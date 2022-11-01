@@ -2,7 +2,7 @@ import { connect } from "mongoose";
 import { connectMongo } from "./config";
 import colors from "colors"
 import { ColorResolvable } from "discord.js"
-import { BotDB } from "./utils/types"
+import { BotDB } from "./types"
 
 colors
 connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la base de datos'.green))

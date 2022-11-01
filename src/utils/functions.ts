@@ -2,7 +2,7 @@ import { EmbedBuilder, ColorResolvable, Message, InviteGuild, MessagePayload, Me
 import ms from "ms";
 import { botDB } from "../db";
 import { promoLevelModel } from "../models";
-import { MembersPrl } from "./types";
+import { MembersPrl } from "../types";
 
 export const sendMessageText = (msg: Message, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
   setTimeout(()=> {
@@ -43,9 +43,9 @@ export const setErrors = (msg: Message, descriptionsAndConditions: [(string | bo
 }
 
 export const setSlashError = async (int: ChatInputCommandInteraction<CacheType>, description: string) => {
-  int.deferReply({ephemeral: true})
+  await int.deferReply({ephemeral: true})
   setTimeout(async ()=>{
-    int.editReply({ embeds: [createEmbedMessage(`${botDB.emoji.negative} Error`, description, botDB.color.negative)]})
+    await int.editReply({ embeds: [createEmbedMessage(`${botDB.emoji.negative} Error`, description, botDB.color.negative)]})
   }, 500)
 }
 

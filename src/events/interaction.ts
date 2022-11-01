@@ -1,5 +1,6 @@
 import { CacheType, Client, Collection, ColorResolvable, Colors, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
 import { botDB } from "../db";
+import { collaboratorsModel } from "../models";
 import { websSlashCommand, websScb } from "../commands/slash/generals/webs";
 import { pingSlashCommand, pingScb } from "../commands/slash/generals/ping";
 import { ayudaSlashCommand, ayudaScb } from "../commands/slash/generals/ayuda";
@@ -13,10 +14,10 @@ import { clasificacionesSlashCommand, clasificacionesScb } from "../commands/sla
 
 // Moderation
 import { limpiarSlashCommand, limpiarScb } from "../commands/slash/moderation/limpiar";
-import { collaboratorsModel } from "../models";
+import { encarcelarSlashCommand, encarcelarScb } from "../commands/slash/moderation/encarcelar";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
-const cmds = [websScb, pingScb, ayudaScb, reglasScb, examenScb, plantillaScb, historialSmb, informacionScb, estadisticasScb, clasificacionesScb,  limpiarScb]
+const cmds = [websScb, pingScb, ayudaScb, reglasScb, examenScb, plantillaScb, historialSmb, informacionScb, estadisticasScb, clasificacionesScb,  limpiarScb, encarcelarScb]
 cmds.forEach((cmd, ps)=> {
   slashComands.set(cmd.name, cmd)
 })
@@ -32,6 +33,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandName == 'reglas') reglasSlashCommand(int, client)
     if(commandName == 'examen') examenSlashCommand(int)
     if(commandName == 'limpiar') limpiarSlashCommand(int, client)
+    if(commandName == 'encarcelar') encarcelarSlashCommand(int, client)
     if(commandName == 'plantilla') plantillaSlashCommand(int, client)
     if(commandName == 'información') informacionSlashCommand(int)
     if(commandName == 'historial') historialSlashCommand(int, client)
@@ -82,7 +84,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
       }
     }
 
-    if(int.customId == 'edad'){
+    if(customId == 'edad'){
       const author = guild?.members.cache.get(user.id)
       const valores = ['-18', '+18']
       const roles = ['828720200924790834', '828720340719894579']
@@ -122,7 +124,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
       }
     }
 
-    if(int.customId == "videojuegos"){
+    if(customId == "videojuegos"){
       const author = guild?.members.cache.get(user.id)
       let valores = ["fornite","minecraft","free","roblox","GTA","amongus"]
       let roles = ["886331637690953729","886331642074005545","886331630690631691", "885005724307054652","886331626643152906", "886331634272587806"]
@@ -148,7 +150,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
       }
     }
 
-    if(int.customId == "colores"){
+    if(customId == "colores"){
       const author = guild?.members.cache.get(user.id)
       let valores = ["negro","cafe","naranja","rojo","rosa","morado","azul","celeste","cian","verde","lima","amarillo","gris","blanco"]
       let roles = ["825913849504333874","825913858446327838","825913837944438815","823639766226436146","823639778926395393", "825913846571991100", "823639775499386881", "825913860992270347", "825913843645546506","823639769300467724", "825913834803560481","825913840981901312", "825913855392743444","825913852654780477"]
@@ -187,7 +189,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
       }
     }
 
-    if(int.customId == "notificaciones"){
+    if(customId == "notificaciones"){
       const author = guild?.members.cache.get(user.id)
       let valores = ["anuncio","alianza","sorteo","encuesta","evento","sugerencia","postulacion","revivir"]
       let roles = ["840704358949584926","840704364158910475","840704370387451965","840704372911505418","915015715239637002","840704367467954247","840704375190061076","850932923573338162"]
@@ -213,7 +215,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
       }
     }
 
-    if(int.customId == "información"){
+    if(customId == "información"){
       const author = guild?.members.cache.get(user.id)
       const dataCol = await collaboratorsModel.findById(serverId), colaboradores = []
       if(!dataCol) return
