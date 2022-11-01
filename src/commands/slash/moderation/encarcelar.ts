@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, PermissionsBitField, PermissionFlagsBits, ChannelType } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, PermissionFlagsBits, ChannelType } from "discord.js";
 import ms from "ms";
 import { estadisticas } from "../../..";
 import { botDB } from "../../../db";
