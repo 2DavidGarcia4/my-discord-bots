@@ -17,7 +17,7 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
 
   estadisticas.comandos++
   const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.datos.registros.bot) 
-  const razon = int.options.getString("razón", true), preMember = int.options.getUser("miembro"), preId = int.options.getString("id"), userId = preMember?.id || preId || ''
+  const razon = options.getString("razón", true), preMember = options.getUser("miembro"), preId = options.getString("id"), userId = preMember?.id || preId || ''
 
   if(setSlashErrors(int, [
     [
