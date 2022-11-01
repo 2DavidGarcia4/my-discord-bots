@@ -2,7 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder, PermissionFlagsBits, ChatInputComman
 import { estadisticas } from "../../..";
 import { botDB } from "../../../db";
 import { botModel } from "../../../models";
-import { sendMessageSlash, setSlashErrors } from "../../../utils/functions";
+import { sendMessageSlash, setSlashError, setSlashErrors } from "../../../utils/functions";
 
 export const banearScb = new SlashCommandBuilder()
 .setName("banear")
@@ -21,11 +21,11 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
 
   if(setSlashErrors(int, [
     [
-      Boolean(preId && Number(preId)),
+      Boolean(preId && !Number(preId)),
       `La ID proporcionada *(${preId})* no es valida ya que no es numérica.`
     ],
     [
-      Boolean(!preMember && !preMember),
+      Boolean(!preMember && !preId),
       `No has proporcionado el miembro o usuario externo a banear.`
     ],
     [
@@ -45,7 +45,8 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
       `El miembro que has proporcionado *(${guild?.members.cache.get(userId)})* esres tu, no te puedes banear a ti mismo.`
     ],
     [
-      Boolean((await guild?.bans.fetch())?.some(s=>s.user.id == userId))
+      Boolean((await guild?.bans.fetch())?.some(s=>s.user.id == userId)),
+      `El usuario con la id *${userId}* ya se encuentra baneado.`
     ]
   ])) return
 
@@ -74,8 +75,6 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
     .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
     .setTimestamp()
 
-    await int.deferReply()
-
     if(user.id != int.guild?.ownerId){
       if(setSlashErrors(int, [
         [
@@ -89,6 +88,7 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
       ])) return
 
       if(member){
+        await int.deferReply()
         banearEb
         .setTitle(`⛔ ${isBot ? 'Bot' : 'Miembro'} baneado`)
         .setDescription(`${isBot ? '🤖 **Ex bot:**' : '👤 **Ex miembro:**'} ${user}\n**ID:** ${user.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
@@ -96,7 +96,8 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
         
         if(!isBot) member.send({embeds: [banearMdEb]})
 
-        member.ban({deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Miembro'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(()=>{
+        member.ban({deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Miembro'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
+          await int.deferReply()
           sendMessageSlash(int, {embeds: [banearEb]})
         })
 
@@ -114,7 +115,8 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
         .setDescription(`${isBot ? '🤖 **Bot externo:**' : '👤 **Usuario externo:**'} ${user}\n**ID:** ${user.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
         .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
 
-        guild?.members.ban(user, {deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Usuario'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(k=>{
+        guild?.members.ban(user, {deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Usuario'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
+          await int.deferReply()
           sendMessageSlash(int, {embeds: [banearEb]})
         })
 
@@ -131,10 +133,12 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
     if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [logEb]})
 
   }).catch(async ()=>{
+    console.log('catch')
     const embError1 = new EmbedBuilder()
     .setTitle(`${emoji.negative} Error`)
     .setDescription(`La ID que has proporcionado *(${preId})* no es una ID de ningún usuario de Discord.`)
     .setColor(color.negative)
-    await int.reply({ephemeral: true, embeds: [embError1]})
+    setSlashError(int, `La ID que has proporcionado *(${preId})* no es una ID de ningún usuario de Discord.`)
+    // await int.reply({ephemeral: true, embeds: [embError1]})
   })
 } //? lineas 285 
