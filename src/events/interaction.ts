@@ -15,9 +15,13 @@ import { clasificacionesSlashCommand, clasificacionesScb } from "../commands/sla
 // Moderation
 import { limpiarSlashCommand, limpiarScb } from "../commands/slash/moderation/limpiar";
 import { encarcelarSlashCommand, encarcelarScb } from "../commands/slash/moderation/encarcelar";
+import { expulsarSlashCommand, expulsarScb } from "../commands/slash/moderation/expulsar";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
-const cmds = [websScb, pingScb, ayudaScb, reglasScb, examenScb, plantillaScb, historialSmb, informacionScb, estadisticasScb, clasificacionesScb,  limpiarScb, encarcelarScb]
+const cmds = [
+  websScb, pingScb, ayudaScb, reglasScb, examenScb, plantillaScb, historialSmb, informacionScb, estadisticasScb, clasificacionesScb,  
+  limpiarScb, encarcelarScb, expulsarScb
+]
 cmds.forEach((cmd, ps)=> {
   slashComands.set(cmd.name, cmd)
 })
@@ -34,6 +38,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandName == 'examen') examenSlashCommand(int)
     if(commandName == 'limpiar') limpiarSlashCommand(int, client)
     if(commandName == 'encarcelar') encarcelarSlashCommand(int, client)
+    if(commandName == 'expulsar') expulsarSlashCommand(int, client)
     if(commandName == 'plantilla') plantillaSlashCommand(int, client)
     if(commandName == 'información') informacionSlashCommand(int)
     if(commandName == 'historial') historialSlashCommand(int, client)

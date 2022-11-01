@@ -1,5 +1,5 @@
 import { SlashCommandBuilder, Client, PermissionFlagsBits, ChatInputCommandInteraction, CacheType, EmbedBuilder, ChannelType } from "discord.js";
-import { autoModeracion, estadisticas } from "../../..";
+import { estadisticas } from "../../..";
 import { botDB } from "../../../db";
 import { botModel } from "../../../models";
 import { sendMessageSlash, setSlashErrors } from "../../../utils/functions";
