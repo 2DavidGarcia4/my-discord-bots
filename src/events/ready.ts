@@ -2,7 +2,6 @@ import { ActivitiesOptions, ActivityType, ActionRowBuilder, ButtonBuilder, Chann
 import ms from "ms"
 import colors from "colors"
 import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, promoLevelModel } from "../models"
-import { CarcelModel } from "../types"
 import { botDB } from "../db"
 import { symbolName } from "typescript"
 import { slashComands } from "./interaction"

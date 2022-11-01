@@ -41,18 +41,6 @@ export type BotDB = {
   }
 }
 
-export type CarcelModel = {
-  cantidad: number,
-  prisioneros: {
-    id: string
-    tag: string
-    razon: string
-    condena: string
-    tiempo: number
-  }[],
-  // save: () => {}
-}
-
 export type MembersPrl = {
   id: string;
   tag: string;
