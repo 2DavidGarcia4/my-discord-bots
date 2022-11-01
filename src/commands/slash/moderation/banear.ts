@@ -13,7 +13,7 @@ export const banearScb = new SlashCommandBuilder()
 .toJSON()
 
 export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
-  const { guild, user, options } = int, author = guild?.members.cache.get(user.id), { color, emoji } = botDB 
+  const { guild, options } = int, author = guild?.members.cache.get(int.user.id), { color, emoji } = botDB 
 
   estadisticas.comandos++
   const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.datos.registros.bot) 
@@ -41,7 +41,7 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
       `El miembro que has proporcionado *(${guild?.members.cache.get(userId)})* soy yo, yo no me puedo banear a mi mismo.`
     ],
     [
-      Boolean(userId == user.id),
+      Boolean(userId == int.user.id),
       `El miembro que has proporcionado *(${guild?.members.cache.get(userId)})* esres tu, no te puedes banear a ti mismo.`
     ],
     [
@@ -50,7 +50,8 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
     ]
   ])) return
 
-  await client.users.fetch(userId, {force: true}).then(async user=> {
+  
+  client.users.fetch(userId, {force: true}).then(async user => {
     const member = guild?.members.cache.get(userId), isBot = user.bot
 
     const banearEb = new EmbedBuilder()
@@ -88,8 +89,8 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
       ])) return
     }
 
+    await int.deferReply()
     if(member){
-      await int.deferReply()
       banearEb
       .setTitle(`⛔ ${isBot ? 'Bot' : 'Miembro'} baneado`)
       .setDescription(`${isBot ? '🤖 **Ex bot:**' : '👤 **Ex miembro:**'} ${user}\n**ID:** ${user.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
@@ -98,7 +99,6 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
       if(!isBot) member.send({embeds: [banearMdEb]})
 
       member.ban({deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Miembro'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
-        await int.deferReply()
         sendMessageSlash(int, {embeds: [banearEb]})
       })
 
@@ -117,7 +117,6 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
       .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
 
       guild?.members.ban(user, {deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Usuario'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
-        await int.deferReply()
         sendMessageSlash(int, {embeds: [banearEb]})
       })
 
@@ -129,16 +128,12 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
         {name: "📑 **Razón:**", value: `${razon}`}
       )
     }
-
+    
     if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [logEb]})
 
-  }).catch(async ()=>{
-    console.log('catch')
-    const embError1 = new EmbedBuilder()
-    .setTitle(`${emoji.negative} Error`)
-    .setDescription(`La ID que has proporcionado *(${preId})* no es una ID de ningún usuario de Discord.`)
-    .setColor(color.negative)
+  }).catch(async (er)=>{
     setSlashError(int, `La ID que has proporcionado *(${preId})* no es una ID de ningún usuario de Discord.`)
-    // await int.reply({ephemeral: true, embeds: [embError1]})
+    console.log('catch', er)
+    // await int.deferReply()
   })
 } //? lineas 285 

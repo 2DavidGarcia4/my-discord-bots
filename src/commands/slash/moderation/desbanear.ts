@@ -12,16 +12,16 @@ export const desbanearScb = new SlashCommandBuilder()
 .toJSON()
 
 export const desbanearSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
-  const { guild, user, options } = int, author = guild?.members.cache.get(user.id) , { emoji, color } = botDB
+  const { guild, options } = int, author = guild?.members.cache.get(int.user.id) , { emoji, color } = botDB
   
   const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.datos.registros.bot)
   const id = options.getString('id', true)
   estadisticas.comandos++
 
   if(!Number(id)) return setSlashError(int, `La ID proporcionada *(${id})* no es valida ya que no es numérica.`)
-
-  await client.users.fetch(id, {force: true}).then(async user =>{
-    if(!(await guild?.bans.fetch())?.some(s=>s.user.id == user.id)) return setSlashError(int, `El usuario *(${user})* no esta baneado.`)
+  if(!(await guild?.bans.fetch())?.some(s=>s.user.id == id)) return setSlashError(int, `El usuario *(${id})* no esta baneado.`)
+  
+  client.users.fetch(id, {force: true}).then(async user => {
 
     const desbanearEb = new EmbedBuilder()
     .setAuthor({name: author?.nickname || int.user.username, iconURL: int.user.avatarURL() || undefined})
