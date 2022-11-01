@@ -41,6 +41,12 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandName == 'clasificaciones') clasificacionesSlashCommand(int, client)
   }
 
+  if(int.isButton()){
+    const { customId } = int
+    if(customId == 'eliminarMsgMD') int.message.delete()
+    
+  }
+
   if(int.isSelectMenu()){
     const { customId, guild, user } = int
 

@@ -236,7 +236,7 @@ export const readyEvent = async (client: Client) => {
       }
     }
   }
-  // carcel()
+  carcel()
 
   async function colaboradores() {
     let dataCol = await collaboratorsModel.findById(botDB.serverId), arrayCo = dataCol?.colaboradores
@@ -297,7 +297,7 @@ export const readyEvent = async (client: Client) => {
       await collaboratorsModel.findByIdAndUpdate(botDB.serverId, { colaboradores: arrayCo })
     }, 2000)
   }
-  // colaboradores()
+  colaboradores()
 
   function vips() {
     let tiempo = new Date(), canal = servidor?.channels.cache.get("826193847943037018")
@@ -318,7 +318,7 @@ export const readyEvent = async (client: Client) => {
       })
     }
   }
-  // vips()
+  vips()
 
   async function invitaciones() {
     let dataInv = await invitesModel.findById(botDB.serverId), arrayMi = dataInv?.miembros
@@ -383,7 +383,7 @@ export const readyEvent = async (client: Client) => {
     await invitesModel.findByIdAndUpdate(botDB.serverId, { miembros: arrayMi })
 
   }
-  // invitaciones()
+  invitaciones()
 
   async function sorteos() {
     let dataSor = await rafflesModel.findById(botDB.serverId), arraySo = dataSor?.sorteos
@@ -425,7 +425,7 @@ export const readyEvent = async (client: Client) => {
       }
     }
   }
-  // sorteos()
+  sorteos()
 
   async function encuestas() {
     let dataEnc = await surveysModel.findById(botDB.serverId), arrayEn = dataEnc?.encuestas
