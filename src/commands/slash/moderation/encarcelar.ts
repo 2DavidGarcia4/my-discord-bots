@@ -137,16 +137,17 @@ export const encarcelarSlashCommand = async (int: ChatInputCommandInteraction<Ca
   }
 
   member?.roles.add("830260549098405935").then(async c=>{
-    sendMessageSlash(int, {embeds: [carcelEb]})
-    let text = ''
+    let text = 'null'
     member?.send({embeds: [carcelMdEb]}).then(()=> {
       text = member.nickname || member.user.username
     }).catch(()=> {
       text = `No he podido enviar el mensaje al miembro ${member.nickname || member.user.username}`
+    }).finally(()=> {
+      carcelEb
+      .setFooter({text, iconURL: member.displayAvatarURL()})
+      sendMessageSlash(int, {embeds: [carcelEb]})
     })
-
-    carcelEb
-    .setFooter({text, iconURL: member.displayAvatarURL()})
+    
 
     const cantidad = (dataCrc?.cantidad || 1) + 1
     pricioners?.push({id: member.id, tag: member.user.tag, razon: razon, condena: tiempo, tiempo: Date.now()})

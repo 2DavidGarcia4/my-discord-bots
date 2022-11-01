@@ -186,7 +186,8 @@ export const readyEvent = async (client: Client) => {
   }
 
   async function carcel() {
-    const dataCrc = await carcelModel.findById(botDB.serverId), tiempoActual = Date.now(), canalRegistro = servidor?.channels.cache.get('941170978459910214')
+    const dataCrc = await carcelModel.findById(client.user?.id), tiempoActual = Date.now(), canalRegistro = servidor?.channels.cache.get('941170978459910214')
+    
     if (dataCrc && dataCrc.prisioneros.length >= 1) {
       for (let d in dataCrc.prisioneros) {
         const miembro = servidor?.members.cache.get(dataCrc.prisioneros[d].id)
@@ -199,6 +200,7 @@ export const readyEvent = async (client: Client) => {
         .setColor(botDB.color.afirmative)
         .setTimestamp()
 
+        
         if (!miembro && canalRegistro?.type == ChannelType.GuildText) {
           const user = client.users.cache.get(dataCrc.prisioneros[d].id)
           if(user){
@@ -544,12 +546,12 @@ export const readyEvent = async (client: Client) => {
   //   encuestas()
   // }, 2 * 60000)
 
-  // setInterval(async () => {
-  //   estadisticas()
-  //   carcel()
-  //   vips()
-  //   promoNvl()
-  // }, 30 * 60000)
+  setInterval(async () => {
+    estadisticas()
+    carcel()
+    vips()
+    promoNvl()
+  }, 30 * 60000)
 
   slashComands?.forEach(async (command, position) => {
     if(!(await servidor?.commands.fetch())?.some(s=> s.name == command.name)){
