@@ -110,10 +110,10 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
     .setTimestamp()
 
     await gmd.guild.invites.fetch().then(async invites=> {
-      console.log(invites.map(m => `${m.code} || ${m.uses}`))
+      // console.log(invites.map(m => `${m.code} || ${m.uses}`))
       if(!arrayMi) return
       const invitacion = invites.find(f=> arrayMi.find(fm=> fm.id==f.inviterId)?.codes.find(fc=> fc.code==f.code) ? (arrayMi?.find(fm=> fm.id==f.inviterId)?.codes.find(fc=> fc.code==f.code)?.usos || 0) < (f.uses || 0) : false)
-      console.log(invitacion)
+      // console.log(invitacion)
 
       let miembro = arrayMi.find(f=> f.id==invitacion?.inviterId)
       if(miembro){
@@ -171,7 +171,6 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
       }
     })
 
-    // if(welcomeChannel?.type == ChannelType.GuildText) welcomeChannel.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`})
     welcomeMsg.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`})
     if(welcomeLog?.type == ChannelType.GuildText) welcomeLog.send({embeds: [embBien]})
     let miembroInv = arrayMi?.find(f=> f.id==gmd.user.id)
