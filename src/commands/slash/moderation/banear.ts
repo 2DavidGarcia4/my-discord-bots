@@ -86,48 +86,48 @@ export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheT
           `El miembro que has proporcionado *(${member})* es mi creador y el dueño del servidor, **¿Qué intentas hacer?**.`
         ]
       ])) return
+    }
 
-      if(member){
+    if(member){
+      await int.deferReply()
+      banearEb
+      .setTitle(`⛔ ${isBot ? 'Bot' : 'Miembro'} baneado`)
+      .setDescription(`${isBot ? '🤖 **Ex bot:**' : '👤 **Ex miembro:**'} ${user}\n**ID:** ${user.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
+      .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
+      
+      if(!isBot) member.send({embeds: [banearMdEb]})
+
+      member.ban({deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Miembro'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
         await int.deferReply()
-        banearEb
-        .setTitle(`⛔ ${isBot ? 'Bot' : 'Miembro'} baneado`)
-        .setDescription(`${isBot ? '🤖 **Ex bot:**' : '👤 **Ex miembro:**'} ${user}\n**ID:** ${user.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
-        .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
-        
-        if(!isBot) member.send({embeds: [banearMdEb]})
+        sendMessageSlash(int, {embeds: [banearEb]})
+      })
 
-        member.ban({deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Miembro'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
-          await int.deferReply()
-          sendMessageSlash(int, {embeds: [banearEb]})
-        })
+      logEb
+      .addFields(
+        {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
+        {name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}`},
+        {name: `${isBot ? '🤖 **Ex bot' : '👤 **Ex miembro'} baneado:**`, value: `${user}\n**ID:** ${user.id}`},
+        {name: "📑 **Razón:**", value: `${razon}`}
+      )
 
-        logEb
-        .addFields(
-          {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
-          {name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}`},
-          {name: `${isBot ? '🤖 **Ex bot' : '👤 **Ex miembro'} baneado:**`, value: `${user}\n**ID:** ${user.id}`},
-          {name: "📑 **Razón:**", value: `${razon}`}
-        )
+    }else{
+      banearEb
+      .setTitle(`⛔ ${isBot ? 'Bot' : 'Miembro'} baneado`)
+      .setDescription(`${isBot ? '🤖 **Bot externo:**' : '👤 **Usuario externo:**'} ${user}\n**ID:** ${user.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
+      .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
 
-      }else{
-        banearEb
-        .setTitle(`⛔ ${isBot ? 'Bot' : 'Miembro'} baneado`)
-        .setDescription(`${isBot ? '🤖 **Bot externo:**' : '👤 **Usuario externo:**'} ${user}\n**ID:** ${user.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
-        .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
+      guild?.members.ban(user, {deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Usuario'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
+        await int.deferReply()
+        sendMessageSlash(int, {embeds: [banearEb]})
+      })
 
-        guild?.members.ban(user, {deleteMessageSeconds: 7*24*60*60, reason: `Moderador: ${int.user.tag} ID: ${int.user.id} | ${isBot ? 'Bot' : 'Usuario'} baneado: ${user.tag}, ID: ${user.id} | Razón: ${razon}`}).then(async ()=>{
-          await int.deferReply()
-          sendMessageSlash(int, {embeds: [banearEb]})
-        })
-
-        logEb
-        .addFields(
-          {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
-          {name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}`},
-          {name: `${isBot ? '🤖 **Bot' : '👤 **Usuario'} externo baneado:**`, value: `${user}\n**ID:** ${user.id}`},
-          {name: "📑 **Razón:**", value: `${razon}`}
-        )
-      }
+      logEb
+      .addFields(
+        {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
+        {name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}`},
+        {name: `${isBot ? '🤖 **Bot' : '👤 **Usuario'} externo baneado:**`, value: `${user}\n**ID:** ${user.id}`},
+        {name: "📑 **Razón:**", value: `${razon}`}
+      )
     }
 
     if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [logEb]})
