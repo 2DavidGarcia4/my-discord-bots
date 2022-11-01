@@ -4,12 +4,13 @@ import { botDB } from "../../../db";
 import { botModel } from "../../../models";
 import { sendMessageSlash, setSlashErrors } from "../../../utils/functions";
 
-export const banarScb = new SlashCommandBuilder()
+export const banearScb = new SlashCommandBuilder()
 .setName("banear")
 .setDescription(`⛔ Banea a un miembro o usuario externo del servidor.`)
 .addStringOption(razon=> razon.setName("razón").setDescription(`📝 Proporciona la razón por la que banearas al miembro o usuario externo.`).setRequired(true))
 .addUserOption(miembro=> miembro.setName("miembro").setDescription(`🧑 Proporciona el miembro a banear.`).setRequired(false))
 .addStringOption(id=> id.setName(`id`).setDescription(`🆔 ID del miembro o usuario externo a banear.`).setRequired(false))
+.toJSON()
 
 export const banearSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
   const { guild, user, options } = int, author = guild?.members.cache.get(user.id), { color, emoji } = botDB 
