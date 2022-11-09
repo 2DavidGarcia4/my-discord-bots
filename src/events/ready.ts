@@ -1,7 +1,7 @@
 import { ActivitiesOptions, ActivityType, ActionRowBuilder, ButtonBuilder, ChannelType, Client, EmbedBuilder, ButtonStyle, Guild } from "discord.js"
 import ms from "ms"
 import colors from "colors"
-import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, promoLevelModel } from "../models"
+import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, promoLevelModel, botModel } from "../models"
 import { botDB } from "../db"
 import { symbolName } from "typescript"
 import { slashComands } from "./interaction"
@@ -20,7 +20,7 @@ export const readyEvent = async (client: Client) => {
   .setTimestamp()
   // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
 
-  
+  botModel.findById(client.user.id).then(res=> console.log(res))
 
   // Roles principales automaticos
   servidor?.members.cache.filter(f => !botDB.mainRoles.some(s => f.roles.cache.has(s)) && !f.user.bot).map(m => m).forEach((miembro, ps, mapa) => {

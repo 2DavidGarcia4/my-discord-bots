@@ -66,9 +66,9 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
 
     // Personal
     let dataPer = await personalModel.findById(botDB.serverId), arrayPr = dataPer?.personal
-    if(arrayPr?.some(s=> s.i==gmr.id)){
-      let persona = arrayPr.find(f=> f.i==gmr.id)
-      persona.miembro = false
+    if(arrayPr?.some(s=> s.id==gmr.id)){
+      let persona = arrayPr.find(f=> f.id==gmr.id)
+      if(persona) persona.miembro = false
       await personalModel.findByIdAndUpdate(botDB.serverId, {personal: arrayPr})
     }
 

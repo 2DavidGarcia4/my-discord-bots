@@ -2,10 +2,21 @@ import { model, Schema } from "mongoose";
 import { prop, getModelForClass } from "@typegoose/typegoose"
 
 //? Bot db
-export const botModel = model("1botdb", new Schema({
-  _id: {type: String, required: true},
-  datos: {type: Object, required: true}
-}))
+class PCEMbot {
+  @prop({type: String, required: true})
+  public _id: string
+
+  @prop({type: Object, required: true})
+  public logs: object
+
+  @prop({type: Object, required: true})
+  autoModeration: {
+    ignoreCategories: string[]
+    ignoreChannels: string[]
+  }
+}
+
+export const botModel = getModelForClass(PCEMbot)
 
 //? Sistema de alianzas
 class Alianzas {
@@ -72,13 +83,13 @@ export const suggestionsModel = getModelForClass(Sugerencias)
 //? Carcél 
 class Carcel {
   @prop({type: String, required: true})
-  _id: string
+  public _id: string
 
   @prop({type: Number, required: true})
-  cantidad: number
+  public cantidad: number
 
   @prop({type: Array, required: true})
-  prisioneros: {
+  public prisioneros: {
     id: string
     tag: string
     razon: string
@@ -99,10 +110,10 @@ export const ticketsModel = model("Tickets", new Schema({
 //? Sistema de invitaciones
 class Ivitaciones {
   @prop({type: String, required: true})
-  _id: string
+  public _id: string
 
   @prop({type: Object, required: true})
-  datos: {
+  public datos: {
     roles: {
       id: string
       invitaciones: number
@@ -110,7 +121,7 @@ class Ivitaciones {
   }
 
   @prop({type: Array, required: true})
-  miembros: {
+  public miembros: {
     id: string
     tag: string
     verdaderas: number
@@ -134,17 +145,17 @@ export const invitesModel = getModelForClass(Ivitaciones)
 //? Historial del personal
 class Personal {
   @prop({type: String, required: true})
-  _id: string
+  public _id: string
 
   @prop({type: Object, required: true})
-  datos: {
+  public datos: {
     rolID: string,
     roles: string[],
     canalRegistro: string
   }
 
   @prop({type: Array, required: true})
-  personal: {
+  public personal: {
     id: string,
     tag: string,
     rango: number,
@@ -160,16 +171,16 @@ export const personalModel = getModelForClass(Personal)
 //? Sistema de sorteos
 class Sorteos {
   @prop({type: String, required: true})
-  _id: string
+  public _id: string
 
   @prop({type: Object, required: true})
-  datos: {
+  public datos: {
     rolID: string
     emojiID: string
   }
 
   @prop({type: Array, required: true})
-  sorteos: {
+  public sorteos: {
     id: string
     canalID: string
     finaliza: number
@@ -185,16 +196,16 @@ export const rafflesModel = getModelForClass(Sorteos)
 //? Sistema de encuestas
 class Encuestas {
   @prop({type: String, required: true})
-  _id: string
+  public _id: string
 
   @prop({type: Object, required: true})
-  datos: {
+  public datos: {
     rolID: string
     emojis: string[]
   }
 
   @prop({type: Array, required: true})
-  encuestas: {
+  public encuestas: {
     id: string
     canalID: string
     autorID: string
@@ -213,16 +224,16 @@ export const surveysModel = getModelForClass(Encuestas)
 //? ColaboradoresDB
 class Colaboradores {
   @prop({type: String, required: true})
-  _id: string
+  public _id: string
 
   @prop({type: Object, required: true})
-  datos: {
+  public datos: {
     categoriaID: string
     rolID: string
   }
 
   @prop({type: Array, required: true})
-  colaboradores: {
+  public colaboradores: {
     id: string
     tag: string
     canalID: string
@@ -237,15 +248,15 @@ export const collaboratorsModel = getModelForClass(Colaboradores, {options: {dis
 //? Sistema de promo-nvl
 class PromoNvl {
   @prop({type: String, required: true})
-  _id: string
+  public _id: string
 
   @prop({type: Object, required: true})
-  datos: {
+  public datos: {
     canalID: string
   }
 
   @prop({type: Array, required: true})
-  miembros: {
+  public miembros: {
     id: string
     tag: string
     tiempo: number | null 
