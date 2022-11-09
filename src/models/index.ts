@@ -1,5 +1,6 @@
 import { model, Schema } from "mongoose";
 import { prop, getModelForClass } from "@typegoose/typegoose"
+import { BotLogs, DataBot } from "../types";
 
 //? Bot db
 class PCEMbot {
@@ -7,18 +8,7 @@ class PCEMbot {
   public _id: string
 
   @prop({type: Object, required: true})
-  public logs: {
-    bot: string
-    ban: string
-    unban: string
-    exit: string
-    entry: string
-    errors: string
-    connections: string
-    welcome: string
-    moderation: string
-    staff: string
-  }
+  public logs: BotLogs
 
   @prop({type: Object, required: true})
   autoModeration: {

@@ -11,7 +11,7 @@ export const ascenderScb = new SlashCommandBuilder()
 export const ascenderSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
   const { options, guild, user } = int, { serverId } = botDB, author = guild?.members.cache.get(user.id)
   const dataPer = await personalModel.findById(serverId), arrayPr = dataPer?.personal
-  const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.logs.staff || '') 
+  const dataBot = await botModel.findById(client.user?.id), channelLog = client.channels.cache.get(dataBot?.logs.staff || '') 
   const member = guild?.members.cache.get(options.getUser('miembro', true).id)
  
   if(setSlashErrors(int, [

@@ -1,9 +1,8 @@
-import { ActivitiesOptions, ActivityType, ActionRowBuilder, ButtonBuilder, ChannelType, Client, EmbedBuilder, ButtonStyle, Guild } from "discord.js"
+import { ActivitiesOptions, ActivityType, ActionRowBuilder, ButtonBuilder, ChannelType, Client, EmbedBuilder, ButtonStyle } from "discord.js"
 import ms from "ms"
 import colors from "colors"
 import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, promoLevelModel, botModel } from "../models"
 import { botDB } from "../db"
-import { symbolName } from "typescript"
 import { slashComands } from "./interaction"
 
 colors
@@ -11,16 +10,16 @@ export const readyEvent = async (client: Client) => {
   if (!client.user) return
   console.log(`Estoy listo ${client.user?.username}`.rainbow.italic)
 
-  const servidor = client.guilds.cache.get(botDB.serverId), readyChannel = client.channels.cache.get('964696468181094410')
-  let svch = servidor?.channels.cache.get("828300239488024587")
+  const dataBot = await botModel.findById(client.user.id)
+  const servidor = client.guilds.cache.get(botDB.serverId), readyChannel = client.channels.cache.get(dataBot?.logs.connections || '')
+  const channelSuggestions = servidor?.channels.cache.get(dataBot?.logs.suggestions || '828300239488024587')
   const embEncendido = new EmbedBuilder()
   .setTitle(`${botDB.emoji.afirmative} Encendido de nuevo.`)
   .setColor(botDB.color.afirmative)
   .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
   .setTimestamp()
-  // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
+  if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
 
-  botModel.findById(client.user.id).then(res=> console.log(res))
 
   // Roles principales automaticos
   servidor?.members.cache.filter(f => !botDB.mainRoles.some(s => f.roles.cache.has(s)) && !f.user.bot).map(m => m).forEach((miembro, ps, mapa) => {
@@ -31,8 +30,8 @@ export const readyEvent = async (client: Client) => {
   let dataSug = await suggestionsModel.findById(botDB.serverId), mensajesCargados = 0
   if (dataSug) {
     for (let i in dataSug?.mensajes) {
-      if (svch?.type == ChannelType.GuildText && dataSug?.mensajes[i].id.length > 2) {
-        await svch?.messages.fetch(dataSug.mensajes[i].id).then(tc => {
+      if (channelSuggestions?.type == ChannelType.GuildText && dataSug?.mensajes[i].id.length > 2) {
+        await channelSuggestions?.messages.fetch(dataSug.mensajes[i].id).then(tc => {
           mensajesCargados++
         }).catch(err => {
           console.log("mensaje del sistema de sugerencias no encontrado.".red, err)

@@ -7,11 +7,14 @@ import { websSlashCommand, websScb } from "../commands/slash/generals/webs";
 import { pingSlashCommand, pingScb } from "../commands/slash/generals/ping";
 import { ayudaSlashCommand, ayudaScb } from "../commands/slash/generals/ayuda";
 import { reglasSlashCommand, reglasScb } from "../commands/slash/generals/reglas";
-import { examenSlashCommand, examenScb } from "../commands/slash/staff/examen";
 import { plantillaSlashCommand, plantillaScb } from "../commands/slash/generals/plantilla";
 import { informacionSlashCommand, informacionScb } from "../commands/slash/generals/informacion";
 import { estadisticasSlashCommand, estadisticasScb } from "../commands/slash/generals/estadisticas";
 import { clasificacionesSlashCommand, clasificacionesScb } from "../commands/slash/generals/clasificaciones";
+
+// Staff
+import { examenSlashCommand, examenScb } from "../commands/slash/staff/examen";
+import { crearSlashCommand, crearScb } from "../commands/slash/staff/crear";
 
 // Moderation
 import { limpiarSlashCommand, limpiarScb } from "../commands/slash/moderation/limpiar";
@@ -23,12 +26,14 @@ import { desbanearSlashCommand, desbanearScb } from "../commands/slash/moderatio
 // Administration
 import { historialSlashCommand, historialSmb } from "../commands/slash/administration/historial";
 import { ascenderSlashCommand, ascenderScb } from "../commands/slash/administration/ascender";
+import { degradarSlashCommand, degradarScb } from "../commands/slash/administration/degradar";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 const cmds = [
-  websScb, pingScb, ayudaScb, reglasScb, examenScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb,  
+  websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb,  
+  examenScb, crearScb,
   limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb,
-  historialSmb, ascenderScb
+  historialSmb, ascenderScb, degradarScb
 ]
 cmds.forEach((cmd, ps)=> {
   slashComands.set(cmd.name, cmd)
@@ -52,6 +57,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     
     //? Staff
     if(commandName == 'examen') examenSlashCommand(int)
+    if(commandName == 'crear') crearSlashCommand(int, client)
     
     //? Moderation
     if(commandName == 'limpiar') limpiarSlashCommand(int, client)
@@ -63,6 +69,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     //? Administration
     if(commandName == 'historial') historialSlashCommand(int, client)
     if(commandName == 'ascender') ascenderSlashCommand(int, client)
+    if(commandName == 'degradar') degradarSlashCommand(int, client)
   }
 
   if(int.isButton()){

@@ -49,3 +49,26 @@ export type MembersPrl = {
   tiempo: number | null
   notificado: boolean;
 }[] | undefined
+
+export type BotLogs = {
+  bot: string
+  ban: string
+  unban: string
+  exit: string
+  entry: string
+  errors: string
+  connections: string
+  welcome: string
+  moderation: string
+  staff: string
+  suggestions: string
+}
+
+export type DataBot = {
+  _id: string
+  logs: BotLogs
+  autoModeration: {
+    ignoreCategories: string[]
+    ignoreChannels: string[]
+  }
+}

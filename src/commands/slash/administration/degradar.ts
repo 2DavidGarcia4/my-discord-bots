@@ -16,7 +16,7 @@ export const degradarSlashCommand = async (int: ChatInputCommandInteraction<Cach
   const { options, user, guild } = int, { serverId } = botDB, author = guild?.members.cache.get(user.id)
 
   const dataPer = await personalModel.findById(serverId), arrayPr = dataPer?.personal
-  const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.logs.staff || '')
+  const dataBot = await botModel.findById(client.user?.id), channelLog = client.channels.cache.get(dataBot?.logs.staff || '')
   const roles = dataPer?.datos.roles, member = guild?.members.cache.get(options.getUser('miembro', true).id)
 
   if(setSlashErrors(int, [
@@ -51,7 +51,7 @@ export const degradarSlashCommand = async (int: ChatInputCommandInteraction<Cach
   persona?.historial.push({fecha: Date.now(), accion: `Fue degradado/a al rango ${persona?.rango==1 ? "**Cazador/a de alianzas**": persona?.rango==2 ? "**Ayudante**": persona?.rango==3 ? "**Moderador**": "**Administrador**"} por **${int.user.tag}** *(id: ${int.user.id})*.`})
   const embAcenso = new EmbedBuilder()
   .setAuthor({name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL()})
-  .setTitle(`🛗 Acendido`)
+  .setTitle(`🛗 Degradado`)
   .setDescription(`${member} ha sido degradado de rango al rango ${persona.rango==2 ? "**Ayudante**": persona.rango==3 ? "**Moderador**": persona.rango==4 ? "**Administrador**": "**Ejecutivo**"} por ${int.user}.`)
   .setColor(int.guild?.members.me?.displayHexColor || 'White')
   .setFooter({text: member?.nickname || member?.user.username || 'undefined', iconURL: member?.displayAvatarURL()})
