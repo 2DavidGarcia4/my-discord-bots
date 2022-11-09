@@ -20,7 +20,7 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
   
   // await int.deferReply({ephemeral: true})
   estadisticas.comandos++
-  let cantidad = int.options.getString('cantidad', true), autorId = int.options.getString('autorid'), id = int.options.getUser("miembro") ? options.getUser("miembro")?.id: false || autorId, canalRegistros = client.channels.cache.get(dataBot.datos.registros.bot)
+  let cantidad = int.options.getString('cantidad', true), autorId = int.options.getString('autorid'), id = int.options.getUser("miembro") ? options.getUser("miembro")?.id: false || autorId, canalRegistros = client.channels.cache.get(dataBot?.logs.moderation)
 
   if(setSlashErrors(int, [
     [

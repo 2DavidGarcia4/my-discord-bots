@@ -10,7 +10,9 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
   
   const dataBot = await botModel.findById(client.user?.id)
   const dataInv = await invitesModel.findById(botDB.serverId), arrayMi = dataInv?.miembros
-  const leaveLog = client.channels.cache.get(dataBot?.datos.registros.salida)
+  if(!dataBot) return
+
+  const leaveLog = client.channels.cache.get(dataBot.logs.exit)
   if(leaveLog?.type != ChannelType.GuildText) return
   
   const leaveLogEb = new EmbedBuilder()

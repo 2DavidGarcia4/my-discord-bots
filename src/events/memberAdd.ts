@@ -11,7 +11,8 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
 
   const { color, emoji, serverId, creatorId, mainRoles } = botDB
   const dataBot = await botModel.findById(client.user?.id), dataInv = await invitesModel.findById(serverId), arrayMi = dataInv?.miembros
-  const welcomeLog = client.channels.cache.get(dataBot?.datos.registros.entrada)
+  if(!dataBot) return
+  const welcomeLog = client.channels.cache.get(dataBot.logs.entry)
 
   if(gmd.user.bot){
     const botEb = new EmbedBuilder()
@@ -43,7 +44,7 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
 
   }else {
     const usBanner = await client.users.fetch(gmd.id, {force: true})
-    const welcomeChannel = client.channels.cache.get(dataBot?.datos.registros.bienvenidas)
+    const welcomeChannel = client.channels.cache.get(dataBot.logs.welcome)
     if(welcomeChannel?.type != ChannelType.GuildText) return
     welcomeChannel.sendTyping()
 
@@ -137,7 +138,7 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
               }
 
               const miembroSV = gmd.guild.members.cache.get(invitacion.inviterId || '')
-              const channelLog = client.channels.cache.get(dataBot?.datos.registros.bot)
+              const channelLog = client.channels.cache.get(dataBot.logs.bot)
               if(miembroSV && !miembroSV.user.bot){
                 const rolVIPEb = new EmbedBuilder()
                 .setThumbnail(miembroSV.displayAvatarURL({size: 1024}))

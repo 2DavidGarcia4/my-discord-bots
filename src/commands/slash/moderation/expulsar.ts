@@ -15,7 +15,7 @@ export const expulsarScb = new SlashCommandBuilder()
 export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
   estadisticas.comandos++
   const { guild, user } = int, author = guild?.members.cache.get(user.id)
-  const dataBot = await botModel.findById(client.user?.id), canalRegistro = int.guild?.channels.cache.get(dataBot?.datos.registros.bot)
+  const dataBot = await botModel.findById(client.user?.id), canalRegistro = int.guild?.channels.cache.get(dataBot?.logs.moderation || '')
   const razon = int.options.getString("razón", true), preMember = int.options.getUser("miembro"), id = int.options.getString("id"), member = guild?.members.cache.get(preMember?.id || id || '')
 
   if(setSlashErrors(int, [

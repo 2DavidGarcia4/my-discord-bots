@@ -35,7 +35,7 @@ export const encarcelarScb = new SlashCommandBuilder()
 export const encarcelarSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
   estadisticas.comandos++
   const { options, guild, user } = int, { emoji, color } = botDB, author = guild?.members.cache.get(user.id)
-  const dataBot = await botModel.findById(client.user?.id), channelLogs = int.guild?.channels.cache.get(dataBot?.datos.registros.bot)
+  const dataBot = await botModel.findById(client.user?.id), channelLogs = int.guild?.channels.cache.get(dataBot?.logs.moderation || '')
   const dataCrc = await carcelModel.findById(client.user?.id), pricioners = dataCrc?.prisioneros
   const tiempo = int.options.getString("tiempo", true), razon = int.options.getString("razón", true), preMember = options.getUser("miembro"), id = int.options.getString("id"), member =  preMember ? guild?.members.cache.get(preMember.id || '') : guild?.members.cache.get(id || '')
 

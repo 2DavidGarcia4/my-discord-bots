@@ -6,7 +6,7 @@ import { botModel } from "../models";
 export const banAddEvent = async (gba: GuildBan, client: Client) => {
   if(gba.guild.id != botDB.serverId) return;
 
-  const dataBot = await botModel.findById(client.user?.id), channelLog = client.channels.cache.get(dataBot?.datos.registros.ban)
+  const dataBot = await botModel.findById(client.user?.id), channelLog = client.channels.cache.get(dataBot?.logs.ban || '')
   const embBaneado = new EmbedBuilder()
   .setThumbnail(gba.user.displayAvatarURL())
   .setTitle(`${botDB.emoji.negative} Usuario baneado`)

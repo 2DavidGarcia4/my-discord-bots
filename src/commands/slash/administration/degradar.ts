@@ -16,7 +16,7 @@ export const degradarSlashCommand = async (int: ChatInputCommandInteraction<Cach
   const { options, user, guild } = int, { serverId } = botDB, author = guild?.members.cache.get(user.id)
 
   const dataPer = await personalModel.findById(serverId), arrayPr = dataPer?.personal
-  const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.datos.staff)
+  const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.logs.staff || '')
   const roles = dataPer?.datos.roles, member = guild?.members.cache.get(options.getUser('miembro', true).id)
 
   if(setSlashErrors(int, [

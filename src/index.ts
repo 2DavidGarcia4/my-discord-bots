@@ -76,7 +76,7 @@ PCEM.on('messageReactionRemove', (reaction, user) => {
 
 //! Errors events
 PCEM.on("shardError", async err => {
-  const dataBot = await botModel.findById(PCEM.user?.id), channelLog = PCEM.channels.cache.get(dataBot?.datos.registros.errores)
+  const dataBot = await botModel.findById(PCEM.user?.id), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
   console.log(err)
   const embErr = new EmbedBuilder()
   .setTitle(`${botDB.emoji.negative} Ocurrió un error`)
@@ -87,7 +87,7 @@ PCEM.on("shardError", async err => {
 })
 
 process.on("unhandledRejection", async err => {
-  const dataBot = await botModel.findById(PCEM.user?.id), channelLog = PCEM.channels.cache.get(dataBot?.datos.registros.errores)
+  const dataBot = await botModel.findById(PCEM.user?.id), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
   console.log(err)
   const embErr = new EmbedBuilder()
   .setTitle(`${botDB.emoji.negative} Ocurrió un error`)

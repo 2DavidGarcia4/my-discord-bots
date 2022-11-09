@@ -14,7 +14,7 @@ export const desbanearScb = new SlashCommandBuilder()
 export const desbanearSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
   const { guild, options } = int, author = guild?.members.cache.get(int.user.id) , { emoji, color } = botDB
   
-  const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.datos.registros.bot)
+  const dataBot = await botModel.findById(client.user?.id), channelLog = guild?.channels.cache.get(dataBot?.logs.moderation || '')
   const id = options.getString('id', true)
   estadisticas.comandos++
 

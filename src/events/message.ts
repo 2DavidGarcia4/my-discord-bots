@@ -191,8 +191,9 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
     //* Auto moderación -----------------------------
     if(!msg.member?.roles.cache.has('887444598715219999') && !msg.member?.permissions.has('Administrator')){
       const dataBot = await botModel.findById(client.user?.id)
-      const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot?.datos.autoModeracion.categoriasIgnorar.includes(fc.parentId)).map(mc => mc.id)
-      const otrosIDCha = dataBot?.datos.autoModeracion.canalesIgnorar
+      if(!dataBot) return
+      const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id)
+      const otrosIDCha = dataBot.autoModeration.ignoreChannels
       canalesPerIDs?.push(...otrosIDCha)
 
       if(msg.content == "p.canalesModerados"){

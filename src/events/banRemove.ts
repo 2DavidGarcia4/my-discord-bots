@@ -6,7 +6,7 @@ import { botModel } from "../models";
 export const banRemoveEvent = async (gbr: GuildBan, client: Client) => {
   if(gbr.guild.id != botDB.serverId) return;
     
-  const dataBot = await botModel.findById(client.user?.id), channelLog = client.channels.cache.get(dataBot?.datos.registros.unban)
+  const dataBot = await botModel.findById(client.user?.id), channelLog = client.channels.cache.get(dataBot?.logs.unban || '')
   const embDesbaneado = new EmbedBuilder()
   .setThumbnail(gbr.user.displayAvatarURL())
   .setTitle(`${botDB.emoji.afirmative} Usuario desbaneado`)

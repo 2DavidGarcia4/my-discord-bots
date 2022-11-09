@@ -7,7 +7,18 @@ class PCEMbot {
   public _id: string
 
   @prop({type: Object, required: true})
-  public logs: object
+  public logs: {
+    bot: string
+    ban: string
+    unban: string
+    exit: string
+    entry: string
+    errors: string
+    connections: string
+    welcome: string
+    moderation: string
+    staff: string
+  }
 
   @prop({type: Object, required: true})
   autoModeration: {
