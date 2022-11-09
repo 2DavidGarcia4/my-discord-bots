@@ -152,6 +152,7 @@ export const historialSlashCommand = async (int: ChatInputCommandInteraction<Cac
 
     let bueltas = 1, tabla: any[] = []
     let persona = dataPer.personal.find(f=>f.id == (member ? member.id: int.user.id))
+    if(!persona) return
     for(let h of persona.historial){
       tabla.push(`> **${bueltas}.** <t:${Math.floor(h.fecha/1000)}:F> *(<t:${Math.floor(h.fecha/1000)}:R>)*\n> ${h.accion}`)
       bueltas++

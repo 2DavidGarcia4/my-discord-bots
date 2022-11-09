@@ -1,13 +1,14 @@
-import { CacheType, Client, Collection, ColorResolvable, Colors, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
+import { CacheType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
 import { botDB } from "../db";
 import { collaboratorsModel } from "../models";
+
+// Generals
 import { websSlashCommand, websScb } from "../commands/slash/generals/webs";
 import { pingSlashCommand, pingScb } from "../commands/slash/generals/ping";
 import { ayudaSlashCommand, ayudaScb } from "../commands/slash/generals/ayuda";
 import { reglasSlashCommand, reglasScb } from "../commands/slash/generals/reglas";
 import { examenSlashCommand, examenScb } from "../commands/slash/staff/examen";
 import { plantillaSlashCommand, plantillaScb } from "../commands/slash/generals/plantilla";
-import { historialSlashCommand, historialSmb } from "../commands/slash/staff/historial";
 import { informacionSlashCommand, informacionScb } from "../commands/slash/generals/informacion";
 import { estadisticasSlashCommand, estadisticasScb } from "../commands/slash/generals/estadisticas";
 import { clasificacionesSlashCommand, clasificacionesScb } from "../commands/slash/generals/clasificaciones";
@@ -19,10 +20,15 @@ import { expulsarSlashCommand, expulsarScb } from "../commands/slash/moderation/
 import { banearSlashCommand, banearScb } from "../commands/slash/moderation/banear";
 import { desbanearSlashCommand, desbanearScb } from "../commands/slash/moderation/desbanear";
 
+// Administration
+import { historialSlashCommand, historialSmb } from "../commands/slash/administration/historial";
+import { ascenderSlashCommand, ascenderScb } from "../commands/slash/administration/ascender";
+
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 const cmds = [
-  websScb, pingScb, ayudaScb, reglasScb, examenScb, plantillaScb, historialSmb, informacionScb, estadisticasScb, clasificacionesScb,  
-  limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb
+  websScb, pingScb, ayudaScb, reglasScb, examenScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb,  
+  limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb,
+  historialSmb, ascenderScb
 ]
 cmds.forEach((cmd, ps)=> {
   slashComands.set(cmd.name, cmd)
@@ -33,21 +39,30 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
 
   if(int.isChatInputCommand()){
     const { commandName } = int
+
+    //? Generals
     if(commandName == 'webs') websSlashCommand(int)
     if(commandName == 'ping') pingSlashCommand(int, client)
     if(commandName == 'ayuda') ayudaSlashCommand(int, client)
     if(commandName == 'reglas') reglasSlashCommand(int, client)
+    if(commandName == 'plantilla') plantillaSlashCommand(int, client)
+    if(commandName == 'información') informacionSlashCommand(int)
+    if(commandName == 'estadísticas') estadisticasSlashCommand(int, client)
+    if(commandName == 'clasificaciones') clasificacionesSlashCommand(int, client)
+    
+    //? Staff
     if(commandName == 'examen') examenSlashCommand(int)
+    
+    //? Moderation
     if(commandName == 'limpiar') limpiarSlashCommand(int, client)
     if(commandName == 'encarcelar') encarcelarSlashCommand(int, client)
     if(commandName == 'expulsar') expulsarSlashCommand(int, client)
     if(commandName == 'banear') banearSlashCommand(int, client)
     if(commandName == 'desbanear') desbanearSlashCommand(int, client)
-    if(commandName == 'plantilla') plantillaSlashCommand(int, client)
-    if(commandName == 'información') informacionSlashCommand(int)
+    
+    //? Administration
     if(commandName == 'historial') historialSlashCommand(int, client)
-    if(commandName == 'estadísticas') estadisticasSlashCommand(int, client)
-    if(commandName == 'clasificaciones') clasificacionesSlashCommand(int, client)
+    if(commandName == 'ascender') ascenderSlashCommand(int, client)
   }
 
   if(int.isButton()){

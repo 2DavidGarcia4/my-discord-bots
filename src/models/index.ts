@@ -132,11 +132,30 @@ class Ivitaciones {
 export const invitesModel = getModelForClass(Ivitaciones)
 
 //? Historial del personal
-export const personalModel = model("Personal", new Schema({
-  _id: {type: String, required: true},
-  datos: {type: Object, required: true},
-  personal: {type: Array, required: true}
-}))
+class Personal {
+  @prop({type: String, required: true})
+  _id: string
+
+  @prop({type: Object, required: true})
+  datos: {
+    rolID: string,
+    roles: string[],
+    canalRegistro: string
+  }
+
+  @prop({type: Array, required: true})
+  personal: {
+    id: string,
+    tag: string,
+    rango: number,
+    miembro: boolean,
+    historial: {
+      fecha: number,
+      accion: string
+    }[]
+  }[]
+}
+export const personalModel = getModelForClass(Personal)
 
 //? Sistema de sorteos
 class Sorteos {
