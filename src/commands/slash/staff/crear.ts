@@ -2,8 +2,8 @@ import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheTy
 import ms from "ms";
 import { estadisticas } from "../../..";
 import { botDB } from "../../../db";
-import { alliancesModel, collaboratorsModel, rafflesModel, surveysModel } from "../../../models";
-import { setSlashError, setSlashErrors } from "../../../utils/functions";
+import { alliancesModel, botModel, collaboratorsModel, rafflesModel, surveysModel } from "../../../models";
+import { setSlashError, setSlashErrors, createEmbedMessage } from "../../../utils/functions";
 
 export const crearScb = new SlashCommandBuilder()
 .setName("crear")
@@ -84,13 +84,14 @@ export const crearScb = new SlashCommandBuilder()
 
 
 export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
-  const { options, guild, user } = int, subCommand = options.getSubcommand(true), { serverId, emoji } = botDB, author = guild?.members.cache.get(user.id)
+  const { options, guild, user } = int, subCommand = options.getSubcommand(true), { serverId, emoji, color } = botDB, author = guild?.members.cache.get(user.id)
+  const dataBot = await botModel.findById(client.user?.id || '')
   // const {} = PermissionFlagsBits
 
   if(subCommand == "alianza"){
     estadisticas.comandos++
     const dataAli = await alliancesModel.findById(serverId), arrayMi = dataAli?.miembros, arraySv = dataAli?.servidores
-    const channel = guild?.channels.cache.get('826863938057797633'), channelLog = guild?.channels.cache.get(dataAli?.canalID || '')
+    const channel = guild?.channels.cache.get('826863938057797633'), channelLog = guild?.channels.cache.get(dataBot?.logs.alliances || '941880387020419083')
     const notificacion = int.options.getBoolean("notificación", true), aliado = int.options.getUser("aliado")
     let enviado = false
 
@@ -124,7 +125,7 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
         .setColor(guild?.roles.cache.get("840704364158910475")?.hexColor || 'White')
         if(channel?.type == ChannelType.GuildText) channel.send({content: contenido}).then(mc=>{
           const embEnviada = new EmbedBuilder()
-          .setTitle(`<a:afirmativo:856966728806432778> Alianza creada`)
+          .setTitle(`${emoji.afirmative} Alianza creada`)
           .setDescription(des2)
           .setColor(guild?.members.me?.displayHexColor || 'White')
           .setTimestamp()
@@ -165,15 +166,21 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
           m.delete().catch(c=>c)
         }, 400)
 
-        if(!["discord.gg/","discord.com/invite/"].some(s=> plantilla.includes(s))) return setSlashError(int, `La plantilla que has proporcionado no es una plantilla de un servidor ya que no contienen ningún enlace de invitación a un servidor de Discord.`)
+        if(!["discord.gg/", "discord.com/invite/"].some(s=> plantilla.includes(s))) return setSlashError(int, `La plantilla que has proporcionado no es una plantilla de un servidor ya que no contienen ningún enlace de invitación a un servidor de Discord.`)
 
         client.fetchInvite(plantilla.split(/ +/g).find(f=> ["discord.com/invite/", "discord.gg/"].some(s=> f.includes(s))) || '').then(async invite=> {
           if(arraySv?.some(s=> s.id == invite.guild?.id)){
             let servidor = arraySv?.find(f=> f.id==invite.guild?.id)
             
             if(servidor){
-              if(servidor.tiempo >= Math.floor(Date.now()-ms("7d"))) return setSlashError(int, `Ya se ha echo alianza con ese servidor y esa alianza se ha echo **<t:${Math.floor((servidor?.tiempo || 0)/1000)}:R>** así que no se puede renovar por ahora.`)
-  
+              if(servidor.tiempo >= Math.floor(Date.now()-ms("7d"))) return int.editReply({embeds: [
+                createEmbedMessage(
+                  `${emoji.negative} Error`, 
+                  `Ya se ha echo alianza con ese servidor y esa alianza se ha echo **<t:${Math.floor((servidor?.tiempo || 0)/1000)}:R>** así que no se puede renovar por ahora.`, 
+                  color.negative
+                )
+              ]})
+              
               servidor.nombre = invite.guild?.name || ''
               servidor.tiempo = Date.now()
               servidor.invitacion = invite.url
@@ -258,7 +265,7 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
         Boolean(member?.id == guild?.ownerId),
         `El miembro que has proporcionado *(${member})* es el sueño del servidor no tiene sentido que sea colaborador.`
       ]
-    ]))
+    ])) return
 
     if(arrayCo?.some(s=>s.id == member?.id)){
       const colaborador = arrayCo.find(f=>f.id == member?.id)
@@ -305,8 +312,8 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
   if(subCommand == "encuesta"){
     estadisticas.comandos++
     const dataEnc = await surveysModel.findById(serverId), arrayEn = dataEnc?.encuestas
-    const color = guild?.roles.cache.get(dataEnc?.datos.rolID || '')?.hexColor
-    const title = int.options.getString("titulo", true), tiempo = int.options.getString("tiempo", true), description = int.options.getString("descripción") || undefined, canal = guild?.channels.cache.get(options.getChannel("canal")?.id || ''), opcion1 = options.getString("opción1"), opcion2 = options.getString("opción2"), opcion3 = options.getString("opción3"), opcion4 = options.getString("opción4"), opcion5 = options.getString("opción5"), opcion6 = options.getString("opción6")
+    const colorEb = guild?.roles.cache.get(dataEnc?.datos.rolID || '')?.hexColor
+    const title = int.options.getString("titulo", true), tiempo = int.options.getString("tiempo", true), description = int.options.getString("descripción") || undefined, canal = guild?.channels.cache.get(options.getChannel("canal")?.id || '') || int.channel, opcion1 = options.getString("opción1"), opcion2 = options.getString("opción2"), opcion3 = options.getString("opción3"), opcion4 = options.getString("opción4"), opcion5 = options.getString("opción5"), opcion6 = options.getString("opción6")
     let cantidadOpciones = 0, posicion = 0, opciones: {emoji: string, opcion: string, votos: number}[] = []
 
     ;[opcion1, opcion2, opcion3, opcion4, opcion5, opcion6].forEach(option=> {
@@ -356,17 +363,18 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
     .setAuthor({name: `⏸️ Encuesta en curso`})
     .addFields(
       {name: `🧩 **Opciones**`, value:`${opciones.map(m=> `${m.emoji} ${m.opcion}`).join("\n")}`},
-      {name: `<a:Info:926972188018479164> **Información**`, value: `¡Selecciona una opción!\nFinaliza: <t:${Math.floor((Date.now()+ms(tiempo))/1000)}:R> *(<t:${Math.floor((Date.now()+ms(tiempo))/1000)}:F>)*\nCreada por: ${int.user}.`}
+      {name: `${emoji.information} **Información**`, value: `¡Selecciona una opción!\nFinaliza: <t:${Math.floor((Date.now()+ms(tiempo))/1000)}:R> *(<t:${Math.floor((Date.now()+ms(tiempo))/1000)}:F>)*\nCreada por: ${int.user}.`}
     )
-    .setColor(color || 'White')
+    .setColor(colorEb || 'White')
 
     const embEnviado = new EmbedBuilder()
     .setTitle(`${emoji.afirmative} Encuesta creada`)
-    .setColor("#00ff00")
+    .setDescription(`La encuesta ha sido creada en este canal.`)
+    .setColor(color.afirmative)
+
     if(canal && canal.type == ChannelType.GuildText){
-      canal.send({embeds: [embEncuesta], content: `**<@&${dataEnc?.datos.rolID}>**`}).then(async ts=>{
-        embEnviado
-        .setDescription(`La encuesta ha sido creada en el canal ${canal}.`)
+      canal.send({embeds: [embEncuesta], content: `**¡Nueva encuesta <@&${dataEnc?.datos.rolID}!**`}).then(async ts=>{
+        if(canal.id != int.channelId) embEnviado.setDescription(`La encuesta ha sido creada en el canal ${canal}.`)
         for(let r=0; r<opciones.length; r++){
           if(dataEnc) ts.react(dataEnc.datos.emojis[r])
         }
@@ -374,25 +382,13 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
         arrayEn?.push({id: ts.id, canalID: canal.id, finaliza: Math.floor(Date.now()+ms(tiempo)), autorID: int.user.id, creado: Date.now(), activa: true, opciones: opciones})
         await surveysModel.findByIdAndUpdate(serverId, {encuestas: arrayEn})
       })
-
-    }else{
-      int.channel?.send({embeds: [embEncuesta], content: `**<@&${dataEnc?.datos.rolID}>**`}).then(async ts=>{
-        embEnviado
-        .setDescription(`La encuesta ha sido creada en este canal.`)
-        for(let r=0; r<opciones.length; r++){
-          if(dataEnc) ts.react(dataEnc.datos.emojis[r])
-        }
-        int.reply({ephemeral: true, embeds: [embEnviado]})
-        arrayEn?.push({id: ts.id, canalID: int.channelId, finaliza: Math.floor(Date.now()+ms(tiempo)), autorID: int.user.id, creado: Date.now(), activa: true, opciones: opciones})
-        await surveysModel.findByIdAndUpdate(serverId, {encuestas: arrayEn})
-      })
     }
   }
 
   if(subCommand == "sorteo"){
     estadisticas.comandos++
-    let dataSor = await rafflesModel.findById(serverId), arraySo = dataSor?.sorteos, color = guild?.roles.cache.get(dataSor?.datos.rolID || '')?.hexColor
-    const title = options.getString("titulo", true), tiempo = options.getString("tiempo", true), preGanadores = options.getInteger("ganadores"), ganadores = preGanadores ? Math.floor(preGanadores) : null, description = options.getString("descripción") || undefined, canal = guild?.channels.cache.get(options.getChannel("canal")?.id || '') 
+    let dataSor = await rafflesModel.findById(serverId), arraySo = dataSor?.sorteos, colorEb = guild?.roles.cache.get(dataSor?.datos.rolID || '')?.hexColor
+    const title = options.getString("titulo", true), tiempo = options.getString("tiempo", true), preGanadores = options.getInteger("ganadores"), ganadores = preGanadores ? Math.floor(preGanadores) : null, description = options.getString("descripción") || undefined, canal = guild?.channels.cache.get(options.getChannel("canal")?.id || '') || int.channel 
 
     if(setSlashErrors(int, [
       [
@@ -430,29 +426,21 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
     .addFields(
       {name: `\u200B`, value: `¡Reacciona a ${emoji.confetti} para participar!\nFinaliza: <t:${Math.floor((Date.now()+ms(tiempo))/1000)}:R> *(<t:${Math.floor((Date.now()+ms(tiempo))/1000)}:F>)*\nGanadores: ${ganadores==1 ? `solo **1**`: `**${ganadores}**`}\nCreado por: ${int.user}.`}
     )
-    .setColor(color || 'White')
+    .setColor(colorEb || 'White')
     .setFooter({text: guild?.name || 'undefined', iconURL: guild?.iconURL() || undefined})
     .setTimestamp()
 
     const embEnviado = new EmbedBuilder()
     .setTitle(`${emoji.afirmative} Sorteo creado`)
-    .setColor("#00ff00")
+    .setDescription(`El sorteo ha sido creado este canal.`)
+    .setColor(color.afirmative)
+    
     if(canal && canal.type == ChannelType.GuildText){
-      canal.send({embeds: [embSorteo], content: `**<@&${dataSor?.datos.rolID}>**`}).then(async ts=>{
-        embEnviado
-        .setDescription(`El sorteo ha sido creado en el canal ${canal}.`)
+      canal.send({embeds: [embSorteo], content: `**¡Nuevo sorteo <@&${dataSor?.datos.rolID}**!`}).then(async ts=>{
+        if(canal.id != int.channelId) embEnviado.setDescription(`El sorteo ha sido creado en el canal ${canal}.`)
         ts.react("974801702307901490")
         int.reply({ephemeral: true, embeds: [embEnviado]})
         arraySo?.push({id: ts.id, canalID: canal.id, finaliza: Math.floor(Date.now()+ms(tiempo)), ganadores: ganadores || 1, autorID: int.user.id, creado: Date.now(), activo: true, participantes: []})
-        await rafflesModel.findByIdAndUpdate(serverId, {sorteos: arraySo})
-      })
-    }else{
-      int.channel?.send({embeds: [embSorteo], content: `**<@&${dataSor?.datos.rolID}>**`}).then(async ts=>{
-        embEnviado
-        .setDescription(`El sorteo ha sido creado en este canal.`)
-        ts.react("974801702307901490")
-        int.reply({ephemeral: true, embeds: [embEnviado]})
-        arraySo?.push({id: ts.id, canalID: int.channelId, finaliza: Math.floor(Date.now()+ms(tiempo)), ganadores: ganadores || 1, autorID: int.user.id, creado: Date.now(), activo: true, participantes: []})
         await rafflesModel.findByIdAndUpdate(serverId, {sorteos: arraySo})
       })
     }

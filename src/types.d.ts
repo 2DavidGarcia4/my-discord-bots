@@ -61,7 +61,8 @@ export type BotLogs = {
   welcome: string
   moderation: string
   staff: string
-  suggestions: string
+  suggestions: string,
+  alliances: string
 }
 
 export type DataBot = {

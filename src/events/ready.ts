@@ -409,7 +409,7 @@ export const readyEvent = async (client: Client) => {
             }
   
             const emb = mensage.embeds[0]
-            if(emb.author?.name) emb.author.name = "⏹️ Sorteo finalizado"
+            if(emb.data.author?.name) emb.data.author.name = "▶️ Sorteo finalizado"
             if (ganadoresFinal.length == 0) {
               emb.fields[0].value = `*No hubo ganadores ya que nadie participo*\nCreado por: <@${s.autorID}>`
               mensage.reply({ content: `Nadie gano el sorteo.` })
@@ -419,7 +419,7 @@ export const readyEvent = async (client: Client) => {
               mensage.reply({ content: `¡Felicidades ${ganadoresFinal.length == 1 ? `${ganadoresFinal.map(m => `<@${m}>`)[0]} has ganado` : `${ganadoresFinal.map(m => `<@${m}>`).join(", ")} han ganado`} **${emb.title}**!` })
             }
             s.activo = false
-            mensage.edit({ embeds: [emb] })
+            mensage.edit({ embeds: [emb], content: `*¡Sorteo finalizado!*` })
             await rafflesModel.findByIdAndUpdate(botDB.serverId, { sorteos: arraySo })
           }
         }
@@ -435,7 +435,8 @@ export const readyEvent = async (client: Client) => {
         if (e.activa && e.finaliza < Date.now()) {
           const channel = client.channels.cache.get(e.canalID)
           if(channel?.type != ChannelType.GuildText) return
-          let mensage = channel?.messages.cache.get(e.id)
+          const mensage = channel?.messages.cache.get(e.id)
+
           if (mensage) {
             let opcionesOrdenadas = e.opciones.sort((a, b) => b.votos - a.votos), totalVotos = 0, bueltas = 1, tabla = []
             opcionesOrdenadas.map(m => totalVotos += m.votos)
@@ -453,21 +454,22 @@ export const readyEvent = async (client: Client) => {
               tabla.push(`**${bueltas == 1 ? "🥇" : bueltas == 2 ? "🥈" : bueltas == 3 ? "🥉" : `${bueltas}`}.** ${o.emoji} ${o.opcion} *(${o.votos})*\n\`\`${diseño}\`\` **|** ${porcentaje}%`)
               bueltas++
             }
+
+            mensage.reactions.cache.forEach(react => react.remove())
   
             const embed = mensage.embeds[0]
-            if(embed.author?.name) embed.author.name = `▶️ Encuesta finalizada`
+            if(embed.data.author) embed.data.author.name = `▶️ Encuesta finalizada`
             embed.fields[0].value = tabla.join("\n\n")
             embed.fields[1].value = `Opción ganadora: **${opcionesOrdenadas[0].opcion}**\nVotos totales: **${totalVotos}**\nCreada por: <@${e.autorID}>`
-            mensage.edit({ embeds: [embed] })
+            mensage.edit({ embeds: [embed], content: '*¡Encuesta finalizada!*' })
             e.activa = false
             await surveysModel.findByIdAndUpdate(botDB.serverId, { encuestas: arrayEn })
-  
           }
         }
       }
     }
   }
-  // encuestas()
+  encuestas()
 
   function mensajesTemporales() {
     const canales = ["826205120173310032", "823639152922460170", "828300239488024587"]
@@ -538,12 +540,12 @@ export const readyEvent = async (client: Client) => {
   }
   // promoNvl()
 
-  // setInterval(async () => {
-  //   presencias()
-  //   colaboradores()
-  //   sorteos()
-  //   encuestas()
-  // }, 2 * 60000)
+  setInterval(async () => {
+    presencias()
+    colaboradores()
+    sorteos()
+    encuestas()
+  }, 2 * 60000)
 
   setInterval(async () => {
     estadisticas()
