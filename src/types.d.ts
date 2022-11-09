@@ -21,6 +21,8 @@ export type BotDB = {
     dislike: string
     discord: string
     youTube: string
+    warning: string
+    confetti: string
     tickTock: string
     negative: string
     leftArrow: string

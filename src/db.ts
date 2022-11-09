@@ -32,6 +32,8 @@ export const botDB: BotDB = {
     twitter: '<:TwitterLogo:855168545566490664>',
     dislike: '<:redDislike:946826212960010251>',
     youTube: '<:YouTube:1027686980840071209>',
+    warning: '<:advertencia:929204500739268608>',
+    confetti: '<a:confeti:974801702307901490>',
     tickTock: '<:Mamadatok:855167926875979837>',
     leftArrow: '<a:LeftArrow:942155020017754132>',
     rightArrow: '<a:RightArrow:942154978859044905>',

@@ -1,4 +1,4 @@
-import { EmbedBuilder, ColorResolvable, Message, InviteGuild, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, MessageReaction, PartialMessageReaction, User, PartialUser } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message, InviteGuild, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, MessageReaction, PartialMessageReaction, User, PartialUser, TextChannel, Guild } from "discord.js";
 import ms from "ms";
 import { botDB } from "../db";
 import { promoLevelModel } from "../models";
