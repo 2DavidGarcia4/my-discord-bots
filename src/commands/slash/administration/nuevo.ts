@@ -4,10 +4,11 @@ import { botModel, personalModel } from "../../../models";
 import { sendMessageSlash, setSlashErrors } from "../../../utils/functions";
 
 export const nuevoScb = new SlashCommandBuilder()
+.setName('nuevo')
 .setDescription(`Nuevo algo`)
 .addSubcommand(cazador=> 
   cazador.setName(`cazador-alianzas`)
-  .setDescription(`🏹 Se registra al nuevo cazador de alianzas en la DB y se le da los roles correspondientes.`)
+  .setDescription(`🏹 Se registra al nuevo cazador de alianzas y se le da los roles correspondientes.`)
   .addUserOption(miembro=> miembro.setName(`cazador`).setDescription(`🧑 Nuevo cazador de alianzas.`).setRequired(true))
 )
 .addSubcommand(ayudante=> 
@@ -17,7 +18,7 @@ export const nuevoScb = new SlashCommandBuilder()
 ).toJSON()
 
 export const nuevoSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
-  const { guild, user, options } = int, subCommand = options.getSubcommand(true), author = guild?.members.cache.get(user.id), { serverId, emoji } = botDB
+  const { guild, user, options } = int, subCommand = options.getSubcommand(true), author = guild?.members.cache.get(user.id), { serverId } = botDB
   const dataBot = await botModel.findById(client.user?.id), channelLog = client.channels.cache.get(dataBot?.logs.staff || '')
   const dataPer = await personalModel.findById(serverId), arrayPr = dataPer?.personal
 
