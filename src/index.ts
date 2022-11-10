@@ -22,6 +22,12 @@ const PCEM = new Client({intents: 131071, presence: {status: 'dnd'}})
 export let estadisticas = {entradas: 0, salidas: 0, mensajes: 0, comandos: 0}, autoModeracion = [{miembroID: "717420870267830382", advertencias: 0}]
 export const cooldowns = new Map()
 
+export const sistemMarcar: {autorID: string, sugID: string}[] = [], coolSugerencias: string[] = []
+export const addUserIdCoolSug = (id: string) => {
+  coolSugerencias.push(id)
+}
+export const addDataMarcar = (data: {autorID: string, sugID: string}) => sistemMarcar.push(data)
+
 PCEM.on('ready', async () => {
   readyEvent(PCEM)
 })
