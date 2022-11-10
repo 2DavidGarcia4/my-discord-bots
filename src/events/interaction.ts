@@ -27,17 +27,16 @@ import { desbanearSlashCommand, desbanearScb } from "../commands/slash/moderatio
 import { historialSlashCommand, historialSmb } from "../commands/slash/administration/historial";
 import { ascenderSlashCommand, ascenderScb } from "../commands/slash/administration/ascender";
 import { degradarSlashCommand, degradarScb } from "../commands/slash/administration/degradar";
+import { finalizarSlashCommand, finalizarScb } from "../commands/slash/administration/finalizar";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 const cmds = [
   websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb,  
   examenScb, crearScb,
   limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb,
-  historialSmb, ascenderScb, degradarScb
+  historialSmb, ascenderScb, degradarScb, finalizarScb
 ]
-cmds.forEach((cmd, ps)=> {
-  slashComands.set(cmd.name, cmd)
-})
+cmds.forEach((cmd, ps)=> slashComands.set(cmd.name, cmd))
 
 export const interactionEvent = async (int: Interaction<CacheType>, client: Client) => {
   const { emoji, color, serverId } = botDB
@@ -70,6 +69,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandName == 'historial') historialSlashCommand(int, client)
     if(commandName == 'ascender') ascenderSlashCommand(int, client)
     if(commandName == 'degradar') degradarSlashCommand(int, client)
+    if(commandName == 'finalizar') finalizarSlashCommand(int, client)
   }
 
   if(int.isButton()){

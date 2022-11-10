@@ -138,7 +138,7 @@ export const readyEvent = async (client: Client) => {
       client.user?.setPresence({ status: "online", activities: [estadosDia[Math.floor(Math.random() * estadosDia.length)]] })
     }
   }
-  // presencias()
+  presencias()
 
   function estadisticas() {
     const server = client.guilds.cache.get(botDB.serverId), todosG = server?.memberCount, soloMiembros = server?.members.cache.filter(fm => !fm.user.bot).size, cantBots = server?.members.cache.filter(fb => fb.user.bot).size
@@ -409,7 +409,7 @@ export const readyEvent = async (client: Client) => {
             }
   
             const emb = mensage.embeds[0]
-            if(emb.data.author?.name) emb.data.author.name = "▶️ Sorteo finalizado"
+            if(emb.data.author?.name) emb.data.author.name = "⏹️ Sorteo finalizado"
             if (ganadoresFinal.length == 0) {
               emb.fields[0].value = `*No hubo ganadores ya que nadie participo*\nCreado por: <@${s.autorID}>`
               mensage.reply({ content: `Nadie gano el sorteo.` })
@@ -458,7 +458,7 @@ export const readyEvent = async (client: Client) => {
             mensage.reactions.cache.forEach(react => react.remove())
   
             const embed = mensage.embeds[0]
-            if(embed.data.author) embed.data.author.name = `▶️ Encuesta finalizada`
+            if(embed.data.author) embed.data.author.name = `⏹️ Encuesta finalizada`
             embed.fields[0].value = tabla.join("\n\n")
             embed.fields[1].value = `Opción ganadora: **${opcionesOrdenadas[0].opcion}**\nVotos totales: **${totalVotos}**\nCreada por: <@${e.autorID}>`
             mensage.edit({ embeds: [embed], content: '*¡Encuesta finalizada!*' })
@@ -538,7 +538,7 @@ export const readyEvent = async (client: Client) => {
       await promoLevelModel.findByIdAndUpdate(botDB.serverId, { miembros: arrayPl })
     }, 6000)
   }
-  // promoNvl()
+  promoNvl()
 
   setInterval(async () => {
     presencias()
