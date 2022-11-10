@@ -30,13 +30,15 @@ import { ascenderSlashCommand, ascenderScb } from "../commands/slash/administrat
 import { degradarSlashCommand, degradarScb } from "../commands/slash/administration/degradar";
 import { finalizarSlashCommand, finalizarScb } from "../commands/slash/administration/finalizar";
 import { marcarSlashCommadn, marcarScb } from "../commands/slash/administration/marcar";
+import { nuevoSlashCommand, nuevoScb } from "../commands/slash/administration/nuevo";
+import { rerollSlashCommand, rerollScb } from "../commands/slash/administration/reroll";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 const cmds = [
   websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb, sugerirScb, 
   examenScb, crearScb,
   limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb,
-  historialSmb, ascenderScb, degradarScb, finalizarScb, marcarScb
+  historialSmb, ascenderScb, degradarScb, finalizarScb, marcarScb, nuevoScb, rerollScb
 ]
 cmds.forEach((cmd, ps)=> slashComands.set(cmd.name, cmd))
 
@@ -74,6 +76,8 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandName == 'degradar') degradarSlashCommand(int, client)
     if(commandName == 'finalizar') finalizarSlashCommand(int, client)
     if(commandName == 'marcar') marcarSlashCommadn(int, client)
+    if(commandName == 'nuevo') nuevoSlashCommand(int, client)
+    if(commandName == 'reroll') rerollSlashCommand(int)
   }
 
   if(int.isButton()){
