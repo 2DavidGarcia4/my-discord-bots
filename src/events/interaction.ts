@@ -11,6 +11,7 @@ import { plantillaSlashCommand, plantillaScb } from "../commands/slash/generals/
 import { informacionSlashCommand, informacionScb } from "../commands/slash/generals/informacion";
 import { estadisticasSlashCommand, estadisticasScb } from "../commands/slash/generals/estadisticas";
 import { clasificacionesSlashCommand, clasificacionesScb } from "../commands/slash/generals/clasificaciones";
+import { sugerirSlashCommand, sugerirScb } from "../commands/slash/generals/sugerir";
 
 // Staff
 import { examenSlashCommand, examenScb } from "../commands/slash/staff/examen";
@@ -28,13 +29,14 @@ import { historialSlashCommand, historialSmb } from "../commands/slash/administr
 import { ascenderSlashCommand, ascenderScb } from "../commands/slash/administration/ascender";
 import { degradarSlashCommand, degradarScb } from "../commands/slash/administration/degradar";
 import { finalizarSlashCommand, finalizarScb } from "../commands/slash/administration/finalizar";
+import { marcarSlashCommadn, marcarScb } from "../commands/slash/administration/marcar";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 const cmds = [
-  websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb,  
+  websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb, sugerirScb, 
   examenScb, crearScb,
   limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb,
-  historialSmb, ascenderScb, degradarScb, finalizarScb
+  historialSmb, ascenderScb, degradarScb, finalizarScb, marcarScb
 ]
 cmds.forEach((cmd, ps)=> slashComands.set(cmd.name, cmd))
 
@@ -46,11 +48,12 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
 
     //? Generals
     if(commandName == 'webs') websSlashCommand(int)
+    if(commandName == 'sugerir') sugerirSlashCommand(int)
+    if(commandName == 'información') informacionSlashCommand(int)
     if(commandName == 'ping') pingSlashCommand(int, client)
     if(commandName == 'ayuda') ayudaSlashCommand(int, client)
     if(commandName == 'reglas') reglasSlashCommand(int, client)
     if(commandName == 'plantilla') plantillaSlashCommand(int, client)
-    if(commandName == 'información') informacionSlashCommand(int)
     if(commandName == 'estadísticas') estadisticasSlashCommand(int, client)
     if(commandName == 'clasificaciones') clasificacionesSlashCommand(int, client)
     
@@ -70,6 +73,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandName == 'ascender') ascenderSlashCommand(int, client)
     if(commandName == 'degradar') degradarSlashCommand(int, client)
     if(commandName == 'finalizar') finalizarSlashCommand(int, client)
+    if(commandName == 'marcar') marcarSlashCommadn(int, client)
   }
 
   if(int.isButton()){
