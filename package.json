@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "commonjs",
   "engines": {
-    "node": "16.x"
+    "node": "17.x"
   },
   "scripts": {
     "start": "npx ts-node src",
