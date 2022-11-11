@@ -5,7 +5,7 @@
   "main": "src/index.ts",
   "type": "commonjs",
   "scripts": {
-    "start": "npx ts-node src/.",
+    "start": "npx ts-node src",
     "dev": "ts-node-dev --respawn src/."
   },
   "keywords": [],
