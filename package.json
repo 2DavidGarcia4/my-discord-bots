@@ -4,6 +4,9 @@
   "description": "PCEM bot, bot para mi servidor PCEM.",
   "main": "src/index.ts",
   "type": "commonjs",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
     "start": "npx ts-node src",
     "dev": "ts-node-dev --respawn src/."
