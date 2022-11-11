@@ -15,14 +15,14 @@ export const sugerirScb = new SlashCommandBuilder()
 
 
 export const sugerirSlashCommand = async (int: ChatInputCommandInteraction<CacheType>) => {
-  const { guild, user, options } = int, { emoji, serverId } = botDB
+  const { user, options } = int, { emoji, serverId } = botDB
   
   estadisticas.comandos++
   if(coolSugerencias.some(s=> s == int.user.id)) setSlashError(int, `Espera **10** minutos para volver a usar el comando.` )
 
   const dataSug = await suggestionsModel.findById(serverId), arrayMsgsSug = dataSug?.mensajes,  suggestion = options.getString('sugerencia', true)
 
-  arrayMsgsSug?.push({id: "", origenID: "", autorID: int.user.id, sugerencia: suggestion, estado: "normal", positivas: 0, negativas: 0})
+  arrayMsgsSug?.push({id: "", origenID: "", autorID: user.id, sugerencia: suggestion, estado: "normal", positivas: 0, negativas: 0})
 
   const SuggestionEb = new EmbedBuilder()
   .setAuthor({name: int.user.tag, iconURL: int.user.displayAvatarURL()})

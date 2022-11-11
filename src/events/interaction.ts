@@ -1,6 +1,7 @@
-import { CacheType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
 import { botDB } from "../db";
-import { collaboratorsModel } from "../models";
+import { sistemMarcar } from "..";
+import { collaboratorsModel, suggestionsModel } from "../models";
 
 // Generals
 import { websSlashCommand, websScb } from "../commands/slash/generals/webs";
@@ -81,9 +82,515 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
   }
 
   if(int.isButton()){
-    const { customId } = int
+    const { customId, guild, user } = int
     if(customId == 'eliminarMsgMD') int.message.delete()
     
+    //? Sistema de sugerencias
+    if(customId == 'confirmar'){
+      const dataSug = await suggestionsModel.findById(serverId), statsSug = dataSug?.sugerencias, arrayMsgSug = dataSug?.mensajes, arrayMiemSug = dataSug?.miembros, canalRevicion = client.channels.cache.get("831773866228449280")
+      if(!statsSug) return
+
+      let posicion = 0
+      if(arrayMsgSug){
+        for(let i=0; i<arrayMsgSug.length; i++){
+          if(arrayMsgSug[i].autorID === user.id) posicion = i
+        }
+      }
+
+      let suger = dataSug?.mensajes[posicion].sugerencia
+      console.log(suger)
+
+      const embCanfirmada = new EmbedBuilder()
+      .setTitle(`${emoji.afirmative} Acción confirmada`)
+      .setDescription(`**¡Tu sugerencia ha sido enviada al personal del servidor!**\nPara que la revisen y determinen si es apta o no para ser publicada en <#828300239488024587>.`)
+      .setColor("#00ff00")
+      .setFooter({text: `Se te notificara al MD en cualquiera de los 2 casos.`})
+      int.update({embeds: [embCanfirmada], components: []})
+
+      const revicionEb = new EmbedBuilder()
+      .setAuthor({name: user.tag, iconURL: user.displayAvatarURL()})
+      .setTitle("🔎 Sugerencia esperando revisión")
+      .addFields(
+        {name: `✉️ **Sugerencia:**`, value: `${suger}`}
+      )
+      .setColor(guild?.members.me?.displayHexColor || 'White')
+      .setTimestamp()
+
+      const revicionBtns = new ActionRowBuilder<ButtonBuilder>()
+      .addComponents(
+        [
+          new ButtonBuilder()
+          .setCustomId("aprobar")
+          .setEmoji(emoji.afirmative)
+          .setLabel("Aprobar")
+          .setStyle(ButtonStyle.Success),
+
+          new ButtonBuilder()
+          .setCustomId("denegar")
+          .setEmoji(emoji.negative)
+          .setLabel("Denegar")
+          .setStyle(ButtonStyle.Danger)
+        ]
+      )
+
+      if(canalRevicion?.type == ChannelType.GuildText && arrayMsgSug) canalRevicion.send({embeds: [revicionEb], components: [revicionBtns]}).then(async t=>{
+        arrayMsgSug[posicion] = {id: "", origenID: t.id, autorID: int.user.id, sugerencia: suger || '', estado: "normal", positivas: 0, negativas: 0}
+        statsSug.cantidad++
+      })
+
+      if(arrayMiemSug?.some(s=> s.id === int.user.id)){
+        let posicionData = 0
+        for(let i=0; i<arrayMiemSug.length; i++){
+          if(arrayMiemSug[i].id === int.user.id){
+            posicionData = i
+          }
+        }
+
+        arrayMiemSug[posicionData].sugerencias++
+      }else{
+        arrayMiemSug?.push({id: int.user.id, sugerencias: 1, aceptadas: 0, denegadas: 0})
+      }
+      await suggestionsModel.findByIdAndUpdate(serverId, {sugerencias: statsSug, mensajes: arrayMsgSug, miembros: arrayMiemSug})
+    }
+
+    if(customId == "cancelar"){
+      const dataSug = await suggestionsModel.findById(serverId), arrayMsgSug = dataSug?.mensajes
+
+      if(arrayMsgSug){
+        for(let i=0; i<arrayMsgSug.length; i++){
+          if(arrayMsgSug[i].autorID == int.user.id) arrayMsgSug.splice(i, 1)
+        }
+      }
+
+      await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug})
+      
+      const cancelarEb = new EmbedBuilder()
+      .setTitle(`${emoji.negative} Acción cancelada`)
+      .setDescription(`Has cancelado la sugerencia.`)
+      .setColor(color.negative)
+      int.update({embeds: [cancelarEb], components: []})
+    }
+
+    if(customId == "aprobar"){
+      const dataSug = await suggestionsModel.findById(serverId)
+      if(!dataSug) return
+      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
+      const rolSugerencia = guild?.roles.cache.get('840704367467954247')
+      const canalSugs = guild?.channels.cache.get('828300239488024587')
+
+      let posicion = 0
+      if(arrayMsgSug){
+        for(let i=0; i<arrayMsgSug.length; i++){
+          if(arrayMsgSug[i].origenID === int.message.id) posicion = i
+        }
+      }
+
+      let member = guild?.members.cache.get(dataSug?.mensajes[posicion].autorID || '')
+
+      const sugAceptadaEb = new EmbedBuilder()
+      .setTitle(`${emoji.afirmative} Sugerencia aprobada`)
+      .setColor(color.afirmative)
+      .setFooter({text: int.user.tag, iconURL: int.user.displayAvatarURL()})
+      .setTimestamp()
+
+      const sugerenciaEb = new EmbedBuilder()
+      .setTitle("✉️ Sugerencia:")
+      .setDescription(`${dataSug.mensajes[posicion].sugerencia}`)
+      .setColor(rolSugerencia?.hexColor || 'White')
+      .setTimestamp()
+
+      if(member){
+        sugAceptadaEb
+        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
+        .setDescription(`Sugerencia de ${member?.user.tag} aprobada por ${user.tag}`)
+        .addFields(
+          {name: `✉️ **Sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
+        )
+        int.update({embeds: [sugAceptadaEb], components: []})
+
+        const sugAceptDmEb = new EmbedBuilder()
+        .setAuthor({name: member?.user.tag, iconURL: member?.user.displayAvatarURL()})
+        .setTitle(`${emoji.afirmative} Tu sugerencia ha sido aprobada`)
+        .setDescription(`Tu sugerencia ha sido publicada en el canal ${canalSugs}`)
+        .addFields(
+          {name: `✉️ **Tu sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
+        )
+        .setColor(color.afirmative)
+        .setFooter({text: `Sugerencia aceptada por ${int.user.tag}`, iconURL: int.user.  displayAvatarURL()})
+        .setTimestamp()
+        member.send({embeds: [sugAceptDmEb]}).catch(()=> '')
+
+        sugerenciaEb
+        .setAuthor({name: `Nueva sugerencia de ${member?.user.tag}`, iconURL: member?.displayAvatarURL()})
+
+        member?.roles.add('830260561044176896')
+
+        if(dataSug.miembros.some(s=> s.id == member?.id)){
+          let posicionData = 0
+          for(let i=0; i<dataSug.miembros.length; i++){
+            posicionData = i
+          }
+          
+          let sugerenciasDeData = dataSug.miembros[posicionData].sugerencias
+          let aceptadasDeData = dataSug.miembros[posicionData].aceptadas
+          let denegadasDeData = dataSug.miembros[posicionData].denegadas
+
+          dataSug.miembros[posicionData] = {id: member?.id, sugerencias: sugerenciasDeData, aceptadas: aceptadasDeData + 1, denegadas: denegadasDeData}
+          await dataSug.save()
+        }
+
+      }else{
+        const user = await client.users.fetch(dataSug?.mensajes[posicion].autorID || '', {force: true})
+
+        sugAceptadaEb
+        .setAuthor({name: user.tag, iconURL: user.displayAvatarURL()})
+        .setDescription(`Sugerencia de **${user.tag}** aprobada por **${int.user.tag}**.`)
+        .addFields(
+          {name: `✉️ **Sugerencia:**`, value: `${dataSug?.mensajes[posicion].sugerencia}`}
+        )
+        int.update({embeds: [sugAceptadaEb], components: []})
+
+        sugerenciaEb
+        .setAuthor({name: `Nueva sugerencia de ${user.tag}`, iconURL: user.displayAvatarURL()})
+
+      }
+
+      if(canalSugs?.type == ChannelType.GuildText) canalSugs.send({embeds: [sugerenciaEb], content: "<@&840704367467954247>"}).then(async tm=>{
+        tm.react('946826193032851516')
+        tm.react('946826212960010251')
+        let orID = arrayMsgSug[posicion].origenID
+        let miemID = arrayMsgSug[posicion].autorID
+        let sug = arrayMsgSug[posicion].sugerencia
+        arrayMsgSug[posicion] = {id: tm.id, origenID: orID, autorID: miemID, sugerencia: sug, estado: "normal", positivas: 0, negativas: 0}
+        
+        statsSug.aceptadas++
+      })  
+
+      await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug, sugerencias: statsSug})
+    }
+
+    if(customId == "denegar"){
+      const dataSug = await suggestionsModel.findById(serverId)
+      if(!dataSug) return
+      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias, membersSug = dataSug.miembros
+
+      let posicion = 0
+      for(let i=0; i<dataSug.mensajes.length; i++){
+        if(dataSug.mensajes[i].origenID == int.message.id) posicion = i
+      }
+
+      const member = guild?.members.cache.get(dataSug.mensajes[posicion].autorID)
+
+      const denegadaEb = new EmbedBuilder()
+      .setTitle(`${emoji.negative} Sugerencia denegada`)
+      .addFields(
+        {name: `✉️ **Sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
+      )
+      .setColor(color.negative)
+      .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
+      .setTimestamp()
+
+      if(member){
+        denegadaEb
+        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
+        .setDescription(`Sugerencia de **${member.user.tag}** denegada por **${int.user.tag}**.`)
+
+        const denegadaDmEb = new EmbedBuilder()
+        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
+        .setTitle(`${emoji.negative} Tu sugerencia ha sido denegada`)
+        .addFields(
+          {name: `✉️ **Sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
+        )
+        .setColor(color.negative)
+        .setFooter({text: `Sugerencia denegada por ${int.user.tag}`, iconURL:int.user.displayAvatarURL()})
+        .setTimestamp()
+
+        member.send({embeds: [denegadaDmEb]}).catch(c=> console.log(c))
+
+        if(dataSug.miembros.some(s=> s.id == member.id)){
+          let posicionData = 0
+          for(let i=0; i<dataSug.miembros.length; i++){
+            posicionData = i
+          }
+          membersSug[posicionData].denegadas++
+        }
+
+      }else{
+        let user = await client.users.fetch(dataSug.mensajes[posicion].autorID, {force: true})
+
+        denegadaEb
+        .setAuthor({name: user.tag, iconURL: user.displayAvatarURL()})
+        .setDescription(`Sugerencia de **${user.tag}** denegada por **${user.tag}**.`)
+        
+      }
+
+      int.update({embeds: [denegadaEb], components: []}).then(async t=>{
+        statsSug.denegadas++
+        arrayMsgSug.splice(posicion, 1)
+        await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug, sugerencias: statsSug, miembros: membersSug})
+      })
+    }
+
+    if(customId == "implementada"){
+      const dataSug = await suggestionsModel.findById(serverId)
+      if(!dataSug) return
+      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
+      const channel = guild?.channels.cache.get("828300239488024587")
+      if(!(channel && channel.type == ChannelType.GuildText)) return
+
+      let posMar = 0
+      for(let i=0; i<sistemMarcar.length; i++){
+        if(sistemMarcar[i].autorID == int.user.id) posMar = i
+      }
+
+      let posicion = 0
+      for(let i=0; i<arrayMsgSug.length; i++){
+        if(arrayMsgSug[i].id == sistemMarcar[posMar].sugID) posicion = i
+      }
+
+      const member = guild?.members.cache.get(arrayMsgSug[posicion].autorID)
+      const message = channel.messages.cache.get(arrayMsgSug[posicion].id)
+      message?.reactions.removeAll()
+      const embed = message?.embeds[0]
+      if(!embed) return
+      const editedEb = new EmbedBuilder({
+        title: embed.title || undefined,
+        fields: embed.fields,
+        description: embed.description || undefined,
+        timestamp: embed.timestamp || ''
+      })
+
+      // let antField = embed.fields[0]
+      const nuevoField = {name: '🚥 **Estado:**', value: "**sugerencia implementada**", inline: false}
+
+      arrayMsgSug[posicion].estado = 'implementada'
+      arrayMsgSug[posicion].id = sistemMarcar[posMar].sugID
+
+      statsSug.implementadas++
+
+      const estadoEb = new EmbedBuilder()
+      .setTitle("🚥 Estado agregado a la sugerencia")
+      .setDescription(`Se le ha agregado a la sugerencia el estado 🟢 **Implementada**.`)
+      .setColor("#00ff00")
+      int.reply({embeds: [estadoEb], ephemeral: true})
+      member?.roles.add("946139081367240714")
+
+      editedEb
+      .setFields(
+        nuevoField
+      )
+      .setColor(color.afirmative)
+      
+      if(member){
+        editedEb
+        .setAuthor({name: `Sugerencia de ${member.user.tag}`, iconURL: member.displayAvatarURL()})
+
+        const embEstadoMD = new EmbedBuilder()
+        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
+        .setTitle("El estado de tu sugerencia a sido actualizado")
+        .setDescription(`🚥 **Estado:** sugerencia implementada`)
+        .addFields(
+          {name: "✉️ **Sugerencia:**", value: `${dataSug.mensajes[posicion].sugerencia}`}
+        )
+        .setColor(color.afirmative)
+        .setFooter({text: `Actualizado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
+        member.send({embeds: [embEstadoMD]}).catch(c=> console.log(c))
+
+      }else{
+        editedEb.setAuthor(embed.author)
+      }
+      message.edit({embeds: [editedEb]})
+    }
+
+    if(customId == "en progreso"){
+      const dataSug = await suggestionsModel.findById(serverId)
+      if(!dataSug) return
+      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
+      const channel = guild?.channels.cache.get("828300239488024587")
+      if(channel?.type != ChannelType.GuildText) return
+
+      let posMar = 0
+      for(let i=0; i<sistemMarcar.length; i++){
+        if(sistemMarcar[i].autorID == int.user.id) posMar = i
+      }
+      let posicion = 0
+      for(let i=0; i<dataSug.mensajes.length; i++){
+        if(dataSug.mensajes[i].id == sistemMarcar[posMar].sugID) posicion = i
+      }
+
+      const member = guild?.members.cache.get(dataSug.mensajes[posicion].autorID)
+      const message = channel.messages?.cache.get(dataSug.mensajes[posicion].id)
+      const embed = message?.embeds[0]
+      if(!embed) return
+      const editedEb = new EmbedBuilder({
+        title: embed.title || undefined,
+        fields: embed.fields,
+        description: embed.description || undefined,
+        timestamp: embed.timestamp || ''
+      })
+
+      const nuevoField = {name: '🚥 **Estado:**', value: "__sugerencia en progreso__", inline: false}
+
+      arrayMsgSug[posicion].id = sistemMarcar[posMar].sugID
+      arrayMsgSug[posicion].estado = 'en progreso'
+      statsSug.en_progreso++
+      
+      editedEb
+      .setFields(
+        nuevoField
+      )
+      .setColor('#FFC300')
+
+      const estadoEb = new EmbedBuilder()
+      .setTitle("🚥 Estado agregado a la sugerencia")
+      .setDescription(`Se le ha agregado a la sugerencia el estado 🟢 **Implementada**.`)
+      .setColor("#00ff00")
+      int.reply({embeds: [estadoEb], ephemeral: true})
+      member?.roles.add("946139081367240714")
+
+      const embEstado = new EmbedBuilder()
+      .setTitle("🚥 Estado agregado a la sugerencia")
+      .setDescription(`Se le ha agregado a la sugerencia el estado 🟡 **en progreso**.`)
+      .setColor("#FFC300")
+      int.reply({embeds: [embEstado], ephemeral: true})
+
+      if(member){
+        editedEb
+        .setAuthor({name: `Sugerencia de ${member.user.tag}`, iconURL: member.displayAvatarURL()})
+
+        const embEstadoMD = new EmbedBuilder()
+        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
+        .setTitle("El estado de tu sugerencia a sido actualizado")
+        .setDescription(`🚥 **Estado:** sugerencia __en progreso__`)
+        .addFields(
+          {name: "✉️ **Sugerencia:**", value: `${dataSug.mensajes[posicion].sugerencia}`}
+        )
+        .setColor("#FFC300")
+        .setFooter({text: `Actualizado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
+        member.send({embeds: [embEstadoMD]}).catch(c=> console.log(c))
+      
+      }else{
+        editedEb.setAuthor(embed.author)
+      }
+
+      await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug, sugerencias: statsSug})
+    }
+
+    if(int.customId == "no sucedera"){
+      const dataSug = await suggestionsModel.findById(serverId)
+      if(!dataSug) return
+      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
+      const channel = guild?.channels.cache.get("828300239488024587")
+      if(channel?.type != ChannelType.GuildText) return
+
+      let posMar = 0
+      for(let i=0; i<sistemMarcar.length; i++){
+        if(sistemMarcar[i].autorID === int.user.id) posMar = i  
+      }
+
+      let posicion = 0
+      for(let i=0; i<dataSug.mensajes.length; i++){
+        if(dataSug.mensajes[i].id === sistemMarcar[posMar].sugID) posicion = i  
+      }
+
+      const member = guild?.members.cache.get(dataSug.mensajes[posicion].autorID)
+      const message = channel.messages.cache.get(dataSug.mensajes[posicion].id)
+      message?.reactions.removeAll()
+      let embed = message?.embeds[0]
+      if(!embed) return
+      const editedEb = new EmbedBuilder({
+        title: embed.title || undefined,
+        fields: embed.fields,
+        description: embed.description || undefined,
+        timestamp: embed.timestamp || ''
+      })
+
+      let nuevoField = {name: '🚥 **Estado:**', value: "__***no sucederá***__", inline: false}
+
+      editedEb
+      .setFields(
+        nuevoField
+      )
+      .setColor(color.negative)
+
+      arrayMsgSug[posicion].id = sistemMarcar[posMar].sugID
+      arrayMsgSug[posicion].estado = 'no sucederá'
+      statsSug.no_sucedera++
+
+      const embEstado = new EmbedBuilder()
+      .setTitle("🚥 Estado agregado a la sugerencia")
+      .setDescription(`Se le ha agregado a la sugerencia el estado 🔴 **no sucederá**.`)
+      .setColor(color.negative)
+      int.reply({embeds: [embEstado], ephemeral: true})
+
+      if(member){
+        editedEb.setAuthor({name: ``, iconURL: member.displayAvatarURL()})
+
+        const embEstadoMD = new EmbedBuilder()
+        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
+        .setTitle("El estado de tu sugerencia a sido actualizado")
+        .setDescription(`🚥 **Estado:** sugerencia __no sucederá__`)
+        .addFields(
+          {name: "✉️ **Sugerencia:**", value: `${dataSug.mensajes[posicion].sugerencia}`}
+        )
+        .setColor(color.negative)
+        .setFooter({text: `Actualizado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
+        member.send({embeds: [embEstadoMD]}).catch(c=> console.log(c))
+      }else{
+        editedEb.setAuthor(embed.author)
+      }
+    }
+
+    // if(int.customId == "normal"){
+    //   let dataSug = await systemSug.findOne({_id: int.guildId})
+    //   let canal = int.guild.channels.cache.get("828300239488024587")
+    //   let rol = int.guild.roles.cache.get("840704367467954247")
+
+    //   let posMar
+    //   for(let i=0; i<sistemMarcar.length; i++){
+    //       if(sistemMarcar[i].autorID == int.user.id){
+    //           posMar = i
+    //       }
+    //   }
+    //   let posicion 
+    //   for(let i=0; i<dataSug.mensajes.length; i++){
+    //       if(dataSug.mensajes[i].id == sistemMarcar[posMar].sugID){
+    //           posicion = i
+    //       }
+    //   }
+
+    //   let mensaje = canal.messages.cache.get(dataSug.mensajes[posicion].id)
+    //   let embed = mensaje.embeds[0]
+
+      
+    //   embed.fields.splice(1,1)
+    //   embed.color = rol.hexColor
+    //   mensaje.edit({embeds: [embed]})
+
+    //   let orID = dataSug.mensajes[posicion].origenID
+    //   let auID = dataSug.mensajes[posicion].autorID
+    //   let sug = dataSug.mensajes[posicion].sugerencia
+    //   let positi = dataSug.mensajes[posicion].positivas
+    //   let negati = dataSug.mensajes[posicion].negativas
+    //   dataSug.mensajes[posicion] = {id: sistemMarcar[posMar].sugID, origenID: orID, autorID: auID, sugerencia: sug, estado: "normal", positivas: positi, negativas: negati}
+      
+
+    //   let cant = dataSug.sugerencias.cantidad
+    //   let acept = dataSug.sugerencias.aceptadas
+    //   let den = dataSug.sugerencias.denegadas
+    //   let imple = dataSug.sugerencias.implementadas
+    //   let enP = dataSug.sugerencias.en_progreso
+    //   let noSus = dataSug.sugerencias.no_sucedera
+    //   dataSug.sugerencias = {cantidad: cant, aceptadas: acept, denegadas: den, implementadas: imple, en_progreso: enP, no_sucedera: noSus}
+    //   await dataSug.save()
+      
+
+    //   const embEstado = new Discord.MessageEmbed()
+    //   .setTitle("🚥 Estado agregado a la sugerencia")
+    //   .setDescription(`Se le ha agregado a la sugerencia el estado 🔵 **normal**.`)
+    //   .setColor(rol.hexColor)
+    //   int.reply({embeds: [embEstado], ephemeral: true})
+    // }
   }
 
   if(int.isSelectMenu()){
@@ -284,7 +791,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
           valor: `servidor`,
           color: guild?.members.me?.displayHexColor || 'White',
           miniatura: guild?.iconURL({size: 1024}) || '',
-          titulo: `${int.guild?.name}`, 
+          titulo: `${guild?.name}`, 
           descripcion: `Es un servidor enfocado en la promoción, creado el <t:${Math.floor((guild?.createdAt.valueOf() || 0)/1000)}:F> aquí puedes promocionarte, dar a conocer tu contenido, trabajo, redes sociales a mas personas, además de eso puedes charlar con los demás miembros del servidor, hacer amigos, entretenerte con los diversos bots de entretenimiento que tenemos, entre otras cosas.\n\n**¡Disfruta del servidor!**\n*Gracias por estar aquí*`
         },
         {
@@ -434,33 +941,27 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
         .setThumbnail(info.miniatura || null)
         .setTitle(info.titulo)
         .setDescription(info.descripcion)
-        .setColor('#F04C05')
+        .setColor(info.color)
         if(int.values[0] == "categoría-importante" && info.valor == "categoría-importante"){
           const embImportante = new EmbedBuilder()
           .setDescription(`> **<#936444065426325577>**: en este canal se colocan las plantillas de los servidores con los que hacemos **afiliaciones**, **¿quieres hacer una afiliación?**, antes revisa los requisitos que están en los mensajes fijados del canal, si cumples con los requisitos abre un ticket en <#830165896743223327> y pide la afiliación.\n> .\n> **<#826863938057797633>**: en este canal se colocan las alianzas con otros servidores, **¿quieres hacer una alianza?**, antes revisa los requisitos que están en la descripción del canal, si cumples con los requisitos abre un ticket en <#830165896743223327> y pide la alianza.\n> .\n> **<#828300239488024587>**: en este canal se publican las sugerencias que hacen los miembros sobre el servidor, **¿Quieres hacer una sugerencia?**, la puedes hacer usando el comando de barra diagonal \`\`/sugerir\`\` en el canal <#834956208112795668>, para evitar perderte de cualquier nueva sugerencia ve al canal <#823639152922460170> y obtén el rol <@&840704367467954247> el cual te notificara en cada nueva sugerencia. `)
           .setColor(info.color)
           int.reply({ephemeral: true, embeds: [embInformacion, embImportante]})
-        }else{
-          if(int.values[0] == "categoría-promociónate" && info.valor == "categoría-promociónate"){
-            const embPromocionate = new EmbedBuilder()
-            .setDescription(`> **<#833750719307579392>**: en este canal puedes publicar todo lo relacionado con **trabajo**, tu estado laborar *(desempleado y buscas trabajo, buscas empleados, tus conocimientos)*, una página o portafolio donde explique a que te dedicas, tus conocimientos, experiencia, etc.\n> .\n> **<#842893188867817562>**: en este canal solo puedes promocionar **bots** ya sean bots de esta plataforma o otras, su enlace de invitación o página del bot.\n> .\n> **<#899328778566783058>**: en este canal solo puedes promocionar contenido **NSFW** o **+18** ya sean servidores de Discord, redes sociales, páginas web, etc.`)
-            .setColor(info.color)
-            int.reply({ephemeral: true, embeds: [embInformacion, embPromocionate]})
-          }else{
-            if(int.values[0] == "roles-exclusivos" && info.valor == "roles-exclusivos"){
-              const embExclusivos1 = new EmbedBuilder()
-              .setDescription(`> **<@&826197378229993503>**: este rol te da acceso al canal <#826193730578153472> canal en el cual podrás publicar cualquier tipo de contenido cada **4** horas exceptuando contenido explicito.\n\n> **Para conseguirlo hay **5** formas:**\n> **1. Invitar a **10** miembros al servidor**, para ver la cantidad de invitaciones que has hecho ejecuta el comando de barra diagonal \`\`/información miembro\`\` en el canal <#834956208112795668>, el rol se te será removido cuando los miembros que invitaste se vallan del servidor.\n> **2. Pagar 2 dólares por [PayPal](https://www.paypal.com/paypalme/srvers)**, el rol te durara **2** meses.\n> **3. Comprar el rol en economía**, en el canal <#834893418403725342>.\n> **4. Boostear el servidor o mejorarlo**, el rol sete será removido si eliminas la mejora o cuando caduque.\n> **5. Ganarse el rol en un sorteo en el canal** <#826205120173310032>, *no hacemos con frecuencia sorteos de roles*.\nPara resolver cualquier duda o reclamar el rol abre un ticket en el canal <#830165896743223327>.\n\n\n> **<@&839549487877062698>**: este rol te representa como **YouTuber**, para conseguirlo tienes que tener un canal de **YouTube** tener mínimo **200** subscriptores y tener tu cuenta de **YouTube** enlazada con la de **Discord**.\n> Si tienes todos los anteriores tienes que abrir un **Ticket** en <#830165896743223327> y pídele el rol a un administrador, el confirmará los datos y te dará el rol.\n\n\n> **<@&839549494659252244>**: Este rol te representa como **Streamer** de **Twitch**, para conseguirlo tienes que tener una media de **60** visitas en cada directo no necesariamente en vivo, tener tu cuanta de **Twitch** enlazada con la de **Discord**.\n> Si tienes los requisitos crea un **Ticket** en <#830165896743223327> y pídele el rol a un administrador, el confirmará los datos y te dará el rol.`)
-              .setColor(info.color)
-              const embExclusivos2 = new EmbedBuilder()
-              .setDescription(`**<@&851577906828148766>**: Este rol por ahora no te da ninguna ventaja dentro del servidor.\n\n> Se consigue invitando al bot <@935707268090056734> a tu servidor para invitarlo ve al perfil del bot en el encontraras un botón para invitarlo en caso de no encontrarlo usa el comando \`\`u!invite\`\` o menciona al bot, para reclamar el rol habré un **ticket** en  <#830165896743223327>, ayudas bastante al creador del bot invitándolo a tu servidor.`)
-              .setColor(info.color)
-              int.reply({ephemeral: true, embeds: [embInformacion, embExclusivos1, embExclusivos2]})
-            }else{
-              if(info.valor == int.values[0]){
-                int.reply({ephemeral: true, embeds: [embInformacion]})
-              }
-            }
-          }
+        }else if(int.values[0] == "categoría-promociónate" && info.valor == "categoría-promociónate"){
+          const embPromocionate = new EmbedBuilder()
+          .setDescription(`> **<#833750719307579392>**: en este canal puedes publicar todo lo relacionado con **trabajo**, tu estado laborar *(desempleado y buscas trabajo, buscas empleados, tus conocimientos)*, una página o portafolio donde explique a que te dedicas, tus conocimientos, experiencia, etc.\n> .\n> **<#842893188867817562>**: en este canal solo puedes promocionar **bots** ya sean bots de esta plataforma o otras, su enlace de invitación o página del bot.\n> .\n> **<#899328778566783058>**: en este canal solo puedes promocionar contenido **NSFW** o **+18** ya sean servidores de Discord, redes sociales, páginas web, etc.`)
+          .setColor(info.color)
+          int.reply({ephemeral: true, embeds: [embInformacion, embPromocionate]})
+        }else if(int.values[0] == "roles-exclusivos" && info.valor == "roles-exclusivos"){
+          const embExclusivos1 = new EmbedBuilder()
+          .setDescription(`> **<@&826197378229993503>**: este rol te da acceso al canal <#826193730578153472> canal en el cual podrás publicar cualquier tipo de contenido cada **4** horas exceptuando contenido explicito.\n\n> **Para conseguirlo hay **5** formas:**\n> **1. Invitar a **10** miembros al servidor**, para ver la cantidad de invitaciones que has hecho ejecuta el comando de barra diagonal \`\`/información miembro\`\` en el canal <#834956208112795668>, el rol se te será removido cuando los miembros que invitaste se vallan del servidor.\n> **2. Pagar 2 dólares por [PayPal](https://www.paypal.com/paypalme/srvers)**, el rol te durara **2** meses.\n> **3. Comprar el rol en economía**, en el canal <#834893418403725342>.\n> **4. Boostear el servidor o mejorarlo**, el rol sete será removido si eliminas la mejora o cuando caduque.\n> **5. Ganarse el rol en un sorteo en el canal** <#826205120173310032>, *no hacemos con frecuencia sorteos de roles*.\nPara resolver cualquier duda o reclamar el rol abre un ticket en el canal <#830165896743223327>.\n\n\n> **<@&839549487877062698>**: este rol te representa como **YouTuber**, para conseguirlo tienes que tener un canal de **YouTube** tener mínimo **200** subscriptores y tener tu cuenta de **YouTube** enlazada con la de **Discord**.\n> Si tienes todos los anteriores tienes que abrir un **Ticket** en <#830165896743223327> y pídele el rol a un administrador, el confirmará los datos y te dará el rol.\n\n\n> **<@&839549494659252244>**: Este rol te representa como **Streamer** de **Twitch**, para conseguirlo tienes que tener una media de **60** visitas en cada directo no necesariamente en vivo, tener tu cuanta de **Twitch** enlazada con la de **Discord**.\n> Si tienes los requisitos crea un **Ticket** en <#830165896743223327> y pídele el rol a un administrador, el confirmará los datos y te dará el rol.`)
+          .setColor(info.color)
+          const embExclusivos2 = new EmbedBuilder()
+          .setDescription(`**<@&851577906828148766>**: Este rol por ahora no te da ninguna ventaja dentro del servidor.\n\n> Se consigue invitando al bot <@935707268090056734> a tu servidor para invitarlo ve al perfil del bot en el encontraras un botón para invitarlo en caso de no encontrarlo usa el comando \`\`u!invite\`\` o menciona al bot, para reclamar el rol habré un **ticket** en  <#830165896743223327>, ayudas bastante al creador del bot invitándolo a tu servidor.`)
+          .setColor(info.color)
+          int.reply({ephemeral: true, embeds: [embInformacion, embExclusivos1, embExclusivos2]})
+        }else if(info.valor == int.values[0]){
+          int.reply({ephemeral: true, embeds: [embInformacion]})
         }
       })
     }
