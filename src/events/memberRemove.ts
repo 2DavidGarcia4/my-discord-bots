@@ -5,11 +5,12 @@ import { botDB } from "../db";
 import { botModel, collaboratorsModel, invitesModel, personalModel, promoLevelModel } from "../models";
 
 export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, client: Client) => {
-  if(gmr.guild.id != botDB.serverId) return;
+  const { color, serverId } = botDB
+  if(gmr.guild.id != serverId) return;
   estadisticas.salidas++
   
   const dataBot = await botModel.findById(client.user?.id)
-  const dataInv = await invitesModel.findById(botDB.serverId), arrayMi = dataInv?.miembros
+  const dataInv = await invitesModel.findById(serverId), arrayMi = dataInv?.miembros
   if(!dataBot) return
 
   const leaveLog = client.channels.cache.get(dataBot.logs.exit)
@@ -33,7 +34,7 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
     .setImage(mbanner.bannerURL({size: 2048}) || null)
     .setTitle("📤 Se fue un miembro")
     .setDescription(`Se fue ${gmr} (*no se por quien fue invitado/a*).\n📥 **Seunio:**\n<t:${Math.round((gmr.joinedAt?.valueOf() || 0) / 1000)}:R>`)
-    .setColor("#ff0000")
+    .setColor(color.negative)
     .setFooter({text: gmr.guild.name, iconURL: gmr.guild.iconURL() || undefined})
     .setTimestamp()
 

@@ -18,6 +18,7 @@ class PCEMbot {
 }
 
 export const botModel = getModelForClass(PCEMbot)
+botModel.syncIndexes()
 
 //? Sistema de alianzas
 class Alianzas {

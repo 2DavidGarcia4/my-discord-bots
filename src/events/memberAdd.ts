@@ -106,7 +106,7 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
     .setImage(usBanner?.bannerURL({size: 4096}) || null)
     .setTitle("📥 Se unió un usuario")
     .setDescription(`Se unió ${gmd} *(no se por quien fue invitado/a)*.\n📅 **Creacion de la cueta:**\n<t:${Math.round(gmd.user.createdAt.valueOf() / 1000)}:R>`)
-    .setColor(color.negative)
+    .setColor(color.afirmative)
     .setFooter({text: gmd.guild.name, iconURL: gmd.guild.iconURL() || undefined})
     .setTimestamp()
 
@@ -172,7 +172,8 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
       }
     })
 
-    welcomeMsg.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`})
+    console.log('nuevo miembro')
+    welcomeMsg.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`}).then(()=> console.log('send webhook'))
     if(welcomeLog?.type == ChannelType.GuildText) welcomeLog.send({embeds: [embBien]})
     let miembroInv = arrayMi?.find(f=> f.id==gmd.user.id)
     if(miembroInv) miembroInv.tiempo = null
