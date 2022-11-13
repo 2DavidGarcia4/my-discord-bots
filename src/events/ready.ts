@@ -18,7 +18,7 @@ export const readyEvent = async (client: Client) => {
   .setColor(botDB.color.afirmative)
   .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
   .setTimestamp()
-  if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
+  // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
 
 
   // Roles principales automaticos
@@ -480,7 +480,7 @@ export const readyEvent = async (client: Client) => {
       }
     })
   }
-  // mensajesTemporales()
+  mensajesTemporales()
 
   async function promoNvl() {
     let dataPrl = await promoLevelModel.findById(botDB.serverId), arrayPl = dataPrl?.miembros, canal = servidor?.channels.cache.get(dataPrl?.datos.canalID || '')
