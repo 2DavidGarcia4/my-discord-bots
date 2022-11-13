@@ -17,16 +17,15 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
   if(leaveLog?.type != ChannelType.GuildText) return
   
   const leaveLogEb = new EmbedBuilder()
+  .setTimestamp()
   if(gmr.user.bot){
     leaveLogEb
     .setTitle("🤖 Se fue un bot")
     .setThumbnail(gmr.displayAvatarURL())
     .setDescription(`${gmr}\n${gmr.user.tag}\nSeunio: <t:${Math.round((gmr.joinedAt?.valueOf() || 0) / 1000)}:R>`)
     .setColor('Orange')
-    .setTimestamp()
 
   }else{
-    // if(leaveLog?.type != ChannelType.GuildText) return
     const mbanner = await client.users.fetch(gmr.id, {force: true})
     leaveLogEb
     .setAuthor({name: gmr.user.username, iconURL: gmr.user.displayAvatarURL({size: 2048})})
@@ -36,7 +35,6 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
     .setDescription(`Se fue ${gmr} (*no se por quien fue invitado/a*).\n📥 **Seunio:**\n<t:${Math.round((gmr.joinedAt?.valueOf() || 0) / 1000)}:R>`)
     .setColor(color.negative)
     .setFooter({text: gmr.guild.name, iconURL: gmr.guild.iconURL() || undefined})
-    .setTimestamp()
 
     if(arrayMi){
       for(let m of arrayMi){
