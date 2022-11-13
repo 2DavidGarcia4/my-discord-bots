@@ -1,7 +1,6 @@
 import { connect } from "mongoose";
 import { connectMongo } from "./config";
 import colors from "colors"
-import { ColorResolvable } from "discord.js"
 import { BotDB } from "./types"
 
 colors
@@ -9,10 +8,8 @@ connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la b
 .catch((err)=> console.error('Ocurrió un error al conectarse a la DB'.red, err))
 
 
-
-
 export const botDB: BotDB = {
-  prefix: '|',
+  prefix: '||',
   serverId: '773249398431809586',
   creatorId: '717420870267830382',
   owners: ['717420870267830382', '825186118050775052'],
@@ -50,6 +47,7 @@ export const botDB: BotDB = {
   color: {
     blue: '#0095F7',
     afirmative: '#00ff00',
-    negative: '#ff0000'
+    negative: '#ff0000',
+    yellow: '#F8CB01'
   }
 }

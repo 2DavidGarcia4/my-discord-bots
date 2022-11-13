@@ -40,6 +40,7 @@ export type BotDB = {
     blue: ColorResolvable
     afirmative: ColorResolvable
     negative: ColorResolvable
+    yellow: ColorResolvable
   }
 }
 
