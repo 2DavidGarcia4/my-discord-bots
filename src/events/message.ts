@@ -363,7 +363,7 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
 
   if(msg.member?.permissions.has('Administrator')){
     if(['addreaction', 'addrc'].some(s=> s==command)) addReactionCommand(msg, client, args)
-    if(command == 'roles') rolesCommand(msg, client)
+    if(command == 'roles') rolesCommand(msg)
     if(command == 'ticket') ticketCommand(msg)
     if(command == 'informacion') informationCommand(msg)
   }
