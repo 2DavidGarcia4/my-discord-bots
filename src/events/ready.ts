@@ -141,48 +141,27 @@ export const readyEvent = async (client: Client) => {
   presencias()
 
   function estadisticas() {
-    const server = client.guilds.cache.get(botDB.serverId), todosG = server?.memberCount, soloMiembros = server?.members.cache.filter(fm => !fm.user.bot).size, cantBots = server?.members.cache.filter(fb => fb.user.bot).size
-    const channelLog = client.channels.cache.get('960567789263937656')
+    const server = client.guilds.cache.get(botDB.serverId), todosG = server?.memberCount, online = server?.members.cache.filter(f=> f.presence?.status == 'dnd' || f.presence?.status == 'idle' || f.presence?.status == 'online').size, cantBots = server?.members.cache.filter(fb => fb.user.bot).size
     const canalTodos = client.channels.cache.get('823349420106973204')
     const canalMiembros = client.channels.cache.get('823349423349301318')
     const canalBots = client.channels.cache.get('823349426264997919')
-    if(canalTodos?.type != ChannelType.GuildText) return
-    if(canalMiembros?.type != ChannelType.GuildText) return
-    if(canalBots?.type != ChannelType.GuildText) return
+    if(canalTodos?.type != ChannelType.GuildVoice) return
+    if(canalMiembros?.type != ChannelType.GuildVoice) return
+    if(canalBots?.type != ChannelType.GuildVoice) return
 
-    let estadoT = null, estadoM = null, estadoB = null, edited = false
-
-    if (canalTodos?.name == `『👥』Todos: ${todosG?.toLocaleString()}`)  estadoT = "Sin actualización"
-    else {
+    if (canalTodos.name != `『👥』Todos: ${todosG?.toLocaleString()}`){
       canalTodos.edit({ name: `『👥』Todos: ${todosG?.toLocaleString()}` })
-      estadoT = "Se ha actualizado"
-      edited = true
     }
 
-    if (canalMiembros.name == `『🧑』Miembros: ${soloMiembros?.toLocaleString()}`) estadoM = "Sin actualización"
-    else {
-      canalMiembros.edit({ name: `『🧑』Miembros: ${soloMiembros?.toLocaleString()}` })
-      estadoM = "Se ha actualizado"
-      edited = true
+    if (canalMiembros.name != `『🟢』En linea: ${online?.toLocaleString()}`){
+      canalMiembros.edit({ name: `『🟢』En linea: ${online?.toLocaleString()}` })
     }
 
-    if (canalBots.name == `『🤖』Bots: ${cantBots?.toLocaleString()}`) {
-      estadoB = "Sin actualización"
-    } else {
+    if (canalBots.name != `『🤖』Bots: ${cantBots?.toLocaleString()}`){
       canalBots.edit({ name: `『🤖』Bots: ${cantBots?.toLocaleString()}` })
-      estadoB = "Se ha actualizado"
-      edited = true
-    }
-
-    if (edited && channelLog?.type == ChannelType.GuildText) {
-      const embEstadisticas = new EmbedBuilder()
-      .setTitle("Actualización de estadísticas")
-      .setDescription(`**『👥』Todos: ${todosG}**\n${estadoT}\n\n**『👤』Miembros: ${soloMiembros}**\n${estadoM}\n\n**『🤖』Bots: ${cantBots}**\n${estadoB}`)
-      .setColor(botDB.color.blue)
-      .setTimestamp()
-      channelLog.send({ embeds: [embEstadisticas] })
     }
   }
+  estadisticas()
 
   async function carcel() {
     const dataCrc = await carcelModel.findById(client.user?.id), tiempoActual = Date.now(), canalRegistro = servidor?.channels.cache.get('941170978459910214')
