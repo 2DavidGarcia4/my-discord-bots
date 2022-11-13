@@ -26,13 +26,15 @@ export type BotDB = {
     tickTock: string
     negative: string
     leftArrow: string
-    rightArrow: string
     ping30ms: string
     ping60ms: string
+    addition: string
     ping100ms: string
     instagram: string
+    rightArrow: string
     invitation: string
     afirmative: string
+    subtraction: string
     information: string
     animateBoost: string
   }
@@ -73,4 +75,10 @@ export type DataBot = {
     ignoreCategories: string[]
     ignoreChannels: string[]
   }
+}
+
+export type DictionaryMenu = {
+  value: string 
+  rol: string
+  status: string
 }
