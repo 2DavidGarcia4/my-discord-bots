@@ -1,4 +1,4 @@
-import { EmbedBuilder, ColorResolvable, Message, InviteGuild, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, MessageReaction, PartialMessageReaction, User, PartialUser, TextChannel, Guild, GuildMember, SelectMenuInteraction } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction } from "discord.js";
 import ms from "ms";
 import { botDB } from "../db";
 import { promoLevelModel } from "../models";
@@ -12,7 +12,7 @@ export const sendMessageText = (msg: Message, optionsMessage: string | MessagePa
   }, 500)
 }
 
-export const sendMessageSlash = (int: ChatInputCommandInteraction<CacheType>, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
+export const sendMessageSlash = (int: ChatInputCommandInteraction<CacheType> | UserContextMenuCommandInteraction<CacheType>, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
   setTimeout(async () => {
     await int.editReply(optionsMessage)
   }, 600)
