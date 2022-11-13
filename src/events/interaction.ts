@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, SelectMenuBuilder } from "discord.js";
 import { botDB } from "../db";
 import { sistemMarcar } from "..";
 import { collaboratorsModel, suggestionsModel } from "../models";
@@ -33,6 +33,7 @@ import { finalizarSlashCommand, finalizarScb } from "../commands/slash/administr
 import { marcarSlashCommadn, marcarScb } from "../commands/slash/administration/marcar";
 import { nuevoSlashCommand, nuevoScb } from "../commands/slash/administration/nuevo";
 import { rerollSlashCommand, rerollScb } from "../commands/slash/administration/reroll";
+import { selectMultipleRoles, selectRole } from "../utils/functions";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 const cmds = [
@@ -44,10 +45,11 @@ const cmds = [
 cmds.forEach((cmd, ps)=> slashComands.set(cmd.name, cmd))
 
 export const interactionEvent = async (int: Interaction<CacheType>, client: Client) => {
-  const { emoji, color, serverId } = botDB
+  const { emoji, owners, color, serverId } = botDB
 
   if(int.isChatInputCommand()){
-    const { commandName } = int
+    const { commandName, user } = int
+    // if(!owners.some()) return
 
     //? Generals
     if(commandName == 'webs') websSlashCommand(int)
@@ -79,6 +81,10 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandName == 'marcar') marcarSlashCommadn(int, client)
     if(commandName == 'nuevo') nuevoSlashCommand(int, client)
     if(commandName == 'reroll') rerollSlashCommand(int)
+  }
+  
+  if(int.isContextMenuCommand()){
+  
   }
 
   if(int.isButton()){
@@ -594,177 +600,566 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
   }
 
   if(int.isSelectMenu()){
-    const { customId, guild, user } = int
+    const { customId, values, guild, user } = int
+    
+    if(customId == 'select-type-role'){
+      const guildColor = guild?.members.me?.displayHexColor || 'White'
 
-    if(customId == 'genero'){
-      const author = guild?.members.cache.get(user.id)
-      const valores = ['mujer', 'hombre']
-      const roles = ['828720344869240832', '828720347246624769']
-      for(let i=0; i<valores.length; i++){
-        if(int.values[0] == valores[i]){
-          if(author?.roles.cache.has(roles[i])){
-            const embYaLoTiene = new EmbedBuilder()
-            .setAuthor({name: "➖ Rol removido"})
-            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-            .setColor(botDB.color.negative)
-            .setTimestamp()
-            author.roles.remove(roles[i])
-            return int.reply({embeds: [embYaLoTiene], ephemeral: true})
-          }
+      if(values[0] == 'access'){
+        const accesEb = new EmbedBuilder()
+        .setTitle(`💂 Roles de acceso`)
+        .setDescription(`Estos roles te otorgan acceso a categorías ocultas.\n*Selecciona uno para obtenerlo*\n\n**<@&1041161492126507118>:** Este rol te da acceso a la categoría *👥 User x user* en la cual hay canales en los que puedes publicar e encontrar a personas que hagan join x join, alianzas, etc.\n\n**<@&1041162293683159101>:** Este rol te da acceso a la categoría *🔞 NSFW* en la cual hay canales con contenido sexual para mayore.\n\n**<@&1041161785186725919>:** Este rol te da acceso a la categoría *📝 Registros* la cual tiene canales en los que se registran acciones en el servidor, como sanciones.\n\n**<@&1041161797434081450>:** Este rol te da acceso a la categoría *🎮 Entretenimiento* en la que encontraras canales de bots de entretenimiento como el bot de economía.`)
+        .setColor(guildColor)
 
-          for(let e=0; e<roles.length; e++){
-            if(author?.roles.cache.has(roles[e])){
-              const embRemoveYAdd = new EmbedBuilder()
-              .setAuthor({name: '🔃 Intercambio de roles'})
-              .setDescription(`Solo puedes tener un rol de **Genero** por lo tanto te he eliminado el rol <@&${roles[e]}> y te he agregado el rol <@&${roles[i]}> el cual has elegido ahora.`)
-              .setColor(int.guild?.members.me?.displayHexColor || 'White')
-              .setTimestamp()
-              author?.roles.remove(roles[e])
-              author?.roles.add(roles[i])
+        const accesMenu = new ActionRowBuilder<SelectMenuBuilder>()
+        .addComponents(
+          new SelectMenuBuilder()
+          .setCustomId('acces-roles')
+          .setPlaceholder("📑 Elige varias opciones.")
+          .setMaxValues(4)
+          .addOptions(
+            [
+              {
+                emoji: '👥',
+                label: 'J4J',
+                description: 'Te da acceso a la categoría 👥 User x user.',
+                value: 'j4j'
+              },
+              {
+                emoji: '🔞',
+                label: 'NSFW',
+                description: 'Te da acceso a la categoría 🔞 NSFW.',
+                value: 'nsfw'
+              },
+              {
+                emoji: '📝',
+                label: 'Registros',
+                description: 'Te da acceso a la categoría 📝 Registros.',
+                value: 'logs'
+              },
+              {
+                emoji: '🎮',
+                label: 'Entretenimiento',
+                description: 'Te da acceso a la categoría 🎮 Entretenimiento.',
+                value: 'entertainment'
+              },
+            ]
+          )
+        )
+        int.reply({ephemeral: true, embeds: [accesEb], components: [accesMenu]})
+      }
 
-              return int.reply({embeds: [embRemoveYAdd], ephemeral: true})
-            }
-          }
+      if(values[0] == 'colors'){
+        const colorsEb = new EmbedBuilder()
+        .setTitle("🌈 Roles de colores")
+        .setDescription(`Elige una opción para obtener un rol que cambiará el color de tu nombre dentro del servidor.\n\n**<@&825913849504333874>\n\n<@&825913858446327838>\n\n<@&825913837944438815>\n\n<@&823639766226436146>\n\n<@&823639778926395393>\n\n<@&825913846571991100>\n\n<@&823639775499386881>\n\n<@&825913860992270347>\n\n<@&825913843645546506>\n\n<@&823639769300467724>\n\n<@&825913834803560481>\n\n<@&825913840981901312>\n\n<@&825913855392743444>\n\n<@&825913852654780477>**`)
+        .setColor(guildColor)
 
-          const embAddRol = new EmbedBuilder()
-          .setTitle("➕ Rol agregado")
-          .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-          .setColor(botDB.color.afirmative)
-          int.reply({embeds: [embAddRol], ephemeral: true})
-          author?.roles.add(roles[i])
-        }
+        const colorsMenu = new ActionRowBuilder<SelectMenuBuilder>()
+        .addComponents(
+          new SelectMenuBuilder()
+          .setCustomId("colors-roles")
+          .setPlaceholder("📑 Elige una opción para obtener un rol.")
+          .addOptions(
+            [
+              {
+                label: "Negro",
+                emoji: "🎩",
+                description: "Pinta tu nombre de color Negro.",
+                value: "negro"
+              },
+              {
+                label: "Café ",
+                emoji: "🦂",
+                description: "Pinta tu nombre de color Café .",
+                value: "cafe"
+              },
+              {
+                label: "Naranja",
+                emoji: "🍊",
+                description: "Pinta tu nombre de color Naranja.",
+                value: "naranja"
+              },
+              {
+                label: "Rojo",
+                emoji: "🍎",
+                description: "Pinta tu nombre de color Rojo.",
+                value: "rojo"
+              },
+              {
+                label: "Rosa",    
+                emoji: "🌷",
+                description: "Pinta tu nombre de color Rosa.",
+                value: "rosa"
+              },
+              {
+                label: "Morado",
+                emoji: "☂️",
+                description: "Pinta tu nombre de color Morado.",
+                value: "morado"
+              },
+              {
+                label: "Azul",
+                emoji: "💧",
+                description: "Pinta tu nombre de color Azul.",
+                value: "azul"
+              },
+              {
+                label: "Azul celeste",
+                emoji: "🐬",
+                description: "Pinta tu nombre de color Azul celeste.",
+                value: "celeste"
+              },
+              {
+                label: "Cian",
+                emoji: "🧼",
+                description: "Pinta tu nombre de color Cian.",
+                value: "cian"
+              },
+              {
+                label: "Verde",
+                emoji: "🌲",
+                description: "Pinta tu nombre de color Verde.",
+                value: "verde"
+              },
+              {
+                label: "Verde Lima",
+                emoji: "🍀",
+                description: "Pinta tu nombre de color Verde Lima.",
+                value: "lima"
+              },
+              {
+                label: "Amarillo",
+                emoji: "🍌",
+                description: "Pinta tu nombre de color Amarillo.",
+                value: "amarillo"
+              },
+              {
+                label: "Gris",
+                emoji: "🐺",
+                description: "Pinta tu nombre de color Gris.",
+                value: "gris"
+              },
+              {
+                label: "Blanco",
+                emoji: "☁️",
+                description: "Pinta tu nombre de color Blanco",
+                value: "blanco"
+              }
+            ]
+          )
+        )
+        int.reply({ephemeral: true, embeds: [colorsEb], components: [colorsMenu]})
+      }
+
+      if(values[0] == 'notifications'){
+        const notificationsEb = new EmbedBuilder()
+        .setTitle("🔔 Roles de notificaciones")
+        .setDescription(`Elige una opción para obtener un rol que te notificará de nuevos anuncios, alianzas, sorteos, encuestas, eventos, sugerencias de la comunidad o postulaciones a staff del servidor o puedes obtener un rol que te notifica cuando se necesite revivir el chat general el cual es <@&850932923573338162> y puede ser muy usado.\n\n**<@&840704358949584926>\n\n<@&840704364158910475>\n\n<@&840704370387451965>\n\n<@&840704372911505418>\n\n<@&915015715239637002>\n\n<@&840704367467954247>\n\n<@&840704375190061076>\n\n<@&850932923573338162>**`)
+        .setColor(guildColor)
+
+        const notificationsBtns = new ActionRowBuilder<SelectMenuBuilder>()
+        .addComponents(
+          new SelectMenuBuilder()
+          .setCustomId("notifications-roles")
+          .setPlaceholder("📑 Elige varias opciones.")
+          .setMaxValues(8)
+          .addOptions(
+            [ 
+              {
+                label: "Anuncios",
+                emoji: "📢",
+                description: "Te notifica cuándo haya un nuevo Anuncio.",
+                value: "anuncio"
+              },
+              {
+                label: "Alianzas",
+                emoji: "🤝",
+                description: "Te notifica cuándo haya una nueva Alianza.",
+                value: "alianza"
+              },
+              {
+                label: "Sorteos",
+                emoji: "🎉",
+                description: "Te notifica cuándo haya un nuevo Sorteo.",
+                value: "sorteo"
+              },
+              {
+                label: "Encuestas",
+                emoji: "📊",
+                description: "Te notifica cuándo haya una nueva Encuesta.",
+                value: "encuesta"
+              },
+              {
+                label: "Evento",
+                emoji: "🥳",
+                description: "Te notifica cuándo haya un nuevo Evento.",
+                value: "evento"
+              },
+              {
+                label: "Sugerencias",
+                emoji: "📧",
+                description: "Te notifica cuándo haya una nueva Sugerencia.",
+                value: "sugerencia"
+              },
+              {
+                label: "Postulaciones",
+                emoji: "📝",
+                description: "Te notifica cuándo haya una actualización sobre las Postulaciones.",
+                value: "postulacion"
+              },
+              {
+                label: "Revivir chat",
+                emoji: "❇️",
+                description: "Te notifica cuándo se necesite Revivir el chat general.",
+                value: "revivir"
+              },
+            ] 
+          )
+        )
+        int.reply({ephemeral: true, embeds: [notificationsEb], components: [notificationsBtns]})
+      }
+
+      if(values[0] == 'gender'){
+        const genderEb = new EmbedBuilder()
+        .setTitle("♀️♂️ Roles de género")
+        .setDescription(`Elige una opción en el menú de abajo para agregarte un rol y así determinar tu género dentro del servidor.\n\n**<@&828720344869240832>\n\n<@&828720347246624769>**`)
+        .setColor(guildColor)
+
+        const genderBtns = new ActionRowBuilder<SelectMenuBuilder>()
+        .addComponents(
+          [
+            new SelectMenuBuilder()
+            .setCustomId("gender-roles")
+            .setPlaceholder("📑 Elige una opción para obtener un rol.")
+            .addOptions(
+              [
+                {
+                  label: "Mujer",
+                  emoji: "👩",
+                  description: "Rol que te determina como mujer aquí.",
+                  value: "mujer"
+                },
+                {
+                  label: "Hombre",
+                  emoji: "👨",
+                  description: "Rol que te determina como hombre aquí.",
+                  value: "hombre"
+                }   
+              ]
+            )
+          ]
+        )
+        int.reply({ephemeral: true, embeds: [genderEb], components: [genderBtns]})
+      }
+      
+      if(values[0] == 'age'){
+        const ageEb = new EmbedBuilder()
+        .setTitle("🔢 Roles de edad")
+        .setDescription(`Elije una opción en el menú de abajo para agregarte un rol de edad y así determinar tu edad dentro del servidor.\n\n**<@&828720200924790834>\n\n<@&828720340719894579>**`)
+        .setColor(guildColor)
+      
+        const ageMenu = new ActionRowBuilder<SelectMenuBuilder>()
+        .addComponents(
+          new SelectMenuBuilder()
+          .setCustomId("age-roles")
+          .setPlaceholder("📑 Elige una opción para obtener un rol.")
+          .addOptions(
+            [
+              {
+                label: "-18",
+                emoji: "🌗",
+                description: "Rol que te determina como menor de edad.",
+                value: "-18"
+              },
+              {
+                label: "+18",
+                emoji: "🌕",
+                description: "Rol que te determina como mayor de edad.",
+                value: "+18"
+              }
+            ]
+          )
+        )
+        int.reply({ephemeral: true, embeds: [ageEb], components: [ageMenu]})
+      }
+
+      if(values[0] == 'video-games'){
+        const videoGamesEb = new EmbedBuilder()
+        .setTitle("🎮 Roles de videojuegos")
+        .setDescription(`Elige una o más opciones en el menú de abajo para obtener un rol del videojuego que te guste y así los demás miembros sabrán que videojuegos te gustan.\n\n**<@&886331637690953729>\n\n<@&886331642074005545>\n\n<@&886331630690631691>\n\n<@&885005724307054652>\n\n<@&886331626643152906>\n\n<@&886331634272587806>**`)
+        .setColor(guildColor)
+
+        const videoGamesMenu = new ActionRowBuilder<SelectMenuBuilder>()
+        .addComponents(
+          new SelectMenuBuilder()
+          .setCustomId("video-games-roles")
+          .setPlaceholder("📑 Elige varias opciones.")
+          .setMaxValues(6)
+          .addOptions(
+            [
+              {
+                label: "Fornite",
+                emoji: "☂️",
+                description: "Obtienes el rol de Fornite.",
+                value: "fornite"
+              },
+              {
+                label: "Minecraft",
+                emoji: "⛏️",
+                description: "Obtienes el rol de Minecraft.",
+                value: "minecraft"
+              },
+              {
+                label: "Free Fire",
+                emoji: "🔫",
+                description: "Obtienes el rol de Free Fire.",
+                value: "free"
+              },
+              {
+                label: "Roblox",
+                emoji: "💠",
+                description: "Obtienes el rol de Roblox.",
+                value: "roblox"
+              },
+              {
+                label: "GTA V",
+                emoji: "🚗",
+                description: "Obtienes el rol de GTA V.",
+                value: "GTA"
+              },
+              {
+                label: "Among Us",
+                emoji: "🔍",
+                description: "Obtienes el rol de Among Us.",
+                value: "amongus"
+              },
+            ]
+          )
+        )
+        int.reply({ephemeral: true, embeds: [videoGamesEb], components: [videoGamesMenu]})
       }
     }
 
-    if(customId == 'edad'){
+    if(customId == 'gender-roles'){
       const author = guild?.members.cache.get(user.id)
-      const valores = ['-18', '+18']
-      const roles = ['828720200924790834', '828720340719894579']
-      for(let i=0; i<valores.length; i++){
-        if(int.values[0] == valores[i]){
-          if(author?.roles.cache.has(roles[i])){
-            const embYaLoTiene = new EmbedBuilder()
-            .setAuthor({name: "➖ Rol removido"})
-            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-            .setColor(color.negative)
-            .setTimestamp()
-            author?.roles.remove(roles[i])
-            return int.reply({embeds: [embYaLoTiene], ephemeral: true})
-          }
-
-          for(let e=0; e<roles.length; e++){
-            if(author?.roles.cache.has(roles[e])){
-              const embRemoveYAdd = new EmbedBuilder()
-              .setAuthor({name: "🔃 Intercambio de roles"})
-              .setDescription(`Solo puedes tener un rol de **Edad** por lo tanto te he eliminado el rol <@&${roles[e]}> y te he agregado el rol <@&${roles[i]}> el cual has elegido ahora.`)
-              .setColor(int.guild?.members.me?.displayHexColor || 'White')
-              .setTimestamp()
-              author?.roles.remove(roles[e])
-              author?.roles.add(roles[i])
-
-              return int.reply({embeds: [embRemoveYAdd], ephemeral: true})
-            }
-          }
-
-          const embAddRol = new EmbedBuilder()
-          .setTitle("➕ Rol agregado")
-          .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-          .setColor("#00ff00")
-          int.reply({embeds: [embAddRol], ephemeral: true})
-          author?.roles.add(roles[i])
+      const dictionary = [
+        {
+          value: 'mujer',
+          rol: '828720344869240832',
+          status: ''
+        },
+        {
+          value: 'hombre',
+          rol: '828720347246624769',
+          status: ''
         }
-      }
+      ]
+      if(author) selectRole(int, values[0], dictionary, author)
     }
 
-    if(customId == "videojuegos"){
+    if(customId == 'age-roles'){
       const author = guild?.members.cache.get(user.id)
-      let valores = ["fornite","minecraft","free","roblox","GTA","amongus"]
-      let roles = ["886331637690953729","886331642074005545","886331630690631691", "885005724307054652","886331626643152906", "886331634272587806"]
-      for(let i=0; i<valores.length; i++){
-        if(int.values[0] == valores[i]){
-          if(author?.roles.cache.has(roles[i])){
-            const embYaLoTiene = new EmbedBuilder()
-            .setAuthor({name: "➖ Rol removido"})
-            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-            .setColor(color.negative)
-            .setTimestamp()
-            author?.roles.remove(roles[i])
-            return int.reply({embeds: [embYaLoTiene], ephemeral: true})
-          }
-
-          const embAddRol = new EmbedBuilder()
-          .setTitle("➕ Rol agregado")
-          .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-          .setColor(color.afirmative)
-          int.reply({embeds: [embAddRol], ephemeral: true})
-          author?.roles.add(roles[i])
+      const dictionary = [
+        {
+          value: '-18',
+          rol: '828720200924790834',
+          status: ''
+        },
+        {
+          value: '+18',
+          rol: '828720340719894579',
+          status: ''
         }
-      }
+      ]
+      if(author) selectRole(int, values[0], dictionary, author)
     }
 
-    if(customId == "colores"){
+    if(customId == "video-games-roles"){
       const author = guild?.members.cache.get(user.id)
-      let valores = ["negro","cafe","naranja","rojo","rosa","morado","azul","celeste","cian","verde","lima","amarillo","gris","blanco"]
-      let roles = ["825913849504333874","825913858446327838","825913837944438815","823639766226436146","823639778926395393", "825913846571991100", "823639775499386881", "825913860992270347", "825913843645546506","823639769300467724", "825913834803560481","825913840981901312", "825913855392743444","825913852654780477"]
-      for(let i=0; i<valores.length; i++){
-        if(int.values[0] == valores[i]){
-          if(author?.roles.cache.has(roles[i])){
-            const embYaLoTiene = new EmbedBuilder()
-            .setAuthor({name: "➖ Rol removido"})
-            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-            .setColor("#ff0000")
-            .setTimestamp()
-            author?.roles.remove(roles[i])
-            return int.reply({embeds: [embYaLoTiene], ephemeral: true})
-          }
-
-          for(let e=0; e<roles.length; e++){
-            if(author?.roles.cache.has(roles[e])){
-              const embRemoveYAdd = new EmbedBuilder()
-              .setAuthor({name: "🔃 Intercambio de roles"})
-              .setDescription(`Solo puedes tener un rol de **Colores** por lo tanto te he eliminado el rol <@&${roles[e]}> y te he agregado el rol <@&${roles[i]}> el cual has elegido ahora.`)
-              .setColor(int.guild?.members.me?.displayHexColor || 'White')
-              .setTimestamp()
-              author?.roles.remove(roles[e])
-              author?.roles.add(roles[i])
-              return int.reply({embeds: [embRemoveYAdd], ephemeral: true})
-            }
-          }
-
-          const embAddRol = new EmbedBuilder()
-          .setTitle("➕ Rol agregado")
-          .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-          .setColor("#00ff00")
-          int.reply({embeds: [embAddRol], ephemeral: true})
-          author?.roles.add(roles[i])
+      const dictionary = [
+        {
+          value: 'fornite',
+          rol: '886331637690953729',
+          status: ''
+        },
+        {
+          value: 'minecraft',
+          rol: '886331642074005545',
+          status: ''
+        },
+        {
+          value: 'free',
+          rol: '886331630690631691',
+          status: ''
+        },
+        {
+          value: 'roblox',
+          rol: '885005724307054652',
+          status: ''
+        },
+        {
+          value: 'GTA',
+          rol: '886331626643152906',
+          status: ''
+        },
+        {
+          value: 'amongus',
+          rol: '886331634272587806',
+          status: ''
         }
-      }
+      ]
+      if(author) selectMultipleRoles(int, values, dictionary, author)
     }
 
-    if(customId == "notificaciones"){
+    if(customId == "colors-roles"){
       const author = guild?.members.cache.get(user.id)
-      let valores = ["anuncio","alianza","sorteo","encuesta","evento","sugerencia","postulacion","revivir"]
-      let roles = ["840704358949584926","840704364158910475","840704370387451965","840704372911505418","915015715239637002","840704367467954247","840704375190061076","850932923573338162"]
-      for(let i=0; i<valores.length; i++){
-        if(int.values[0] == valores[i]){
-          if(author?.roles.cache.has(roles[i])){
-            const embYaLoTiene = new EmbedBuilder()
-            .setAuthor({name: "➖ Rol removido"})
-            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-            .setColor(color.negative)
-            .setTimestamp()
-            author?.roles.remove(roles[i])
-            return int.reply({embeds: [embYaLoTiene], ephemeral: true})
-          }
+      const dictionary = [
+        {
+          value: 'negro',
+          rol: '825913849504333874',
+          status: ''
+        },
+        {
+          value: 'cafe',
+          rol: '825913858446327838',
+          status: ''
+        },
+        {
+          value: 'naranja',
+          rol: '825913837944438815',
+          status: ''
+        },
+        {
+          value: 'rojo',
+          rol: '823639766226436146',
+          status: ''
+        },
+        {
+          value: 'rosa',
+          rol: '823639778926395393',
+          status: ''
+        },
+        {
+          value: 'morado',
+          rol: '825913846571991100',
+          status: ''
+        },
+        {
+          value: 'azul',
+          rol: '823639775499386881',
+          status: ''
+        },
+        {
+          value: 'celeste',
+          rol: '825913860992270347',
+          status: ''
+        },
+        {
+          value: 'cian',
+          rol: '825913843645546506',
+          status: ''
+        },
+        {
+          value: 'verde',
+          rol: '823639769300467724',
+          status: ''
+        },
+        {
+          value: 'lima',
+          rol: '825913834803560481',
+          status: ''
+        },
+        {
+          value: 'amarillo',
+          rol: '825913840981901312',
+          status: ''
+        },
+        {
+          value: 'gris',
+          rol: '825913855392743444',
+          status: ''
+        },
+        {
+          value: 'blanco',
+          rol: '825913852654780477',
+          status: ''
+        },
+      ]
+      if(author) selectRole(int, values[0], dictionary, author)
+    }
 
-          const embAddRol = new EmbedBuilder()
-          .setTitle("➕ Rol agregado")
-          .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-          .setColor("#00ff00")
-          int.reply({embeds: [embAddRol], ephemeral: true})
-          author?.roles.add(roles[i])
-        }
-      }
+    if(customId == "notifications-roles"){
+      const author = guild?.members.cache.get(user.id)
+      const dictionary = [
+        {
+          value: 'anuncio',
+          rol: '840704358949584926',
+          status: ''
+        },
+        {
+          value: 'alianza',
+          rol: '840704364158910475',
+          status: ''
+        },
+        {
+          value: 'sorteo',
+          rol: '840704370387451965',
+          status: ''
+        },
+        {
+          value: 'encuesta',
+          rol: '840704372911505418',
+          status: ''
+        },
+        {
+          value: 'evento',
+          rol: '915015715239637002',
+          status: ''
+        },
+        {
+          value: 'sugerencia',
+          rol: '840704367467954247',
+          status: ''
+        },
+        {
+          value: 'postulacion',
+          rol: '840704375190061076',
+          status: ''
+        },
+        {
+          value: 'revivir',
+          rol: '850932923573338162',
+          status: ''
+        },
+      ]
+      if(author) selectMultipleRoles(int, values, dictionary, author)
+    }
+
+    if(customId == 'acces-roles'){
+      const author = guild?.members.cache.get(user.id), dictionary = [
+        {
+          value: 'j4j',
+          rol: '1041161492126507118',
+          status: ''
+        },
+        {
+          value: 'nsfw',
+          rol: '1041162293683159101',
+          status: ''
+        },
+        {
+          value: 'logs',
+          rol: '1041161785186725919',
+          status: ''
+        },
+        {
+          value: 'entertainment',
+          rol: '1041161797434081450',
+          status: ''
+        },
+      ]
+      if(author) selectMultipleRoles(int, values, dictionary, author)
     }
 
     if(customId == "información"){
