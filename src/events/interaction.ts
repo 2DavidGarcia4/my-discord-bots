@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, SelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, SelectMenuBuilder } from "discord.js";
 import { botDB } from "../db";
 import { sistemMarcar } from "..";
 import { collaboratorsModel, suggestionsModel } from "../models";
@@ -13,6 +13,9 @@ import { informacionSlashCommand, informacionScb } from "../commands/slash/gener
 import { estadisticasSlashCommand, estadisticasScb } from "../commands/slash/generals/estadisticas";
 import { clasificacionesSlashCommand, clasificacionesScb } from "../commands/slash/generals/clasificaciones";
 import { sugerirSlashCommand, sugerirScb } from "../commands/slash/generals/sugerir";
+
+import { usuarioContextMenu, usuarioCmcb } from "../commands/contextMenu/usuario";
+import { rolesBaseContextMenu, rolesBaseCmcb } from "../commands/contextMenu/rolesBase";
 
 // Staff
 import { examenSlashCommand, examenScb } from "../commands/slash/staff/examen";
@@ -37,7 +40,7 @@ import { selectMultipleRoles, selectRole } from "../utils/functions";
 
 export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 const cmds = [
-  websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb, sugerirScb, 
+  websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb, sugerirScb, usuarioCmcb, rolesBaseCmcb, 
   examenScb, crearScb,
   limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb,
   historialSmb, ascenderScb, degradarScb, finalizarScb, marcarScb, nuevoScb, rerollScb
@@ -48,8 +51,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
   const { emoji, owners, color, serverId } = botDB
 
   if(int.isChatInputCommand()){
-    const { commandName, user } = int
-    // if(!owners.some()) return
+    const { commandName } = int
 
     //? Generals
     if(commandName == 'webs') websSlashCommand(int)
@@ -84,7 +86,12 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
   }
   
   if(int.isContextMenuCommand()){
-  
+    const { commandName, commandType } = int
+
+    if(commandType == ApplicationCommandType.User){
+      if(commandName == 'Usuario') usuarioContextMenu(int)
+      if(commandName == 'Roles base') rolesBaseContextMenu(int)
+    }
   }
 
   if(int.isButton()){
