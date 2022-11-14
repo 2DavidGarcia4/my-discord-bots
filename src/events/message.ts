@@ -14,7 +14,7 @@ import { evalCommand } from "../commands/text/eval";
 
 
 export const messageEvent = async (msg: Message<boolean>, client: Client) => {
-  const { prefix, emoji, color } = botDB
+  const { member } = msg, { prefix, emoji, color } = botDB
 
   if(msg.guildId == botDB.serverId){
     estadisticas.mensajes++
@@ -53,6 +53,35 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
       })
     }
     if(msg.author.bot) return
+
+    //TODO: Roles de timpo
+    if(member){
+      const tiempo = Math.floor(Date.now()-Number(member.joinedAt?.valueOf()))
+      const tiempos = [
+        {condicion: tiempo>=ms("30d") && tiempo<ms("60d"), rol: "975068365032947792"},
+        {condicion: tiempo>=ms("60d") && tiempo<ms("90d"), rol: "975068396406329434"},
+        {condicion: tiempo>=ms("90d") && tiempo<ms("120d"), rol: "975068402576154654"},
+        {condicion: tiempo>=ms("120d") && tiempo<ms("150d"), rol: "975068408464949298"},
+        {condicion: tiempo>=ms("150d") && tiempo<ms("180d"), rol: "975068418850050098"},
+        {condicion: tiempo>=ms("180d") && tiempo<ms("210d"), rol: "975068424466214922"},
+        {condicion: tiempo>=ms("210d") && tiempo<ms("240d"), rol: "975068413816868894"},
+        {condicion: tiempo>=ms("240d") && tiempo<ms("270d"), rol: "975068429834915850"},
+        {condicion: tiempo>=ms("270d") && tiempo<ms("300d"), rol: "975068435434319903"},
+        {condicion: tiempo>=ms("300d") && tiempo<ms("330d"), rol: "975068435832770581"},
+        {condicion: tiempo>=ms("330d") && tiempo<ms("360d"), rol: "975068441650274314"},
+        {condicion: tiempo>=ms("360d") && tiempo<ms("547d"), rol: "975068449015480402"},
+        {condicion: tiempo>=ms("547d") && tiempo<ms("730d"), rol: "975068458045825024"},
+        {condicion: tiempo>=ms("730d"), rol: "975068463687139349"},
+      ]
+      const option = tiempos.find(f=> f.condicion)
+      if(option) member.roles.add(option?.rol)
+      tiempos.forEach(time=> {
+        if(member.roles.cache.has(time.rol) && time.rol != option?.rol){
+          member.roles.remove(time.rol)
+        } 
+      })
+    }
+    
 
     //TODO: Colaboradores
     let dataCol = await collaboratorsModel.findById(botDB.serverId), arrayCo = dataCol?.colaboradores
@@ -189,12 +218,15 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
 
 
     //* Auto moderación -----------------------------
-    if(!msg.member?.roles.cache.has('887444598715219999') && !msg.member?.permissions.has('Administrator')){
+    const urlIncludes = ['https://', 'http://', '.com', 'discord.']
+    if(!msg.member?.roles.cache.has('887444598715219999') && !msg.member?.permissions.has('Administrator') && urlIncludes.some(s=> msg.content.includes(s))){
       const dataBot = await botModel.findById(client.user?.id)
       if(!dataBot) return
       const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id)
       const otrosIDCha = dataBot.autoModeration.ignoreChannels
+      // console.log(otrosIDCha)
       canalesPerIDs?.push(...otrosIDCha)
+      // console.log(canalesPerIDs)
 
       if(msg.content == "p.canalesModerados"){
         if(msg.guild?.ownerId == msg.author.id && canalesPerIDs){
@@ -213,15 +245,24 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
       }
 
       if(!canalesPerIDs?.some(s=> s == msg.channelId)){
-        let enlaces = [{urls: ["discord.gg/","discord.com/invite/"]},{urls: ["youtube.com","youtu.be"]},{urls: ["twitch.tv"]},{urls: ["tiktok.com","vm.tiktok.com"]},{urls: ["twitter.com"]},{urls: ["instagram.com"]},{urls: ["https:","http:",".com"]}]
-        let titulos = ["<a:DiscordLogo:973995348974505984> Auto moderación de enlaces de Discord","<:youtubelogo:855166340780130354> Auto moderación de enlaces de YouTube","<:TwitchEmblema:855167274193125396> Auto moderación de enlaces de Twitch","<:Mamadatok:855167926875979837> Auto moderación de enlaces de TikTok",`<:TwitterLogo:855168545566490664> Auto moderación de enlaces de Twitter`,"<:instagram:855169028376494080> Auto moderación de enlaces de Instagram","🔗 Auto moderación de enlaces"]
-        let descripciones = [` de **Discord**, el canal correcto para publicar un enlace de **Discord** es <#823381769750577163> o <#836315643070251008>`,` de **YouTube**, el canal correcto para publicar un enlace de **YouTube** es <#823961526297165845> o <#836315643070251008>`,` de **Twitch**, el canal correcto para publicar un enlace de **Twitch** es <#823381980389310464> o <#836315643070251008>`,` de **TikTok**, el canal correcto para publicar un enlace de **TikTok** es <#827295990360965153> o <#836315643070251008>`,` de **Twitter**, el canal correcto para publicar un enlace de **Twitter** es <#823381924344758313> o <#836315643070251008>`,` de **Instagram**, el canal correcto para publicar un enlace de **Instagram** es <#823382007391584276> o <#836315643070251008>`,`, si quiere hacer promoción hágalo en los canales de la categoría **<#785729364288339978>** como <#836315643070251008>.\nSi esta perdido y necesita ayuda mencione a un <@&831669132607881236>.`]
-        let colores: ColorResolvable[] = ["#5965F1","#FE0100","#6441a5","#030303","#1CA1F3","#ED0D6E", color.negative]
+        // console.log('no ignorados')
+        const enlaces = [["discord.gg/","discord.com/invite/"], ["youtube.com","youtu.be"], ["twitch.tv"], ["tiktok.com","vm.tiktok.com"], ["twitter.com"], ["instagram.com"]]
+        const titulos = ["<a:DiscordLogo:973995348974505984> Auto moderación de enlaces de Discord","<:youtubelogo:855166340780130354> Auto moderación de enlaces de YouTube","<:TwitchEmblema:855167274193125396> Auto moderación de enlaces de Twitch","<:Mamadatok:855167926875979837> Auto moderación de enlaces de TikTok",`<:TwitterLogo:855168545566490664> Auto moderación de enlaces de Twitter`,"<:instagram:855169028376494080> Auto moderación de enlaces de Instagram","🔗 Auto moderación de enlaces"]
+        const descripciones = [` de **Discord**, el canal correcto para publicar un enlace de **Discord** es <#823381769750577163> o <#836315643070251008>`,` de **YouTube**, el canal correcto para publicar un enlace de **YouTube** es <#823961526297165845> o <#836315643070251008>`,` de **Twitch**, el canal correcto para publicar un enlace de **Twitch** es <#823381980389310464> o <#836315643070251008>`,` de **TikTok**, el canal correcto para publicar un enlace de **TikTok** es <#827295990360965153> o <#836315643070251008>`,` de **Twitter**, el canal correcto para publicar un enlace de **Twitter** es <#823381924344758313> o <#836315643070251008>`,` de **Instagram**, el canal correcto para publicar un enlace de **Instagram** es <#823382007391584276> o <#836315643070251008>`,`, si quiere hacer promoción hágalo en los canales de la categoría **<#785729364288339978>** como <#836315643070251008>.\nSi esta perdido y necesita ayuda mencione a un <@&831669132607881236>.`]
+        const colores: ColorResolvable[] = ["#5965F1","#FE0100","#6441a5","#030303","#1CA1F3","#ED0D6E", color.negative]
 
+        // if(enlaces.some(s=> s.some(c=> msg.content.includes(c)))){
+        //   const dataIdex = 
+        //   console.log('goola')
+
+        // }else{
+
+        // }
         for(const m in enlaces){
-          let count = 0
-          if(enlaces[m].urls.some(s=> msg.content.includes(s)) && count == 0){
-            count++
+          // console.log(enlaces[m])
+          // console.log(enlaces[m].some(s=> msg.content.includes(s)))
+          if(enlaces[m].some(s=> msg.content.includes(s))){
+            // console.log('sss')
             const embWarn = new EmbedBuilder()
             .setAuthor({name: msg.author.tag, iconURL: msg.author.displayAvatarURL()})
             .setTitle(titulos[m])
@@ -236,7 +277,7 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
                   tw.delete().catch(c=>console.log(c))
                 },24000)
               })
-            }, 800)
+            }, 600)
 
             if(autoModeracion.some(s=> s.miembroID == msg.author.id)){
               const autoModMember = autoModeracion.find(f=> f.miembroID==msg.author.id)
@@ -270,7 +311,6 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
             }else{
               autoModeracion.push({miembroID: msg.author.id, advertencias: 1})
             } 
-          }else{
             break
           }
         }

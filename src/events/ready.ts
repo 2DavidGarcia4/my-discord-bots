@@ -18,10 +18,10 @@ export const readyEvent = async (client: Client) => {
   .setColor(botDB.color.afirmative)
   .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
   .setTimestamp()
-  // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
+  if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
 
 
-  // Roles principales automaticos
+  //! Roles principales automaticos
   servidor?.members.cache.filter(f => !botDB.mainRoles.some(s => f.roles.cache.has(s)) && !f.user.bot).map(m => m).forEach((miembro, ps, mapa) => {
     miembro.roles.add(botDB.mainRoles)
     if (ps + 1 == mapa.length) console.log(`Roles principales agregados a ${ps + 1} miembros.`.blue.italic)
@@ -459,7 +459,7 @@ export const readyEvent = async (client: Client) => {
       }
     })
   }
-  mensajesTemporales()
+  // mensajesTemporales()
 
   async function promoNvl() {
     let dataPrl = await promoLevelModel.findById(botDB.serverId), arrayPl = dataPrl?.miembros, canal = servidor?.channels.cache.get(dataPrl?.datos.canalID || '')
