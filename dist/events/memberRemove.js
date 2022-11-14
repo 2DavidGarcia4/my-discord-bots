@@ -20,27 +20,27 @@ const db_1 = require("../db");
 const models_1 = require("../models");
 const memberRemoveEvent = (gmr, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d;
-    if (gmr.guild.id != db_1.botDB.serverId)
+    const { color, serverId } = db_1.botDB;
+    if (gmr.guild.id != serverId)
         return;
     __1.estadisticas.salidas++;
     const dataBot = yield models_1.botModel.findById((_a = client.user) === null || _a === void 0 ? void 0 : _a.id);
-    const dataInv = yield models_1.invitesModel.findById(db_1.botDB.serverId), arrayMi = dataInv === null || dataInv === void 0 ? void 0 : dataInv.miembros;
+    const dataInv = yield models_1.invitesModel.findById(serverId), arrayMi = dataInv === null || dataInv === void 0 ? void 0 : dataInv.miembros;
     if (!dataBot)
         return;
     const leaveLog = client.channels.cache.get(dataBot.logs.exit);
     if ((leaveLog === null || leaveLog === void 0 ? void 0 : leaveLog.type) != discord_js_1.ChannelType.GuildText)
         return;
-    const leaveLogEb = new discord_js_1.EmbedBuilder();
+    const leaveLogEb = new discord_js_1.EmbedBuilder()
+        .setTimestamp();
     if (gmr.user.bot) {
         leaveLogEb
             .setTitle("🤖 Se fue un bot")
             .setThumbnail(gmr.displayAvatarURL())
             .setDescription(`${gmr}\n${gmr.user.tag}\nSeunio: <t:${Math.round((((_b = gmr.joinedAt) === null || _b === void 0 ? void 0 : _b.valueOf()) || 0) / 1000)}:R>`)
-            .setColor('Orange')
-            .setTimestamp();
+            .setColor('Orange');
     }
     else {
-        // if(leaveLog?.type != ChannelType.GuildText) return
         const mbanner = yield client.users.fetch(gmr.id, { force: true });
         leaveLogEb
             .setAuthor({ name: gmr.user.username, iconURL: gmr.user.displayAvatarURL({ size: 2048 }) })
@@ -48,9 +48,8 @@ const memberRemoveEvent = (gmr, client) => __awaiter(void 0, void 0, void 0, fun
             .setImage(mbanner.bannerURL({ size: 2048 }) || null)
             .setTitle("📤 Se fue un miembro")
             .setDescription(`Se fue ${gmr} (*no se por quien fue invitado/a*).\n📥 **Seunio:**\n<t:${Math.round((((_c = gmr.joinedAt) === null || _c === void 0 ? void 0 : _c.valueOf()) || 0) / 1000)}:R>`)
-            .setColor("#ff0000")
-            .setFooter({ text: gmr.guild.name, iconURL: gmr.guild.iconURL() || undefined })
-            .setTimestamp();
+            .setColor(color.negative)
+            .setFooter({ text: gmr.guild.name, iconURL: gmr.guild.iconURL() || undefined });
         if (arrayMi) {
             for (let m of arrayMi) {
                 if (m.invitados.some(s => s.id == gmr.user.id)) {

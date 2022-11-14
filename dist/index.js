@@ -32,6 +32,7 @@ const invitationDelete_1 = require("./events/invitationDelete");
 const reactionAdd_1 = require("./events/reactionAdd");
 const reactionRemove_1 = require("./events/reactionRemove");
 colors_1.default;
+console.log('hola');
 const PCEM = new discord_js_1.Client({ intents: 131071, presence: { status: 'dnd' } });
 exports.estadisticas = { entradas: 0, salidas: 0, mensajes: 0, comandos: 0 }, exports.autoModeracion = [{ miembroID: "717420870267830382", advertencias: 0 }];
 exports.cooldowns = new Map();

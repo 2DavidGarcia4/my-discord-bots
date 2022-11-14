@@ -348,7 +348,7 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         if (['addreaction', 'addrc'].some(s => s == command))
             (0, addReaction_1.addReactionCommand)(msg, client, args);
         if (command == 'roles')
-            (0, roles_1.rolesCommand)(msg, client);
+            (0, roles_1.rolesCommand)(msg);
         if (command == 'ticket')
             (0, ticket_1.ticketCommand)(msg);
         if (command == 'informacion')

@@ -24,6 +24,8 @@ const informacion_1 = require("../commands/slash/generals/informacion");
 const estadisticas_1 = require("../commands/slash/generals/estadisticas");
 const clasificaciones_1 = require("../commands/slash/generals/clasificaciones");
 const sugerir_1 = require("../commands/slash/generals/sugerir");
+const usuario_1 = require("../commands/contextMenu/usuario");
+const rolesBase_1 = require("../commands/contextMenu/rolesBase");
 // Staff
 const examen_1 = require("../commands/slash/staff/examen");
 const crear_1 = require("../commands/slash/staff/crear");
@@ -41,17 +43,18 @@ const finalizar_1 = require("../commands/slash/administration/finalizar");
 const marcar_1 = require("../commands/slash/administration/marcar");
 const nuevo_1 = require("../commands/slash/administration/nuevo");
 const reroll_1 = require("../commands/slash/administration/reroll");
+const functions_1 = require("../utils/functions");
 exports.slashComands = new discord_js_1.Collection();
 const cmds = [
-    webs_1.websScb, ping_1.pingScb, ayuda_1.ayudaScb, reglas_1.reglasScb, plantilla_1.plantillaScb, informacion_1.informacionScb, estadisticas_1.estadisticasScb, clasificaciones_1.clasificacionesScb, sugerir_1.sugerirScb,
+    webs_1.websScb, ping_1.pingScb, ayuda_1.ayudaScb, reglas_1.reglasScb, plantilla_1.plantillaScb, informacion_1.informacionScb, estadisticas_1.estadisticasScb, clasificaciones_1.clasificacionesScb, sugerir_1.sugerirScb, usuario_1.usuarioCmcb, rolesBase_1.rolesBaseCmcb,
     examen_1.examenScb, crear_1.crearScb,
     limpiar_1.limpiarScb, encarcelar_1.encarcelarScb, expulsar_1.expulsarScb, banear_1.banearScb, desbanear_1.desbanearScb,
     historial_1.historialSmb, ascender_1.ascenderScb, degradar_1.degradarScb, finalizar_1.finalizarScb, marcar_1.marcarScb, nuevo_1.nuevoScb, reroll_1.rerollScb
 ];
 cmds.forEach((cmd, ps) => exports.slashComands.set(cmd.name, cmd));
 const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p;
-    const { emoji, color, serverId } = db_1.botDB;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    const { emoji, owners, color, serverId } = db_1.botDB;
     if (int.isChatInputCommand()) {
         const { commandName } = int;
         //? Generals
@@ -104,6 +107,15 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
             (0, nuevo_1.nuevoSlashCommand)(int, client);
         if (commandName == 'reroll')
             (0, reroll_1.rerollSlashCommand)(int);
+    }
+    if (int.isContextMenuCommand()) {
+        const { commandName, commandType } = int;
+        if (commandType == discord_js_1.ApplicationCommandType.User) {
+            if (commandName == 'Usuario')
+                (0, usuario_1.usuarioContextMenu)(int);
+            if (commandName == 'Roles base')
+                (0, rolesBase_1.rolesBaseContextMenu)(int);
+        }
     }
     if (int.isButton()) {
         const { customId, guild, user } = int;
@@ -533,162 +545,529 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
         // }
     }
     if (int.isSelectMenu()) {
-        const { customId, guild, user } = int;
-        if (customId == 'genero') {
-            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-            const valores = ['mujer', 'hombre'];
-            const roles = ['828720344869240832', '828720347246624769'];
-            for (let i = 0; i < valores.length; i++) {
-                if (int.values[0] == valores[i]) {
-                    if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[i])) {
-                        const embYaLoTiene = new discord_js_1.EmbedBuilder()
-                            .setAuthor({ name: "➖ Rol removido" })
-                            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-                            .setColor(db_1.botDB.color.negative)
-                            .setTimestamp();
-                        author.roles.remove(roles[i]);
-                        return int.reply({ embeds: [embYaLoTiene], ephemeral: true });
+        const { customId, values, guild, user } = int;
+        if (customId == 'select-type-role') {
+            const guildColor = ((_c = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White';
+            if (values[0] == 'access') {
+                const accesEb = new discord_js_1.EmbedBuilder()
+                    .setTitle(`💂 Roles de acceso`)
+                    .setDescription(`Estos roles te otorgan acceso a categorías ocultas.\n*Selecciona uno para obtenerlo*\n\n**<@&1041161492126507118>:** Este rol te da acceso a la categoría *👥 User x user* en la cual hay canales en los que puedes publicar e encontrar a personas que hagan join x join, alianzas, etc.\n\n**<@&1041162293683159101>:** Este rol te da acceso a la categoría *🔞 NSFW* en la cual hay canales con contenido sexual para mayore.\n\n**<@&1041161785186725919>:** Este rol te da acceso a la categoría *📝 Registros* la cual tiene canales en los que se registran acciones en el servidor, como sanciones.\n\n**<@&1041161797434081450>:** Este rol te da acceso a la categoría *🎮 Entretenimiento* en la que encontraras canales de bots de entretenimiento como el bot de economía.`)
+                    .setColor(guildColor);
+                const accesMenu = new discord_js_1.ActionRowBuilder()
+                    .addComponents(new discord_js_1.SelectMenuBuilder()
+                    .setCustomId('acces-roles')
+                    .setPlaceholder("📑 Elige varias opciones.")
+                    .setMaxValues(4)
+                    .addOptions([
+                    {
+                        emoji: '👥',
+                        label: 'J4J',
+                        description: 'Te da acceso a la categoría 👥 User x user.',
+                        value: 'j4j'
+                    },
+                    {
+                        emoji: '🔞',
+                        label: 'NSFW',
+                        description: 'Te da acceso a la categoría 🔞 NSFW.',
+                        value: 'nsfw'
+                    },
+                    {
+                        emoji: '📝',
+                        label: 'Registros',
+                        description: 'Te da acceso a la categoría 📝 Registros.',
+                        value: 'logs'
+                    },
+                    {
+                        emoji: '🎮',
+                        label: 'Entretenimiento',
+                        description: 'Te da acceso a la categoría 🎮 Entretenimiento.',
+                        value: 'entertainment'
+                    },
+                ]));
+                int.reply({ ephemeral: true, embeds: [accesEb], components: [accesMenu] });
+            }
+            if (values[0] == 'colors') {
+                const colorsEb = new discord_js_1.EmbedBuilder()
+                    .setTitle("🌈 Roles de colores")
+                    .setDescription(`Elige una opción para obtener un rol que cambiará el color de tu nombre dentro del servidor.\n\n**<@&825913849504333874>\n\n<@&825913858446327838>\n\n<@&825913837944438815>\n\n<@&823639766226436146>\n\n<@&823639778926395393>\n\n<@&825913846571991100>\n\n<@&823639775499386881>\n\n<@&825913860992270347>\n\n<@&825913843645546506>\n\n<@&823639769300467724>\n\n<@&825913834803560481>\n\n<@&825913840981901312>\n\n<@&825913855392743444>\n\n<@&825913852654780477>**`)
+                    .setColor(guildColor);
+                const colorsMenu = new discord_js_1.ActionRowBuilder()
+                    .addComponents(new discord_js_1.SelectMenuBuilder()
+                    .setCustomId("colors-roles")
+                    .setPlaceholder("📑 Elige una opción para obtener un rol.")
+                    .addOptions([
+                    {
+                        label: "Negro",
+                        emoji: "🎩",
+                        description: "Pinta tu nombre de color Negro.",
+                        value: "negro"
+                    },
+                    {
+                        label: "Café ",
+                        emoji: "🦂",
+                        description: "Pinta tu nombre de color Café .",
+                        value: "cafe"
+                    },
+                    {
+                        label: "Naranja",
+                        emoji: "🍊",
+                        description: "Pinta tu nombre de color Naranja.",
+                        value: "naranja"
+                    },
+                    {
+                        label: "Rojo",
+                        emoji: "🍎",
+                        description: "Pinta tu nombre de color Rojo.",
+                        value: "rojo"
+                    },
+                    {
+                        label: "Rosa",
+                        emoji: "🌷",
+                        description: "Pinta tu nombre de color Rosa.",
+                        value: "rosa"
+                    },
+                    {
+                        label: "Morado",
+                        emoji: "☂️",
+                        description: "Pinta tu nombre de color Morado.",
+                        value: "morado"
+                    },
+                    {
+                        label: "Azul",
+                        emoji: "💧",
+                        description: "Pinta tu nombre de color Azul.",
+                        value: "azul"
+                    },
+                    {
+                        label: "Azul celeste",
+                        emoji: "🐬",
+                        description: "Pinta tu nombre de color Azul celeste.",
+                        value: "celeste"
+                    },
+                    {
+                        label: "Cian",
+                        emoji: "🧼",
+                        description: "Pinta tu nombre de color Cian.",
+                        value: "cian"
+                    },
+                    {
+                        label: "Verde",
+                        emoji: "🌲",
+                        description: "Pinta tu nombre de color Verde.",
+                        value: "verde"
+                    },
+                    {
+                        label: "Verde Lima",
+                        emoji: "🍀",
+                        description: "Pinta tu nombre de color Verde Lima.",
+                        value: "lima"
+                    },
+                    {
+                        label: "Amarillo",
+                        emoji: "🍌",
+                        description: "Pinta tu nombre de color Amarillo.",
+                        value: "amarillo"
+                    },
+                    {
+                        label: "Gris",
+                        emoji: "🐺",
+                        description: "Pinta tu nombre de color Gris.",
+                        value: "gris"
+                    },
+                    {
+                        label: "Blanco",
+                        emoji: "☁️",
+                        description: "Pinta tu nombre de color Blanco",
+                        value: "blanco"
                     }
-                    for (let e = 0; e < roles.length; e++) {
-                        if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[e])) {
-                            const embRemoveYAdd = new discord_js_1.EmbedBuilder()
-                                .setAuthor({ name: '🔃 Intercambio de roles' })
-                                .setDescription(`Solo puedes tener un rol de **Genero** por lo tanto te he eliminado el rol <@&${roles[e]}> y te he agregado el rol <@&${roles[i]}> el cual has elegido ahora.`)
-                                .setColor(((_d = (_c = int.guild) === null || _c === void 0 ? void 0 : _c.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White')
-                                .setTimestamp();
-                            author === null || author === void 0 ? void 0 : author.roles.remove(roles[e]);
-                            author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
-                            return int.reply({ embeds: [embRemoveYAdd], ephemeral: true });
+                ]));
+                int.reply({ ephemeral: true, embeds: [colorsEb], components: [colorsMenu] });
+            }
+            if (values[0] == 'notifications') {
+                const notificationsEb = new discord_js_1.EmbedBuilder()
+                    .setTitle("🔔 Roles de notificaciones")
+                    .setDescription(`Elige una opción para obtener un rol que te notificará de nuevos anuncios, alianzas, sorteos, encuestas, eventos, sugerencias de la comunidad o postulaciones a staff del servidor o puedes obtener un rol que te notifica cuando se necesite revivir el chat general el cual es <@&850932923573338162> y puede ser muy usado.\n\n**<@&840704358949584926>\n\n<@&840704364158910475>\n\n<@&840704370387451965>\n\n<@&840704372911505418>\n\n<@&915015715239637002>\n\n<@&840704367467954247>\n\n<@&840704375190061076>\n\n<@&850932923573338162>**`)
+                    .setColor(guildColor);
+                const notificationsBtns = new discord_js_1.ActionRowBuilder()
+                    .addComponents(new discord_js_1.SelectMenuBuilder()
+                    .setCustomId("notifications-roles")
+                    .setPlaceholder("📑 Elige varias opciones.")
+                    .setMaxValues(8)
+                    .addOptions([
+                    {
+                        label: "Anuncios",
+                        emoji: "📢",
+                        description: "Te notifica cuándo haya un nuevo Anuncio.",
+                        value: "anuncio"
+                    },
+                    {
+                        label: "Alianzas",
+                        emoji: "🤝",
+                        description: "Te notifica cuándo haya una nueva Alianza.",
+                        value: "alianza"
+                    },
+                    {
+                        label: "Sorteos",
+                        emoji: "🎉",
+                        description: "Te notifica cuándo haya un nuevo Sorteo.",
+                        value: "sorteo"
+                    },
+                    {
+                        label: "Encuestas",
+                        emoji: "📊",
+                        description: "Te notifica cuándo haya una nueva Encuesta.",
+                        value: "encuesta"
+                    },
+                    {
+                        label: "Evento",
+                        emoji: "🥳",
+                        description: "Te notifica cuándo haya un nuevo Evento.",
+                        value: "evento"
+                    },
+                    {
+                        label: "Sugerencias",
+                        emoji: "📧",
+                        description: "Te notifica cuándo haya una nueva Sugerencia.",
+                        value: "sugerencia"
+                    },
+                    {
+                        label: "Postulaciones",
+                        emoji: "📝",
+                        description: "Te notifica cuándo haya una actualización sobre las Postulaciones.",
+                        value: "postulacion"
+                    },
+                    {
+                        label: "Revivir chat",
+                        emoji: "❇️",
+                        description: "Te notifica cuándo se necesite Revivir el chat general.",
+                        value: "revivir"
+                    },
+                ]));
+                int.reply({ ephemeral: true, embeds: [notificationsEb], components: [notificationsBtns] });
+            }
+            if (values[0] == 'gender') {
+                const genderEb = new discord_js_1.EmbedBuilder()
+                    .setTitle("♀️♂️ Roles de género")
+                    .setDescription(`Elige una opción en el menú de abajo para agregarte un rol y así determinar tu género dentro del servidor.\n\n**<@&828720344869240832>\n\n<@&828720347246624769>**`)
+                    .setColor(guildColor);
+                const genderBtns = new discord_js_1.ActionRowBuilder()
+                    .addComponents([
+                    new discord_js_1.SelectMenuBuilder()
+                        .setCustomId("gender-roles")
+                        .setPlaceholder("📑 Elige una opción para obtener un rol.")
+                        .addOptions([
+                        {
+                            label: "Mujer",
+                            emoji: "👩",
+                            description: "Rol que te determina como mujer aquí.",
+                            value: "mujer"
+                        },
+                        {
+                            label: "Hombre",
+                            emoji: "👨",
+                            description: "Rol que te determina como hombre aquí.",
+                            value: "hombre"
                         }
+                    ])
+                ]);
+                int.reply({ ephemeral: true, embeds: [genderEb], components: [genderBtns] });
+            }
+            if (values[0] == 'age') {
+                const ageEb = new discord_js_1.EmbedBuilder()
+                    .setTitle("🔢 Roles de edad")
+                    .setDescription(`Elije una opción en el menú de abajo para agregarte un rol de edad y así determinar tu edad dentro del servidor.\n\n**<@&828720200924790834>\n\n<@&828720340719894579>**`)
+                    .setColor(guildColor);
+                const ageMenu = new discord_js_1.ActionRowBuilder()
+                    .addComponents(new discord_js_1.SelectMenuBuilder()
+                    .setCustomId("age-roles")
+                    .setPlaceholder("📑 Elige una opción para obtener un rol.")
+                    .addOptions([
+                    {
+                        label: "-18",
+                        emoji: "🌗",
+                        description: "Rol que te determina como menor de edad.",
+                        value: "-18"
+                    },
+                    {
+                        label: "+18",
+                        emoji: "🌕",
+                        description: "Rol que te determina como mayor de edad.",
+                        value: "+18"
                     }
-                    const embAddRol = new discord_js_1.EmbedBuilder()
-                        .setTitle("➕ Rol agregado")
-                        .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-                        .setColor(db_1.botDB.color.afirmative);
-                    int.reply({ embeds: [embAddRol], ephemeral: true });
-                    author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
-                }
+                ]));
+                int.reply({ ephemeral: true, embeds: [ageEb], components: [ageMenu] });
+            }
+            if (values[0] == 'video-games') {
+                const videoGamesEb = new discord_js_1.EmbedBuilder()
+                    .setTitle("🎮 Roles de videojuegos")
+                    .setDescription(`Elige una o más opciones en el menú de abajo para obtener un rol del videojuego que te guste y así los demás miembros sabrán que videojuegos te gustan.\n\n**<@&886331637690953729>\n\n<@&886331642074005545>\n\n<@&886331630690631691>\n\n<@&885005724307054652>\n\n<@&886331626643152906>\n\n<@&886331634272587806>**`)
+                    .setColor(guildColor);
+                const videoGamesMenu = new discord_js_1.ActionRowBuilder()
+                    .addComponents(new discord_js_1.SelectMenuBuilder()
+                    .setCustomId("video-games-roles")
+                    .setPlaceholder("📑 Elige varias opciones.")
+                    .setMaxValues(6)
+                    .addOptions([
+                    {
+                        label: "Fornite",
+                        emoji: "☂️",
+                        description: "Obtienes el rol de Fornite.",
+                        value: "fornite"
+                    },
+                    {
+                        label: "Minecraft",
+                        emoji: "⛏️",
+                        description: "Obtienes el rol de Minecraft.",
+                        value: "minecraft"
+                    },
+                    {
+                        label: "Free Fire",
+                        emoji: "🔫",
+                        description: "Obtienes el rol de Free Fire.",
+                        value: "free"
+                    },
+                    {
+                        label: "Roblox",
+                        emoji: "💠",
+                        description: "Obtienes el rol de Roblox.",
+                        value: "roblox"
+                    },
+                    {
+                        label: "GTA V",
+                        emoji: "🚗",
+                        description: "Obtienes el rol de GTA V.",
+                        value: "GTA"
+                    },
+                    {
+                        label: "Among Us",
+                        emoji: "🔍",
+                        description: "Obtienes el rol de Among Us.",
+                        value: "amongus"
+                    },
+                ]));
+                int.reply({ ephemeral: true, embeds: [videoGamesEb], components: [videoGamesMenu] });
             }
         }
-        if (customId == 'edad') {
+        if (customId == 'gender-roles') {
             const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-            const valores = ['-18', '+18'];
-            const roles = ['828720200924790834', '828720340719894579'];
-            for (let i = 0; i < valores.length; i++) {
-                if (int.values[0] == valores[i]) {
-                    if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[i])) {
-                        const embYaLoTiene = new discord_js_1.EmbedBuilder()
-                            .setAuthor({ name: "➖ Rol removido" })
-                            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-                            .setColor(color.negative)
-                            .setTimestamp();
-                        author === null || author === void 0 ? void 0 : author.roles.remove(roles[i]);
-                        return int.reply({ embeds: [embYaLoTiene], ephemeral: true });
-                    }
-                    for (let e = 0; e < roles.length; e++) {
-                        if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[e])) {
-                            const embRemoveYAdd = new discord_js_1.EmbedBuilder()
-                                .setAuthor({ name: "🔃 Intercambio de roles" })
-                                .setDescription(`Solo puedes tener un rol de **Edad** por lo tanto te he eliminado el rol <@&${roles[e]}> y te he agregado el rol <@&${roles[i]}> el cual has elegido ahora.`)
-                                .setColor(((_f = (_e = int.guild) === null || _e === void 0 ? void 0 : _e.members.me) === null || _f === void 0 ? void 0 : _f.displayHexColor) || 'White')
-                                .setTimestamp();
-                            author === null || author === void 0 ? void 0 : author.roles.remove(roles[e]);
-                            author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
-                            return int.reply({ embeds: [embRemoveYAdd], ephemeral: true });
-                        }
-                    }
-                    const embAddRol = new discord_js_1.EmbedBuilder()
-                        .setTitle("➕ Rol agregado")
-                        .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-                        .setColor("#00ff00");
-                    int.reply({ embeds: [embAddRol], ephemeral: true });
-                    author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
+            const dictionary = [
+                {
+                    value: 'mujer',
+                    rol: '828720344869240832',
+                    status: ''
+                },
+                {
+                    value: 'hombre',
+                    rol: '828720347246624769',
+                    status: ''
                 }
-            }
+            ];
+            if (author)
+                (0, functions_1.selectRole)(int, values[0], dictionary, author);
         }
-        if (customId == "videojuegos") {
+        if (customId == 'age-roles') {
             const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-            let valores = ["fornite", "minecraft", "free", "roblox", "GTA", "amongus"];
-            let roles = ["886331637690953729", "886331642074005545", "886331630690631691", "885005724307054652", "886331626643152906", "886331634272587806"];
-            for (let i = 0; i < valores.length; i++) {
-                if (int.values[0] == valores[i]) {
-                    if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[i])) {
-                        const embYaLoTiene = new discord_js_1.EmbedBuilder()
-                            .setAuthor({ name: "➖ Rol removido" })
-                            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-                            .setColor(color.negative)
-                            .setTimestamp();
-                        author === null || author === void 0 ? void 0 : author.roles.remove(roles[i]);
-                        return int.reply({ embeds: [embYaLoTiene], ephemeral: true });
-                    }
-                    const embAddRol = new discord_js_1.EmbedBuilder()
-                        .setTitle("➕ Rol agregado")
-                        .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-                        .setColor(color.afirmative);
-                    int.reply({ embeds: [embAddRol], ephemeral: true });
-                    author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
+            const dictionary = [
+                {
+                    value: '-18',
+                    rol: '828720200924790834',
+                    status: ''
+                },
+                {
+                    value: '+18',
+                    rol: '828720340719894579',
+                    status: ''
                 }
-            }
+            ];
+            if (author)
+                (0, functions_1.selectRole)(int, values[0], dictionary, author);
         }
-        if (customId == "colores") {
+        if (customId == "video-games-roles") {
             const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-            let valores = ["negro", "cafe", "naranja", "rojo", "rosa", "morado", "azul", "celeste", "cian", "verde", "lima", "amarillo", "gris", "blanco"];
-            let roles = ["825913849504333874", "825913858446327838", "825913837944438815", "823639766226436146", "823639778926395393", "825913846571991100", "823639775499386881", "825913860992270347", "825913843645546506", "823639769300467724", "825913834803560481", "825913840981901312", "825913855392743444", "825913852654780477"];
-            for (let i = 0; i < valores.length; i++) {
-                if (int.values[0] == valores[i]) {
-                    if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[i])) {
-                        const embYaLoTiene = new discord_js_1.EmbedBuilder()
-                            .setAuthor({ name: "➖ Rol removido" })
-                            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-                            .setColor("#ff0000")
-                            .setTimestamp();
-                        author === null || author === void 0 ? void 0 : author.roles.remove(roles[i]);
-                        return int.reply({ embeds: [embYaLoTiene], ephemeral: true });
-                    }
-                    for (let e = 0; e < roles.length; e++) {
-                        if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[e])) {
-                            const embRemoveYAdd = new discord_js_1.EmbedBuilder()
-                                .setAuthor({ name: "🔃 Intercambio de roles" })
-                                .setDescription(`Solo puedes tener un rol de **Colores** por lo tanto te he eliminado el rol <@&${roles[e]}> y te he agregado el rol <@&${roles[i]}> el cual has elegido ahora.`)
-                                .setColor(((_h = (_g = int.guild) === null || _g === void 0 ? void 0 : _g.members.me) === null || _h === void 0 ? void 0 : _h.displayHexColor) || 'White')
-                                .setTimestamp();
-                            author === null || author === void 0 ? void 0 : author.roles.remove(roles[e]);
-                            author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
-                            return int.reply({ embeds: [embRemoveYAdd], ephemeral: true });
-                        }
-                    }
-                    const embAddRol = new discord_js_1.EmbedBuilder()
-                        .setTitle("➕ Rol agregado")
-                        .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-                        .setColor("#00ff00");
-                    int.reply({ embeds: [embAddRol], ephemeral: true });
-                    author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
+            const dictionary = [
+                {
+                    value: 'fornite',
+                    rol: '886331637690953729',
+                    status: ''
+                },
+                {
+                    value: 'minecraft',
+                    rol: '886331642074005545',
+                    status: ''
+                },
+                {
+                    value: 'free',
+                    rol: '886331630690631691',
+                    status: ''
+                },
+                {
+                    value: 'roblox',
+                    rol: '885005724307054652',
+                    status: ''
+                },
+                {
+                    value: 'GTA',
+                    rol: '886331626643152906',
+                    status: ''
+                },
+                {
+                    value: 'amongus',
+                    rol: '886331634272587806',
+                    status: ''
                 }
-            }
+            ];
+            if (author)
+                (0, functions_1.selectMultipleRoles)(int, values, dictionary, author);
         }
-        if (customId == "notificaciones") {
+        if (customId == "colors-roles") {
             const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-            let valores = ["anuncio", "alianza", "sorteo", "encuesta", "evento", "sugerencia", "postulacion", "revivir"];
-            let roles = ["840704358949584926", "840704364158910475", "840704370387451965", "840704372911505418", "915015715239637002", "840704367467954247", "840704375190061076", "850932923573338162"];
-            for (let i = 0; i < valores.length; i++) {
-                if (int.values[0] == valores[i]) {
-                    if (author === null || author === void 0 ? void 0 : author.roles.cache.has(roles[i])) {
-                        const embYaLoTiene = new discord_js_1.EmbedBuilder()
-                            .setAuthor({ name: "➖ Rol removido" })
-                            .setDescription(`Te he removido el rol <@&${roles[i]}>.`)
-                            .setColor(color.negative)
-                            .setTimestamp();
-                        author === null || author === void 0 ? void 0 : author.roles.remove(roles[i]);
-                        return int.reply({ embeds: [embYaLoTiene], ephemeral: true });
-                    }
-                    const embAddRol = new discord_js_1.EmbedBuilder()
-                        .setTitle("➕ Rol agregado")
-                        .setDescription(`Te he agregado el rol <@&${roles[i]}>.`)
-                        .setColor("#00ff00");
-                    int.reply({ embeds: [embAddRol], ephemeral: true });
-                    author === null || author === void 0 ? void 0 : author.roles.add(roles[i]);
-                }
-            }
+            const dictionary = [
+                {
+                    value: 'negro',
+                    rol: '825913849504333874',
+                    status: ''
+                },
+                {
+                    value: 'cafe',
+                    rol: '825913858446327838',
+                    status: ''
+                },
+                {
+                    value: 'naranja',
+                    rol: '825913837944438815',
+                    status: ''
+                },
+                {
+                    value: 'rojo',
+                    rol: '823639766226436146',
+                    status: ''
+                },
+                {
+                    value: 'rosa',
+                    rol: '823639778926395393',
+                    status: ''
+                },
+                {
+                    value: 'morado',
+                    rol: '825913846571991100',
+                    status: ''
+                },
+                {
+                    value: 'azul',
+                    rol: '823639775499386881',
+                    status: ''
+                },
+                {
+                    value: 'celeste',
+                    rol: '825913860992270347',
+                    status: ''
+                },
+                {
+                    value: 'cian',
+                    rol: '825913843645546506',
+                    status: ''
+                },
+                {
+                    value: 'verde',
+                    rol: '823639769300467724',
+                    status: ''
+                },
+                {
+                    value: 'lima',
+                    rol: '825913834803560481',
+                    status: ''
+                },
+                {
+                    value: 'amarillo',
+                    rol: '825913840981901312',
+                    status: ''
+                },
+                {
+                    value: 'gris',
+                    rol: '825913855392743444',
+                    status: ''
+                },
+                {
+                    value: 'blanco',
+                    rol: '825913852654780477',
+                    status: ''
+                },
+            ];
+            if (author)
+                (0, functions_1.selectRole)(int, values[0], dictionary, author);
+        }
+        if (customId == "notifications-roles") {
+            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+            const dictionary = [
+                {
+                    value: 'anuncio',
+                    rol: '840704358949584926',
+                    status: ''
+                },
+                {
+                    value: 'alianza',
+                    rol: '840704364158910475',
+                    status: ''
+                },
+                {
+                    value: 'sorteo',
+                    rol: '840704370387451965',
+                    status: ''
+                },
+                {
+                    value: 'encuesta',
+                    rol: '840704372911505418',
+                    status: ''
+                },
+                {
+                    value: 'evento',
+                    rol: '915015715239637002',
+                    status: ''
+                },
+                {
+                    value: 'sugerencia',
+                    rol: '840704367467954247',
+                    status: ''
+                },
+                {
+                    value: 'postulacion',
+                    rol: '840704375190061076',
+                    status: ''
+                },
+                {
+                    value: 'revivir',
+                    rol: '850932923573338162',
+                    status: ''
+                },
+            ];
+            if (author)
+                (0, functions_1.selectMultipleRoles)(int, values, dictionary, author);
+        }
+        if (customId == 'acces-roles') {
+            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id), dictionary = [
+                {
+                    value: 'j4j',
+                    rol: '1041161492126507118',
+                    status: ''
+                },
+                {
+                    value: 'nsfw',
+                    rol: '1041162293683159101',
+                    status: ''
+                },
+                {
+                    value: 'logs',
+                    rol: '1041161785186725919',
+                    status: ''
+                },
+                {
+                    value: 'entertainment',
+                    rol: '1041161797434081450',
+                    status: ''
+                },
+            ];
+            if (author)
+                (0, functions_1.selectMultipleRoles)(int, values, dictionary, author);
         }
         if (customId == "información") {
             const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
@@ -697,13 +1076,13 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 return;
             for (let c in dataCol.colaboradores) {
                 if (dataCol.colaboradores[c].colaborador) {
-                    colaboradores.push(`**<#${dataCol.colaboradores[c].canalID}>**: canal del colaborador **${(_j = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(dataCol.colaboradores[c].id)) === null || _j === void 0 ? void 0 : _j.user.tag}**.`);
+                    colaboradores.push(`**<#${dataCol.colaboradores[c].canalID}>**: canal del colaborador **${(_d = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(dataCol.colaboradores[c].id)) === null || _d === void 0 ? void 0 : _d.user.tag}**.`);
                 }
             }
             let infos = [
                 {
                     valor: `servidor`,
-                    color: ((_k = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _k === void 0 ? void 0 : _k.displayHexColor) || 'White',
+                    color: ((_e = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _e === void 0 ? void 0 : _e.displayHexColor) || 'White',
                     miniatura: (guild === null || guild === void 0 ? void 0 : guild.iconURL({ size: 1024 })) || '',
                     titulo: `${guild === null || guild === void 0 ? void 0 : guild.name}`,
                     descripcion: `Es un servidor enfocado en la promoción, creado el <t:${Math.floor(((guild === null || guild === void 0 ? void 0 : guild.createdAt.valueOf()) || 0) / 1000)}:F> aquí puedes promocionarte, dar a conocer tu contenido, trabajo, redes sociales a mas personas, además de eso puedes charlar con los demás miembros del servidor, hacer amigos, entretenerte con los diversos bots de entretenimiento que tenemos, entre otras cosas.\n\n**¡Disfruta del servidor!**\n*Gracias por estar aquí*`
@@ -843,10 +1222,10 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 },
                 {
                     valor: `bot-servidor`,
-                    color: ((_l = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _l === void 0 ? void 0 : _l.displayHexColor) || 'White',
-                    miniatura: ((_m = client.user) === null || _m === void 0 ? void 0 : _m.displayAvatarURL({ size: 1024 })) || '',
+                    color: ((_f = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _f === void 0 ? void 0 : _f.displayHexColor) || 'White',
+                    miniatura: ((_g = client.user) === null || _g === void 0 ? void 0 : _g.displayAvatarURL({ size: 1024 })) || '',
                     titulo: `🤖 Bot del servidor`,
-                    descripcion: `Hola, soy **<@${(_o = client.user) === null || _o === void 0 ? void 0 : _o.id}>** el bot oficial del servidor, creado por <@717420870267830382>, el <t:${Math.floor((((_p = client.user) === null || _p === void 0 ? void 0 : _p.createdAt.valueOf()) || 0) / 1000)}:F> con la finalidad de hacer el trabajo pesado o difícil de los moderadores y administradores, remplazar a otros bots, hacer acciones complejas que otros bots no pondrían.\n*El objetivo de mi creador es seguir mejorándome hasta remplazar la máxima cantidad de bots que pueda.*`
+                    descripcion: `Hola, soy **<@${(_h = client.user) === null || _h === void 0 ? void 0 : _h.id}>** el bot oficial del servidor, creado por <@717420870267830382>, el <t:${Math.floor((((_j = client.user) === null || _j === void 0 ? void 0 : _j.createdAt.valueOf()) || 0) / 1000)}:F> con la finalidad de hacer el trabajo pesado o difícil de los moderadores y administradores, remplazar a otros bots, hacer acciones complejas que otros bots no pondrían.\n*El objetivo de mi creador es seguir mejorándome hasta remplazar la máxima cantidad de bots que pueda.*`
                 },
             ];
             infos.forEach((info) => {

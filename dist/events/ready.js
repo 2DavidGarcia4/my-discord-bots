@@ -33,8 +33,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         .setColor(db_1.botDB.color.afirmative)
         .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
         .setTimestamp();
-    if (readyChannel && readyChannel.type == discord_js_1.ChannelType.GuildText)
-        readyChannel.send({ embeds: [embEncendido] });
+    // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
     // Roles principales automaticos
     servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.filter(f => !db_1.botDB.mainRoles.some(s => f.roles.cache.has(s)) && !f.user.bot).map(m => m).forEach((miembro, ps, mapa) => {
         miembro.roles.add(db_1.botDB.mainRoles);
@@ -153,49 +152,27 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     }
     presencias();
     function estadisticas() {
-        const server = client.guilds.cache.get(db_1.botDB.serverId), todosG = server === null || server === void 0 ? void 0 : server.memberCount, soloMiembros = server === null || server === void 0 ? void 0 : server.members.cache.filter(fm => !fm.user.bot).size, cantBots = server === null || server === void 0 ? void 0 : server.members.cache.filter(fb => fb.user.bot).size;
-        const channelLog = client.channels.cache.get('960567789263937656');
+        const server = client.guilds.cache.get(db_1.botDB.serverId), todosG = server === null || server === void 0 ? void 0 : server.memberCount, online = server === null || server === void 0 ? void 0 : server.members.cache.filter(f => { var _a, _b, _c; return ((_a = f.presence) === null || _a === void 0 ? void 0 : _a.status) == 'dnd' || ((_b = f.presence) === null || _b === void 0 ? void 0 : _b.status) == 'idle' || ((_c = f.presence) === null || _c === void 0 ? void 0 : _c.status) == 'online'; }).size, cantBots = server === null || server === void 0 ? void 0 : server.members.cache.filter(fb => fb.user.bot).size;
         const canalTodos = client.channels.cache.get('823349420106973204');
         const canalMiembros = client.channels.cache.get('823349423349301318');
         const canalBots = client.channels.cache.get('823349426264997919');
-        if ((canalTodos === null || canalTodos === void 0 ? void 0 : canalTodos.type) != discord_js_1.ChannelType.GuildText)
+        if ((canalTodos === null || canalTodos === void 0 ? void 0 : canalTodos.type) != discord_js_1.ChannelType.GuildVoice)
             return;
-        if ((canalMiembros === null || canalMiembros === void 0 ? void 0 : canalMiembros.type) != discord_js_1.ChannelType.GuildText)
+        if ((canalMiembros === null || canalMiembros === void 0 ? void 0 : canalMiembros.type) != discord_js_1.ChannelType.GuildVoice)
             return;
-        if ((canalBots === null || canalBots === void 0 ? void 0 : canalBots.type) != discord_js_1.ChannelType.GuildText)
+        if ((canalBots === null || canalBots === void 0 ? void 0 : canalBots.type) != discord_js_1.ChannelType.GuildVoice)
             return;
-        let estadoT = null, estadoM = null, estadoB = null, edited = false;
-        if ((canalTodos === null || canalTodos === void 0 ? void 0 : canalTodos.name) == `『👥』Todos: ${todosG === null || todosG === void 0 ? void 0 : todosG.toLocaleString()}`)
-            estadoT = "Sin actualización";
-        else {
+        if (canalTodos.name != `『👥』Todos: ${todosG === null || todosG === void 0 ? void 0 : todosG.toLocaleString()}`) {
             canalTodos.edit({ name: `『👥』Todos: ${todosG === null || todosG === void 0 ? void 0 : todosG.toLocaleString()}` });
-            estadoT = "Se ha actualizado";
-            edited = true;
         }
-        if (canalMiembros.name == `『🧑』Miembros: ${soloMiembros === null || soloMiembros === void 0 ? void 0 : soloMiembros.toLocaleString()}`)
-            estadoM = "Sin actualización";
-        else {
-            canalMiembros.edit({ name: `『🧑』Miembros: ${soloMiembros === null || soloMiembros === void 0 ? void 0 : soloMiembros.toLocaleString()}` });
-            estadoM = "Se ha actualizado";
-            edited = true;
+        if (canalMiembros.name != `『🟢』En linea: ${online === null || online === void 0 ? void 0 : online.toLocaleString()}`) {
+            canalMiembros.edit({ name: `『🟢』En linea: ${online === null || online === void 0 ? void 0 : online.toLocaleString()}` });
         }
-        if (canalBots.name == `『🤖』Bots: ${cantBots === null || cantBots === void 0 ? void 0 : cantBots.toLocaleString()}`) {
-            estadoB = "Sin actualización";
-        }
-        else {
+        if (canalBots.name != `『🤖』Bots: ${cantBots === null || cantBots === void 0 ? void 0 : cantBots.toLocaleString()}`) {
             canalBots.edit({ name: `『🤖』Bots: ${cantBots === null || cantBots === void 0 ? void 0 : cantBots.toLocaleString()}` });
-            estadoB = "Se ha actualizado";
-            edited = true;
-        }
-        if (edited && (channelLog === null || channelLog === void 0 ? void 0 : channelLog.type) == discord_js_1.ChannelType.GuildText) {
-            const embEstadisticas = new discord_js_1.EmbedBuilder()
-                .setTitle("Actualización de estadísticas")
-                .setDescription(`**『👥』Todos: ${todosG}**\n${estadoT}\n\n**『👤』Miembros: ${soloMiembros}**\n${estadoM}\n\n**『🤖』Bots: ${cantBots}**\n${estadoB}`)
-                .setColor(db_1.botDB.color.blue)
-                .setTimestamp();
-            channelLog.send({ embeds: [embEstadisticas] });
         }
     }
+    estadisticas();
     function carcel() {
         var _a;
         return __awaiter(this, void 0, void 0, function* () {
@@ -490,7 +467,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             }
         });
     }
-    // mensajesTemporales()
+    mensajesTemporales();
     function promoNvl() {
         return __awaiter(this, void 0, void 0, function* () {
             let dataPrl = yield models_1.promoLevelModel.findById(db_1.botDB.serverId), arrayPl = dataPrl === null || dataPrl === void 0 ? void 0 : dataPrl.miembros, canal = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get((dataPrl === null || dataPrl === void 0 ? void 0 : dataPrl.datos.canalID) || '');
@@ -570,5 +547,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     // console.log((await servidor?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
     // const command = slashComands.get('encarcelar')
     // ;(await servidor?.commands.fetch('972168438321651752', {force: true}))?.edit({defaultMemberPermissions: 'ManageMessages'}).then(c=> console.log('Comando actualizado'))
+    // ;(await servidor?.commands.fetch('961732766112841768', {force: true}))?.delete().then(c=> console.log('Comando eliminado'))
 });
 exports.readyEvent = readyEvent;

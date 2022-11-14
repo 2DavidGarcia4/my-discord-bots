@@ -104,7 +104,7 @@ const memberAddEvent = (gmd, client) => __awaiter(void 0, void 0, void 0, functi
             .setImage((usBanner === null || usBanner === void 0 ? void 0 : usBanner.bannerURL({ size: 4096 })) || null)
             .setTitle("📥 Se unió un usuario")
             .setDescription(`Se unió ${gmd} *(no se por quien fue invitado/a)*.\n📅 **Creacion de la cueta:**\n<t:${Math.round(gmd.user.createdAt.valueOf() / 1000)}:R>`)
-            .setColor(color.negative)
+            .setColor(color.afirmative)
             .setFooter({ text: gmd.guild.name, iconURL: gmd.guild.iconURL() || undefined })
             .setTimestamp();
         yield gmd.guild.invites.fetch().then((invites) => __awaiter(void 0, void 0, void 0, function* () {
@@ -168,8 +168,9 @@ const memberAddEvent = (gmd, client) => __awaiter(void 0, void 0, void 0, functi
                 }
             }
         }));
-        console.log('nuevo miembro');
-        welcomeMsg.send({ embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**` }).then(() => console.log('send webhook'));
+        // console.log('nuevo miembro')
+        welcomeMsg.send({ embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**` });
+        // .then(()=> console.log('send webhook'))
         if ((welcomeLog === null || welcomeLog === void 0 ? void 0 : welcomeLog.type) == discord_js_1.ChannelType.GuildText)
             welcomeLog.send({ embeds: [embBien] });
         let miembroInv = arrayMi === null || arrayMi === void 0 ? void 0 : arrayMi.find(f => f.id == gmd.user.id);

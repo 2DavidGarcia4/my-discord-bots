@@ -11,11 +11,11 @@ colors_1.default;
 (0, mongoose_1.connect)(config_1.connectMongo || '').then(() => console.log('Conectado corectamente a la base de datos'.green))
     .catch((err) => console.error('Ocurrió un error al conectarse a la DB'.red, err));
 exports.botDB = {
-    prefix: '|',
+    prefix: 'p.',
     serverId: '773249398431809586',
     creatorId: '717420870267830382',
     owners: ['717420870267830382', '825186118050775052'],
-    mainRoles: ["823372926707171358", "887450254826418236", "852684847901704192", "830260569012699146", "840704377962758204", "887443737804931122", "885301022677942272", "887443742469029961"],
+    mainRoles: ["823372926707171358", "887450254826418236", "852684847901704192", "830260569012699146", "840704377962758204", "887443737804931122", "885301022677942272", "887443742469029961", '975523381736787978'],
     levelRoles: ['831671368776024104', '831671377396367360', '838498326512140329', '838498329650003969', '876273805494988821', '876273903452975134', '876274096990724097', '876274137239265340', '891446815700967434', '891446820851564584', '891446820851564584', '971515112567476354', '971515118837956699', '971515126144442448'],
     emoji: {
         cat: '<a:gatito:909919946140684288>',
@@ -34,6 +34,7 @@ exports.botDB = {
         warning: '<:advertencia:929204500739268608>',
         confetti: '<a:confeti:974801702307901490>',
         tickTock: '<:Mamadatok:855167926875979837>',
+        addition: '<:addition:1041412594931605606>',
         leftArrow: '<a:LeftArrow:942155020017754132>',
         rightArrow: '<a:RightArrow:942154978859044905>',
         ping30ms: '<:30ms:917227036890791936',
@@ -43,12 +44,14 @@ exports.botDB = {
         instagram: '<:instagram:855169028376494080>',
         afirmative: '<a:afirmativo:856966728806432778>',
         invitation: '<:invitacion:1027688019123249243>',
+        subtraction: '<:subtraction:1041412540774756362>',
         information: '<a:Info:926972188018479164>',
         animateBoost: '<a:BoostAnimado:931289485700911184>',
     },
     color: {
         blue: '#0095F7',
         afirmative: '#00ff00',
-        negative: '#ff0000'
+        negative: '#ff0000',
+        yellow: '#F8CB01'
     }
 };
