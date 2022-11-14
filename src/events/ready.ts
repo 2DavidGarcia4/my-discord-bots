@@ -545,4 +545,5 @@ export const readyEvent = async (client: Client) => {
 
   // const command = slashComands.get('encarcelar')
   // ;(await servidor?.commands.fetch('972168438321651752', {force: true}))?.edit({defaultMemberPermissions: 'ManageMessages'}).then(c=> console.log('Comando actualizado'))
+  // ;(await servidor?.commands.fetch('961732766112841768', {force: true}))?.delete().then(c=> console.log('Comando eliminado'))
 }
