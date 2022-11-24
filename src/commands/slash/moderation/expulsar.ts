@@ -24,11 +24,11 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
       `La ID proporcionada *(${id})* no es valida ya que no es numérica.`
     ],
     [
-      Boolean(!member && !id),
+      Boolean(!preMember && !id),
       `No has proporcionado el miembro a expulsar.`
     ],
     [
-      Boolean(member && id),
+      Boolean(preMember && id),
       `No proporciones un miembro y una ID a la vez.`
     ],
     [
