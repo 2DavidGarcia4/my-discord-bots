@@ -44,6 +44,7 @@ exports.botDB = {
         instagram: '<:instagram:855169028376494080>',
         afirmative: '<a:afirmativo:856966728806432778>',
         invitation: '<:invitacion:1027688019123249243>',
+        textChannel: '<:canaldetexto:904812801925738557>',
         subtraction: '<:subtraction:1041412540774756362>',
         information: '<a:Info:926972188018479164>',
         animateBoost: '<a:BoostAnimado:931289485700911184>',

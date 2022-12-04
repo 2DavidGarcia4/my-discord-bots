@@ -34,6 +34,7 @@ export type BotDB = {
     rightArrow: string
     invitation: string
     afirmative: string
+    textChannel: string
     subtraction: string
     information: string
     animateBoost: string
@@ -64,8 +65,10 @@ export type BotLogs = {
   welcome: string
   moderation: string
   staff: string
-  suggestions: string,
+  suggestions: string
   alliances: string
+  deleteMessages: string
+  editedMessages: string
 }
 
 export type DataBot = {
