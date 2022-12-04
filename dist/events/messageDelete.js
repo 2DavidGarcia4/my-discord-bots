@@ -14,10 +14,10 @@ const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const models_1 = require("../models");
 const messageDeleteEvent = (msgd, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
-    if (msgd.guildId != db_1.botDB.serverId)
-        return;
+    var _a, _b, _c, _d, _e, _f, _g;
     const { serverId, color, emoji } = db_1.botDB;
+    if (msgd.guildId != serverId)
+        return;
     let dataTs = yield models_1.ticketsModel.findById(serverId), arrayTs = dataTs === null || dataTs === void 0 ? void 0 : dataTs.tickets, ticket = arrayTs === null || arrayTs === void 0 ? void 0 : arrayTs.find(f => f.id == msgd.channelId);
     if ((arrayTs === null || arrayTs === void 0 ? void 0 : arrayTs.some(s => s.id == msgd.channelId)) && ticket.msgCerrarID == msgd.id && !ticket.cerrado) {
         const botonCerrar = new discord_js_1.ActionRowBuilder()
@@ -48,15 +48,17 @@ const messageDeleteEvent = (msgd, client) => __awaiter(void 0, void 0, void 0, f
         if (!dataBot)
             return;
         const channelLog = client.channels.cache.get(dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.deleteMessages);
-        const deleteMessageEb = new discord_js_1.EmbedBuilder()
-            .setAuthor({ name: ((_b = msgd.member) === null || _b === void 0 ? void 0 : _b.nickname) || ((_c = msgd.author) === null || _c === void 0 ? void 0 : _c.username) || 'undefined', iconURL: (_d = msgd.author) === null || _d === void 0 ? void 0 : _d.displayAvatarURL() })
+        const logs = yield ((_b = msgd.guild) === null || _b === void 0 ? void 0 : _b.fetchAuditLogs());
+        const executor = (_c = logs === null || logs === void 0 ? void 0 : logs.entries.filter(f => f.actionType == 'Delete' && f.targetType == 'Message').first()) === null || _c === void 0 ? void 0 : _c.executor;
+        const DeleteMessageEb = new discord_js_1.EmbedBuilder()
+            .setAuthor({ name: ((_d = msgd.member) === null || _d === void 0 ? void 0 : _d.nickname) || ((_e = msgd.author) === null || _e === void 0 ? void 0 : _e.username) || 'undefined', iconURL: (_f = msgd.author) === null || _f === void 0 ? void 0 : _f.displayAvatarURL() })
             .setTitle('🗑️ Mensaje eliminado')
             .setDescription(`**📄 Mensaje:**\n${msgd.content.length > 2000 ? msgd.content.slice(0, 2000) + '...' : msgd.content}`)
-            .setFields({ name: '🆔 Autor:', value: `${msgd.author} ||*(${(_e = msgd.author) === null || _e === void 0 ? void 0 : _e.id})*||`, inline: true }, { name: `${emoji.textChannel} Canal:`, value: `${msgd.channel}`, inline: true })
-            .setColor(color.negative)
+            .setFields({ name: '🧑 **Autor:**', value: `${msgd.author} ||*(\`\`${(_g = msgd.author) === null || _g === void 0 ? void 0 : _g.id}\`\`)*||`, inline: true }, { name: `${emoji.textChannel} **Canal:**`, value: `${msgd.channel}`, inline: true }, { name: '👮 **Ejecutor:**', value: `${executor} ||*(\`\`${executor === null || executor === void 0 ? void 0 : executor.id}\`\`)*||`, inline: true })
+            .setColor('Red')
             .setTimestamp();
         if ((channelLog === null || channelLog === void 0 ? void 0 : channelLog.type) == discord_js_1.ChannelType.GuildText)
-            return channelLog.send({ embeds: [deleteMessageEb] });
+            return channelLog.send({ embeds: [DeleteMessageEb] });
     }
 });
 exports.messageDeleteEvent = messageDeleteEvent;

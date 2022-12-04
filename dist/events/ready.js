@@ -33,8 +33,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         .setColor(db_1.botDB.color.afirmative)
         .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
         .setTimestamp();
-    if (readyChannel && readyChannel.type == discord_js_1.ChannelType.GuildText)
-        readyChannel.send({ embeds: [embEncendido] });
+    // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
     //! Roles principales automaticos
     servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.filter(f => !db_1.botDB.mainRoles.some(s => f.roles.cache.has(s)) && !f.user.bot).map(m => m).forEach((miembro, ps, mapa) => {
         miembro.roles.add(db_1.botDB.mainRoles);

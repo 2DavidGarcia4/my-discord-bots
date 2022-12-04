@@ -18,7 +18,7 @@ export const readyEvent = async (client: Client) => {
   .setColor(botDB.color.afirmative)
   .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
   .setTimestamp()
-  // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
+  if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
 
 
   //! Roles principales automaticos
@@ -164,12 +164,12 @@ export const readyEvent = async (client: Client) => {
   estadisticas()
 
   async function carcel() {
-    const dataCrc = await carcelModel.findById(client.user?.id), tiempoActual = Date.now(), canalRegistro = servidor?.channels.cache.get('941170978459910214')
+    const dataBot = await botModel.findById(client.user?.id)
+    const dataCrc = await carcelModel.findById(client.user?.id), tiempoActual = Date.now(), canalRegistro = servidor?.channels.cache.get(dataBot?.logs.moderation || '')
     
     if (dataCrc && dataCrc.prisioneros.length >= 1) {
       for (let d in dataCrc.prisioneros) {
         const miembro = servidor?.members.cache.get(dataCrc.prisioneros[d].id)
-        const tiempo = dataCrc.prisioneros[d].condena
         const msTime = ms(dataCrc.prisioneros[d].condena) || 0
         const durante = msTime >= 86400000 ? `**${Math.floor(msTime / 86400000)}** días` : msTime >= 3600000 ? `**${Math.floor(msTime / 3600000)}** horas` : msTime >= 60000 ? `**${Math.floor(msTime / 60000)}** minutos` : `**${Math.floor(msTime / 1000)}** segundos`
         
@@ -179,17 +179,18 @@ export const readyEvent = async (client: Client) => {
         .setTimestamp()
 
         
-        if (!miembro && canalRegistro?.type == ChannelType.GuildText) {
+        if (!miembro) {
           const user = client.users.cache.get(dataCrc.prisioneros[d].id)
           if(user){
             registroSa
             .setAuthor({name: user?.tag, iconURL: user.displayAvatarURL()})
             .setDescription(`👤 ${user.tag}\n**Ha cumplido con la condena de:** ${durante}\n**Por la razón:** ${dataCrc.prisioneros[d].razon}`)
           }
-          canalRegistro.send({ embeds: [registroSa] })
+          if(canalRegistro?.type == ChannelType.GuildText) canalRegistro.send({ embeds: [registroSa] })
+          dataCrc.prisioneros.splice(parseInt(d), 1)
+          await dataCrc.save()
 
-        } else if(miembro && servidor && canalRegistro?.type == ChannelType.GuildText) {
-          // console.log((dataCrc.prisioneros[d].tiempo + msTime) - tiempoActual)
+        } else if(miembro && servidor) {
           if ((dataCrc.prisioneros[d].tiempo + msTime) - tiempoActual <= 0) {
             const embMDS = new EmbedBuilder()
             .setAuthor({ name: miembro.user.tag, iconURL: miembro.displayAvatarURL() })
@@ -206,12 +207,12 @@ export const readyEvent = async (client: Client) => {
 
             miembro.roles.remove('830260549098405935').then(r => {
               miembro.send({ embeds: [embMDS] }).catch(() => '')
-              canalRegistro.send({ embeds: [registroSa] })
+              if(canalRegistro?.type == ChannelType.GuildText) canalRegistro.send({ embeds: [registroSa] })
             })
 
+            dataCrc.prisioneros.splice(parseInt(d), 1)
+            await dataCrc.save()
           }
-          dataCrc.prisioneros.splice(parseInt(d), 1)
-          await dataCrc.save()
         }
       }
     }

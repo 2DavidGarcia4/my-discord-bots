@@ -31,10 +31,9 @@ const invitationCreate_1 = require("./events/invitationCreate");
 const invitationDelete_1 = require("./events/invitationDelete");
 const reactionAdd_1 = require("./events/reactionAdd");
 const reactionRemove_1 = require("./events/reactionRemove");
+const messageUpdate_1 = require("./events/messageUpdate");
 colors_1.default;
-require("./Pepe frog");
-console.log('hola');
-const PCEM = new discord_js_1.Client({ intents: 131071, presence: { status: 'dnd' } });
+const PCEM = new discord_js_1.Client({ intents: 131071 });
 exports.estadisticas = { entradas: 0, salidas: 0, mensajes: 0, comandos: 0 }, exports.autoModeracion = [{ miembroID: "717420870267830382", advertencias: 0 }];
 exports.cooldowns = new Map();
 exports.sistemMarcar = [], exports.coolSugerencias = [];
@@ -52,6 +51,9 @@ PCEM.on('messageCreate', (message) => __awaiter(void 0, void 0, void 0, function
 }));
 PCEM.on('messageDelete', (message) => {
     (0, messageDelete_1.messageDeleteEvent)(message, PCEM);
+});
+PCEM.on('messageUpdate', (oldMessage, newMessage) => {
+    (0, messageUpdate_1.messageUpdateEvent)(oldMessage, newMessage, PCEM);
 });
 PCEM.on('interactionCreate', (interaction) => {
     (0, interaction_1.interactionEvent)(interaction, PCEM);

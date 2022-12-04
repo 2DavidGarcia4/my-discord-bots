@@ -14,7 +14,6 @@ export const messageUpdateEvent = async (oldMsg: Message<boolean> | PartialMessa
     const MessageUpdateEb = new EmbedBuilder()
     .setAuthor({name: oldMsg.member?.nickname || oldMsg.author?.username || 'undefined', iconURL: oldMsg.author?.displayAvatarURL()})
     .setTitle('🪄 Mensaje editado')
-    .setDescription(`📄 ** Mensaje editado:**\n`)
     .addFields(
       {name: `📄 **Mensaje antiguo:**`, value: `${oldMsg.content.length>1024 ? oldMsg.content.slice(0,1020)+'...' : oldMsg.content}`, inline: true},
       {name: `📝 **Mensaje actual:**`, value: `${(newMsg.content?.length || 0)>1024 ? newMsg.content?.slice(0, 1020)+'...' : newMsg.content}`, inline: true},

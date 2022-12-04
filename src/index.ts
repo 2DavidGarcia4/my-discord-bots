@@ -16,6 +16,7 @@ import { invitationCreateEvent } from "./events/invitationCreate";
 import { invitationDeleteEvent } from "./events/invitationDelete";
 import { reactionAddEvent } from "./events/reactionAdd";
 import { reactionRemoveEvent } from "./events/reactionRemove";
+import { messageUpdateEvent } from "./events/messageUpdate";
 
 colors
 
@@ -42,7 +43,7 @@ PCEM.on('messageDelete', (message) => {
 })
 
 PCEM.on('messageUpdate', (oldMessage, newMessage) => {
-  
+  messageUpdateEvent(oldMessage, newMessage, PCEM)
 })
 
 PCEM.on('interactionCreate', (interaction) => {
