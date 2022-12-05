@@ -33,7 +33,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         .setColor(db_1.botDB.color.afirmative)
         .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
         .setTimestamp();
-    // if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
+    if (readyChannel && readyChannel.type == discord_js_1.ChannelType.GuildText)
+        readyChannel.send({ embeds: [embEncendido] });
     //! Roles principales automaticos
     servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.filter(f => !db_1.botDB.mainRoles.some(s => f.roles.cache.has(s)) && !f.user.bot).map(m => m).forEach((miembro, ps, mapa) => {
         miembro.roles.add(db_1.botDB.mainRoles);
@@ -174,30 +175,32 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     }
     estadisticas();
     function carcel() {
-        var _a;
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const dataCrc = yield models_1.carcelModel.findById((_a = client.user) === null || _a === void 0 ? void 0 : _a.id), tiempoActual = Date.now(), canalRegistro = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get('941170978459910214');
+            const dataBot = yield models_1.botModel.findById((_a = client.user) === null || _a === void 0 ? void 0 : _a.id);
+            const dataCrc = yield models_1.carcelModel.findById((_b = client.user) === null || _b === void 0 ? void 0 : _b.id), tiempoActual = Date.now(), canalRegistro = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.moderation) || '');
             if (dataCrc && dataCrc.prisioneros.length >= 1) {
                 for (let d in dataCrc.prisioneros) {
                     const miembro = servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.get(dataCrc.prisioneros[d].id);
-                    const tiempo = dataCrc.prisioneros[d].condena;
                     const msTime = (0, ms_1.default)(dataCrc.prisioneros[d].condena) || 0;
                     const durante = msTime >= 86400000 ? `**${Math.floor(msTime / 86400000)}** días` : msTime >= 3600000 ? `**${Math.floor(msTime / 3600000)}** horas` : msTime >= 60000 ? `**${Math.floor(msTime / 60000)}** minutos` : `**${Math.floor(msTime / 1000)}** segundos`;
                     const registroSa = new discord_js_1.EmbedBuilder()
                         .setTitle(`${db_1.botDB.emoji.exit} Pricionero liberado`)
                         .setColor(db_1.botDB.color.afirmative)
                         .setTimestamp();
-                    if (!miembro && (canalRegistro === null || canalRegistro === void 0 ? void 0 : canalRegistro.type) == discord_js_1.ChannelType.GuildText) {
+                    if (!miembro) {
                         const user = client.users.cache.get(dataCrc.prisioneros[d].id);
                         if (user) {
                             registroSa
                                 .setAuthor({ name: user === null || user === void 0 ? void 0 : user.tag, iconURL: user.displayAvatarURL() })
                                 .setDescription(`👤 ${user.tag}\n**Ha cumplido con la condena de:** ${durante}\n**Por la razón:** ${dataCrc.prisioneros[d].razon}`);
                         }
-                        canalRegistro.send({ embeds: [registroSa] });
+                        if ((canalRegistro === null || canalRegistro === void 0 ? void 0 : canalRegistro.type) == discord_js_1.ChannelType.GuildText)
+                            canalRegistro.send({ embeds: [registroSa] });
+                        dataCrc.prisioneros.splice(parseInt(d), 1);
+                        yield dataCrc.save();
                     }
-                    else if (miembro && servidor && (canalRegistro === null || canalRegistro === void 0 ? void 0 : canalRegistro.type) == discord_js_1.ChannelType.GuildText) {
-                        // console.log((dataCrc.prisioneros[d].tiempo + msTime) - tiempoActual)
+                    else if (miembro && servidor) {
                         if ((dataCrc.prisioneros[d].tiempo + msTime) - tiempoActual <= 0) {
                             const embMDS = new discord_js_1.EmbedBuilder()
                                 .setAuthor({ name: miembro.user.tag, iconURL: miembro.displayAvatarURL() })
@@ -211,11 +214,12 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
                                 .setDescription(`👤 ${miembro}\n**Ha cumplido con la condena de:** ${durante}\n**Por la razón:** ${dataCrc.prisioneros[d].razon}`);
                             miembro.roles.remove('830260549098405935').then(r => {
                                 miembro.send({ embeds: [embMDS] }).catch(() => '');
-                                canalRegistro.send({ embeds: [registroSa] });
+                                if ((canalRegistro === null || canalRegistro === void 0 ? void 0 : canalRegistro.type) == discord_js_1.ChannelType.GuildText)
+                                    canalRegistro.send({ embeds: [registroSa] });
                             });
+                            dataCrc.prisioneros.splice(parseInt(d), 1);
+                            yield dataCrc.save();
                         }
-                        dataCrc.prisioneros.splice(parseInt(d), 1);
-                        yield dataCrc.save();
                     }
                 }
             }
