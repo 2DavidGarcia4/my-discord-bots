@@ -38,7 +38,7 @@ const rerollSlashCommand = (int) => __awaiter(void 0, void 0, void 0, function* 
         ]
     ]))
         return;
-    const raffle = arraySo === null || arraySo === void 0 ? void 0 : arraySo.find(f => f.id == messageId), channel = guild === null || guild === void 0 ? void 0 : guild.channels.cache.get((raffle === null || raffle === void 0 ? void 0 : raffle.canalID) || ''), message = (channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText ? channel.messages.cache.get(messageId) : undefined;
+    const raffle = arraySo === null || arraySo === void 0 ? void 0 : arraySo.find(f => f.id == messageId), channel = guild === null || guild === void 0 ? void 0 : guild.channels.cache.get((raffle === null || raffle === void 0 ? void 0 : raffle.canalID) || ''), message = ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText || (channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildAnnouncement) ? channel.messages.cache.get(messageId) : undefined;
     const participants = raffle === null || raffle === void 0 ? void 0 : raffle.participantes.filter(f => guild === null || guild === void 0 ? void 0 : guild.members.cache.has(f));
     let bueltas = 1, ganadoresFinal = [];
     if (raffle && participants) {

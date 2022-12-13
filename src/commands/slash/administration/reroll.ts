@@ -33,7 +33,7 @@ export const rerollSlashCommand = async (int: ChatInputCommandInteraction<CacheT
   ])) return
 
 
-  const raffle = arraySo?.find(f=> f.id==messageId), channel = guild?.channels.cache.get(raffle?.canalID || ''), message = channel?.type == ChannelType.GuildText ? channel.messages.cache.get(messageId) : undefined
+  const raffle = arraySo?.find(f=> f.id==messageId), channel = guild?.channels.cache.get(raffle?.canalID || ''), message = (channel?.type == ChannelType.GuildText || channel?.type == ChannelType.GuildAnnouncement) ? channel.messages.cache.get(messageId) : undefined
   const participants = raffle?.participantes.filter(f=> guild?.members.cache.has(f))
 
   let bueltas = 1, ganadoresFinal: string[] = []

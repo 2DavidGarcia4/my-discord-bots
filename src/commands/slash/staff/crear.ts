@@ -372,7 +372,7 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
     .setDescription(`La encuesta ha sido creada en este canal.`)
     .setColor(color.afirmative)
 
-    if(canal && canal.type == ChannelType.GuildText){
+    if(canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)){
       canal.send({embeds: [embEncuesta], content: `**¡Nueva encuesta <@&${dataEnc?.datos.rolID}>!**`}).then(async ts=>{
         if(canal.id != int.channelId) embEnviado.setDescription(`La encuesta ha sido creada en el canal ${canal}.`)
         for(let r=0; r<opciones.length; r++){
@@ -435,7 +435,7 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
     .setDescription(`El sorteo ha sido creado este canal.`)
     .setColor(color.afirmative)
     
-    if(canal && canal.type == ChannelType.GuildText){
+    if(canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)){
       canal.send({embeds: [embSorteo], content: `**¡Nuevo sorteo <@&${dataSor?.datos.rolID}>**!`}).then(async ts=>{
         if(canal.id != int.channelId) embEnviado.setDescription(`El sorteo ha sido creado en el canal ${canal}.`)
         ts.react("974801702307901490")
