@@ -322,7 +322,7 @@ const crearSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, fun
             .setDescription(`La encuesta ha sido creada en este canal.`)
             .setColor(color.afirmative);
         if (canal && canal.type == discord_js_1.ChannelType.GuildText) {
-            canal.send({ embeds: [embEncuesta], content: `**¡Nueva encuesta <@&${dataEnc === null || dataEnc === void 0 ? void 0 : dataEnc.datos.rolID}!**` }).then((ts) => __awaiter(void 0, void 0, void 0, function* () {
+            canal.send({ embeds: [embEncuesta], content: `**¡Nueva encuesta <@&${dataEnc === null || dataEnc === void 0 ? void 0 : dataEnc.datos.rolID}>!**` }).then((ts) => __awaiter(void 0, void 0, void 0, function* () {
                 if (canal.id != int.channelId)
                     embEnviado.setDescription(`La encuesta ha sido creada en el canal ${canal}.`);
                 for (let r = 0; r < opciones.length; r++) {
@@ -381,7 +381,7 @@ const crearSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, fun
             .setDescription(`El sorteo ha sido creado este canal.`)
             .setColor(color.afirmative);
         if (canal && canal.type == discord_js_1.ChannelType.GuildText) {
-            canal.send({ embeds: [embSorteo], content: `**¡Nuevo sorteo <@&${dataSor === null || dataSor === void 0 ? void 0 : dataSor.datos.rolID}**!` }).then((ts) => __awaiter(void 0, void 0, void 0, function* () {
+            canal.send({ embeds: [embSorteo], content: `**¡Nuevo sorteo <@&${dataSor === null || dataSor === void 0 ? void 0 : dataSor.datos.rolID}>**!` }).then((ts) => __awaiter(void 0, void 0, void 0, function* () {
                 if (canal.id != int.channelId)
                     embEnviado.setDescription(`El sorteo ha sido creado en el canal ${canal}.`);
                 ts.react("974801702307901490");
