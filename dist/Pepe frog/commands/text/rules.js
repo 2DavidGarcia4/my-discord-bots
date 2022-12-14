@@ -16,6 +16,7 @@ const rulesCommand = (msg) => __awaiter(void 0, void 0, void 0, function* () {
     const RulesEb = new discord_js_1.EmbedBuilder()
         .setTitle('📖 Reglas')
         .setDescription(`> **1.** Respeto mutuo, trata a los demás con respeto. No se tolerará ningún tipo de acoso, caza de brujas, sexismo, racismo o discurso de odio.\n\n> **2.** No incite a otros a hacer practicas maliciosas como el raideo, scam entre otras.\n\n> 3. No se permite el spam ni la autopromoción (invitaciones al servidor, anuncios, etc.) sin permiso de un miembro del personal. Esto también incluye mandar MD a otros miembros.\n\n> **4.** No fotopollas, por favor no enviar fotos de su pene esta prohibido por el momento ya que este servidor es un servidor enfocado en el contenido sexual femenino.\n\n> **5.** Si ves algo que va en contra de las normas o que no te haga sentir seguro, informa al personal. ¡Queremos que este servidor sea un lugar acogedor!`)
+        .setFooter({ text: "you don't speak Spanish?, Click blue button below" })
         .setColor(((_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White');
     const RulesArb = new discord_js_1.ActionRowBuilder()
         .addComponents(new discord_js_1.ButtonBuilder()

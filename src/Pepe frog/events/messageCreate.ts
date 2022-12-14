@@ -4,6 +4,7 @@ import { frogDb } from "../db";
 import { evalCommand } from "../commands/text/eval";
 import { rolesCommand } from "../commands/text/roles";
 import { rulesCommand } from "../commands/text/rules";
+import { girlsCommand } from "../commands/text/girls";
 
 export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
   const { prefix } = frogDb
@@ -13,12 +14,13 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
   const command = args.shift()?.toLowerCase()
 
   if(msg.member?.permissions.has('Administrator')){
-    if(command == 'eval') evalCommand(msg, client, args.join(''))
+    if(command == 'eval') evalCommand(msg, client, args.join(' '))
 
     if(command == 'rules') rulesCommand(msg)
 
     if(command == 'roles') rolesCommand(msg)
 
+    if(command == 'girls') girlsCommand(msg)
   }
 
 }

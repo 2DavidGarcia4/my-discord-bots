@@ -2,6 +2,7 @@ import { Client, EmbedBuilder, Message } from "discord.js"
 import { inspect } from 'util'
 import { sendMessageText, setError } from "../../../utils/functions"
 import { frogDb } from "../../db"
+import { setGuildStatus } from "../../utils/functions"
 
 export const evalCommand = (msg: Message, client: Client, args: string) => {
   try {

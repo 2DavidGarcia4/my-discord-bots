@@ -14,9 +14,8 @@ export const readyEvent = async (client: Client) => {
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
   }
 
-  setGuildStatus(client)
+  // setGuildStatus(client)
   setInterval(()=> {
     setGuildStatus(client)
-
-  }, 60*60*1000)
+  }, 6*60*60*1000)
 }

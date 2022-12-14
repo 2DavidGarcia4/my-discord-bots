@@ -14,8 +14,9 @@ const discord_js_1 = require("discord.js");
 const rolesCommand = (msg) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const RolesEb = new discord_js_1.EmbedBuilder()
-        .setTitle('🌈 Roles')
-        .setDescription('Hola, aquí podrás obtener los roles que quieras, unos roles te notifican sobre acciones que se realizan en el servidor mientras que otros son solo de adorno como roles que cambian tu color.\n\nPara obtener un rol seleccione el tipo de rol que quieres obtener abajo en el menú desplegable.')
+        .setTitle('🎭 Roles')
+        .setDescription('Hola, aquí podrás obtener los roles que quieras, unos roles te notifican sobre acciones que se realizan en el servidor mientras que otros son solo de adorno como roles que cambian el color de tu nombre.\n\nPara obtener un rol seleccione el tipo de rol que quieres obtener abajo en el menú desplegable.')
+        .setFooter({ text: "you don't speak Spanish?, Click blue button below" })
         .setColor(((_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White');
     const RolesBtn = new discord_js_1.ActionRowBuilder()
         .addComponents(new discord_js_1.ButtonBuilder()

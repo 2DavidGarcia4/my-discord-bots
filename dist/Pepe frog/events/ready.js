@@ -24,9 +24,9 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         readyChannel.sendTyping();
         setTimeout(() => readyChannel.send({ embeds: [ReadyEb] }), 2000);
     }
-    (0, functions_1.setGuildStatus)(client);
+    // setGuildStatus(client)
     setInterval(() => {
         (0, functions_1.setGuildStatus)(client);
-    }, 60 * 60 * 1000);
+    }, 6 * 60 * 60 * 1000);
 });
 exports.readyEvent = readyEvent;

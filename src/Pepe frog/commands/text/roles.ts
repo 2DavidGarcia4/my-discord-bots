@@ -1,9 +1,10 @@
-import { Message, Client, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SelectMenuBuilder } from "discord.js";
+import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SelectMenuBuilder } from "discord.js";
 
 export const rolesCommand = async (msg: Message<boolean>) => {
   const RolesEb = new EmbedBuilder()
-  .setTitle('🌈 Roles')
-  .setDescription('Hola, aquí podrás obtener los roles que quieras, unos roles te notifican sobre acciones que se realizan en el servidor mientras que otros son solo de adorno como roles que cambian tu color.\n\nPara obtener un rol seleccione el tipo de rol que quieres obtener abajo en el menú desplegable.')
+  .setTitle('🎭 Roles')
+  .setDescription('Hola, aquí podrás obtener los roles que quieras, unos roles te notifican sobre acciones que se realizan en el servidor mientras que otros son solo de adorno como roles que cambian el color de tu nombre.\n\nPara obtener un rol seleccione el tipo de rol que quieres obtener abajo en el menú desplegable.')
+  .setFooter({text: "you don't speak Spanish?, Click blue button below"})
   .setColor(msg.guild?.members.me?.displayHexColor || 'White')
 
   const RolesBtn = new ActionRowBuilder<ButtonBuilder>()

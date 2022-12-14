@@ -14,6 +14,7 @@ const db_1 = require("../db");
 const eval_1 = require("../commands/text/eval");
 const roles_1 = require("../commands/text/roles");
 const rules_1 = require("../commands/text/rules");
+const girls_1 = require("../commands/text/girls");
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const { prefix } = db_1.frogDb;
@@ -23,11 +24,13 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
     const command = (_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
     if ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.permissions.has('Administrator')) {
         if (command == 'eval')
-            (0, eval_1.evalCommand)(msg, client, args.join(''));
+            (0, eval_1.evalCommand)(msg, client, args.join(' '));
         if (command == 'rules')
             (0, rules_1.rulesCommand)(msg);
         if (command == 'roles')
             (0, roles_1.rolesCommand)(msg);
+        if (command == 'girls')
+            (0, girls_1.girlsCommand)(msg);
     }
 });
 exports.messageCreateEvent = messageCreateEvent;
