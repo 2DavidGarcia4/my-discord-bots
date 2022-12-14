@@ -33,6 +33,7 @@ const reactionAdd_1 = require("./events/reactionAdd");
 const reactionRemove_1 = require("./events/reactionRemove");
 const messageUpdate_1 = require("./events/messageUpdate");
 colors_1.default;
+require("./Pepe frog");
 const PCEM = new discord_js_1.Client({ intents: 131071 });
 exports.estadisticas = { entradas: 0, salidas: 0, mensajes: 0, comandos: 0 }, exports.autoModeracion = [{ miembroID: "717420870267830382", advertencias: 0 }];
 exports.cooldowns = new Map();

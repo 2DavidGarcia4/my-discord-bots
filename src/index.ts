@@ -20,6 +20,8 @@ import { messageUpdateEvent } from "./events/messageUpdate";
 
 colors
 
+import './Pepe frog'
+
 const PCEM = new Client({intents: 131071}) 
 export let estadisticas = {entradas: 0, salidas: 0, mensajes: 0, comandos: 0}, autoModeracion = [{miembroID: "717420870267830382", advertencias: 0}]
 export const cooldowns = new Map()

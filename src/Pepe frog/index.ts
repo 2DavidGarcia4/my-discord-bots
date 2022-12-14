@@ -1,21 +1,21 @@
 import { Client } from "discord.js";
 import { pepeFrog } from "../config";
-import { setGuildStatus } from "./utils/functions";
+import { readyEvent } from "./events/ready";
+import { interactionCreateEvent } from "./events/interactionCreate";
+import { messageCreateEvent } from "./events/messageCreate";
 
 const Frog = new Client({intents: 131071})
 
 Frog.on('ready', async () => {
-  console.log(Frog.user?.username+' Estoy listo')
+  readyEvent(Frog)
+})
 
-  setGuildStatus(Frog)
-  setInterval(()=> {
-    setGuildStatus(Frog)
+Frog.on('messageCreate', (message) => {
+  messageCreateEvent(message, Frog)
+})
 
-  }, 60*60*1000)
-
-  ;(await Frog.application?.commands.fetch())?.forEach(async cmd=> {
-    await cmd.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
-  })
+Frog.on('interactionCreate', (interaction) => {
+  interactionCreateEvent(interaction, Frog)
 })
 
 Frog.login(pepeFrog)
