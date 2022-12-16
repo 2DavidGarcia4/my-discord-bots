@@ -6,6 +6,7 @@ import { setGuildStatus } from "../../utils/functions"
 
 export const evalCommand = (msg: Message, client: Client, args: string) => {
   try {
+    const db = frogDb, setStatus = setGuildStatus
     msg.channel.sendTyping()
     const code = eval(args), texto = inspect(code)
     const evalEb = new EmbedBuilder()

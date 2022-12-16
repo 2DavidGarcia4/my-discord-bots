@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.messageCreateEvent = void 0;
+const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const eval_1 = require("../commands/text/eval");
 const roles_1 = require("../commands/text/roles");
@@ -17,7 +18,17 @@ const rules_1 = require("../commands/text/rules");
 const girls_1 = require("../commands/text/girls");
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    const { prefix } = db_1.frogDb;
+    const { prefix, serverId, principalServerId } = db_1.frogDb;
+    if (msg.guildId == principalServerId) {
+        if (msg.channel.type != discord_js_1.ChannelType.GuildText)
+            return;
+        if (msg.channel.parentId == '1028793497295261828') {
+            console.log('parent');
+            const server = client.guilds.cache.get(serverId), channelName = msg.channel.name, serverChannel = server === null || server === void 0 ? void 0 : server.channels.cache.find(f => f.name.includes(channelName));
+            if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
+                serverChannel.send({ content: msg.content || ' ', files: msg.attachments.map(m => m) });
+        }
+    }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);

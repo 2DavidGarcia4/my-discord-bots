@@ -4,9 +4,12 @@ exports.evalCommand = void 0;
 const discord_js_1 = require("discord.js");
 const util_1 = require("util");
 const functions_1 = require("../../../utils/functions");
+const db_1 = require("../../db");
+const functions_2 = require("../../utils/functions");
 const evalCommand = (msg, client, args) => {
     var _a, _b;
     try {
+        const db = db_1.frogDb, setStatus = functions_2.setGuildStatus;
         msg.channel.sendTyping();
         const code = eval(args), texto = (0, util_1.inspect)(code);
         const evalEb = new discord_js_1.EmbedBuilder()

@@ -1,5 +1,5 @@
 export const frogDb = {
   prefix: 's!',
-  serverId: '1028794417076764693',
-
+  serverId: '1053382837857943662',
+  principalServerId: '1028793496674500659'
 }

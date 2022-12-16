@@ -1,10 +1,14 @@
 import { ChannelType, Client, EmbedBuilder } from "discord.js";
 import { setGuildStatus } from "../utils/functions";
+import { frogDb } from "../db";
 
 export const readyEvent = async (client: Client) => {
   console.log(client.user?.username+' Estoy listo')
-
-  const readyChannel = client.channels.cache.get('1052421775805386782')
+  const principalServer = client.guilds.cache.get('1028793496674500659')
+  const server = client.guilds.cache.get(frogDb.serverId)
+  
+  
+  const readyChannel = client.channels.cache.get('1053425705385467904')
   const ReadyEb = new EmbedBuilder()
   .setTitle('✅ I am ready')
   .setColor('DarkGold')
@@ -14,7 +18,7 @@ export const readyEvent = async (client: Client) => {
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
   }
 
-  // setGuildStatus(client)
+  setGuildStatus(client)
   setInterval(()=> {
     setGuildStatus(client)
   }, 6*60*60*1000)
