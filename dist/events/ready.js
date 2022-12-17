@@ -379,12 +379,12 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     function sorteos() {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            let dataSor = yield models_1.rafflesModel.findById(db_1.botDB.serverId), arraySo = dataSor === null || dataSor === void 0 ? void 0 : dataSor.sorteos;
+            const dataSor = yield models_1.rafflesModel.findById(db_1.botDB.serverId), arraySo = dataSor === null || dataSor === void 0 ? void 0 : dataSor.sorteos;
             if (arraySo) {
-                for (const s of arraySo) {
+                for (let s of arraySo) {
                     if (s.activo && s.finaliza < Date.now()) {
                         const channel = client.channels.cache.get(s.canalID);
-                        if ((channel === null || channel === void 0 ? void 0 : channel.type) != discord_js_1.ChannelType.GuildText)
+                        if ((channel === null || channel === void 0 ? void 0 : channel.type) != discord_js_1.ChannelType.GuildText && (channel === null || channel === void 0 ? void 0 : channel.type) != discord_js_1.ChannelType.GuildAnnouncement)
                             return;
                         const mensage = (_a = channel === null || channel === void 0 ? void 0 : channel.messages) === null || _a === void 0 ? void 0 : _a.cache.get(s.id);
                         if (mensage) {

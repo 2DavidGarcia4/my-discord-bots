@@ -367,12 +367,13 @@ export const readyEvent = async (client: Client) => {
   invitaciones()
 
   async function sorteos() {
-    let dataSor = await rafflesModel.findById(botDB.serverId), arraySo = dataSor?.sorteos
+    const dataSor = await rafflesModel.findById(botDB.serverId), arraySo = dataSor?.sorteos
     if(arraySo){
-      for (const s of arraySo) {
+      for (let s of arraySo) {
         if (s.activo && s.finaliza < Date.now()) {
+          
           const channel = client.channels.cache.get(s.canalID)
-          if(channel?.type != ChannelType.GuildText) return
+          if(channel?.type != ChannelType.GuildText && channel?.type != ChannelType.GuildAnnouncement) return
           const mensage = channel?.messages?.cache.get(s.id)
           if (mensage) {
             let miembros = s.participantes.filter(f => servidor?.members.cache.has(f))
