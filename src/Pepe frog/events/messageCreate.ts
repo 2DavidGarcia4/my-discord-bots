@@ -11,7 +11,8 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
 
   if(msg.guildId == principalServerId){
     if(msg.channel.type != ChannelType.GuildText) return
-    if(msg.channel.parentId == '1028793497295261828'){
+    const { parentId } = msg.channel
+    if(['1028793497295261828', '1054489737097908364'].some(s=> s==parentId)){
       const server = client.guilds.cache.get(serverId), channelName = msg.channel.name, serverChannel = server?.channels.cache.find(f=>  f.name == channelName) 
       if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: msg.content || ' ', files: msg.attachments.map(m=> m)})
     }

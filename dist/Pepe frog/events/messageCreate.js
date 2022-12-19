@@ -22,7 +22,8 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
     if (msg.guildId == principalServerId) {
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
-        if (msg.channel.parentId == '1028793497295261828') {
+        const { parentId } = msg.channel;
+        if (['1028793497295261828', '1054489737097908364'].some(s => s == parentId)) {
             const server = client.guilds.cache.get(serverId), channelName = msg.channel.name, serverChannel = server === null || server === void 0 ? void 0 : server.channels.cache.find(f => f.name == channelName);
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
                 serverChannel.send({ content: msg.content || ' ', files: msg.attachments.map(m => m) });
