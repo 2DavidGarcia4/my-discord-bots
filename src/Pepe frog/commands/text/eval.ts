@@ -3,10 +3,11 @@ import { inspect } from 'util'
 import { sendMessageText, setError } from "../../../utils/functions"
 import { frogDb } from "../../db"
 import { setGuildStatus } from "../../utils/functions"
+import { modDb } from "../../events/messageCreate"
 
 export const evalCommand = (msg: Message, client: Client, args: string) => {
   try {
-    const db = frogDb, setStatus = setGuildStatus
+    const db = frogDb, setStatus = setGuildStatus, modDB = modDb
     msg.channel.sendTyping()
     const code = eval(args), texto = inspect(code)
     const evalEb = new EmbedBuilder()

@@ -1,6 +1,7 @@
 import { ChannelType, Client, EmbedBuilder } from "discord.js";
 import { setGuildStatus } from "../utils/functions";
 import { frogDb } from "../db";
+import { isDevelopment } from "../../config";
 
 export const readyEvent = async (client: Client) => {
   console.log(client.user?.username+' Estoy listo')
@@ -13,12 +14,12 @@ export const readyEvent = async (client: Client) => {
   .setTitle('✅ I am ready')
   .setColor('DarkGold')
   .setDescription('Connected again')
-  if(readyChannel?.type == ChannelType.GuildText){
+  if(!isDevelopment && readyChannel?.type == ChannelType.GuildText){
     readyChannel.sendTyping()
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
   }
 
-  setGuildStatus(client)
+  // setGuildStatus(client)
   setInterval(()=> {
     setGuildStatus(client)
   }, 6*60*60*1000)

@@ -19,6 +19,7 @@ const colors_1 = __importDefault(require("colors"));
 const models_1 = require("../models");
 const db_1 = require("../db");
 const interaction_1 = require("./interaction");
+const config_1 = require("../config");
 colors_1.default;
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
@@ -33,7 +34,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         .setColor(db_1.botDB.color.afirmative)
         .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
         .setTimestamp();
-    if (readyChannel && readyChannel.type == discord_js_1.ChannelType.GuildText)
+    if (!config_1.isDevelopment && (readyChannel === null || readyChannel === void 0 ? void 0 : readyChannel.type) == discord_js_1.ChannelType.GuildText)
         readyChannel.send({ embeds: [embEncendido] });
     //! Roles principales automaticos
     servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.filter(f => !db_1.botDB.mainRoles.some(s => f.roles.cache.has(s)) && !f.user.bot).map(m => m).forEach((miembro, ps, mapa) => {

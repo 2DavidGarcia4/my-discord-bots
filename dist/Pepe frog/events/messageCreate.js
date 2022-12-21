@@ -9,15 +9,38 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.messageCreateEvent = void 0;
+exports.messageCreateEvent = exports.modDb = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const eval_1 = require("../commands/text/eval");
 const roles_1 = require("../commands/text/roles");
 const rules_1 = require("../commands/text/rules");
 const girls_1 = require("../commands/text/girls");
+exports.modDb = [];
+const sanctions = [
+    {
+        time: 4 * 60 * 60 * 1000,
+        warns: 3
+    },
+    {
+        time: 8 * 60 * 60 * 1000,
+        warns: 4
+    },
+    {
+        time: 16 * 60 * 60 * 1000,
+        warns: 5
+    },
+    {
+        time: 24 * 60 * 60 * 1000,
+        warns: 6
+    },
+    {
+        time: 48 * 60 * 60 * 1000,
+        warns: 7
+    },
+];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a, _b, _c;
     const { prefix, serverId, principalServerId } = db_1.frogDb;
     if (msg.guildId == principalServerId) {
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
@@ -29,11 +52,42 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 serverChannel.send({ content: msg.content || ' ', files: msg.attachments.map(m => m) });
         }
     }
+    if (msg.guildId == serverId) {
+        const enlaceActivators = ['http://', 'https://'];
+        const filesSinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3'];
+        if (!((_a = msg.member) === null || _a === void 0 ? void 0 : _a.permissions.has('Administrator')) && enlaceActivators.some(s => msg.content.includes(s))) {
+            const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
+            const filter = texts.filter(f => enlaceActivators.some(s => f.includes(s)));
+            if (filter.some(f => !filesSinks.some(s => f.endsWith('.' + s)))) {
+                const AutoModEb = new discord_js_1.EmbedBuilder()
+                    .setTitle('Auto moderation')
+                    .setDescription('Only links to images, videos and gifs are allowed.')
+                    .setColor('Red');
+                msg.reply({ embeds: [AutoModEb] }).then(re => {
+                    msg.delete();
+                    setTimeout(() => re.delete(), 10000);
+                });
+                const member = exports.modDb.find(f => f.id == msg.author.id);
+                if (member) {
+                    member.warns++;
+                    sanctions.forEach(sanction => {
+                        var _a;
+                        if (sanction.warns == member.warns) {
+                            (_a = msg.member) === null || _a === void 0 ? void 0 : _a.timeout(sanction.time, `Auto moderation of links, ${sanction.warns} warns`);
+                        }
+                    });
+                }
+                else {
+                    exports.modDb.push({ id: msg.author.id, warns: 1 });
+                }
+            }
+        }
+    }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const command = (_a = args.shift()) === null || _a === void 0 ? void 0 : _a.toLowerCase();
-    if ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.permissions.has('Administrator')) {
+    const command = (_b = args.shift()) === null || _b === void 0 ? void 0 : _b.toLowerCase();
+    if ((_c = msg.member) === null || _c === void 0 ? void 0 : _c.permissions.has('Administrator')) {
         if (command == 'eval')
             (0, eval_1.evalCommand)(msg, client, args.join(' '));
         if (command == 'rules')

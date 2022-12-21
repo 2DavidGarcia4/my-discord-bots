@@ -4,6 +4,7 @@ import colors from "colors"
 import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, promoLevelModel, botModel } from "../models"
 import { botDB } from "../db"
 import { slashComands } from "./interaction"
+import { isDevelopment } from "../config"
 
 colors
 export const readyEvent = async (client: Client) => {
@@ -18,7 +19,7 @@ export const readyEvent = async (client: Client) => {
   .setColor(botDB.color.afirmative)
   .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
   .setTimestamp()
-  if (readyChannel && readyChannel.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
+  if (!isDevelopment && readyChannel?.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
 
 
   //! Roles principales automaticos
