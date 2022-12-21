@@ -42,7 +42,7 @@ const sanctions = [
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
     const { prefix, serverId, principalServerId } = db_1.frogDb;
-    if (msg.guildId == principalServerId) {
+    if (msg.guildId == principalServerId && !msg.author.bot) {
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
         const { parentId } = msg.channel;
@@ -81,6 +81,14 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                     exports.modDb.push({ id: msg.author.id, warns: 1 });
                 }
             }
+        }
+        if (msg.channel.type != discord_js_1.ChannelType.GuildText)
+            return;
+        const { parentId } = msg.channel;
+        if (parentId == '1053401638494289931' && msg.attachments.size) {
+            const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
+            if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
+                serverChannel.send({ files: msg.attachments.map(m => m) });
         }
     }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))

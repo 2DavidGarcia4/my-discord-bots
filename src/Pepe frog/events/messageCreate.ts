@@ -34,7 +34,7 @@ const sanctions = [
 export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
   const { prefix, serverId, principalServerId } = frogDb
 
-  if(msg.guildId == principalServerId){
+  if(msg.guildId == principalServerId && !msg.author.bot){
     if(msg.channel.type != ChannelType.GuildText) return
     const { parentId } = msg.channel
     if(['1028793497295261828', '1054489737097908364'].some(s=> s==parentId)){
@@ -74,6 +74,13 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
           modDb.push({id: msg.author.id, warns: 1})
         }
       }
+    }
+
+    if(msg.channel.type != ChannelType.GuildText) return
+    const { parentId } = msg.channel
+    if(parentId == '1053401638494289931' && msg.attachments.size){
+      const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
+      if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({files: msg.attachments.map(m=> m)})
     }
   }
 
