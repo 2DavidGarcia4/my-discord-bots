@@ -34,7 +34,7 @@ const sanctions = [
 export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
   const { prefix, serverId, principalServerId } = frogDb
 
-  if(msg.guildId == principalServerId && !msg.author.bot){
+  if(msg.guildId == principalServerId && msg.author.id != '942860991698436156'){
     if(msg.channel.type != ChannelType.GuildText) return
     const { parentId } = msg.channel
     if(['1028793497295261828', '1054489737097908364'].some(s=> s==parentId)){
@@ -78,10 +78,12 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
 
     if(msg.channel.type != ChannelType.GuildText) return
     const { parentId } = msg.channel
-    if(parentId == '1053401638494289931' && msg.attachments.size){
+    if(parentId == '1053401638494289931' && msg.attachments.size && msg.author.id != '942860991698436156'){
       const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
       if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({files: msg.attachments.map(m=> m)})
     }
+
+    if(msg.mentions.roles.first()?.id == '1053411182935023657') msg.react('1053444752340680817')
   }
 
   if(msg.author.bot || !msg.content.toLowerCase().startsWith(prefix)) return

@@ -40,9 +40,9 @@ const sanctions = [
     },
 ];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     const { prefix, serverId, principalServerId } = db_1.frogDb;
-    if (msg.guildId == principalServerId && !msg.author.bot) {
+    if (msg.guildId == principalServerId && msg.author.id != '942860991698436156') {
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
         const { parentId } = msg.channel;
@@ -85,17 +85,19 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
         const { parentId } = msg.channel;
-        if (parentId == '1053401638494289931' && msg.attachments.size) {
+        if (parentId == '1053401638494289931' && msg.attachments.size && msg.author.id != '942860991698436156') {
             const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
                 serverChannel.send({ files: msg.attachments.map(m => m) });
         }
+        if (((_b = msg.mentions.roles.first()) === null || _b === void 0 ? void 0 : _b.id) == '1053411182935023657')
+            msg.react('1053444752340680817');
     }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const command = (_b = args.shift()) === null || _b === void 0 ? void 0 : _b.toLowerCase();
-    if ((_c = msg.member) === null || _c === void 0 ? void 0 : _c.permissions.has('Administrator')) {
+    const command = (_c = args.shift()) === null || _c === void 0 ? void 0 : _c.toLowerCase();
+    if ((_d = msg.member) === null || _d === void 0 ? void 0 : _d.permissions.has('Administrator')) {
         if (command == 'eval')
             (0, eval_1.evalCommand)(msg, client, args.join(' '));
         if (command == 'rules')
