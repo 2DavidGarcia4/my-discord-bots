@@ -45,9 +45,10 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
   }
   
   if(msg.guildId == serverId){
+    //? Auto moderation
     const enlaceActivators = ['http://', 'https://']
     const filesSinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3']
-    if(!msg.member?.permissions.has('Administrator') && enlaceActivators.some(s=> msg.content.includes(s))){
+    if(!msg.author.bot && !msg.member?.permissions.has('Administrator') && enlaceActivators.some(s=> msg.content.includes(s))){
       const texts = msg.content.split(/ +/g).map(m=> m.includes('\n') ? m.split('\n') : m).flat()
       const filter = texts.filter(f=> enlaceActivators.some(s=> f.includes(s))) 
       
@@ -65,6 +66,9 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         const member = modDb.find(f=> f.id == msg.author.id)
         if(member){
           member.warns++
+          if(member.warns >= 7){
+            msg.member?.roles.add('1053430826823594106')
+          }
           sanctions.forEach(sanction=> {
             if(sanction.warns == member.warns){
               msg.member?.timeout(sanction.time, `Auto moderation of links, ${sanction.warns} warns`)

@@ -40,7 +40,7 @@ const sanctions = [
     },
 ];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
+    var _a, _b, _c, _d, _e;
     const { prefix, serverId, principalServerId } = db_1.frogDb;
     if (msg.guildId == principalServerId && msg.author.id != '942860991698436156') {
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
@@ -53,9 +53,10 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         }
     }
     if (msg.guildId == serverId) {
+        //? Auto moderation
         const enlaceActivators = ['http://', 'https://'];
         const filesSinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3'];
-        if (!((_a = msg.member) === null || _a === void 0 ? void 0 : _a.permissions.has('Administrator')) && enlaceActivators.some(s => msg.content.includes(s))) {
+        if (!msg.author.bot && !((_a = msg.member) === null || _a === void 0 ? void 0 : _a.permissions.has('Administrator')) && enlaceActivators.some(s => msg.content.includes(s))) {
             const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
             const filter = texts.filter(f => enlaceActivators.some(s => f.includes(s)));
             if (filter.some(f => !filesSinks.some(s => f.endsWith('.' + s)))) {
@@ -70,6 +71,9 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 const member = exports.modDb.find(f => f.id == msg.author.id);
                 if (member) {
                     member.warns++;
+                    if (member.warns >= 7) {
+                        (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add('1053430826823594106');
+                    }
                     sanctions.forEach(sanction => {
                         var _a;
                         if (sanction.warns == member.warns) {
@@ -90,14 +94,14 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
                 serverChannel.send({ files: msg.attachments.map(m => m) });
         }
-        if (((_b = msg.mentions.roles.first()) === null || _b === void 0 ? void 0 : _b.id) == '1053411182935023657')
+        if (((_c = msg.mentions.roles.first()) === null || _c === void 0 ? void 0 : _c.id) == '1053411182935023657')
             msg.react('1053444752340680817');
     }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const command = (_c = args.shift()) === null || _c === void 0 ? void 0 : _c.toLowerCase();
-    if ((_d = msg.member) === null || _d === void 0 ? void 0 : _d.permissions.has('Administrator')) {
+    const command = (_d = args.shift()) === null || _d === void 0 ? void 0 : _d.toLowerCase();
+    if ((_e = msg.member) === null || _e === void 0 ? void 0 : _e.permissions.has('Administrator')) {
         if (command == 'eval')
             (0, eval_1.evalCommand)(msg, client, args.join(' '));
         if (command == 'rules')
