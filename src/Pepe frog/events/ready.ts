@@ -2,6 +2,7 @@ import { ChannelType, Client, EmbedBuilder } from "discord.js";
 import { setGuildStatus } from "../utils/functions";
 import { frogDb } from "../db";
 import { isDevelopment } from "../../config";
+import { commands } from "./interactionCreate";
 
 export const readyEvent = async (client: Client) => {
   console.log(client.user?.username+' Estoy listo')
@@ -23,4 +24,14 @@ export const readyEvent = async (client: Client) => {
   setInterval(()=> {
     setGuildStatus(client)
   }, 6*60*60*1000)
+
+
+  ;[principalServer, server].forEach(async sv=> {
+    commands.forEach(async cmd=> {
+      if(!(await sv?.commands.fetch())?.some(s=> s.name == cmd.name)){
+        sv?.commands.create(cmd).then(c=> console.log(`Se creo el comando ${c.name}`))
+      }
+    })
+
+  })
 }

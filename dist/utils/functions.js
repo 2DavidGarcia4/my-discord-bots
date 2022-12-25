@@ -21,13 +21,13 @@ const { color, emoji } = db_1.botDB;
 const sendMessageText = (msg, optionsMessage) => {
     setTimeout(() => {
         msg.reply(optionsMessage);
-    }, 500);
+    }, 4000);
 };
 exports.sendMessageText = sendMessageText;
 const sendMessageSlash = (int, optionsMessage) => {
     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
         yield int.editReply(optionsMessage);
-    }), 600);
+    }), 4000);
 };
 exports.sendMessageSlash = sendMessageSlash;
 const createEmbedMessage = (title, description, color) => {
@@ -41,7 +41,7 @@ const setError = (msg, description) => {
             tnt.delete().catch(() => '');
             msg.delete().catch(() => '');
         }, 20000));
-    }, 500);
+    }, 4000);
 };
 exports.setError = setError;
 const setErrors = (msg, descriptionsAndConditions) => {
@@ -60,7 +60,7 @@ const setSlashError = (int, description) => __awaiter(void 0, void 0, void 0, fu
     yield int.deferReply({ ephemeral: true });
     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
         yield int.editReply({ embeds: [(0, exports.createEmbedMessage)(`${emoji.negative} Error`, description, color.negative)] });
-    }), 500);
+    }), 4000);
 });
 exports.setSlashError = setSlashError;
 const setSlashErrors = (int, descriptionsAndConditions) => {

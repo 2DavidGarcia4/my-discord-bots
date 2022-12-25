@@ -9,11 +9,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.interactionCreateEvent = void 0;
+exports.interactionCreateEvent = exports.commands = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../utils/functions");
+const send_1 = require("../commands/contextMenu/send");
+const move_1 = require("../commands/slash/move");
+exports.commands = new discord_js_1.Collection();
+[send_1.sendCMCB, move_1.moveScb].forEach(cmd => exports.commands.set(cmd.name, cmd));
 const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    if (int.isChatInputCommand()) {
+        const { commandName } = int;
+        if (commandName == 'move')
+            (0, move_1.moveSlashCommand)(int, client);
+    }
+    if (int.isContextMenuCommand()) {
+        const { commandType, commandName, user } = int;
+        if (commandType == discord_js_1.ApplicationCommandType.Message) {
+            if (commandName == 'Send')
+                (0, send_1.sendCM)(int, client);
+        }
+    }
     if (int.isButton()) {
         const { customId, guild } = int;
         if (customId == 'en-rules-btn') {

@@ -1,4 +1,4 @@
-import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction } from "discord.js";
 import ms from "ms";
 import { botDB } from "../db";
 import { promoLevelModel } from "../models";
@@ -9,13 +9,13 @@ const { color, emoji } = botDB
 export const sendMessageText = (msg: Message, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
   setTimeout(()=> {
     msg.reply(optionsMessage)
-  }, 500)
+  }, 4000)
 }
 
-export const sendMessageSlash = (int: ChatInputCommandInteraction<CacheType> | UserContextMenuCommandInteraction<CacheType>, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
+export const sendMessageSlash = (int: ChatInputCommandInteraction<CacheType> | UserContextMenuCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
   setTimeout(async () => {
     await int.editReply(optionsMessage)
-  }, 600)
+  }, 4000)
 }
 
 export const createEmbedMessage = (title: string, description: string, color: ColorResolvable) => {
@@ -29,7 +29,7 @@ export const setError = (msg: Message, description: string) => {
       tnt.delete().catch(()=> '')
       msg.delete().catch(()=> '')
     }, 20000));
-  }, 500)
+  }, 4000)
 }
 
 export const setErrors = (msg: Message, descriptionsAndConditions: [(string | boolean)[], never[]]) => {
@@ -44,14 +44,14 @@ export const setErrors = (msg: Message, descriptionsAndConditions: [(string | bo
   return res
 }
 
-export const setSlashError = async (int: ChatInputCommandInteraction<CacheType>, description: string) => {
+export const setSlashError = async (int: ChatInputCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, description: string) => {
   await int.deferReply({ephemeral: true})
   setTimeout(async ()=>{
     await int.editReply({ embeds: [createEmbedMessage(`${emoji.negative} Error`, description, color.negative)]})
-  }, 500)
+  }, 4000)
 }
 
-export const setSlashErrors = (int: ChatInputCommandInteraction<CacheType>, descriptionsAndConditions: ((string | boolean)[])[]) => {
+export const setSlashErrors = (int: ChatInputCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, descriptionsAndConditions: ((string | boolean)[])[]) => {
   let res = false
   for(const dac of descriptionsAndConditions){
     if(dac[0]){

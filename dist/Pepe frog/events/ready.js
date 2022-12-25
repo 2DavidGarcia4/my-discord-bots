@@ -14,6 +14,7 @@ const discord_js_1 = require("discord.js");
 const functions_1 = require("../utils/functions");
 const db_1 = require("../db");
 const config_1 = require("../../config");
+const interactionCreate_1 = require("./interactionCreate");
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     console.log(((_a = client.user) === null || _a === void 0 ? void 0 : _a.username) + ' Estoy listo');
@@ -32,5 +33,13 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     setInterval(() => {
         (0, functions_1.setGuildStatus)(client);
     }, 6 * 60 * 60 * 1000);
+    [principalServer, server].forEach((sv) => __awaiter(void 0, void 0, void 0, function* () {
+        interactionCreate_1.commands.forEach((cmd) => __awaiter(void 0, void 0, void 0, function* () {
+            var _b;
+            if (!((_b = (yield (sv === null || sv === void 0 ? void 0 : sv.commands.fetch()))) === null || _b === void 0 ? void 0 : _b.some(s => s.name == cmd.name))) {
+                sv === null || sv === void 0 ? void 0 : sv.commands.create(cmd).then(c => console.log(`Se creo el comando ${c.name}`));
+            }
+        }));
+    }));
 });
 exports.readyEvent = readyEvent;

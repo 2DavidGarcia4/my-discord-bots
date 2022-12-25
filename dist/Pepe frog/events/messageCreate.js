@@ -42,7 +42,9 @@ const sanctions = [
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     const { prefix, serverId, principalServerId } = db_1.frogDb;
-    if (msg.guildId == principalServerId && msg.author.id != '942860991698436156') {
+    if (msg.author.bot)
+        return;
+    if (msg.guildId == principalServerId) {
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
         const { parentId } = msg.channel;
@@ -89,10 +91,10 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
         const { parentId } = msg.channel;
-        if (parentId == '1053401638494289931' && msg.attachments.size && msg.author.id != '942860991698436156') {
+        if (parentId == '1053401638494289931' && msg.attachments.size) {
             const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
-                serverChannel.send({ files: msg.attachments.map(m => m) });
+                serverChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.map(m => m) });
         }
         if (((_c = msg.mentions.roles.first()) === null || _c === void 0 ? void 0 : _c.id) == '1053411182935023657')
             msg.react('1053444752340680817');

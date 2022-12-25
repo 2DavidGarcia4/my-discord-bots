@@ -1,7 +1,28 @@
-import { ActionRowBuilder, CacheType, Client, EmbedBuilder, Interaction, SelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandType, CacheType, Client, Collection, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, SelectMenuBuilder } from "discord.js";
 import { selectMultipleRoles, selectRole } from "../../utils/functions";
 
+import { sendCMCB, sendCM } from "../commands/contextMenu/send";
+import { moveScb, moveSlashCommand } from "../commands/slash/move";
+
+export const commands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
+;[sendCMCB, moveScb].forEach(cmd=> commands.set(cmd.name, cmd))
+
 export const interactionCreateEvent = async (int: Interaction<CacheType>, client: Client) => {
+  
+  if(int.isChatInputCommand()){
+    const { commandName } = int
+    
+    if(commandName == 'move') moveSlashCommand(int, client)
+  }
+
+  if(int.isContextMenuCommand()){
+    const { commandType, commandName, user } = int
+    
+    if(commandType == ApplicationCommandType.Message){
+      if(commandName == 'Send') sendCM(int, client)
+    }
+  }
+  
   if(int.isButton()){
     const { customId, guild } = int
 
