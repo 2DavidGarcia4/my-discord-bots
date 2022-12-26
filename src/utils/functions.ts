@@ -1,4 +1,4 @@
-import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction } from "discord.js";
+import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from "discord.js";
 import ms from "ms";
 import { botDB } from "../db";
 import { promoLevelModel } from "../models";
@@ -124,4 +124,13 @@ export const selectMultipleRoles = (int: SelectMenuInteraction<CacheType>, value
   .setDescription(`${addRoles.length>0 ? `${inEnglish ? 'Roles added to you' : 'Roles que se te agregaron'}:\n${addRoles.map((m, i)=> `${i+1}. <@&${m.rol}>`).join('\n')}\n\n` : ''} ${removeRoles.length>0 ? `${inEnglish ? 'Roles that have been removed' : 'Roles que se te eliminaron'}:\n${removeRoles.map((m, i)=> `${i+1}. <@&${m.rol}>`).join('\n')}` : ''}`)
   .setColor(addRoles.length>0 && removeRoles.length>0 ? color.yellow : addRoles.length>0 ? color.afirmative : color.negative)
   int.reply({ephemeral: true, embeds: [rolStatusEb]})
+}
+
+export const presences = (dayStates: ActivitiesOptions[], nightStates: ActivitiesOptions[], client: Client) => {
+  const tiempo = new Date()
+  if (tiempo.getHours() > 1 && tiempo.getHours() < 13) {
+    client.user?.setPresence({ status: "idle", activities: [nightStates[Math.floor(Math.random() * nightStates.length)]] })
+  } else {
+    client.user?.setPresence({ status: "online", activities: [dayStates[Math.floor(Math.random() * dayStates.length)]] })
+  }
 }

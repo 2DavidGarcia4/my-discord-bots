@@ -15,11 +15,13 @@ const functions_1 = require("../utils/functions");
 const db_1 = require("../db");
 const config_1 = require("../../config");
 const interactionCreate_1 = require("./interactionCreate");
+const functions_2 = require("../../utils/functions");
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
+    const { serverId, principalServerId } = db_1.frogDb;
     console.log(((_a = client.user) === null || _a === void 0 ? void 0 : _a.username) + ' Estoy listo');
-    const principalServer = client.guilds.cache.get('1028793496674500659');
-    const server = client.guilds.cache.get(db_1.frogDb.serverId);
+    const principalServer = client.guilds.cache.get(principalServerId);
+    const server = client.guilds.cache.get(serverId);
     const readyChannel = client.channels.cache.get('1053425705385467904');
     const ReadyEb = new discord_js_1.EmbedBuilder()
         .setTitle('✅ I am ready')
@@ -41,5 +43,51 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             }
         }));
     }));
+    const dayStates = [
+        {
+            name: "moans",
+            type: discord_js_1.ActivityType.Listening
+        },
+        {
+            name: "orgasms",
+            type: discord_js_1.ActivityType.Watching
+        },
+        {
+            name: "with the girls",
+            type: discord_js_1.ActivityType.Playing
+        },
+        {
+            name: (server === null || server === void 0 ? void 0 : server.memberCount.toLocaleString()) + " members.",
+            type: discord_js_1.ActivityType.Watching
+        },
+        {
+            name: "vaginas",
+            type: discord_js_1.ActivityType.Watching
+        },
+        {
+            name: "boobs",
+            type: discord_js_1.ActivityType.Watching
+        },
+        {
+            name: "ass",
+            type: discord_js_1.ActivityType.Watching
+        },
+    ];
+    const nightStates = [
+        {
+            name: `naked women.`,
+            type: discord_js_1.ActivityType.Watching
+        },
+        {
+            name: `moans.`,
+            type: discord_js_1.ActivityType.Listening
+        },
+        {
+            name: 'the beauty of women',
+            type: discord_js_1.ActivityType.Watching
+        }
+    ];
+    (0, functions_2.presences)(dayStates, nightStates, client);
+    setInterval(() => (0, functions_2.presences)(dayStates, nightStates, client), 30 * 60 * 60 * 1000);
 });
 exports.readyEvent = readyEvent;

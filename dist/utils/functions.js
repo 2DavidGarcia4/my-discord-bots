@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.selectMultipleRoles = exports.selectRole = exports.promotionLevelNotificationReset = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = void 0;
+exports.presences = exports.selectMultipleRoles = exports.selectRole = exports.promotionLevelNotificationReset = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = void 0;
 const discord_js_1 = require("discord.js");
 const ms_1 = __importDefault(require("ms"));
 const db_1 = require("../db");
@@ -135,3 +135,14 @@ const selectMultipleRoles = (int, values, dictionary, author) => {
     int.reply({ ephemeral: true, embeds: [rolStatusEb] });
 };
 exports.selectMultipleRoles = selectMultipleRoles;
+const presences = (dayStates, nightStates, client) => {
+    var _a, _b;
+    const tiempo = new Date();
+    if (tiempo.getHours() > 1 && tiempo.getHours() < 13) {
+        (_a = client.user) === null || _a === void 0 ? void 0 : _a.setPresence({ status: "idle", activities: [nightStates[Math.floor(Math.random() * nightStates.length)]] });
+    }
+    else {
+        (_b = client.user) === null || _b === void 0 ? void 0 : _b.setPresence({ status: "online", activities: [dayStates[Math.floor(Math.random() * dayStates.length)]] });
+    }
+};
+exports.presences = presences;

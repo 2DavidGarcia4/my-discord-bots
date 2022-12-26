@@ -1,13 +1,15 @@
-import { ChannelType, Client, EmbedBuilder } from "discord.js";
+import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder } from "discord.js";
 import { setGuildStatus } from "../utils/functions";
 import { frogDb } from "../db";
 import { isDevelopment } from "../../config";
 import { commands } from "./interactionCreate";
+import { presences } from "../../utils/functions";
 
 export const readyEvent = async (client: Client) => {
+  const { serverId, principalServerId } = frogDb
   console.log(client.user?.username+' Estoy listo')
-  const principalServer = client.guilds.cache.get('1028793496674500659')
-  const server = client.guilds.cache.get(frogDb.serverId)
+  const principalServer = client.guilds.cache.get(principalServerId)
+  const server = client.guilds.cache.get(serverId)
   
   
   const readyChannel = client.channels.cache.get('1053425705385467904')
@@ -34,4 +36,53 @@ export const readyEvent = async (client: Client) => {
     })
 
   })
+
+  const dayStates: ActivitiesOptions[] = [
+    {
+      name: "moans",
+      type: ActivityType.Listening
+    },
+    {
+      name: "orgasms",
+      type: ActivityType.Watching
+    },
+    {
+      name: "with the girls",
+      type: ActivityType.Playing
+    },
+    {
+      name: server?.memberCount.toLocaleString()+" members.",
+      type: ActivityType.Watching
+    },
+    {
+      name: "vaginas",
+      type: ActivityType.Watching
+    },
+    {
+      name: "boobs",
+      type: ActivityType.Watching
+    },
+    {
+      name: "ass",
+      type: ActivityType.Watching
+    },
+  ]
+
+  const nightStates: ActivitiesOptions[] = [
+    {
+      name: `naked women.`,
+      type: ActivityType.Watching
+    },
+    {
+      name: `moans.`,
+      type: ActivityType.Listening
+    },
+    {
+      name: 'the beauty of women',
+      type: ActivityType.Watching
+    }
+  ]
+
+  presences(dayStates, nightStates, client)
+  setInterval(()=> presences(dayStates, nightStates, client), 30*60*60*1000)
 }
