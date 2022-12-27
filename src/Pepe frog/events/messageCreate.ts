@@ -33,7 +33,6 @@ const sanctions = [
 
 export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
   const { prefix, serverId, principalServerId } = frogDb
-
   if(msg.author.bot) return
 
   if(msg.guildId == principalServerId){

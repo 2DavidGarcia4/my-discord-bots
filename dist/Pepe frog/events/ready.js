@@ -87,7 +87,43 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             type: discord_js_1.ActivityType.Watching
         }
     ];
-    (0, functions_2.presences)(dayStates, nightStates, client);
-    setInterval(() => (0, functions_2.presences)(dayStates, nightStates, client), 30 * 60 * 60 * 1000);
+    // presences(dayStates, nightStates, client)
+    const statsChannel = server === null || server === void 0 ? void 0 : server.channels.cache.get('1053389468993851472');
+    const sendStats = () => __awaiter(void 0, void 0, void 0, function* () {
+        var _c;
+        console.log('Ejecution');
+        if ((statsChannel === null || statsChannel === void 0 ? void 0 : statsChannel.type) != discord_js_1.ChannelType.GuildText)
+            return;
+        const { topic } = statsChannel, nowTime = Date.now();
+        if (topic) {
+            const oldTime = parseInt(topic) + 24 * 60 * 60 * 1000;
+            if (oldTime < (nowTime - (1 * 60 * 60 * 1000))) {
+                const { joins, leaves } = db_1.frogDb, members = joins - leaves;
+                const porcentMembers = Math.floor(members * 100 / joins);
+                let barr = '';
+                for (let i = 1; i <= 20; i++) {
+                    if (i * 5 <= porcentMembers)
+                        barr += '█';
+                    else
+                        barr += ' ';
+                }
+                console.log('holaa');
+                db_1.frogDb.joins = 0, db_1.frogDb.leaves = 0;
+                statsChannel.edit({ topic: nowTime.toString() });
+                const StatsEb = new discord_js_1.EmbedBuilder()
+                    .setTitle('Estadisticas diarias del servidor')
+                    .setDescription(`Se unieron ${joins}, ${leaves} se fueron y ${members} se quedaron.\n\n**Miembros: ${porcentMembers}%**\n\`\`${barr}\`\``)
+                    .setColor(((_c = server === null || server === void 0 ? void 0 : server.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White');
+                statsChannel.send({ embeds: [StatsEb] });
+            }
+        }
+        else
+            statsChannel.edit({ topic: nowTime.toString() });
+    });
+    sendStats();
+    setInterval(() => {
+        (0, functions_2.presences)(dayStates, nightStates, client);
+        sendStats();
+    }, 60 * 60 * 60 * 1000);
 });
 exports.readyEvent = readyEvent;

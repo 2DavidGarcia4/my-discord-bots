@@ -55,4 +55,12 @@ Frog.on('channelPinsUpdate', (channel) => {
   console.log('holaa')
 })
 
+Frog.on('guildMemberAdd', (member) => {
+  
+})
+
+Frog.on('guildMemberRemove', (member) => {
+
+})
+
 Frog.login(pepeFrog)
