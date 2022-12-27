@@ -18,9 +18,11 @@ const messageCreate_1 = require("./events/messageCreate");
 const roleCreate_1 = require("./events/roleCreate");
 const roleUpdate_1 = require("./events/roleUpdate");
 const roleDelete_1 = require("./events/roleDelete");
-const channelDelete_1 = require("../events/channelDelete");
+const channelDelete_1 = require("./events/channelDelete");
 const channelCreate_1 = require("./events/channelCreate");
 const channelUpdate_1 = require("./events/channelUpdate");
+const memberAdd_1 = require("./events/memberAdd");
+const memberRemove_1 = require("./events/memberRemove");
 const Frog = new discord_js_1.Client({ intents: 131071 });
 Frog.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
     (0, ready_1.readyEvent)(Frog);
@@ -54,7 +56,9 @@ Frog.on('channelPinsUpdate', (channel) => {
     console.log('holaa');
 });
 Frog.on('guildMemberAdd', (member) => {
+    (0, memberAdd_1.memberAddEvent)(member, Frog);
 });
 Frog.on('guildMemberRemove', (member) => {
+    (0, memberRemove_1.memberRemoveEvent)(member, Frog);
 });
 Frog.login(config_1.pepeFrog);

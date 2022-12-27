@@ -31,10 +31,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         readyChannel.sendTyping();
         setTimeout(() => readyChannel.send({ embeds: [ReadyEb] }), 2000);
     }
-    // setGuildStatus(client)
-    setInterval(() => {
-        (0, functions_1.setGuildStatus)(client);
-    }, 6 * 60 * 60 * 1000);
+    ;
     [principalServer, server].forEach((sv) => __awaiter(void 0, void 0, void 0, function* () {
         interactionCreate_1.commands.forEach((cmd) => __awaiter(void 0, void 0, void 0, function* () {
             var _b;
@@ -87,11 +84,10 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             type: discord_js_1.ActivityType.Watching
         }
     ];
-    // presences(dayStates, nightStates, client)
+    (0, functions_2.presences)(dayStates, nightStates, client);
     const statsChannel = server === null || server === void 0 ? void 0 : server.channels.cache.get('1053389468993851472');
     const sendStats = () => __awaiter(void 0, void 0, void 0, function* () {
         var _c;
-        console.log('Ejecution');
         if ((statsChannel === null || statsChannel === void 0 ? void 0 : statsChannel.type) != discord_js_1.ChannelType.GuildText)
             return;
         const { topic } = statsChannel, nowTime = Date.now();
@@ -107,7 +103,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
                     else
                         barr += ' ';
                 }
-                console.log('holaa');
                 db_1.frogDb.joins = 0, db_1.frogDb.leaves = 0;
                 statsChannel.edit({ topic: nowTime.toString() });
                 const StatsEb = new discord_js_1.EmbedBuilder()
@@ -125,5 +120,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         (0, functions_2.presences)(dayStates, nightStates, client);
         sendStats();
     }, 60 * 60 * 60 * 1000);
+    setInterval(() => {
+        (0, functions_1.setGuildStatus)(client);
+    }, 6 * 60 * 60 * 1000);
 });
 exports.readyEvent = readyEvent;

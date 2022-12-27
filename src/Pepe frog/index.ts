@@ -8,9 +8,11 @@ import { messageCreateEvent } from "./events/messageCreate";
 import { roleCreateEvent } from "./events/roleCreate";
 import { roleUpdateEvent } from "./events/roleUpdate";
 import { roleDeleteEvent } from "./events/roleDelete";
-import { channelDeleteEvent } from "../events/channelDelete";
+import { channelDeleteEvent } from "./events/channelDelete";
 import { channelCreateEvent } from "./events/channelCreate";
 import { channelUpdateEvetn } from "./events/channelUpdate";
+import { memberAddEvent } from "./events/memberAdd";
+import { memberRemoveEvent } from "./events/memberRemove";
 
 const Frog = new Client({intents: 131071})
 
@@ -56,11 +58,11 @@ Frog.on('channelPinsUpdate', (channel) => {
 })
 
 Frog.on('guildMemberAdd', (member) => {
-  
+  memberAddEvent(member, Frog)
 })
 
 Frog.on('guildMemberRemove', (member) => {
-
+  memberRemoveEvent(member, Frog)
 })
 
 Frog.login(pepeFrog)

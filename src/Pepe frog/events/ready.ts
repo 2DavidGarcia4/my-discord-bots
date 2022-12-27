@@ -23,11 +23,6 @@ export const readyEvent = async (client: Client) => {
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
   }
 
-  // setGuildStatus(client)
-  setInterval(()=> {
-    setGuildStatus(client)
-  }, 6*60*60*1000)
-
 
   ;[principalServer, server].forEach(async sv=> {
     commands.forEach(async cmd=> {
@@ -84,11 +79,10 @@ export const readyEvent = async (client: Client) => {
     }
   ]
 
-  // presences(dayStates, nightStates, client)
+  presences(dayStates, nightStates, client)
 
   const statsChannel = server?.channels.cache.get('1053389468993851472')
   const sendStats = async () => {
-    console.log('Ejecution')
     if(statsChannel?.type != ChannelType.GuildText) return
     const { topic } = statsChannel, nowTime = Date.now()
 
@@ -103,10 +97,7 @@ export const readyEvent = async (client: Client) => {
           else barr+=' '
         }
 
-        console.log('holaa')
-
         frogDb.joins = 0, frogDb.leaves = 0
-
         statsChannel.edit({topic: nowTime.toString()})
 
         const StatsEb = new EmbedBuilder()
@@ -124,4 +115,8 @@ export const readyEvent = async (client: Client) => {
     presences(dayStates, nightStates, client)
     sendStats()
   }, 60*60*60*1000)
+
+  setInterval(()=> {
+    setGuildStatus(client)
+  }, 6*60*60*1000)
 }
