@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ApplicationCommandType, CacheType, Client, Collection, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, SelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandType, CacheType, Client, Collection, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
 import { selectMultipleRoles, selectRole } from "../../utils/functions";
 
 import { sendCMCB, sendCM } from "../commands/contextMenu/send";
@@ -40,9 +40,9 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
       .setDescription('Hello, here you can get the roles you want, some roles notify you about actions that are performed on the server while others are just for decoration like roles that change your color.\n\nTo get a role select the type of role you want get down in the drop down menu.')
       .setColor(int.message?.member?.displayHexColor || 'White')
 
-      const RolesMenu = new ActionRowBuilder<SelectMenuBuilder>()
+      const RolesMenu = new ActionRowBuilder<StringSelectMenuBuilder>()
       .addComponents(
-        new SelectMenuBuilder()
+        new StringSelectMenuBuilder()
         .setCustomId('roles-menu')
         .setPlaceholder('👉 Select a role type')
         .setOptions([
@@ -93,9 +93,9 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
         `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents?.toLocaleString()}** miembros tienen el rol.`)
         .setColor(int.guild?.members.me?.displayHexColor || 'White')
 
-        const NotificationsMenu = new ActionRowBuilder<SelectMenuBuilder>()
+        const NotificationsMenu = new ActionRowBuilder<StringSelectMenuBuilder>()
         .addComponents(
-          new SelectMenuBuilder()
+          new StringSelectMenuBuilder()
           .setCustomId('notifications-menu')
           .setMaxValues(3)
           .setPlaceholder(inEnglish ? '👉 Select the roles you want.' : '👉 Selecciona los roles que quieres.')
@@ -145,9 +145,9 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
         `estos roles pintan tu nombre dentro del servidor, selecciona uno para cambiar el color de tu nombre.\n\n`)+rolesIds.map(m=> `**<@&${m}>**`).join('\n'))
         .setColor(int.guild?.members.me?.displayHexColor || 'White')
 
-        const ColorsMenu = new ActionRowBuilder<SelectMenuBuilder>()
+        const ColorsMenu = new ActionRowBuilder<StringSelectMenuBuilder>()
         .addComponents(
-          new SelectMenuBuilder()
+          new StringSelectMenuBuilder()
           .setCustomId('colors-menu')
           .setPlaceholder(inEnglish ? '👉 Select a role.' : '👉 Selecciona un rol.')
           .setOptions([

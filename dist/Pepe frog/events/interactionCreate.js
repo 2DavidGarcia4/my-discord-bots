@@ -45,7 +45,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                 .setDescription('Hello, here you can get the roles you want, some roles notify you about actions that are performed on the server while others are just for decoration like roles that change your color.\n\nTo get a role select the type of role you want get down in the drop down menu.')
                 .setColor(((_c = (_b = int.message) === null || _b === void 0 ? void 0 : _b.member) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White');
             const RolesMenu = new discord_js_1.ActionRowBuilder()
-                .addComponents(new discord_js_1.SelectMenuBuilder()
+                .addComponents(new discord_js_1.StringSelectMenuBuilder()
                 .setCustomId('roles-menu')
                 .setPlaceholder('👉 Select a role type')
                 .setOptions([
@@ -88,7 +88,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                     `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements === null || announcements === void 0 ? void 0 : announcements.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys === null || surveys === void 0 ? void 0 : surveys.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents === null || contents === void 0 ? void 0 : contents.toLocaleString()}** miembros tienen el rol.`)
                     .setColor(((_g = (_f = int.guild) === null || _f === void 0 ? void 0 : _f.members.me) === null || _g === void 0 ? void 0 : _g.displayHexColor) || 'White');
                 const NotificationsMenu = new discord_js_1.ActionRowBuilder()
-                    .addComponents(new discord_js_1.SelectMenuBuilder()
+                    .addComponents(new discord_js_1.StringSelectMenuBuilder()
                     .setCustomId('notifications-menu')
                     .setMaxValues(3)
                     .setPlaceholder(inEnglish ? '👉 Select the roles you want.' : '👉 Selecciona los roles que quieres.')
@@ -134,7 +134,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                     `estos roles pintan tu nombre dentro del servidor, selecciona uno para cambiar el color de tu nombre.\n\n`) + rolesIds.map(m => `**<@&${m}>**`).join('\n'))
                     .setColor(((_j = (_h = int.guild) === null || _h === void 0 ? void 0 : _h.members.me) === null || _j === void 0 ? void 0 : _j.displayHexColor) || 'White');
                 const ColorsMenu = new discord_js_1.ActionRowBuilder()
-                    .addComponents(new discord_js_1.SelectMenuBuilder()
+                    .addComponents(new discord_js_1.StringSelectMenuBuilder()
                     .setCustomId('colors-menu')
                     .setPlaceholder(inEnglish ? '👉 Select a role.' : '👉 Selecciona un rol.')
                     .setOptions([

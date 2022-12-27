@@ -15,8 +15,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.presences = exports.selectMultipleRoles = exports.selectRole = exports.promotionLevelNotificationReset = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = void 0;
 const discord_js_1 = require("discord.js");
 const ms_1 = __importDefault(require("ms"));
-const db_1 = require("../db");
-const models_1 = require("../models");
+const db_1 = require("../pcem/db");
+const models_1 = require("../pcem/models");
 const { color, emoji } = db_1.botDB;
 const sendMessageText = (msg, optionsMessage) => {
     setTimeout(() => {

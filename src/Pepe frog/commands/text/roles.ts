@@ -1,4 +1,4 @@
-import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, SelectMenuBuilder } from "discord.js";
+import { Message, EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } from "discord.js";
 
 export const rolesCommand = async (msg: Message<boolean>) => {
   const RolesEb = new EmbedBuilder()
@@ -16,9 +16,9 @@ export const rolesCommand = async (msg: Message<boolean>) => {
     .setStyle(ButtonStyle.Primary)
   )
 
-  const RolesMenu = new ActionRowBuilder<SelectMenuBuilder>()
+  const RolesMenu = new ActionRowBuilder<StringSelectMenuBuilder>()
   .addComponents(
-    new SelectMenuBuilder()
+    new StringSelectMenuBuilder()
     .setCustomId('roles-menu')
     .setPlaceholder('👉 Selecciona un tipo de rol')
     .setOptions([

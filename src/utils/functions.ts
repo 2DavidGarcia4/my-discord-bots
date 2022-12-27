@@ -1,8 +1,8 @@
 import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from "discord.js";
 import ms from "ms";
-import { botDB } from "../db";
-import { promoLevelModel } from "../models";
-import { DictionaryMenu, MembersPrl } from "../types";
+import { botDB } from "../pcem/db";
+import { promoLevelModel } from "../pcem/models";
+import { DictionaryMenu, MembersPrl } from "../pcem/types";
 
 const { color, emoji } = botDB
 

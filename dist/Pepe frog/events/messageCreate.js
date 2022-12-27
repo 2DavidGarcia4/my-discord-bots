@@ -42,6 +42,8 @@ const sanctions = [
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     const { prefix, serverId, principalServerId } = db_1.frogDb;
+    if (((_a = msg.mentions.roles.first()) === null || _a === void 0 ? void 0 : _a.id) == '1053411182935023657')
+        msg.react('1053444752340680817');
     if (msg.author.bot)
         return;
     if (msg.guildId == principalServerId) {
@@ -58,7 +60,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         //? Auto moderation
         const enlaceActivators = ['http://', 'https://'];
         const filesSinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3'];
-        if (!msg.author.bot && !((_a = msg.member) === null || _a === void 0 ? void 0 : _a.permissions.has('Administrator')) && enlaceActivators.some(s => msg.content.includes(s))) {
+        if (!msg.author.bot && !((_b = msg.member) === null || _b === void 0 ? void 0 : _b.permissions.has('Administrator')) && enlaceActivators.some(s => msg.content.includes(s))) {
             const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
             const filter = texts.filter(f => enlaceActivators.some(s => f.includes(s)));
             if (filter.some(f => !filesSinks.some(s => f.endsWith('.' + s)))) {
@@ -74,7 +76,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 if (member) {
                     member.warns++;
                     if (member.warns >= 7) {
-                        (_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.add('1053430826823594106');
+                        (_c = msg.member) === null || _c === void 0 ? void 0 : _c.roles.add('1053430826823594106');
                     }
                     sanctions.forEach(sanction => {
                         var _a;
@@ -91,13 +93,11 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
         const { parentId } = msg.channel;
-        if (parentId == '1053401638494289931' && msg.attachments.size) {
+        if (msg.attachments.size && parentId != '1054485238413266965') {
             const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
                 serverChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.map(m => m) });
         }
-        if (((_c = msg.mentions.roles.first()) === null || _c === void 0 ? void 0 : _c.id) == '1053411182935023657')
-            msg.react('1053444752340680817');
     }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;

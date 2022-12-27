@@ -25,7 +25,7 @@ const rolesCommand = (msg) => __awaiter(void 0, void 0, void 0, function* () {
         .setLabel('English')
         .setStyle(discord_js_1.ButtonStyle.Primary));
     const RolesMenu = new discord_js_1.ActionRowBuilder()
-        .addComponents(new discord_js_1.SelectMenuBuilder()
+        .addComponents(new discord_js_1.StringSelectMenuBuilder()
         .setCustomId('roles-menu')
         .setPlaceholder('👉 Selecciona un tipo de rol')
         .setOptions([
