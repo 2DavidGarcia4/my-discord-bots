@@ -527,7 +527,7 @@ export const readyEvent = async (client: Client) => {
     colaboradores()
     sorteos()
     encuestas()
-  }, 2 * 60000)
+  }, 60 * 60000)
 
   setInterval(async () => {
     estadisticas()

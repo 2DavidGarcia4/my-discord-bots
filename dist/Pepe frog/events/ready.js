@@ -119,9 +119,9 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     setInterval(() => {
         (0, functions_2.presences)(dayStates, nightStates, client);
         sendStats();
-    }, 60 * 60 * 60 * 1000);
+    }, 60 * 60000);
     setInterval(() => {
         (0, functions_1.setGuildStatus)(client);
-    }, 6 * 60 * 60 * 1000);
+    }, 6 * 60 * 60000);
 });
 exports.readyEvent = readyEvent;

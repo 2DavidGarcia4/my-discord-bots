@@ -114,9 +114,9 @@ export const readyEvent = async (client: Client) => {
   setInterval(()=> {
     presences(dayStates, nightStates, client)
     sendStats()
-  }, 60*60*60*1000)
+  }, 60*60000)
 
   setInterval(()=> {
     setGuildStatus(client)
-  }, 6*60*60*1000)
+  }, 6*60*60000)
 }

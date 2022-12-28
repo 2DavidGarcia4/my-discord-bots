@@ -40,7 +40,7 @@ const sanctions = [
     },
 ];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c, _d;
     const { prefix, serverId, principalServerId } = db_1.frogDb;
     if (((_a = msg.mentions.roles.first()) === null || _a === void 0 ? void 0 : _a.id) == '1053411182935023657')
         msg.react('1053444752340680817');
@@ -103,7 +103,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
     const command = (_d = args.shift()) === null || _d === void 0 ? void 0 : _d.toLowerCase();
-    if ((_e = msg.member) === null || _e === void 0 ? void 0 : _e.permissions.has('Administrator')) {
+    if (['717420870267830382', '551146834941313026', '853063286320922634'].some(s => s == msg.author.id)) {
         if (command == 'eval')
             (0, eval_1.evalCommand)(msg, client, args.join(' '));
         if (command == 'rules')

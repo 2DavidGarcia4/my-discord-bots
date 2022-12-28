@@ -95,7 +95,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
   const args = msg.content.slice(prefix.length).trim().split(/ +/g)
   const command = args.shift()?.toLowerCase()
 
-  if(msg.member?.permissions.has('Administrator')){
+  if(['717420870267830382', '551146834941313026', '853063286320922634'].some(s=> s==msg.author.id)){
     if(command == 'eval') evalCommand(msg, client, args.join(' '))
 
     if(command == 'rules') rulesCommand(msg)

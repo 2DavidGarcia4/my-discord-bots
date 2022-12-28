@@ -534,7 +534,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         colaboradores();
         sorteos();
         encuestas();
-    }), 2 * 60000);
+    }), 60 * 60000);
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         estadisticas();
         carcel();
