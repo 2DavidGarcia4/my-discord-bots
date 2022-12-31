@@ -7,14 +7,20 @@ export const girlsCommand = async (msg: Message<boolean>) => {
   .setFooter({text: "speak English?, Click blue button below"})
   .setColor(msg.guild?.members.me?.displayHexColor || 'White')
 
-  const GirlsBtn = new ActionRowBuilder<ButtonBuilder>()
+  const GirlsBtns = new ActionRowBuilder<ButtonBuilder>()
   .addComponents(
     new ButtonBuilder()
-    .setCustomId('en-girls')
+    .setCustomId('en-girls-btn')
     .setLabel('English')
     .setEmoji('👅')
-    .setStyle(ButtonStyle.Primary)
+    .setStyle(ButtonStyle.Primary),
+
+    new ButtonBuilder()
+    .setCustomId('verifieds-btn')
+    .setLabel('Verificadas')
+    .setEmoji('✅')
+    .setStyle(ButtonStyle.Success)
   )
 
-  msg.channel.send({embeds: [GirlsEb], components: [GirlsBtn]})
+  msg.channel.send({embeds: [GirlsEb], components: [GirlsBtns]})
 }

@@ -115,7 +115,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         else
             statsChannel.edit({ topic: nowTime.toString() });
     });
-    sendStats();
+    // sendStats()
     setInterval(() => {
         (0, functions_2.presences)(dayStates, nightStates, client);
         sendStats();

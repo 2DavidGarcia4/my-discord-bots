@@ -41,6 +41,12 @@ const rolesCommand = (msg) => __awaiter(void 0, void 0, void 0, function* () {
             description: 'Roles que cambian el color de tu nombre.',
             value: 'colors'
         },
+        {
+            label: 'Géneros',
+            emoji: '👥',
+            description: 'Roles que te identifican con un género.',
+            value: 'genders'
+        },
     ]));
     msg.channel.send({ embeds: [RolesEb], components: [RolesMenu, RolesBtn] });
 });

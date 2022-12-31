@@ -9,6 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.modDb = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../config");
 //! Events
@@ -23,6 +24,7 @@ const channelCreate_1 = require("./events/channelCreate");
 const channelUpdate_1 = require("./events/channelUpdate");
 const memberAdd_1 = require("./events/memberAdd");
 const memberRemove_1 = require("./events/memberRemove");
+exports.modDb = [];
 const Frog = new discord_js_1.Client({ intents: 131071 });
 Frog.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
     (0, ready_1.readyEvent)(Frog);

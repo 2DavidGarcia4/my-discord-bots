@@ -1,5 +1,6 @@
 import { Client } from "discord.js";
 import { pepeFrog } from "../config";
+import { ModDb } from "./types";
 
 //! Events
 import { readyEvent } from "./events/ready";
@@ -13,6 +14,9 @@ import { channelCreateEvent } from "./events/channelCreate";
 import { channelUpdateEvetn } from "./events/channelUpdate";
 import { memberAddEvent } from "./events/memberAdd";
 import { memberRemoveEvent } from "./events/memberRemove";
+
+
+export const modDb: ModDb[] = []
 
 const Frog = new Client({intents: 131071})
 

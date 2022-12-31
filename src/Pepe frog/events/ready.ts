@@ -4,7 +4,6 @@ import { frogDb } from "../db";
 import { isDevelopment } from "../../config";
 import { commands } from "./interactionCreate";
 import { presences } from "../../utils/functions";
-import { createCanvas, loadImage } from "canvas";
 
 export const readyEvent = async (client: Client) => {
   const { serverId, principalServerId } = frogDb
@@ -23,14 +22,12 @@ export const readyEvent = async (client: Client) => {
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
   }
 
-
   ;[principalServer, server].forEach(async sv=> {
     commands.forEach(async cmd=> {
       if(!(await sv?.commands.fetch())?.some(s=> s.name == cmd.name)){
         sv?.commands.create(cmd).then(c=> console.log(`Se creo el comando ${c.name}`))
       }
     })
-
   })
 
   const dayStates: ActivitiesOptions[] = [

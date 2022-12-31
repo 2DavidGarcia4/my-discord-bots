@@ -1,9 +1,10 @@
 import { Client, EmbedBuilder, Message } from "discord.js"
 import { inspect } from 'util'
+import { modDb } from "../.."
 import { sendMessageText, setError } from "../../../utils/functions"
 import { frogDb } from "../../db"
 import { setGuildStatus } from "../../utils/functions"
-import { modDb } from "../../events/messageCreate"
+// import { modDb } from "../../events/messageCreate"
 
 export const evalCommand = (msg: Message, client: Client, args: string) => {
   try {

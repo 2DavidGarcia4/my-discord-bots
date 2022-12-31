@@ -9,14 +9,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.messageCreateEvent = exports.modDb = void 0;
+exports.messageCreateEvent = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
+const index_1 = require("../index");
 const eval_1 = require("../commands/text/eval");
 const roles_1 = require("../commands/text/roles");
 const rules_1 = require("../commands/text/rules");
 const girls_1 = require("../commands/text/girls");
-exports.modDb = [];
+const info_1 = require("../commands/text/info");
 const sanctions = [
     {
         time: 4 * 60 * 60 * 1000,
@@ -72,7 +73,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                     msg.delete();
                     setTimeout(() => re.delete(), 10000);
                 });
-                const member = exports.modDb.find(f => f.id == msg.author.id);
+                const member = index_1.modDb.find(f => f.id == msg.author.id);
                 if (member) {
                     member.warns++;
                     if (member.warns >= 7) {
@@ -86,7 +87,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                     });
                 }
                 else {
-                    exports.modDb.push({ id: msg.author.id, warns: 1 });
+                    index_1.modDb.push({ id: msg.author.id, warns: 1 });
                 }
             }
         }
@@ -112,6 +113,8 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             (0, roles_1.rolesCommand)(msg);
         if (command == 'girls')
             (0, girls_1.girlsCommand)(msg);
+        if (command == 'info')
+            (0, info_1.infoCommand)(msg);
     }
 });
 exports.messageCreateEvent = messageCreateEvent;

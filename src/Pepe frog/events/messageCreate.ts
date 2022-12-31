@@ -1,13 +1,13 @@
 import { ChannelType, Client, EmbedBuilder, Message } from "discord.js";
 import { frogDb } from "../db";
+import { modDb } from "../index";
 
 import { evalCommand } from "../commands/text/eval";
 import { rolesCommand } from "../commands/text/roles";
 import { rulesCommand } from "../commands/text/rules";
 import { girlsCommand } from "../commands/text/girls";
-import { ModDb } from "../types";
+import { infoCommand } from "../commands/text/info";
 
-export const modDb: ModDb[] = []
 const sanctions = [
   {
     time: 4*60*60*1000,
@@ -103,5 +103,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
     if(command == 'roles') rolesCommand(msg)
 
     if(command == 'girls') girlsCommand(msg)
+
+    if(command == 'info') infoCommand(msg)
   }
 }
