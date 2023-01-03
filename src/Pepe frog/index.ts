@@ -16,6 +16,7 @@ import { memberAddEvent } from "./events/memberAdd";
 import { memberRemoveEvent } from "./events/memberRemove";
 import { messageUpdateEvent } from "./events/messageUpdate";
 import { messageDeleteEvent } from "./events/messageDelete";
+import { reactionAddEvent } from "./events/reactionAdd";
 
 
 export const modDb: ModDb[] = []
@@ -36,6 +37,10 @@ Frog.on('messageUpdate', (oldMessage, newMessage) => {
 
 Frog.on('messageDelete', (message) => {
   messageDeleteEvent(message, Frog)
+})
+
+Frog.on('messageReactionAdd', (reaction, user) => {
+  reactionAddEvent(reaction, user)
 })
 
 Frog.on('interactionCreate', (interaction) => {

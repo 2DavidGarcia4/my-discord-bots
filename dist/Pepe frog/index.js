@@ -26,6 +26,7 @@ const memberAdd_1 = require("./events/memberAdd");
 const memberRemove_1 = require("./events/memberRemove");
 const messageUpdate_1 = require("./events/messageUpdate");
 const messageDelete_1 = require("./events/messageDelete");
+const reactionAdd_1 = require("./events/reactionAdd");
 exports.modDb = [];
 const Frog = new discord_js_1.Client({ intents: 131071 });
 Frog.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,6 +40,9 @@ Frog.on('messageUpdate', (oldMessage, newMessage) => {
 });
 Frog.on('messageDelete', (message) => {
     (0, messageDelete_1.messageDeleteEvent)(message, Frog);
+});
+Frog.on('messageReactionAdd', (reaction, user) => {
+    (0, reactionAdd_1.reactionAddEvent)(reaction, user);
 });
 Frog.on('interactionCreate', (interaction) => {
     (0, interactionCreate_1.interactionCreateEvent)(interaction, Frog);

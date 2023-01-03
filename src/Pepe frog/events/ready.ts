@@ -11,7 +11,6 @@ export const readyEvent = async (client: Client) => {
   const principalServer = client.guilds.cache.get(principalServerId)
   const server = client.guilds.cache.get(serverId)
   
-  
   const readyChannel = client.channels.cache.get('1053425705385467904')
   const ReadyEb = new EmbedBuilder()
   .setTitle('✅ I am ready')
@@ -21,6 +20,9 @@ export const readyEvent = async (client: Client) => {
     readyChannel.sendTyping()
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
   }
+
+  const suggestionsChannel = server?.channels.cache.get('1053401642915082392')
+  if(suggestionsChannel?.type == ChannelType.GuildText) suggestionsChannel.messages.fetch({limit: 100})
 
   ;[principalServer, server].forEach(async sv=> {
     commands.forEach(async cmd=> {

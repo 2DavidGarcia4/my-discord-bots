@@ -31,7 +31,9 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         readyChannel.sendTyping();
         setTimeout(() => readyChannel.send({ embeds: [ReadyEb] }), 2000);
     }
-    ;
+    const suggestionsChannel = server === null || server === void 0 ? void 0 : server.channels.cache.get('1053401642915082392');
+    if ((suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.type) == discord_js_1.ChannelType.GuildText)
+        suggestionsChannel.messages.fetch({ limit: 100 });
     [principalServer, server].forEach((sv) => __awaiter(void 0, void 0, void 0, function* () {
         interactionCreate_1.commands.forEach((cmd) => __awaiter(void 0, void 0, void 0, function* () {
             var _b;
