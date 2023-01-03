@@ -14,6 +14,8 @@ import { channelCreateEvent } from "./events/channelCreate";
 import { channelUpdateEvetn } from "./events/channelUpdate";
 import { memberAddEvent } from "./events/memberAdd";
 import { memberRemoveEvent } from "./events/memberRemove";
+import { messageUpdateEvent } from "./events/messageUpdate";
+import { messageDeleteEvent } from "./events/messageDelete";
 
 
 export const modDb: ModDb[] = []
@@ -26,6 +28,14 @@ Frog.on('ready', async () => {
 
 Frog.on('messageCreate', (message) => {
   messageCreateEvent(message, Frog)
+})
+
+Frog.on('messageUpdate', (oldMessage, newMessage) => {
+  messageUpdateEvent(oldMessage, newMessage, Frog)
+})
+
+Frog.on('messageDelete', (message) => {
+  messageDeleteEvent(message, Frog)
 })
 
 Frog.on('interactionCreate', (interaction) => {

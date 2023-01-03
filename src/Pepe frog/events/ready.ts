@@ -85,7 +85,7 @@ export const readyEvent = async (client: Client) => {
 
     if(topic){
       const oldTime = parseInt(topic) + 24*60*60*1000
-      if(oldTime < (nowTime-(1*60*60*1000))){
+      if((oldTime-(1*60*60*1000)) > nowTime){
         const { joins, leaves } = frogDb, members = joins-leaves
         const porcentMembers = Math.floor(members*100/joins)
         let barr = ''

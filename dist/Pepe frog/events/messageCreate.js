@@ -41,8 +41,8 @@ const sanctions = [
     },
 ];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d;
-    const { prefix, serverId, principalServerId } = db_1.frogDb;
+    var _a, _b, _c, _d, _e;
+    const { prefix, serverId, principalServerId, owners } = db_1.frogDb;
     if (((_a = msg.mentions.roles.first()) === null || _a === void 0 ? void 0 : _a.id) == '1053411182935023657')
         msg.react('1053444752340680817');
     if (msg.author.bot)
@@ -90,7 +90,10 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                     index_1.modDb.push({ id: msg.author.id, warns: 1 });
                 }
             }
+            return;
         }
+        if (msg.channelId == '1053401642915082392' && !((_d = msg.member) === null || _d === void 0 ? void 0 : _d.permissions.has('Administrator')))
+            msg.react('1059641676798377995'), msg.react('1059641726387626015');
         if (msg.channel.type != discord_js_1.ChannelType.GuildText)
             return;
         const { parentId } = msg.channel;
@@ -103,8 +106,8 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const command = (_d = args.shift()) === null || _d === void 0 ? void 0 : _d.toLowerCase();
-    if (['717420870267830382', '551146834941313026', '853063286320922634'].some(s => s == msg.author.id)) {
+    const command = (_e = args.shift()) === null || _e === void 0 ? void 0 : _e.toLowerCase();
+    if (owners.some(s => s == msg.author.id)) {
         if (command == 'eval')
             (0, eval_1.evalCommand)(msg, client, args.join(' '));
         if (command == 'rules')

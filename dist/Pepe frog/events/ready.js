@@ -93,7 +93,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         const { topic } = statsChannel, nowTime = Date.now();
         if (topic) {
             const oldTime = parseInt(topic) + 24 * 60 * 60 * 1000;
-            if (oldTime < (nowTime - (1 * 60 * 60 * 1000))) {
+            if ((oldTime - (1 * 60 * 60 * 1000)) > nowTime) {
                 const { joins, leaves } = db_1.frogDb, members = joins - leaves;
                 const porcentMembers = Math.floor(members * 100 / joins);
                 let barr = '';
@@ -115,7 +115,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         else
             statsChannel.edit({ topic: nowTime.toString() });
     });
-    // sendStats()
+    sendStats();
     setInterval(() => {
         (0, functions_2.presences)(dayStates, nightStates, client);
         sendStats();

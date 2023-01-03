@@ -32,7 +32,7 @@ const sanctions = [
 ]
 
 export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
-  const { prefix, serverId, principalServerId } = frogDb
+  const { prefix, serverId, principalServerId, owners } = frogDb
   if(msg.mentions.roles.first()?.id == '1053411182935023657') msg.react('1053444752340680817')
 
   if(msg.author.bot) return
@@ -81,7 +81,11 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
           modDb.push({id: msg.author.id, warns: 1})
         }
       }
+      return
     }
+
+    if(msg.channelId == '1053401642915082392' && !msg.member?.permissions.has('Administrator')) msg.react('1059641676798377995'), msg.react('1059641726387626015')
+    
 
     if(msg.channel.type != ChannelType.GuildText) return
     const { parentId } = msg.channel
@@ -95,7 +99,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
   const args = msg.content.slice(prefix.length).trim().split(/ +/g)
   const command = args.shift()?.toLowerCase()
 
-  if(['717420870267830382', '551146834941313026', '853063286320922634'].some(s=> s==msg.author.id)){
+  if(owners.some(s=> s == msg.author.id)){
     if(command == 'eval') evalCommand(msg, client, args.join(' '))
 
     if(command == 'rules') rulesCommand(msg)
