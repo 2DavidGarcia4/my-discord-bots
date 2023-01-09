@@ -49,6 +49,84 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
 
   
   if(msg.guildId == serverId){
+    if(msg.channel.type != ChannelType.GuildText) return
+    const { parentId } = msg.channel
+
+    
+    //? Auto moderation links
+    const enlaceActivators = ['http://', 'https://']
+    const filesLinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3']
+    if(parentId != '1053401639454773338' && !msg.member?.permissions.has('Administrator') && enlaceActivators.some(s=> msg.content.includes(s))){
+      const texts = msg.content.split(/ +/g).map(m=> m.includes('\n') ? m.split('\n') : m).flat()
+      const filter = texts.filter(f=> enlaceActivators.some(s=> f.includes(s))) 
+      
+      if(filter.some(f=> !filesLinks.some(s=> f.endsWith('.'+s)))){
+        const AutoModEb = new EmbedBuilder()
+        .setTitle('Auto moderation')
+        .setDescription('Only links to images, videos and gifs are allowed.')
+        .setColor('Red')
+  
+        msg.channel.send({content: `${msg.author}`, embeds: [AutoModEb]}).then(re=> {
+          msg.delete()
+          setTimeout(()=> re.delete(), 10000)
+        })
+  
+        const member = modDb.find(f=> f.id == msg.author.id)
+        if(member){
+          member.warns++
+          if(member.warns >= 7){
+            msg.member?.roles.add('1053430826823594106')
+          }
+          sanctions.forEach(sanction=> {
+            if(sanction.warns == member.warns){
+              msg.member?.timeout(sanction.time, `Auto moderation of links, ${sanction.warns} warns`)
+            }
+          })
+        }else{
+          modDb.push({id: msg.author.id, warns: 1, message: '', messages: []})
+        }
+      }
+      return
+    }
+
+    //? Auto moderation discord invites
+    const discordInvites = ['discord.gg/', 'discord.com/invite/']
+    if(parentId != '1053401639454773338' && !msg.member?.permissions.has('Administrator') && discordInvites.some(s=> msg.content.includes(s))){
+      const AutoModEb = new EmbedBuilder()
+      .setTitle('Auto moderation')
+      .setDescription('Discord server invites are not allowed.')
+      .setColor('Red')
+
+      msg.channel.send({content: `${msg.author}`, embeds: [AutoModEb]}).then(re=> {
+        msg.delete()
+        setTimeout(()=> re.delete(), 10000)
+      })
+
+      const member = modDb.find(f=> f.id == msg.author.id)
+      if(member){
+        member.warns++
+        if(member.warns >= 7){
+          msg.member?.roles.add('1053430826823594106')
+        }
+        sanctions.forEach(sanction=> {
+          if(sanction.warns == member.warns){
+            msg.member?.timeout(sanction.time, `Auto moderation of discord invites, ${sanction.warns} warns`)
+          }
+        })
+      }else{
+        modDb.push({id: msg.author.id, warns: 1, message: '', messages: []})
+      }
+      return
+    }
+
+    //? Auto reactions to suggestions
+    if(msg.channelId == '1053401642915082392' && !msg.member?.permissions.has('Administrator')) msg.react('1059641676798377995'), msg.react('1059641726387626015')
+    
+
+    if(msg.attachments.size && parentId != '1054485238413266965'){
+      const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
+      if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.map(m=> m)})
+    }
 
     //? Automoderation spam
     if(msg.content.split(/ +/g).length <= 2) return
@@ -113,85 +191,8 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
       }, 60000)
     }
 
-    if(msg.channel.type != ChannelType.GuildText) return
-    
-    //? Auto moderation links
-    const enlaceActivators = ['http://', 'https://']
-    const filesLinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3']
-    if(msg.channel.parentId != '1053401639454773338' && !msg.member?.permissions.has('Administrator') && enlaceActivators.some(s=> msg.content.includes(s))){
-      const texts = msg.content.split(/ +/g).map(m=> m.includes('\n') ? m.split('\n') : m).flat()
-      const filter = texts.filter(f=> enlaceActivators.some(s=> f.includes(s))) 
-      
-      if(filter.some(f=> !filesLinks.some(s=> f.endsWith('.'+s)))){
-        const AutoModEb = new EmbedBuilder()
-        .setTitle('Auto moderation')
-        .setDescription('Only links to images, videos and gifs are allowed.')
-        .setColor('Red')
-  
-        msg.channel.send({content: `${msg.author}`, embeds: [AutoModEb]}).then(re=> {
-          msg.delete()
-          setTimeout(()=> re.delete(), 10000)
-        })
-  
-        const member = modDb.find(f=> f.id == msg.author.id)
-        if(member){
-          member.warns++
-          if(member.warns >= 7){
-            msg.member?.roles.add('1053430826823594106')
-          }
-          sanctions.forEach(sanction=> {
-            if(sanction.warns == member.warns){
-              msg.member?.timeout(sanction.time, `Auto moderation of links, ${sanction.warns} warns`)
-            }
-          })
-        }else{
-          modDb.push({id: msg.author.id, warns: 1, message: '', messages: []})
-        }
-      }
-      return
-    }
-
-    //? Auto moderation discord invites
-    const discordInvites = ['discord.gg/', 'discord.com/invite/']
-    if(msg.channel.parentId != '1053401639454773338' && !msg.member?.permissions.has('Administrator') && discordInvites.some(s=> msg.content.includes(s))){
-      const AutoModEb = new EmbedBuilder()
-      .setTitle('Auto moderation')
-      .setDescription('Discord server invites are not allowed.')
-      .setColor('Red')
-
-      msg.channel.send({content: `${msg.author}`, embeds: [AutoModEb]}).then(re=> {
-        msg.delete()
-        setTimeout(()=> re.delete(), 10000)
-      })
-
-      const member = modDb.find(f=> f.id == msg.author.id)
-      if(member){
-        member.warns++
-        if(member.warns >= 7){
-          msg.member?.roles.add('1053430826823594106')
-        }
-        sanctions.forEach(sanction=> {
-          if(sanction.warns == member.warns){
-            msg.member?.timeout(sanction.time, `Auto moderation of discord invites, ${sanction.warns} warns`)
-          }
-        })
-      }else{
-        modDb.push({id: msg.author.id, warns: 1, message: '', messages: []})
-      }
-      return
-    }
-
-    //? Auto reactions to suggestions
-    if(msg.channelId == '1053401642915082392' && !msg.member?.permissions.has('Administrator')) msg.react('1059641676798377995'), msg.react('1059641726387626015')
-    
     //? Auto reactions for verified messages
     if(msg.channel.parentId == '1053401639454773338' && msg.channel.position) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
-
-    const { parentId } = msg.channel
-    if(msg.attachments.size && parentId != '1054485238413266965'){
-      const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
-      if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.map(m=> m)})
-    }
   }
 
   if(msg.author.bot || !msg.content.toLowerCase().startsWith(prefix)) return
