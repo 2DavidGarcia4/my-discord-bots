@@ -2,7 +2,7 @@ import { CacheType, ContextMenuCommandBuilder, MessageContextMenuCommandInteract
 import { frogDb } from "../../db";
 import { sendMessageSlash, setSlashError } from '../../../utils/functions'
 
-export const sendCMCB = new ContextMenuCommandBuilder()
+export const sendCmcb = new ContextMenuCommandBuilder()
 .setName('Send')
 .setNameLocalizations({
   'en-US': 'Send',
@@ -12,7 +12,7 @@ export const sendCMCB = new ContextMenuCommandBuilder()
 .setType(3).toJSON()
 
 export const sendCM = async (int: MessageContextMenuCommandInteraction<CacheType>, client: Client) => {
-  const { locale } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == frogDb.serverId ? frogDb.principalServerId : frogDb.serverId
+  const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == frogDb.serverId ? frogDb.principalServerId : frogDb.serverId
   const server = client.guilds.cache.get(serverId)
 
   if(!int.targetMessage.attachments.size) return setSlashError(int, isEnglish ? 'This message no content images or files.' : 'Este mensaje no contiene imágenes ni archivos.')
@@ -28,7 +28,7 @@ export const sendCM = async (int: MessageContextMenuCommandInteraction<CacheType
   const SendEb = new EmbedBuilder()
   .setTitle(isEnglish ? 'Command execution has been successful' : 'La ejecución del comando ha sido exitosa')
   .setDescription(isEnglish ? `The files have been sent to the channel ${channel}` : `Los archivos se ha enviado al canal **${channel}**.`)
-  .setColor(int.guild?.members.me?.displayHexColor || 'White')
+  .setColor(guild?.members.me?.displayHexColor || 'White')
 
   await int.deferReply({ephemeral: true})
   if(channel.type == ChannelType.GuildText) channel.send({files: int.targetMessage.attachments.map(m=> m)}).then(async sent=> {    

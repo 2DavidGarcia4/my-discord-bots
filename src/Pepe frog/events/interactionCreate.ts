@@ -1,11 +1,14 @@
 import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, CacheType, Client, Collection, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
 import { selectMultipleRoles, selectRole } from "../../utils/functions";
 
-import { sendCMCB, sendCM } from "../commands/contextMenu/send";
 import { moveScb, moveSlashCommand } from "../commands/slash/move";
 
+import { sendCmcb, sendCM } from "../commands/contextMenu/send";
+import { deleteReactionsCM, deleteReactionsCmcb } from "../commands/contextMenu/deleteReactions";
+import { deleteCM, deleteCmcb } from "../commands/contextMenu/delete";
+
 export const commands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
-;[sendCMCB, moveScb].forEach(cmd=> commands.set(cmd.name, cmd))
+;[sendCmcb, deleteReactionsCmcb, deleteCmcb, moveScb].forEach(cmd=> commands.set(cmd.name, cmd))
 
 export const interactionCreateEvent = async (int: Interaction<CacheType>, client: Client) => {
   
@@ -20,6 +23,8 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
     
     if(commandType == ApplicationCommandType.Message){
       if(commandName == 'Send') sendCM(int, client)
+      if(commandName == 'Delete reactions') deleteReactionsCM(int)
+      if(commandName == 'Delete') deleteCM(int)
     }
   }
   

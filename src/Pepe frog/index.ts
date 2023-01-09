@@ -20,6 +20,7 @@ import { reactionAddEvent } from "./events/reactionAdd";
 
 
 export const modDb: ModDb[] = []
+export const exemptMessagesIds: string[] = []
 
 const Frog = new Client({intents: 131071})
 

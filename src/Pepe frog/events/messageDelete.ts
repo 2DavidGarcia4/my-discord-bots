@@ -1,9 +1,15 @@
 import { ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js";
 import { frogDb } from "../db";
+import { exemptMessagesIds } from "..";
 
 export const messageDeleteEvent = async (msgd: Message<boolean> | PartialMessage, client: Client) => {
   const { serverId, prefix, owners } = frogDb
-  if(msgd.guildId != serverId) return
+  if(msgd.guildId != serverId || msgd.author?.bot) return
+  if(exemptMessagesIds.some(s=> s == msgd.id)){
+    exemptMessagesIds.splice(exemptMessagesIds.findIndex(f=> f == msgd.id), 1)
+    console.log(exemptMessagesIds)
+    return
+  }
 
   if(msgd.content && !(msgd.content.startsWith(prefix) && owners.some(s=> s == msgd.author?.id))){
     const channelLog = client.channels.cache.get('1053389522253127720')

@@ -12,10 +12,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.interactionCreateEvent = exports.commands = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../utils/functions");
-const send_1 = require("../commands/contextMenu/send");
 const move_1 = require("../commands/slash/move");
+const send_1 = require("../commands/contextMenu/send");
+const deleteReactions_1 = require("../commands/contextMenu/deleteReactions");
+const delete_1 = require("../commands/contextMenu/delete");
 exports.commands = new discord_js_1.Collection();
-[send_1.sendCMCB, move_1.moveScb].forEach(cmd => exports.commands.set(cmd.name, cmd));
+[send_1.sendCmcb, deleteReactions_1.deleteReactionsCmcb, delete_1.deleteCmcb, move_1.moveScb].forEach(cmd => exports.commands.set(cmd.name, cmd));
 const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
     if (int.isChatInputCommand()) {
@@ -28,6 +30,10 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
         if (commandType == discord_js_1.ApplicationCommandType.Message) {
             if (commandName == 'Send')
                 (0, send_1.sendCM)(int, client);
+            if (commandName == 'Delete reactions')
+                (0, deleteReactions_1.deleteReactionsCM)(int);
+            if (commandName == 'Delete')
+                (0, delete_1.deleteCM)(int);
         }
     }
     if (int.isButton()) {

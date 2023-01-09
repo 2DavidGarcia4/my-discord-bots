@@ -224,25 +224,8 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
       if(!dataBot) return
       const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id)
       const otrosIDCha = dataBot.autoModeration.ignoreChannels
-      // console.log(otrosIDCha)
+      
       canalesPerIDs?.push(...otrosIDCha)
-      // console.log(canalesPerIDs)
-
-      if(msg.content == "p.canalesModerados"){
-        if(msg.guild?.ownerId == msg.author.id && canalesPerIDs){
-          let tabla = []
-          for(let i=0; i<canalesPerIDs.length; i++){
-            tabla.push(`**${i+1} .** <#${msg.guild?.channels.cache.get(canalesPerIDs[i])?.id}>`)
-          }
-
-          const embChaMod = new EmbedBuilder()
-          .setAuthor({name: msg.author.tag, iconURL: msg.author.displayAvatarURL()})
-          .setDescription(`Hay un total de **${canalesPerIDs.length}** canales que tienen des activada la auto moderación de enlaces.\n\n${tabla.join("\n")}`)
-          .setColor(msg.guild?.members.me?.displayHexColor || 'White')
-          .setTimestamp()
-          msg.reply({allowedMentions: {repliedUser: false}, embeds: [embChaMod]})
-        }
-      }
 
       if(!canalesPerIDs?.some(s=> s == msg.channelId)){
         // console.log('no ignorados')
@@ -251,16 +234,7 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
         const descripciones = [` de **Discord**, el canal correcto para publicar un enlace de **Discord** es <#823381769750577163> o <#836315643070251008>`,` de **YouTube**, el canal correcto para publicar un enlace de **YouTube** es <#823961526297165845> o <#836315643070251008>`,` de **Twitch**, el canal correcto para publicar un enlace de **Twitch** es <#823381980389310464> o <#836315643070251008>`,` de **TikTok**, el canal correcto para publicar un enlace de **TikTok** es <#827295990360965153> o <#836315643070251008>`,` de **Twitter**, el canal correcto para publicar un enlace de **Twitter** es <#823381924344758313> o <#836315643070251008>`,` de **Instagram**, el canal correcto para publicar un enlace de **Instagram** es <#823382007391584276> o <#836315643070251008>`,`, si quiere hacer promoción hágalo en los canales de la categoría **<#785729364288339978>** como <#836315643070251008>.\nSi esta perdido y necesita ayuda mencione a un <@&831669132607881236>.`]
         const colores: ColorResolvable[] = ["#5965F1","#FE0100","#6441a5","#030303","#1CA1F3","#ED0D6E", color.negative]
 
-        // if(enlaces.some(s=> s.some(c=> msg.content.includes(c)))){
-        //   const dataIdex = 
-        //   console.log('goola')
-
-        // }else{
-
-        // }
-        for(const m in enlaces){
-          // console.log(enlaces[m])
-          // console.log(enlaces[m].some(s=> msg.content.includes(s)))
+        for(let m in enlaces){
           if(enlaces[m].some(s=> msg.content.includes(s))){
             // console.log('sss')
             const embWarn = new EmbedBuilder()
@@ -279,35 +253,34 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
               })
             }, 600)
 
-            if(autoModeracion.some(s=> s.miembroID == msg.author.id)){
-              const autoModMember = autoModeracion.find(f=> f.miembroID==msg.author.id)
-              if(autoModMember){
-                autoModMember.advertencias++
-                if(autoModMember.advertencias >= 2){
-                  const embAdvertenciaMD = new EmbedBuilder()
-                  .setAuthor({name: msg.author.tag, iconURL: msg.author.displayAvatarURL()})
-                  .setTitle(`🔗 Auto moderación de enlaces`)
-                  .setDescription(`Esta prohibido publicar enlaces en en canal <#${msg.channelId}>, evita hacerlo de nuevo para no sancionarte.`)
-                  .setColor(color.negative)
-                  msg.author.send({embeds: [embAdvertenciaMD]}).catch(()=> '')
-                }
-
-                if(autoModMember.advertencias == 3){
-                  msg.member?.timeout(4*60*60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
-                }
-                if(autoModMember.advertencias == 4){
-                  msg.member?.timeout(8*60*60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
-                }
-                if(autoModMember.advertencias == 5){
-                  msg.member?.timeout(10*60*60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
-                }
-                if(autoModMember.advertencias == 6){
-                  msg.member?.kick(`Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
-                }
-                if(autoModMember.advertencias == 7){
-                  msg.member?.ban({reason: `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`})
-                }
+            const autoModMember = autoModeracion.find(f=> f.miembroID==msg.author.id)
+            if(autoModMember){
+              autoModMember.advertencias++
+              if(autoModMember.advertencias >= 2){
+                const embAdvertenciaMD = new EmbedBuilder()
+                .setAuthor({name: msg.author.tag, iconURL: msg.author.displayAvatarURL()})
+                .setTitle(`🔗 Auto moderación de enlaces`)
+                .setDescription(`Esta prohibido publicar enlaces en en canal <#${msg.channelId}>, evita hacerlo de nuevo para no sancionarte.`)
+                .setColor(color.negative)
+                msg.author.send({embeds: [embAdvertenciaMD]}).catch(()=> '')
               }
+
+              if(autoModMember.advertencias == 3){
+                msg.member?.timeout(4*60*60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
+              }
+              if(autoModMember.advertencias == 4){
+                msg.member?.timeout(8*60*60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
+              }
+              if(autoModMember.advertencias == 5){
+                msg.member?.timeout(10*60*60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
+              }
+              if(autoModMember.advertencias == 6){
+                msg.member?.kick(`Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`)
+              }
+              if(autoModMember.advertencias == 7){
+                msg.member?.ban({reason: `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`})
+              }
+              
             }else{
               autoModeracion.push({miembroID: msg.author.id, advertencias: 1})
             } 
