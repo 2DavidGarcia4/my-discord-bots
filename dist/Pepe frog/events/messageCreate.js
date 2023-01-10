@@ -134,65 +134,65 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
                 serverChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.map(m => m) });
         }
-        //? Automoderation spam
-        if (msg.content.split(/ +/g).length <= 2)
-            return;
-        const member = index_1.modDb.find(f => f.id == msg.author.id);
-        if (member) {
-            const duplicatedMessages = member.messages.filter(f => f.content == msg.content && f.channelId != msg.channelId).length;
-            // console.log(member.messages.length)
-            member.messages.push({ id: msg.id, content: msg.content, channelId: msg.channelId });
-            setTimeout(() => {
-                member.messages.splice(member.messages.findIndex(f => f.id == msg.id), 1);
-            }, 60000);
-            const ar = [];
-            const channels = member.messages.filter((f) => {
-                ar.push(f.channelId);
-                const channelIds = ar.filter(ci => ci == f.channelId).length;
-                return f.content == msg.content && channelIds <= 1;
-            }).map(m => `<#${m.channelId}>`);
-            const AutoModEb = new discord_js_1.EmbedBuilder()
-                .setTitle('Auto moderation')
-                .setDescription(`Don't send the same message on different channels\n\nYou have sent the message in the following channels ${channels.join(', ')}`)
-                .setColor('Red');
-            if (duplicatedMessages >= 2 || member.message == msg.content) {
-                member.warns++;
-                if (!member.message) {
-                    member.message = msg.content;
-                    setTimeout(() => member.message = '', 60000);
+        if (msg.content.split(/ +/g).length >= 3) {
+            //? Automoderation spam
+            const member = index_1.modDb.find(f => f.id == msg.author.id);
+            if (member) {
+                const duplicatedMessages = member.messages.filter(f => f.content == msg.content && f.channelId != msg.channelId).length;
+                // console.log(member.messages.length)
+                member.messages.push({ id: msg.id, content: msg.content, channelId: msg.channelId });
+                setTimeout(() => {
+                    member.messages.splice(member.messages.findIndex(f => f.id == msg.id), 1);
+                }, 60000);
+                const ar = [];
+                const channels = member.messages.filter((f) => {
+                    ar.push(f.channelId);
+                    const channelIds = ar.filter(ci => ci == f.channelId).length;
+                    return f.content == msg.content && channelIds <= 1;
+                }).map(m => `<#${m.channelId}>`);
+                const AutoModEb = new discord_js_1.EmbedBuilder()
+                    .setTitle('Auto moderation')
+                    .setDescription(`Don't send the same message on different channels\n\nYou have sent the message in the following channels ${channels.join(', ')}`)
+                    .setColor('Red');
+                if (duplicatedMessages >= 2 || member.message == msg.content) {
+                    member.warns++;
+                    if (!member.message) {
+                        member.message = msg.content;
+                        setTimeout(() => member.message = '', 60000);
+                    }
+                    member.messages.filter(f => f.content == msg.content && f.id != msg.id).forEach((message) => __awaiter(void 0, void 0, void 0, function* () {
+                        var _l;
+                        const channel = (_l = msg.guild) === null || _l === void 0 ? void 0 : _l.channels.cache.get(message.channelId);
+                        if (channel === null || channel === void 0 ? void 0 : channel.isTextBased())
+                            (yield channel.messages.fetch(message.id)).delete().then(dem => {
+                                member.messages.splice(member.messages.findIndex(f => f.id == dem.id), 1);
+                            }).catch();
+                    }));
+                    msg.reply({ embeds: [AutoModEb] }).then(tmsg => {
+                        setTimeout(() => {
+                            msg.delete().catch();
+                            tmsg.delete();
+                        }, 10000);
+                    });
                 }
-                member.messages.filter(f => f.content == msg.content && f.id != msg.id).forEach((message) => __awaiter(void 0, void 0, void 0, function* () {
-                    var _l;
-                    const channel = (_l = msg.guild) === null || _l === void 0 ? void 0 : _l.channels.cache.get(message.channelId);
-                    if (channel === null || channel === void 0 ? void 0 : channel.isTextBased())
-                        (yield channel.messages.fetch(message.id)).delete().then(dem => {
-                            member.messages.splice(member.messages.findIndex(f => f.id == dem.id), 1);
-                        }).catch();
-                }));
-                msg.reply({ embeds: [AutoModEb] }).then(tmsg => {
-                    setTimeout(() => {
-                        msg.delete().catch();
-                        tmsg.delete();
-                    }, 10000);
-                });
+                if (member.warns == 2) {
+                    (_h = msg.member) === null || _h === void 0 ? void 0 : _h.timeout(4 * 60 * 60000, 'Spam auto moderation');
+                }
+                if (member.warns == 3) {
+                    (_j = msg.member) === null || _j === void 0 ? void 0 : _j.roles.add('1053430826823594106');
+                }
             }
-            if (member.warns == 2) {
-                (_h = msg.member) === null || _h === void 0 ? void 0 : _h.timeout(4 * 60 * 60000, 'Spam auto moderation');
+            else {
+                index_1.modDb.push({ id: msg.author.id, message: '', warns: 0, messages: [{ id: msg.id, content: msg.content, channelId: msg.channelId }] });
+                setTimeout(() => {
+                    const user = index_1.modDb.find(f => f.id == msg.author.id);
+                    user === null || user === void 0 ? void 0 : user.messages.splice(user.messages.findIndex(f => f.id == msg.id), 1);
+                }, 60000);
             }
-            if (member.warns == 3) {
-                (_j = msg.member) === null || _j === void 0 ? void 0 : _j.roles.add('1053430826823594106');
-            }
+            //? Auto reactions for verified messages
+            if (msg.channel.parentId == '1053401639454773338' && msg.channel.position)
+                msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596');
         }
-        else {
-            index_1.modDb.push({ id: msg.author.id, message: '', warns: 0, messages: [{ id: msg.id, content: msg.content, channelId: msg.channelId }] });
-            setTimeout(() => {
-                const user = index_1.modDb.find(f => f.id == msg.author.id);
-                user === null || user === void 0 ? void 0 : user.messages.splice(user.messages.findIndex(f => f.id == msg.id), 1);
-            }, 60000);
-        }
-        //? Auto reactions for verified messages
-        if (msg.channel.parentId == '1053401639454773338' && msg.channel.position)
-            msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596');
     }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
