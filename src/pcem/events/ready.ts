@@ -28,19 +28,19 @@ export const readyEvent = async (client: Client) => {
     if (ps + 1 == mapa.length) console.log(`Roles principales agregados a ${ps + 1} miembros.`.blue.italic)
   })
 
-  let dataSug = await suggestionsModel.findById(botDB.serverId), mensajesCargados = 0
-  if (dataSug) {
-    for (let i in dataSug?.mensajes) {
-      if (channelSuggestions?.type == ChannelType.GuildText && dataSug?.mensajes[i].id.length > 2) {
-        await channelSuggestions?.messages.fetch(dataSug.mensajes[i].id).then(tc => {
-          mensajesCargados++
-        }).catch(err => {
-          console.log("mensaje del sistema de sugerencias no encontrado.".red, err)
-        })
-      }
-    }
-    console.log(`Se han cargado ${mensajesCargados} mensajes del sistema de sugerencias`.yellow.italic)
-  }
+  // let dataSug = await suggestionsModel.findById(botDB.serverId), mensajesCargados = 0
+  // if (dataSug) {
+  //   for (let i in dataSug?.mensajes) {
+  //     if (channelSuggestions?.type == ChannelType.GuildText && dataSug?.mensajes[i].id.length > 2) {
+  //       await channelSuggestions?.messages.fetch(dataSug.mensajes[i].id).then(tc => {
+  //         mensajesCargados++
+  //       }).catch(err => {
+  //         console.log("mensaje del sistema de sugerencias no encontrado.".red, err)
+  //       })
+  //     }
+  //   }
+  //   console.log(`Se han cargado ${mensajesCargados} mensajes del sistema de sugerencias`.yellow.italic)
+  // }
 
   let dataTs = await ticketsModel.findById(botDB.serverId)
   if (dataTs) {

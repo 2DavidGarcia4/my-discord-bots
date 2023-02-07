@@ -5,6 +5,9 @@ import { isDevelopment } from "../../config";
 import { commands } from "./interactionCreate";
 import { presences } from "../../utils/functions";
 
+import { registerFont, createCanvas, loadImage } from "canvas";
+registerFont("tipo.otf", {family: 'MADE TOMMY'})
+
 export const readyEvent = async (client: Client) => {
   const { serverId, principalServerId } = frogDb
   console.log(client.user?.username+' Estoy listo')
@@ -20,6 +23,25 @@ export const readyEvent = async (client: Client) => {
     readyChannel.sendTyping()
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
   }
+
+  const logos = client.channels.cache.get('1064289166462042137')
+  let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1067870216157147156/banner_2023-01.jpg?width=468&height=468"
+  const canvas = createCanvas(1000, 1000);
+  const fondo = await loadImage(imagen);
+  const context = canvas.getContext("2d");
+
+  context.drawImage(fondo, 0, 0, canvas.width, canvas.height);
+  // context.strokeStyle = "#000000";
+  // context.strokeRect(0,0, canvas.width, canvas.height);
+
+  // context.textAlign = "center"
+  context.font = "10px MADE TOMMY"
+  context.fillStyle = "#ffffff"
+  context.fillText("David200409", 20, 980)
+
+  const finalImg = new AttachmentBuilder(canvas.toBuffer(), {name: 'welcome.png'})
+  // if(logos?.isTextBased()) logos.send({files: [finalImg]})
+
 
   const suggestionsChannel = server?.channels.cache.get('1053401642915082392')
   if(suggestionsChannel?.type == ChannelType.GuildText) suggestionsChannel.messages.fetch({limit: 100})
@@ -115,6 +137,7 @@ export const readyEvent = async (client: Client) => {
     sendStats()
   }, 60*60000)
 
+  setGuildStatus(client)
   setInterval(()=> {
     setGuildStatus(client)
   }, 6*60*60000)

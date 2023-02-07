@@ -18,6 +18,7 @@ export const sugerirSlashCommand = async (int: ChatInputCommandInteraction<Cache
   const { user, options } = int, { emoji, serverId } = botDB
   
   estadisticas.comandos++
+  return int.reply({ephemeral: true, content: "Not available."})
   if(coolSugerencias.some(s=> s == int.user.id)) setSlashError(int, `Espera **10** minutos para volver a usar el comando.` )
 
   const dataSug = await suggestionsModel.findById(serverId), arrayMsgsSug = dataSug?.mensajes,  suggestion = options.getString('sugerencia', true)

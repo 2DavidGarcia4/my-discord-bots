@@ -42,19 +42,19 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         if (ps + 1 == mapa.length)
             console.log(`Roles principales agregados a ${ps + 1} miembros.`.blue.italic);
     });
-    let dataSug = yield models_1.suggestionsModel.findById(db_1.botDB.serverId), mensajesCargados = 0;
-    if (dataSug) {
-        for (let i in dataSug === null || dataSug === void 0 ? void 0 : dataSug.mensajes) {
-            if ((channelSuggestions === null || channelSuggestions === void 0 ? void 0 : channelSuggestions.type) == discord_js_1.ChannelType.GuildText && (dataSug === null || dataSug === void 0 ? void 0 : dataSug.mensajes[i].id.length) > 2) {
-                yield (channelSuggestions === null || channelSuggestions === void 0 ? void 0 : channelSuggestions.messages.fetch(dataSug.mensajes[i].id).then(tc => {
-                    mensajesCargados++;
-                }).catch(err => {
-                    console.log("mensaje del sistema de sugerencias no encontrado.".red, err);
-                }));
-            }
-        }
-        console.log(`Se han cargado ${mensajesCargados} mensajes del sistema de sugerencias`.yellow.italic);
-    }
+    // let dataSug = await suggestionsModel.findById(botDB.serverId), mensajesCargados = 0
+    // if (dataSug) {
+    //   for (let i in dataSug?.mensajes) {
+    //     if (channelSuggestions?.type == ChannelType.GuildText && dataSug?.mensajes[i].id.length > 2) {
+    //       await channelSuggestions?.messages.fetch(dataSug.mensajes[i].id).then(tc => {
+    //         mensajesCargados++
+    //       }).catch(err => {
+    //         console.log("mensaje del sistema de sugerencias no encontrado.".red, err)
+    //       })
+    //     }
+    //   }
+    //   console.log(`Se han cargado ${mensajesCargados} mensajes del sistema de sugerencias`.yellow.italic)
+    // }
     let dataTs = yield models_1.ticketsModel.findById(db_1.botDB.serverId);
     if (dataTs) {
         dataTs.tickets.forEach((objeto) => __awaiter(void 0, void 0, void 0, function* () {

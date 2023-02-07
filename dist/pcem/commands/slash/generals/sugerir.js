@@ -24,6 +24,7 @@ exports.sugerirScb = new discord_js_1.SlashCommandBuilder()
 const sugerirSlashCommand = (int) => __awaiter(void 0, void 0, void 0, function* () {
     const { user, options } = int, { emoji, serverId } = db_1.botDB;
     __1.estadisticas.comandos++;
+    return int.reply({ ephemeral: true, content: "Not available." });
     if (__1.coolSugerencias.some(s => s == int.user.id))
         (0, functions_1.setSlashError)(int, `Espera **10** minutos para volver a usar el comando.`);
     const dataSug = yield models_1.suggestionsModel.findById(serverId), arrayMsgsSug = dataSug === null || dataSug === void 0 ? void 0 : dataSug.mensajes, suggestion = options.getString('sugerencia', true);

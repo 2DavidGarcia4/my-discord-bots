@@ -173,7 +173,7 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
     })
 
     // console.log('nuevo miembro')
-    welcomeMsg.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`})
+    // welcomeMsg.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`})
     // .then(()=> console.log('send webhook'))
     if(welcomeLog?.type == ChannelType.GuildText) welcomeLog.send({embeds: [embBien]})
     let miembroInv = arrayMi?.find(f=> f.id==gmd.user.id)

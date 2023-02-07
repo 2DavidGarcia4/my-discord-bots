@@ -606,7 +606,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     // }
   }
 
-  if(int.isSelectMenu()){
+  if(int.isStringSelectMenu()){
     const { customId, values, guild, user } = int
     
     if(customId == 'select-type-role'){

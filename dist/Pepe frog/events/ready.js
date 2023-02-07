@@ -16,6 +16,8 @@ const db_1 = require("../db");
 const config_1 = require("../../config");
 const interactionCreate_1 = require("./interactionCreate");
 const functions_2 = require("../../utils/functions");
+const canvas_1 = require("canvas");
+(0, canvas_1.registerFont)("tipo.otf", { family: 'MADE TOMMY' });
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { serverId, principalServerId } = db_1.frogDb;
@@ -31,6 +33,20 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         readyChannel.sendTyping();
         setTimeout(() => readyChannel.send({ embeds: [ReadyEb] }), 2000);
     }
+    const logos = client.channels.cache.get('1064289166462042137');
+    let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1067870216157147156/banner_2023-01.jpg?width=468&height=468";
+    const canvas = (0, canvas_1.createCanvas)(1000, 1000);
+    const fondo = yield (0, canvas_1.loadImage)(imagen);
+    const context = canvas.getContext("2d");
+    context.drawImage(fondo, 0, 0, canvas.width, canvas.height);
+    // context.strokeStyle = "#000000";
+    // context.strokeRect(0,0, canvas.width, canvas.height);
+    // context.textAlign = "center"
+    context.font = "10px MADE TOMMY";
+    context.fillStyle = "#ffffff";
+    context.fillText("David200409", 20, 980);
+    const finalImg = new discord_js_1.AttachmentBuilder(canvas.toBuffer(), { name: 'welcome.png' });
+    // if(logos?.isTextBased()) logos.send({files: [finalImg]})
     const suggestionsChannel = server === null || server === void 0 ? void 0 : server.channels.cache.get('1053401642915082392');
     if ((suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.type) == discord_js_1.ChannelType.GuildText)
         suggestionsChannel.messages.fetch({ limit: 100 });
@@ -122,6 +138,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         (0, functions_2.presences)(dayStates, nightStates, client);
         sendStats();
     }, 60 * 60000);
+    (0, functions_1.setGuildStatus)(client);
     setInterval(() => {
         (0, functions_1.setGuildStatus)(client);
     }, 6 * 60 * 60000);

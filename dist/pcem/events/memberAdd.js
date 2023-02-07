@@ -169,7 +169,7 @@ const memberAddEvent = (gmd, client) => __awaiter(void 0, void 0, void 0, functi
             }
         }));
         // console.log('nuevo miembro')
-        welcomeMsg.send({ embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**` });
+        // welcomeMsg.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`})
         // .then(()=> console.log('send webhook'))
         if ((welcomeLog === null || welcomeLog === void 0 ? void 0 : welcomeLog.type) == discord_js_1.ChannelType.GuildText)
             welcomeLog.send({ embeds: [embBien] });

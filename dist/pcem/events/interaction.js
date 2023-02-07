@@ -544,7 +544,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
         //   int.reply({embeds: [embEstado], ephemeral: true})
         // }
     }
-    if (int.isSelectMenu()) {
+    if (int.isStringSelectMenu()) {
         const { customId, values, guild, user } = int;
         if (customId == 'select-type-role') {
             const guildColor = ((_c = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White';
