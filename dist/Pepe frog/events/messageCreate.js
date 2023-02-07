@@ -129,10 +129,10 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         //? Auto reactions to suggestions
         if (msg.channelId == '1053401642915082392' && !((_g = msg.member) === null || _g === void 0 ? void 0 : _g.permissions.has('Administrator')))
             msg.react('1059641676798377995'), msg.react('1059641726387626015');
-        if (msg.attachments.size && parentId != '1054485238413266965') {
+        if (msg.attachments.size && parentId != '1054485238413266965' && msg.attachments.some(s => s.size < 8000000)) {
             const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
-                serverChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.map(m => m) });
+                serverChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 8000000).map(m => m) });
         }
         if (msg.content.split(/ +/g).length >= 3) {
             //? Automoderation spam

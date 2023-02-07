@@ -22,7 +22,7 @@ export const readyEvent = async (client: Client) => {
   if(!isDevelopment && readyChannel?.type == ChannelType.GuildText){
     readyChannel.sendTyping()
     setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
-  }
+  } 
 
   const logos = client.channels.cache.get('1064289166462042137')
   let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1067870216157147156/banner_2023-01.jpg?width=468&height=468"
