@@ -27,7 +27,7 @@ const __1 = require("..");
 const functions_1 = require("../../utils/functions");
 const eval_1 = require("../commands/text/eval");
 const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0;
     const { member } = msg, { prefix, emoji, color } = db_1.botDB;
     if (msg.guildId == db_1.botDB.serverId) {
         __1.estadisticas.mensajes++;
@@ -35,9 +35,9 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         let dataTs = yield models_1.ticketsModel.findById(db_1.botDB.serverId), arrayTs = dataTs === null || dataTs === void 0 ? void 0 : dataTs.tickets, servidor2 = client.guilds.cache.get('949860813915705354');
         if (arrayTs) {
             arrayTs.forEach((objeto) => __awaiter(void 0, void 0, void 0, function* () {
-                var _3;
+                var _1;
                 if (objeto.id == msg.channelId) {
-                    if (objeto.publico && ((_3 = msg.member) === null || _3 === void 0 ? void 0 : _3.roles.cache.has('887444598715219999')) && msg.channel.type == discord_js_1.ChannelType.GuildText) {
+                    if (objeto.publico && ((_1 = msg.member) === null || _1 === void 0 ? void 0 : _1.roles.cache.has('887444598715219999')) && msg.channel.type == discord_js_1.ChannelType.GuildText) {
                         objeto.publico = false;
                         objeto.personalID = msg.author.id;
                         yield models_1.ticketsModel.findByIdAndUpdate(db_1.botDB.serverId, { tickets: arrayTs });
@@ -109,26 +109,6 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         if (msg.channelId == '826193847943037018' && msg.channel.type == discord_js_1.ChannelType.GuildText && msg.mentions.everyone && ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.has('826197551904325712')) && !((_c = msg.member) === null || _c === void 0 ? void 0 : _c.permissions.has('Administrator'))) {
             msg.channel.permissionOverwrites.edit(msg.author.id, { 'MentionEveryone': false, });
         }
-        //TODO: PromoNvl
-        if (msg.channelId == '977427047343325284' && msg.channel.type == discord_js_1.ChannelType.GuildText) {
-            if (db_1.botDB.levelRoles.some(s => { var _a; return (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.has(s); })) {
-                let dataPrl = yield models_1.promoLevelModel.findById(db_1.botDB.serverId), arrayPl = dataPrl === null || dataPrl === void 0 ? void 0 : dataPrl.miembros;
-                msg.channel.permissionOverwrites.edit(msg.author.id, { 'SendMessages': false, });
-                let rolIndex = 0;
-                for (let i = 8; i > 0; i--) {
-                    if ((_d = msg.member) === null || _d === void 0 ? void 0 : _d.roles.cache.has(db_1.botDB.levelRoles[rolIndex])) {
-                        (0, functions_1.promotionLevelNotificationReset)(msg, arrayPl, i + 'd');
-                    }
-                    rolIndex++;
-                }
-                if ((_e = msg.member) === null || _e === void 0 ? void 0 : _e.roles.cache.has(db_1.botDB.levelRoles.find((f, i) => i == 8) || '')) {
-                    (0, functions_1.promotionLevelNotificationReset)(msg, arrayPl, '12h');
-                }
-                if (db_1.botDB.levelRoles.slice(9).some(s => { var _a; return (_a = msg.member) === null || _a === void 0 ? void 0 : _a.roles.cache.has(s); })) {
-                    (0, functions_1.promotionLevelNotificationReset)(msg, arrayPl, '6h');
-                }
-            }
-        }
         //TODO: Auto emojis memes
         if (msg.channelId == '845396662930112533') {
             let mci = msg.content;
@@ -143,7 +123,7 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
             //? Boost/mejoras
             const newBoostEb = new discord_js_1.EmbedBuilder()
                 .setTitle(`${db_1.botDB.emoji.animateBoost} Nueva mejora`)
-                .setColor(((_f = msg.member) === null || _f === void 0 ? void 0 : _f.displayHexColor) || 'White');
+                .setColor(((_d = msg.member) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White');
             if (msg.type == discord_js_1.MessageType.GuildBoost) {
                 msg.channel.sendTyping();
                 newBoostEb
@@ -201,26 +181,26 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
             }
         }
         //TODO: Mensaje por mención
-        if (msg.content.match(`^<@!?${(_g = client.user) === null || _g === void 0 ? void 0 : _g.id}>( |)$`)) {
+        if (msg.content.match(`^<@!?${(_e = client.user) === null || _e === void 0 ? void 0 : _e.id}>( |)$`)) {
             msg.channel.sendTyping();
             const embedMen = new discord_js_1.EmbedBuilder()
                 .setAuthor({ name: `Hola ${msg.author.username}`, iconURL: msg.author.displayAvatarURL() })
-                .setThumbnail(((_h = client.user) === null || _h === void 0 ? void 0 : _h.displayAvatarURL()) || null)
-                .setTitle(`Soy ${(_j = client.user) === null || _j === void 0 ? void 0 : _j.username}`)
-                .setDescription(`**El bot de ${(_k = msg.guild) === null || _k === void 0 ? void 0 : _k.name}**, ¿necesitas información o ayuda?`)
+                .setThumbnail(((_f = client.user) === null || _f === void 0 ? void 0 : _f.displayAvatarURL()) || null)
+                .setTitle(`Soy ${(_g = client.user) === null || _g === void 0 ? void 0 : _g.username}`)
+                .setDescription(`**El bot de ${(_h = msg.guild) === null || _h === void 0 ? void 0 : _h.name}**, ¿necesitas información o ayuda?`)
                 .addFields({ name: `${emoji.information} **Información**`, value: "Puedes obtener información sobre los canales y roles del servidor en el canal <#840364744228995092>." }, { name: `${emoji.staff} **Soporte**`, value: "Puedes obtener soporte sobre cualquier duda que tengas con relación al servidor, su configuración, obtener información mas detallada de algún rol, canal, sistema o reportar a un usuario en el canal <#830165896743223327> solo abre un ticket pregunta y espera el equipo de soporte te atenderá en un momento." })
-                .setColor(((_m = (_l = msg.guild) === null || _l === void 0 ? void 0 : _l.members.me) === null || _m === void 0 ? void 0 : _m.displayHexColor) || 'White')
-                .setFooter({ text: ((_o = msg.guild) === null || _o === void 0 ? void 0 : _o.name) || 'undefined', iconURL: ((_p = msg.guild) === null || _p === void 0 ? void 0 : _p.iconURL()) || undefined })
+                .setColor(((_k = (_j = msg.guild) === null || _j === void 0 ? void 0 : _j.members.me) === null || _k === void 0 ? void 0 : _k.displayHexColor) || 'White')
+                .setFooter({ text: ((_l = msg.guild) === null || _l === void 0 ? void 0 : _l.name) || 'undefined', iconURL: ((_m = msg.guild) === null || _m === void 0 ? void 0 : _m.iconURL()) || undefined })
                 .setTimestamp();
             (0, functions_1.sendMessageText)(msg, { embeds: [embedMen] });
         }
         //* Auto moderación -----------------------------
         const urlIncludes = ['https://', 'http://', '.com', 'discord.'];
-        if (!((_q = msg.member) === null || _q === void 0 ? void 0 : _q.roles.cache.has('887444598715219999')) && !((_r = msg.member) === null || _r === void 0 ? void 0 : _r.permissions.has('Administrator')) && urlIncludes.some(s => msg.content.includes(s))) {
-            const dataBot = yield models_1.botModel.findById((_s = client.user) === null || _s === void 0 ? void 0 : _s.id);
+        if (!((_o = msg.member) === null || _o === void 0 ? void 0 : _o.roles.cache.has('887444598715219999')) && !((_p = msg.member) === null || _p === void 0 ? void 0 : _p.permissions.has('Administrator')) && urlIncludes.some(s => msg.content.includes(s))) {
+            const dataBot = yield models_1.botModel.findById((_q = client.user) === null || _q === void 0 ? void 0 : _q.id);
             if (!dataBot)
                 return;
-            const canalesPerIDs = (_t = msg.guild) === null || _t === void 0 ? void 0 : _t.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
+            const canalesPerIDs = (_r = msg.guild) === null || _r === void 0 ? void 0 : _r.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
             const otrosIDCha = dataBot.autoModeration.ignoreChannels;
             canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.push(...otrosIDCha);
             if (!(canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.some(s => s == msg.channelId))) {
@@ -237,7 +217,7 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
                             .setTitle(titulos[m])
                             .setDescription(`Lo ciento ${msg.author} en este canal no esta permitido publicar enlaces${descripciones[m]}`)
                             .setColor(colores[m])
-                            .setFooter({ text: `🛑 Advertencia por ${(_u = client.user) === null || _u === void 0 ? void 0 : _u.tag}`, iconURL: (_v = client.user) === null || _v === void 0 ? void 0 : _v.displayAvatarURL() })
+                            .setFooter({ text: `🛑 Advertencia por ${(_s = client.user) === null || _s === void 0 ? void 0 : _s.tag}`, iconURL: (_t = client.user) === null || _t === void 0 ? void 0 : _t.displayAvatarURL() })
                             .setTimestamp();
                         setTimeout(() => {
                             msg.delete().catch(c => console.log(c));
@@ -259,19 +239,19 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
                                 msg.author.send({ embeds: [embAdvertenciaMD] }).catch(() => '');
                             }
                             if (autoModMember.advertencias == 3) {
-                                (_w = msg.member) === null || _w === void 0 ? void 0 : _w.timeout(4 * 60 * 60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
+                                (_u = msg.member) === null || _u === void 0 ? void 0 : _u.timeout(4 * 60 * 60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
                             }
                             if (autoModMember.advertencias == 4) {
-                                (_x = msg.member) === null || _x === void 0 ? void 0 : _x.timeout(8 * 60 * 60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
+                                (_v = msg.member) === null || _v === void 0 ? void 0 : _v.timeout(8 * 60 * 60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
                             }
                             if (autoModMember.advertencias == 5) {
-                                (_y = msg.member) === null || _y === void 0 ? void 0 : _y.timeout(10 * 60 * 60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
+                                (_w = msg.member) === null || _w === void 0 ? void 0 : _w.timeout(10 * 60 * 60000, `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
                             }
                             if (autoModMember.advertencias == 6) {
-                                (_z = msg.member) === null || _z === void 0 ? void 0 : _z.kick(`Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
+                                (_x = msg.member) === null || _x === void 0 ? void 0 : _x.kick(`Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.`);
                             }
                             if (autoModMember.advertencias == 7) {
-                                (_0 = msg.member) === null || _0 === void 0 ? void 0 : _0.ban({ reason: `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.` });
+                                (_y = msg.member) === null || _y === void 0 ? void 0 : _y.ban({ reason: `Por auto moderación de enlaces, el miembro ha enviado ${autoModMember.advertencias} enlaces en canales los cuales no esta permitido.` });
                             }
                         }
                         else {
@@ -350,12 +330,12 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const command = (_1 = args.shift()) === null || _1 === void 0 ? void 0 : _1.toLowerCase();
+    const command = (_z = args.shift()) === null || _z === void 0 ? void 0 : _z.toLowerCase();
     if (command == 'ayuda')
         (0, help_1.helpCommand)(msg, client);
     if (['comandos', 'cmds'].some(s => s == command))
         (0, commands_1.commandsCommand)(msg, client, args);
-    if ((_2 = msg.member) === null || _2 === void 0 ? void 0 : _2.permissions.has('Administrator')) {
+    if ((_0 = msg.member) === null || _0 === void 0 ? void 0 : _0.permissions.has('Administrator')) {
         if (['addreaction', 'addrc'].some(s => s == command))
             (0, addReaction_1.addReactionCommand)(msg, client, args);
         if (command == 'roles')

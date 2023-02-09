@@ -2,7 +2,7 @@ import { ChannelType, Client, EmbedBuilder, GuildMember, PartialGuildMember } fr
 import ms from "ms";
 import { estadisticas } from "..";
 import { botDB } from "../db";
-import { botModel, collaboratorsModel, invitesModel, personalModel, promoLevelModel } from "../models";
+import { botModel, collaboratorsModel, invitesModel, personalModel } from "../models";
 
 export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, client: Client) => {
   const { color, serverId } = botDB
@@ -71,13 +71,6 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
       let persona = arrayPr.find(f=> f.id==gmr.id)
       if(persona) persona.miembro = false
       await personalModel.findByIdAndUpdate(botDB.serverId, {personal: arrayPr})
-    }
-
-    // PromoNvl
-    let dataPrl = await promoLevelModel.findById(botDB.serverId), arrayPl = dataPrl?.miembros
-    if(arrayPl?.some(s=> s.id==gmr.id)){
-      arrayPl.splice(arrayPl.findIndex(f=> f.id==gmr.id),1)
-      await promoLevelModel.findByIdAndUpdate(botDB.serverId, {miembros: arrayPl})
     }
   }
 }

@@ -1,6 +1,6 @@
 import { ChannelType, Client, ColorResolvable, EmbedBuilder, Message, MessageType, WebhookClient } from "discord.js";
 import ms from "ms";
-import { botModel, collaboratorsModel, promoLevelModel, ticketsModel, alliancesModel, carcelModel, invitesModel, personalModel, rafflesModel, suggestionsModel, surveysModel } from "../models";
+import { botModel, collaboratorsModel, ticketsModel } from "../models";
 import { botDB } from "../db";
 import { helpCommand } from "../commands/text/help";
 import { commandsCommand } from "../commands/text/commands";
@@ -9,7 +9,7 @@ import { rolesCommand } from "../commands/text/roles";
 import { ticketCommand } from "../commands/text/ticket";
 import { informationCommand } from "../commands/text/information";
 import { autoModeracion, estadisticas } from "..";
-import { promotionLevelNotificationReset, sendMessageText } from "../../utils/functions";
+import { sendMessageText } from "../../utils/functions";
 import { evalCommand } from "../commands/text/eval";
 
 
@@ -98,29 +98,6 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
     //TODO: Sistema VIP
     if(msg.channelId == '826193847943037018' && msg.channel.type == ChannelType.GuildText && msg.mentions.everyone && msg.member?.roles.cache.has('826197551904325712') && !msg.member?.permissions.has('Administrator')){
       msg.channel.permissionOverwrites.edit(msg.author.id, {'MentionEveryone': false,})
-    }
-
-    //TODO: PromoNvl
-    if(msg.channelId == '977427047343325284' && msg.channel.type == ChannelType.GuildText){
-      if(botDB.levelRoles.some(s=> msg.member?.roles.cache.has(s))){
-        let dataPrl = await promoLevelModel.findById(botDB.serverId), arrayPl = dataPrl?.miembros
-        msg.channel.permissionOverwrites.edit(msg.author.id, {'SendMessages': false,})
-        
-        let rolIndex = 0
-        for(let i=8; i>0; i--){
-          if(msg.member?.roles.cache.has(botDB.levelRoles[rolIndex])){
-            promotionLevelNotificationReset(msg, arrayPl, i+'d')
-          }
-          rolIndex++
-        }
-        
-        if(msg.member?.roles.cache.has(botDB.levelRoles.find((f, i)=> i==8) || '')){
-          promotionLevelNotificationReset(msg, arrayPl, '12h')
-        }
-        if(botDB.levelRoles.slice(9).some(s=> msg.member?.roles.cache.has(s))){
-          promotionLevelNotificationReset(msg, arrayPl, '6h')
-        }
-      }
     }
 
     //TODO: Auto emojis memes

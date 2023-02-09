@@ -83,12 +83,6 @@ const memberRemoveEvent = (gmr, client) => __awaiter(void 0, void 0, void 0, fun
                 persona.miembro = false;
             yield models_1.personalModel.findByIdAndUpdate(db_1.botDB.serverId, { personal: arrayPr });
         }
-        // PromoNvl
-        let dataPrl = yield models_1.promoLevelModel.findById(db_1.botDB.serverId), arrayPl = dataPrl === null || dataPrl === void 0 ? void 0 : dataPrl.miembros;
-        if (arrayPl === null || arrayPl === void 0 ? void 0 : arrayPl.some(s => s.id == gmr.id)) {
-            arrayPl.splice(arrayPl.findIndex(f => f.id == gmr.id), 1);
-            yield models_1.promoLevelModel.findByIdAndUpdate(db_1.botDB.serverId, { miembros: arrayPl });
-        }
     }
 });
 exports.memberRemoveEvent = memberRemoveEvent;

@@ -246,23 +246,3 @@ class Colaboradores {
   }[]
 }
 export const collaboratorsModel = getModelForClass(Colaboradores, {options: {disablePluginsOnDiscriminator: true}})
-
-//? Sistema de promo-nvl
-class PromoNvl {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public datos: {
-    canalID: string
-  }
-
-  @prop({type: Array, required: true})
-  public miembros: {
-    id: string
-    tag: string
-    tiempo: number | null 
-    notificado: boolean
-  }[]
-}
-export const promoLevelModel = getModelForClass(PromoNvl, {options: {disablePluginsOnDiscriminator: true}})

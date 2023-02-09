@@ -473,62 +473,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     // mensajesTemporales()
-    function promoNvl() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let dataPrl = yield models_1.promoLevelModel.findById(db_1.botDB.serverId), arrayPl = dataPrl === null || dataPrl === void 0 ? void 0 : dataPrl.miembros, canal = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get((dataPrl === null || dataPrl === void 0 ? void 0 : dataPrl.datos.canalID) || '');
-            if (arrayPl && (canal === null || canal === void 0 ? void 0 : canal.type) == discord_js_1.ChannelType.GuildText) {
-                arrayPl.filter(f => servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.has(f.id)).forEach((miembro) => {
-                    var _a, _b, _c, _d, _e;
-                    const usuario = client.users.cache.get(miembro.id);
-                    if (!(usuario === null || usuario === void 0 ? void 0 : usuario.dmChannel))
-                        usuario === null || usuario === void 0 ? void 0 : usuario.createDM();
-                    const embNotificaccion = new discord_js_1.EmbedBuilder()
-                        .setTitle(`🔔 Notificación`)
-                        .setDescription(`${usuario} ya puedes publicar contenido en ${canal}.`)
-                        .setColor(((_a = servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.get(miembro.id)) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'Random')
-                        .setFooter({ text: `Si no quieres ser notificado bloquéame`, iconURL: (_b = client.user) === null || _b === void 0 ? void 0 : _b.displayAvatarURL() });
-                    const boton = new discord_js_1.ActionRowBuilder()
-                        .addComponents([
-                        new discord_js_1.ButtonBuilder()
-                            .setCustomId("eliminarMsgMD")
-                            .setEmoji(db_1.botDB.emoji.negative)
-                            .setLabel("Eliminar mensaje")
-                            .setStyle(discord_js_1.ButtonStyle.Danger)
-                    ]);
-                    if (!miembro.tiempo) {
-                        if (!miembro.notificado) {
-                            miembro.notificado = true;
-                            usuario === null || usuario === void 0 ? void 0 : usuario.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c);
-                        }
-                        if ((usuario === null || usuario === void 0 ? void 0 : usuario.id) && !((_c = canal === null || canal === void 0 ? void 0 : canal.permissionsFor(usuario === null || usuario === void 0 ? void 0 : usuario.id)) === null || _c === void 0 ? void 0 : _c.has('SendMessages')) && (canal === null || canal === void 0 ? void 0 : canal.type) == discord_js_1.ChannelType.GuildText) {
-                            canal === null || canal === void 0 ? void 0 : canal.permissionOverwrites.edit(usuario === null || usuario === void 0 ? void 0 : usuario.id, { "SendMessages": true, });
-                        }
-                    }
-                    else if ((canal === null || canal === void 0 ? void 0 : canal.type) == discord_js_1.ChannelType.GuildText && (usuario === null || usuario === void 0 ? void 0 : usuario.id)) {
-                        if (miembro.tiempo <= Date.now()) {
-                            if (!miembro.notificado) {
-                                miembro.notificado = true;
-                                usuario === null || usuario === void 0 ? void 0 : usuario.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c);
-                            }
-                            miembro.tiempo = null;
-                            if (!((_d = canal === null || canal === void 0 ? void 0 : canal.permissionsFor(miembro.id)) === null || _d === void 0 ? void 0 : _d.has("SendMessages"))) {
-                                canal.permissionOverwrites.edit(usuario.id, { "SendMessages": true, });
-                            }
-                        }
-                        else {
-                            if ((_e = canal.permissionsFor(miembro.id)) === null || _e === void 0 ? void 0 : _e.has("SendMessages")) {
-                                canal.permissionOverwrites.edit(usuario.id, { "SendMessages": false, });
-                            }
-                        }
-                    }
-                });
-            }
-            setTimeout(() => __awaiter(this, void 0, void 0, function* () {
-                yield models_1.promoLevelModel.findByIdAndUpdate(db_1.botDB.serverId, { miembros: arrayPl });
-            }), 6000);
-        });
-    }
-    promoNvl();
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         presencias();
         colaboradores();
@@ -539,7 +483,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         estadisticas();
         carcel();
         vips();
-        promoNvl();
     }), 30 * 60000);
     interaction_1.slashComands === null || interaction_1.slashComands === void 0 ? void 0 : interaction_1.slashComands.forEach((command, position) => __awaiter(void 0, void 0, void 0, function* () {
         var _b;

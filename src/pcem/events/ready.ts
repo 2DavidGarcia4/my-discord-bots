@@ -1,7 +1,7 @@
 import { ActivitiesOptions, ActivityType, ActionRowBuilder, ButtonBuilder, ChannelType, Client, EmbedBuilder, ButtonStyle } from "discord.js"
 import ms from "ms"
 import colors from "colors"
-import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, promoLevelModel, botModel } from "../models"
+import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, botModel } from "../models"
 import { botDB } from "../db"
 import { slashComands } from "./interaction"
 import { isDevelopment } from "../../config"
@@ -464,63 +464,6 @@ export const readyEvent = async (client: Client) => {
   }
   // mensajesTemporales()
 
-  async function promoNvl() {
-    let dataPrl = await promoLevelModel.findById(botDB.serverId), arrayPl = dataPrl?.miembros, canal = servidor?.channels.cache.get(dataPrl?.datos.canalID || '')
-    if(arrayPl && canal?.type == ChannelType.GuildText){
-      arrayPl.filter(f => servidor?.members.cache.has(f.id)).forEach((miembro) => {
-        const usuario = client.users.cache.get(miembro.id)
-        if (!usuario?.dmChannel) usuario?.createDM()
-        
-        const embNotificaccion = new EmbedBuilder()
-          .setTitle(`🔔 Notificación`)
-          .setDescription(`${usuario} ya puedes publicar contenido en ${canal}.`)
-          .setColor(servidor?.members.cache.get(miembro.id)?.displayHexColor || 'Random')
-          .setFooter({text: `Si no quieres ser notificado bloquéame`, iconURL: client.user?.displayAvatarURL()})
-  
-        const boton = new ActionRowBuilder<ButtonBuilder>()
-        .addComponents(
-          [
-            new ButtonBuilder()
-            .setCustomId("eliminarMsgMD")
-            .setEmoji(botDB.emoji.negative)
-            .setLabel("Eliminar mensaje")
-            .setStyle(ButtonStyle.Danger)
-          ]
-        )
-
-        if (!miembro.tiempo) {
-          if (!miembro.notificado) {
-            miembro.notificado = true
-            usuario?.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c)
-          }
-          if (usuario?.id && !canal?.permissionsFor(usuario?.id)?.has('SendMessages') && canal?.type == ChannelType.GuildText) {
-            canal?.permissionOverwrites.edit(usuario?.id, { "SendMessages": true, })
-          }
-  
-        } else if(canal?.type == ChannelType.GuildText && usuario?.id) {
-          if (miembro.tiempo <= Date.now()) {
-            if (!miembro.notificado) {
-              miembro.notificado = true
-              usuario?.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c)
-            }
-            miembro.tiempo = null
-            if (!canal?.permissionsFor(miembro.id)?.has("SendMessages")) {
-              canal.permissionOverwrites.edit(usuario.id, { "SendMessages": true, })
-            }
-          } else {
-            if (canal.permissionsFor(miembro.id)?.has("SendMessages")) {
-              canal.permissionOverwrites.edit(usuario.id, { "SendMessages": false, })
-            }
-          }
-        }
-      })
-    }
-
-    setTimeout(async () => {
-      await promoLevelModel.findByIdAndUpdate(botDB.serverId, { miembros: arrayPl })
-    }, 6000)
-  }
-  promoNvl()
 
   setInterval(async () => {
     presencias()
@@ -533,7 +476,6 @@ export const readyEvent = async (client: Client) => {
     estadisticas()
     carcel()
     vips()
-    promoNvl()
   }, 30 * 60000)
 
   slashComands?.forEach(async (command, position) => {

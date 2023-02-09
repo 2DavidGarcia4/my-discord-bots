@@ -1,7 +1,6 @@
 import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from "discord.js";
 import ms from "ms";
 import { botDB } from "../pcem/db";
-import { promoLevelModel } from "../pcem/models";
 import { DictionaryMenu, MembersPrl } from "../pcem/types";
 
 const { color, emoji } = botDB
@@ -61,21 +60,6 @@ export const setSlashErrors = (int: ChatInputCommandInteraction<CacheType> | Mes
     }
   }
   return res
-}
-
-export const promotionLevelNotificationReset = async (msg: Message, membersPrl: MembersPrl, time: string) => {
-  if(membersPrl?.some(s=> s.id==msg.author.id)){
-    let miembro = membersPrl.find(f=> f.id==msg.author.id)
-    if(miembro){
-      miembro.tag = msg.author.tag
-      miembro.tiempo = Math.floor(Date.now()+ms(time))
-      miembro.notificado = false
-      await promoLevelModel.findByIdAndUpdate(botDB.serverId, {miembros: membersPrl})
-    }
-  }else{
-    membersPrl?.push({id: msg.author.id, tag: msg.author.tag, tiempo: Math.floor(Date.now()+ms(time)), notificado: false})
-    await promoLevelModel.findByIdAndUpdate(botDB.serverId, {miembros: membersPrl})
-  }
 }
 
 export const selectRole = (int: SelectMenuInteraction<CacheType>, value: string, dictionary: DictionaryMenu[], author: GuildMember) => {

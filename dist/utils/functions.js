@@ -8,15 +8,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.presences = exports.selectMultipleRoles = exports.selectRole = exports.promotionLevelNotificationReset = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = void 0;
+exports.presences = exports.selectMultipleRoles = exports.selectRole = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = void 0;
 const discord_js_1 = require("discord.js");
-const ms_1 = __importDefault(require("ms"));
 const db_1 = require("../pcem/db");
-const models_1 = require("../pcem/models");
 const { color, emoji } = db_1.botDB;
 const sendMessageText = (msg, optionsMessage) => {
     setTimeout(() => {
@@ -75,22 +70,6 @@ const setSlashErrors = (int, descriptionsAndConditions) => {
     return res;
 };
 exports.setSlashErrors = setSlashErrors;
-const promotionLevelNotificationReset = (msg, membersPrl, time) => __awaiter(void 0, void 0, void 0, function* () {
-    if (membersPrl === null || membersPrl === void 0 ? void 0 : membersPrl.some(s => s.id == msg.author.id)) {
-        let miembro = membersPrl.find(f => f.id == msg.author.id);
-        if (miembro) {
-            miembro.tag = msg.author.tag;
-            miembro.tiempo = Math.floor(Date.now() + (0, ms_1.default)(time));
-            miembro.notificado = false;
-            yield models_1.promoLevelModel.findByIdAndUpdate(db_1.botDB.serverId, { miembros: membersPrl });
-        }
-    }
-    else {
-        membersPrl === null || membersPrl === void 0 ? void 0 : membersPrl.push({ id: msg.author.id, tag: msg.author.tag, tiempo: Math.floor(Date.now() + (0, ms_1.default)(time)), notificado: false });
-        yield models_1.promoLevelModel.findByIdAndUpdate(db_1.botDB.serverId, { miembros: membersPrl });
-    }
-});
-exports.promotionLevelNotificationReset = promotionLevelNotificationReset;
 const selectRole = (int, value, dictionary, author) => {
     var _a, _b;
     const { locale } = int, inEnglish = locale == 'en-US';
