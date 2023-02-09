@@ -2,7 +2,7 @@ import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheTy
 import ms from "ms";
 import { estadisticas } from "../../..";
 import { botDB } from "../../../db";
-import { alliancesModel, botModel, collaboratorsModel, rafflesModel, surveysModel } from "../../../models";
+import { alliancesModel, botModel, rafflesModel, surveysModel } from "../../../models";
 import { setSlashError, setSlashErrors, createEmbedMessage } from "../../../../utils/functions";
 
 export const crearScb = new SlashCommandBuilder()
@@ -246,67 +246,7 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
 
   if(subCommand == "colaborador"){
     estadisticas.comandos++
-    const dataCol = await collaboratorsModel.findById(serverId), arrayCo = dataCol?.colaboradores, member = guild?.members.cache.get(options.getUser('colaborador', true).id), channelName  = int.options.getString('nombre', true)
-    
-    if(setSlashErrors(int, [
-      [
-        Boolean(!author?.permissions.has('Administrator')),
-        `¡No eres administrador del servidor!, no puede utilizar el comando.`
-      ],
-      [
-        Boolean(member?.user.bot),
-        `El miembro que has proporcionado *(${member})* es un bot, un bot no puede ser colaborador.`
-      ],
-      [
-        Boolean(member?.id == user.id),
-        `El miembro que has proporcionado *(${member})* eres tu, no te puedes otorgar los veneficios como colaborador.`
-      ],
-      [
-        Boolean(member?.id == guild?.ownerId),
-        `El miembro que has proporcionado *(${member})* es el sueño del servidor no tiene sentido que sea colaborador.`
-      ]
-    ])) return
-
-    if(arrayCo?.some(s=>s.id == member?.id)){
-      const colaborador = arrayCo.find(f=>f.id == member?.id)
-
-      if(colaborador?.colaborador){
-        const embEscolaborador = new EmbedBuilder()
-        .setTitle(`💎 Es colaborador`)
-        .setDescription(`El miembro ${member} ya es colaborador del servidor.`)
-        .setColor(member?.displayHexColor || 'White')
-        int.reply({ephemeral: true, embeds: [embEscolaborador]})
-
-      }else if(colaborador){
-        member?.roles.add(dataCol?.datos.rolID || '')
-        guild?.channels.create({name: `『』${channelName}`, parent: dataCol?.datos.categoriaID || '', permissionOverwrites: [{id: member?.id || '', deny: 'ManageRoles', allow: ['CreateInstantInvite', 'ManageChannels', 'AddReactions', 'ViewChannel', 'SendMessages', 'SendTTSMessages', 'ManageMessages', 'EmbedLinks', 'AttachFiles', 'ReadMessageHistory', 'MentionEveryone', 'UseExternalEmojis', 'ManageWebhooks', 'UseApplicationCommands', 'ManageThreads', 'SendMessagesInThreads', 'CreatePublicThreads', 'CreatePrivateThreads', 'UseExternalStickers']}]}).then(async tc=>{
-          const embCanalCreado = new EmbedBuilder()
-          .setTitle(`<a:afirmativo:856966728806432778> Canal creado`)
-          .setDescription(`El canal ${tc} ha sido creado para el colaborador ${member} y se le ha agregado el rol <@&${dataCol?.datos.rolID}>.`)
-          .setColor(guild?.members.me?.displayHexColor || 'White')
-          int.reply({content: `<@${member?.id}>`, embeds: [embCanalCreado]})
-          colaborador.id = member?.id || ''
-          colaborador.tag = member?.user.tag || ''
-          colaborador.canalID = tc.id
-          colaborador.fecha = Date.now()
-          colaborador.colaborador = true
-          colaborador.tiempo = false
-          colaborador.notificado = true
-          await collaboratorsModel.findByIdAndUpdate(serverId, {colaboradores: arrayCo})
-        })
-      }
-    }else{
-      member?.roles.add(dataCol?.datos.rolID || '')
-      guild?.channels.create({name: `『』${channelName}`, parent: dataCol?.datos.categoriaID, permissionOverwrites: [{id: member?.id || '', deny: "ManageRoles", allow: ['CreateInstantInvite', 'ManageChannels', 'AddReactions', 'ViewChannel', 'SendMessages', 'SendTTSMessages', 'ManageMessages', 'EmbedLinks', 'AttachFiles', 'ReadMessageHistory', 'MentionEveryone', 'UseExternalEmojis', 'ManageWebhooks', 'UseApplicationCommands', 'ManageThreads', 'SendMessagesInThreads', 'CreatePublicThreads', 'CreatePrivateThreads', 'UseExternalStickers']}]}).then(async tc=>{
-        const embCanalCreado = new EmbedBuilder()
-        .setTitle(`${emoji.afirmative} Canal creado`)
-        .setDescription(`El canal ${tc} ha sido creado para el nuevo colaborador ${member} y se le ha agregado el rol <@&${dataCol?.datos.rolID}>.`)
-        .setColor(guild?.members.me?.displayHexColor || 'White')
-        int.reply({content: `<@${member?.id}>`, embeds: [embCanalCreado]})
-        arrayCo?.push({id: member?.id || '', tag: member?.user.tag || '', canalID: tc.id, fecha: Date.now(), tiempo: false, colaborador: true, notificado: true})
-        await collaboratorsModel.findByIdAndUpdate(serverId, {colaboradores: arrayCo})
-      })
-    }
+    int.reply({ephemeral: true, content: "Not found"})
   }
 
   if(subCommand == "encuesta"){

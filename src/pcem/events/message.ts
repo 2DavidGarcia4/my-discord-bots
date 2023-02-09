@@ -1,6 +1,6 @@
 import { ChannelType, Client, ColorResolvable, EmbedBuilder, Message, MessageType, WebhookClient } from "discord.js";
 import ms from "ms";
-import { botModel, collaboratorsModel, ticketsModel } from "../models";
+import { botModel, ticketsModel } from "../models";
 import { botDB } from "../db";
 import { helpCommand } from "../commands/text/help";
 import { commandsCommand } from "../commands/text/commands";
@@ -82,18 +82,6 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
       })
     }
     
-
-    //TODO: Colaboradores
-    let dataCol = await collaboratorsModel.findById(botDB.serverId), arrayCo = dataCol?.colaboradores
-    if(dataCol?.colaboradores.filter(f=>f.colaborador).some(s=>s.canalID == msg.channelId)){
-      let miembroCo = arrayCo?.find(f=>f.canalID == msg.channelId)
-      if(msg.mentions.everyone && miembroCo?.id == msg.author.id && msg.channel.type == ChannelType.GuildText){
-        msg.channel.permissionOverwrites.edit(msg.author.id, {'MentionEveryone': false,})
-        miembroCo.tiempo = Date.now()+ms("1d")
-        miembroCo.notificado = false
-        await collaboratorsModel.findByIdAndUpdate(botDB.serverId, {colaboradores: arrayCo})
-      }
-    }
 
     //TODO: Sistema VIP
     if(msg.channelId == '826193847943037018' && msg.channel.type == ChannelType.GuildText && msg.mentions.everyone && msg.member?.roles.cache.has('826197551904325712') && !msg.member?.permissions.has('Administrator')){

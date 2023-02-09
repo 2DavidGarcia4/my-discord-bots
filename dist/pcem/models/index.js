@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.collaboratorsModel = exports.surveysModel = exports.rafflesModel = exports.personalModel = exports.invitesModel = exports.ticketsModel = exports.carcelModel = exports.suggestionsModel = exports.alliancesModel = exports.botModel = void 0;
+exports.surveysModel = exports.rafflesModel = exports.personalModel = exports.invitesModel = exports.ticketsModel = exports.carcelModel = exports.suggestionsModel = exports.alliancesModel = exports.botModel = void 0;
 const mongoose_1 = require("mongoose");
 const typegoose_1 = require("@typegoose/typegoose");
 //? Bot db
@@ -156,19 +156,3 @@ __decorate([
     __metadata("design:type", Array)
 ], Encuestas.prototype, "encuestas", void 0);
 exports.surveysModel = (0, typegoose_1.getModelForClass)(Encuestas);
-//? ColaboradoresDB
-class Colaboradores {
-}
-__decorate([
-    (0, typegoose_1.prop)({ type: String, required: true }),
-    __metadata("design:type", String)
-], Colaboradores.prototype, "_id", void 0);
-__decorate([
-    (0, typegoose_1.prop)({ type: Object, required: true }),
-    __metadata("design:type", Object)
-], Colaboradores.prototype, "datos", void 0);
-__decorate([
-    (0, typegoose_1.prop)({ type: Array, required: true }),
-    __metadata("design:type", Array)
-], Colaboradores.prototype, "colaboradores", void 0);
-exports.collaboratorsModel = (0, typegoose_1.getModelForClass)(Colaboradores, { options: { disablePluginsOnDiscriminator: true } });

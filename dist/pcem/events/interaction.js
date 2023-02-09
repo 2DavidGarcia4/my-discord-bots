@@ -53,7 +53,7 @@ const cmds = [
 ];
 cmds.forEach((cmd, ps) => exports.slashComands.set(cmd.name, cmd));
 const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g, _h;
     const { emoji, owners, color, serverId } = db_1.botDB;
     if (int.isChatInputCommand()) {
         const { commandName } = int;
@@ -1071,18 +1071,11 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
         }
         if (customId == "información") {
             const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-            const dataCol = yield models_1.collaboratorsModel.findById(serverId), colaboradores = [];
-            if (!dataCol)
-                return;
-            for (let c in dataCol.colaboradores) {
-                if (dataCol.colaboradores[c].colaborador) {
-                    colaboradores.push(`**<#${dataCol.colaboradores[c].canalID}>**: canal del colaborador **${(_d = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(dataCol.colaboradores[c].id)) === null || _d === void 0 ? void 0 : _d.user.tag}**.`);
-                }
-            }
+            const colaboradores = [];
             let infos = [
                 {
                     valor: `servidor`,
-                    color: ((_e = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _e === void 0 ? void 0 : _e.displayHexColor) || 'White',
+                    color: ((_d = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White',
                     miniatura: (guild === null || guild === void 0 ? void 0 : guild.iconURL({ size: 1024 })) || '',
                     titulo: `${guild === null || guild === void 0 ? void 0 : guild.name}`,
                     descripcion: `Es un servidor enfocado en la promoción, creado el <t:${Math.floor(((guild === null || guild === void 0 ? void 0 : guild.createdAt.valueOf()) || 0) / 1000)}:F> aquí puedes promocionarte, dar a conocer tu contenido, trabajo, redes sociales a mas personas, además de eso puedes charlar con los demás miembros del servidor, hacer amigos, entretenerte con los diversos bots de entretenimiento que tenemos, entre otras cosas.\n\n**¡Disfruta del servidor!**\n*Gracias por estar aquí*`
@@ -1099,7 +1092,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                     color: `#6B6B6B`,
                     miniatura: `https://cdn.discordapp.com/attachments/901313790765854720/971924981506248734/colaborador.png`,
                     titulo: `💎 Colaboradores`,
-                    descripcion: `Categoría **<#913490278529261619>**:  en esta categoría encontrarás canales para los colaboradores del servidor, cada colaborador tendrá su canal en el cual podrá modificar el nombre y descripción de su canal cuantas veces quiera, publicar su contenido utilizando @everyone o @here una vez por día.\n\n${colaboradores.length == 0 ? "" : "**Canales de los colaboradores actuales:**\n> " + colaboradores.join("\n> .\n> ")}\n> **¿Quieres ser colaborador?** selecciona la opción **:trophy: Roles exclusivos** en este menú para obtener información sobre ello.`
+                    descripcion: `Categoría **<#913490278529261619>**:  en esta categoría encontrarás canales para los colaboradores del servidor, cada colaborador tendrá su canal en el cual podrá modificar el nombre y descripción de su canal cuantas veces quiera, publicar su contenido utilizando @everyone o @here una vez por día.\n\n${colaboradores.length == 0 ? "" : "**Canales de los colaboradores actuales:**\n> " + (colaboradores === null || colaboradores === void 0 ? void 0 : colaboradores.join("\n> .\n> "))}\n> **¿Quieres ser colaborador?** selecciona la opción **:trophy: Roles exclusivos** en este menú para obtener información sobre ello.`
                 },
                 {
                     valor: `categoría-promociones-vip`,
@@ -1222,10 +1215,10 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 },
                 {
                     valor: `bot-servidor`,
-                    color: ((_f = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _f === void 0 ? void 0 : _f.displayHexColor) || 'White',
-                    miniatura: ((_g = client.user) === null || _g === void 0 ? void 0 : _g.displayAvatarURL({ size: 1024 })) || '',
+                    color: ((_e = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _e === void 0 ? void 0 : _e.displayHexColor) || 'White',
+                    miniatura: ((_f = client.user) === null || _f === void 0 ? void 0 : _f.displayAvatarURL({ size: 1024 })) || '',
                     titulo: `🤖 Bot del servidor`,
-                    descripcion: `Hola, soy **<@${(_h = client.user) === null || _h === void 0 ? void 0 : _h.id}>** el bot oficial del servidor, creado por <@717420870267830382>, el <t:${Math.floor((((_j = client.user) === null || _j === void 0 ? void 0 : _j.createdAt.valueOf()) || 0) / 1000)}:F> con la finalidad de hacer el trabajo pesado o difícil de los moderadores y administradores, remplazar a otros bots, hacer acciones complejas que otros bots no pondrían.\n*El objetivo de mi creador es seguir mejorándome hasta remplazar la máxima cantidad de bots que pueda.*`
+                    descripcion: `Hola, soy **<@${(_g = client.user) === null || _g === void 0 ? void 0 : _g.id}>** el bot oficial del servidor, creado por <@717420870267830382>, el <t:${Math.floor((((_h = client.user) === null || _h === void 0 ? void 0 : _h.createdAt.valueOf()) || 0) / 1000)}:F> con la finalidad de hacer el trabajo pesado o difícil de los moderadores y administradores, remplazar a otros bots, hacer acciones complejas que otros bots no pondrían.\n*El objetivo de mi creador es seguir mejorándome hasta remplazar la máxima cantidad de bots que pueda.*`
                 },
             ];
             infos.forEach((info) => {

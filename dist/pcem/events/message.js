@@ -94,17 +94,6 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
                 }
             });
         }
-        //TODO: Colaboradores
-        let dataCol = yield models_1.collaboratorsModel.findById(db_1.botDB.serverId), arrayCo = dataCol === null || dataCol === void 0 ? void 0 : dataCol.colaboradores;
-        if (dataCol === null || dataCol === void 0 ? void 0 : dataCol.colaboradores.filter(f => f.colaborador).some(s => s.canalID == msg.channelId)) {
-            let miembroCo = arrayCo === null || arrayCo === void 0 ? void 0 : arrayCo.find(f => f.canalID == msg.channelId);
-            if (msg.mentions.everyone && (miembroCo === null || miembroCo === void 0 ? void 0 : miembroCo.id) == msg.author.id && msg.channel.type == discord_js_1.ChannelType.GuildText) {
-                msg.channel.permissionOverwrites.edit(msg.author.id, { 'MentionEveryone': false, });
-                miembroCo.tiempo = Date.now() + (0, ms_1.default)("1d");
-                miembroCo.notificado = false;
-                yield models_1.collaboratorsModel.findByIdAndUpdate(db_1.botDB.serverId, { colaboradores: arrayCo });
-            }
-        }
         //TODO: Sistema VIP
         if (msg.channelId == '826193847943037018' && msg.channel.type == discord_js_1.ChannelType.GuildText && msg.mentions.everyone && ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.has('826197551904325712')) && !((_c = msg.member) === null || _c === void 0 ? void 0 : _c.permissions.has('Administrator'))) {
             msg.channel.permissionOverwrites.edit(msg.author.id, { 'MentionEveryone': false, });

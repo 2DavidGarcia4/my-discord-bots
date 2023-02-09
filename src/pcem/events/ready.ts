@@ -1,7 +1,7 @@
-import { ActivitiesOptions, ActivityType, ActionRowBuilder, ButtonBuilder, ChannelType, Client, EmbedBuilder, ButtonStyle } from "discord.js"
+import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder, ButtonStyle } from "discord.js"
 import ms from "ms"
 import colors from "colors"
-import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, collaboratorsModel, invitesModel, botModel } from "../models"
+import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, invitesModel, botModel } from "../models"
 import { botDB } from "../db"
 import { slashComands } from "./interaction"
 import { isDevelopment } from "../../config"
@@ -220,67 +220,6 @@ export const readyEvent = async (client: Client) => {
   }
   carcel()
 
-  async function colaboradores() {
-    let dataCol = await collaboratorsModel.findById(botDB.serverId), arrayCo = dataCol?.colaboradores
-    arrayCo?.filter(f => f.colaborador).forEach(async (col, ps) => {
-      let canal = servidor?.channels.cache.get(col.canalID), colaborador = client.users.cache.get(col.id)
-      if(!canal || !colaborador) return
-      if(canal.type != ChannelType.GuildText) return
-      if (!colaborador?.dmChannel) {
-        colaborador?.createDM()
-      }
-
-      const embNotificaccion = new EmbedBuilder()
-      .setTitle(`🔔 Notificación`)
-      .setDescription(`${colaborador} ya puedes utilizar @everyone o @here en tu canal ${canal}.`)
-      .setColor(servidor?.members.cache.get(col.id)?.displayHexColor || 'Random')
-      .setFooter({text: `¡Gracias por ser colaborador del servidor.!`, iconURL: client.user?.displayAvatarURL()})
-
-      const boton = new ActionRowBuilder<ButtonBuilder>()
-      .addComponents(
-        [
-          new ButtonBuilder()
-          .setCustomId("eliminarMsgMD")
-          .setEmoji(botDB.emoji.negative)
-          .setLabel("Eliminar mensaje")
-          .setStyle(ButtonStyle.Danger)
-        ]
-      )
-
-      if (col.tiempo == false) {
-        if (!col.notificado) {
-          colaborador?.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c)
-          col.notificado = true
-        }
-        if(canal && canal.type == ChannelType.GuildText && !canal.permissionsFor(col.id)?.has('MentionEveryone')) {
-          canal.permissionOverwrites.edit(col.id, { 'MentionEveryone': true, })
-        }
-
-      } else {
-        if (col.tiempo <= Date.now()) {
-          if (!col.notificado) {
-            colaborador?.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c)
-            col.notificado = true
-            col.tiempo = false
-          } else {
-            col.tiempo = false
-          }
-          if (!canal.permissionsFor(col.id)?.has("MentionEveryone")) {
-            canal.permissionOverwrites.edit(col.id, { "MentionEveryone": true, })
-          }
-        } else {
-          if (canal.permissionsFor(col.id)?.has("MentionEveryone")) {
-            canal.permissionOverwrites.edit(col.id, { "MentionEveryone": false, })
-          }
-        }
-      }
-    })
-    setTimeout(async () => {
-      await collaboratorsModel.findByIdAndUpdate(botDB.serverId, { colaboradores: arrayCo })
-    }, 2000)
-  }
-  colaboradores()
-
   function vips() {
     let tiempo = new Date(), canal = servidor?.channels.cache.get("826193847943037018")
     if(!canal) return
@@ -467,7 +406,6 @@ export const readyEvent = async (client: Client) => {
 
   setInterval(async () => {
     presencias()
-    colaboradores()
     sorteos()
     encuestas()
   }, 60 * 60000)

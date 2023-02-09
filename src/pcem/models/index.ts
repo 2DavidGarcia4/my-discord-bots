@@ -222,27 +222,3 @@ class Encuestas {
   }[]
 }
 export const surveysModel = getModelForClass(Encuestas)
-
-//? ColaboradoresDB
-class Colaboradores {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public datos: {
-    categoriaID: string
-    rolID: string
-  }
-
-  @prop({type: Array, required: true})
-  public colaboradores: {
-    id: string
-    tag: string
-    canalID: string
-    fecha: number
-    tiempo: number | boolean
-    colaborador: boolean
-    notificado: boolean
-  }[]
-}
-export const collaboratorsModel = getModelForClass(Colaboradores, {options: {disablePluginsOnDiscriminator: true}})

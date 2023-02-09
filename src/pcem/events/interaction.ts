@@ -1,7 +1,7 @@
 import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
 import { botDB } from "../db";
 import { sistemMarcar } from "..";
-import { collaboratorsModel, suggestionsModel } from "../models";
+import { suggestionsModel } from "../models";
 
 // Generals
 import { websSlashCommand, websScb } from "../commands/slash/generals/webs";
@@ -1171,14 +1171,8 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
 
     if(customId == "información"){
       const author = guild?.members.cache.get(user.id)
-      const dataCol = await collaboratorsModel.findById(serverId), colaboradores = []
-      if(!dataCol) return
-
-      for(let c in dataCol.colaboradores){
-        if(dataCol.colaboradores[c].colaborador){
-          colaboradores.push(`**<#${dataCol.colaboradores[c].canalID}>**: canal del colaborador **${guild?.members.cache.get(dataCol.colaboradores[c].id)?.user.tag}**.`)
-        }
-      }
+      const colaboradores: any[] = []
+      
 
       interface Infos {
         valor: string
@@ -1208,7 +1202,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
           color: `#6B6B6B`,
           miniatura: `https://cdn.discordapp.com/attachments/901313790765854720/971924981506248734/colaborador.png`,
           titulo: `💎 Colaboradores`, 
-          descripcion: `Categoría **<#913490278529261619>**:  en esta categoría encontrarás canales para los colaboradores del servidor, cada colaborador tendrá su canal en el cual podrá modificar el nombre y descripción de su canal cuantas veces quiera, publicar su contenido utilizando @everyone o @here una vez por día.\n\n${colaboradores.length==0 ? "": "**Canales de los colaboradores actuales:**\n> "+colaboradores.join("\n> .\n> ")}\n> **¿Quieres ser colaborador?** selecciona la opción **:trophy: Roles exclusivos** en este menú para obtener información sobre ello.`
+          descripcion: `Categoría **<#913490278529261619>**:  en esta categoría encontrarás canales para los colaboradores del servidor, cada colaborador tendrá su canal en el cual podrá modificar el nombre y descripción de su canal cuantas veces quiera, publicar su contenido utilizando @everyone o @here una vez por día.\n\n${colaboradores.length==0 ? "": "**Canales de los colaboradores actuales:**\n> "+colaboradores?.join("\n> .\n> ")}\n> **¿Quieres ser colaborador?** selecciona la opción **:trophy: Roles exclusivos** en este menú para obtener información sobre ello.`
         },
         {
           valor: `categoría-promociones-vip`,

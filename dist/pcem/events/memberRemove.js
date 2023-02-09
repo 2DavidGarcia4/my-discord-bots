@@ -69,12 +69,6 @@ const memberRemoveEvent = (gmr, client) => __awaiter(void 0, void 0, void 0, fun
             miembro.tiempo = Math.floor(Date.now() + (0, ms_1.default)("30d"));
         }
         yield models_1.invitesModel.findByIdAndUpdate(db_1.botDB.serverId, { miembros: arrayMi });
-        // Colaboradores
-        let dataCol = yield models_1.collaboratorsModel.findById(db_1.botDB.serverId), arrayCo = dataCol === null || dataCol === void 0 ? void 0 : dataCol.colaboradores;
-        if (arrayCo === null || arrayCo === void 0 ? void 0 : arrayCo.some(s => s.id == gmr.id)) {
-            arrayCo.splice(arrayCo.findIndex(f => f.id == gmr.id), 1);
-            yield models_1.collaboratorsModel.findByIdAndUpdate(db_1.botDB.serverId, { colaboradores: arrayCo });
-        }
         // Personal
         let dataPer = yield models_1.personalModel.findById(db_1.botDB.serverId), arrayPr = dataPer === null || dataPer === void 0 ? void 0 : dataPer.personal;
         if (arrayPr === null || arrayPr === void 0 ? void 0 : arrayPr.some(s => s.id == gmr.id)) {

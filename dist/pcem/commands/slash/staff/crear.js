@@ -202,68 +202,7 @@ const crearSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, fun
     }
     if (subCommand == "colaborador") {
         __1.estadisticas.comandos++;
-        const dataCol = yield models_1.collaboratorsModel.findById(serverId), arrayCo = dataCol === null || dataCol === void 0 ? void 0 : dataCol.colaboradores, member = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(options.getUser('colaborador', true).id), channelName = int.options.getString('nombre', true);
-        if ((0, functions_1.setSlashErrors)(int, [
-            [
-                Boolean(!(author === null || author === void 0 ? void 0 : author.permissions.has('Administrator'))),
-                `¡No eres administrador del servidor!, no puede utilizar el comando.`
-            ],
-            [
-                Boolean(member === null || member === void 0 ? void 0 : member.user.bot),
-                `El miembro que has proporcionado *(${member})* es un bot, un bot no puede ser colaborador.`
-            ],
-            [
-                Boolean((member === null || member === void 0 ? void 0 : member.id) == user.id),
-                `El miembro que has proporcionado *(${member})* eres tu, no te puedes otorgar los veneficios como colaborador.`
-            ],
-            [
-                Boolean((member === null || member === void 0 ? void 0 : member.id) == (guild === null || guild === void 0 ? void 0 : guild.ownerId)),
-                `El miembro que has proporcionado *(${member})* es el sueño del servidor no tiene sentido que sea colaborador.`
-            ]
-        ]))
-            return;
-        if (arrayCo === null || arrayCo === void 0 ? void 0 : arrayCo.some(s => s.id == (member === null || member === void 0 ? void 0 : member.id))) {
-            const colaborador = arrayCo.find(f => f.id == (member === null || member === void 0 ? void 0 : member.id));
-            if (colaborador === null || colaborador === void 0 ? void 0 : colaborador.colaborador) {
-                const embEscolaborador = new discord_js_1.EmbedBuilder()
-                    .setTitle(`💎 Es colaborador`)
-                    .setDescription(`El miembro ${member} ya es colaborador del servidor.`)
-                    .setColor((member === null || member === void 0 ? void 0 : member.displayHexColor) || 'White');
-                int.reply({ ephemeral: true, embeds: [embEscolaborador] });
-            }
-            else if (colaborador) {
-                member === null || member === void 0 ? void 0 : member.roles.add((dataCol === null || dataCol === void 0 ? void 0 : dataCol.datos.rolID) || '');
-                guild === null || guild === void 0 ? void 0 : guild.channels.create({ name: `『』${channelName}`, parent: (dataCol === null || dataCol === void 0 ? void 0 : dataCol.datos.categoriaID) || '', permissionOverwrites: [{ id: (member === null || member === void 0 ? void 0 : member.id) || '', deny: 'ManageRoles', allow: ['CreateInstantInvite', 'ManageChannels', 'AddReactions', 'ViewChannel', 'SendMessages', 'SendTTSMessages', 'ManageMessages', 'EmbedLinks', 'AttachFiles', 'ReadMessageHistory', 'MentionEveryone', 'UseExternalEmojis', 'ManageWebhooks', 'UseApplicationCommands', 'ManageThreads', 'SendMessagesInThreads', 'CreatePublicThreads', 'CreatePrivateThreads', 'UseExternalStickers'] }] }).then((tc) => __awaiter(void 0, void 0, void 0, function* () {
-                    var _l;
-                    const embCanalCreado = new discord_js_1.EmbedBuilder()
-                        .setTitle(`<a:afirmativo:856966728806432778> Canal creado`)
-                        .setDescription(`El canal ${tc} ha sido creado para el colaborador ${member} y se le ha agregado el rol <@&${dataCol === null || dataCol === void 0 ? void 0 : dataCol.datos.rolID}>.`)
-                        .setColor(((_l = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _l === void 0 ? void 0 : _l.displayHexColor) || 'White');
-                    int.reply({ content: `<@${member === null || member === void 0 ? void 0 : member.id}>`, embeds: [embCanalCreado] });
-                    colaborador.id = (member === null || member === void 0 ? void 0 : member.id) || '';
-                    colaborador.tag = (member === null || member === void 0 ? void 0 : member.user.tag) || '';
-                    colaborador.canalID = tc.id;
-                    colaborador.fecha = Date.now();
-                    colaborador.colaborador = true;
-                    colaborador.tiempo = false;
-                    colaborador.notificado = true;
-                    yield models_1.collaboratorsModel.findByIdAndUpdate(serverId, { colaboradores: arrayCo });
-                }));
-            }
-        }
-        else {
-            member === null || member === void 0 ? void 0 : member.roles.add((dataCol === null || dataCol === void 0 ? void 0 : dataCol.datos.rolID) || '');
-            guild === null || guild === void 0 ? void 0 : guild.channels.create({ name: `『』${channelName}`, parent: dataCol === null || dataCol === void 0 ? void 0 : dataCol.datos.categoriaID, permissionOverwrites: [{ id: (member === null || member === void 0 ? void 0 : member.id) || '', deny: "ManageRoles", allow: ['CreateInstantInvite', 'ManageChannels', 'AddReactions', 'ViewChannel', 'SendMessages', 'SendTTSMessages', 'ManageMessages', 'EmbedLinks', 'AttachFiles', 'ReadMessageHistory', 'MentionEveryone', 'UseExternalEmojis', 'ManageWebhooks', 'UseApplicationCommands', 'ManageThreads', 'SendMessagesInThreads', 'CreatePublicThreads', 'CreatePrivateThreads', 'UseExternalStickers'] }] }).then((tc) => __awaiter(void 0, void 0, void 0, function* () {
-                var _m;
-                const embCanalCreado = new discord_js_1.EmbedBuilder()
-                    .setTitle(`${emoji.afirmative} Canal creado`)
-                    .setDescription(`El canal ${tc} ha sido creado para el nuevo colaborador ${member} y se le ha agregado el rol <@&${dataCol === null || dataCol === void 0 ? void 0 : dataCol.datos.rolID}>.`)
-                    .setColor(((_m = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _m === void 0 ? void 0 : _m.displayHexColor) || 'White');
-                int.reply({ content: `<@${member === null || member === void 0 ? void 0 : member.id}>`, embeds: [embCanalCreado] });
-                arrayCo === null || arrayCo === void 0 ? void 0 : arrayCo.push({ id: (member === null || member === void 0 ? void 0 : member.id) || '', tag: (member === null || member === void 0 ? void 0 : member.user.tag) || '', canalID: tc.id, fecha: Date.now(), tiempo: false, colaborador: true, notificado: true });
-                yield models_1.collaboratorsModel.findByIdAndUpdate(serverId, { colaboradores: arrayCo });
-            }));
-        }
+        int.reply({ ephemeral: true, content: "Not found" });
     }
     if (subCommand == "encuesta") {
         __1.estadisticas.comandos++;

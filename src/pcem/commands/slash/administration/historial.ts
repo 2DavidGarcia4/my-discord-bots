@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, CacheType, Client, ChatInputCommandInteraction, ActionRowBuilder, ButtonBuilder, ButtonStyle, Colors } from "discord.js"
 import { estadisticas } from "../../.."
 import { botDB } from "../../../db"
-import { collaboratorsModel, personalModel } from "../../../models"
+import { personalModel } from "../../../models"
 import { sendMessageSlash, setSlashError, setSlashErrors } from "../../../../utils/functions"
 
 export const historialSmb = new SlashCommandBuilder()
@@ -17,115 +17,7 @@ export const historialSlashCommand = async (int: ChatInputCommandInteraction<Cac
 
   if(subCommand == "colaboradores"){
     estadisticas.comandos++
-    let dataCol = await collaboratorsModel.findById(serverId), bueltas = 1, tabla: any[] = []
-    if(!dataCol) return
-    for(let c of dataCol.colaboradores.filter(f=> guild?.members.cache.get(f.id))){
-      let miembro = guild?.members.cache.get(c.id)
-      if(miembro){
-        if(c.colaborador){
-          tabla.push(`**${bueltas}.** [${miembro.user.tag}](${miembro.displayAvatarURL({size: 2048})}) - es colaborador desde <t:${Math.floor(c.fecha/1000)}:R>\n**ID:** ${c.id}`)
-        }else{
-          tabla.push(`**${bueltas}.** [${miembro.user.tag}](${miembro.displayAvatarURL({size: 2048})}) - *era colaborador <t:${Math.floor(c.fecha/1000)}:R>*\n**ID:** ${c.id}`)
-        }
-      }
-      bueltas++
-    }
-
-    await int.deferReply()
-    let allPages = 0
-    if(String(tabla.length).slice(-1) == '0'){
-      allPages = Math.floor(tabla.length / 10)
-    }else{
-      allPages = Math.floor(tabla.length / 10 + 1)
-    }
-
-    let start = 0, end = 10, page = 1, descripcion = `Hay un total de **${tabla.length.toLocaleString()}** ${tabla.length <= 1 ? "colaborador.": "colaboradores."}\n\n`
-    const collaboratorsEb = new EmbedBuilder()
-    .setTitle(`💎 Historial de los colaboradores`)
-    .setColor(int.guild?.members.me?.displayHexColor || 'White')
-    .setFooter({text: `Pagina ${page}/${allPages}`, iconURL: guild?.iconURL() || undefined})
-    .setTimestamp()
-
-    if(tabla.length <= 10){
-      collaboratorsEb
-      .setDescription(descripcion+tabla.slice(start, end).join("\n\n"))
-      sendMessageSlash(int, {embeds: [collaboratorsEb]})
-
-    }else{
-      collaboratorsEb
-      .setDescription(descripcion+tabla.slice(start, end).join("\n\n"))
-
-      const collaboratorsArb = new ActionRowBuilder<ButtonBuilder>()
-      .addComponents(
-        [
-          new ButtonBuilder()
-          .setCustomId('previous')
-          .setLabel("Anterior")
-          .setEmoji(emoji.leftArrow)
-          .setStyle(ButtonStyle.Secondary),
-
-          new ButtonBuilder()
-          .setCustomId('next')
-          .setLabel("Siguiente")
-          .setEmoji(emoji.rightArrow)
-          .setStyle(ButtonStyle.Primary)
-        ]
-      ).toJSON()
-           
-      setTimeout(async ()=>{
-        const collaboratorsMessage = await int.editReply({embeds: [collaboratorsEb], components: [collaboratorsArb]}), { components } = collaboratorsArb
-        const collaboratorsCollector = collaboratorsMessage.createMessageComponentCollector({filter: f=> f.user.id == user.id, time: allPages*60000})
-
-
-        collaboratorsCollector.on('collect', async btn => {
-          if(btn.customId == 'previous'){
-            if (end - 10 <= 10) {
-              components[0].style = ButtonStyle.Secondary
-              components[0].disabled = true
-              components[1].disabled = false
-              components[1].style = ButtonStyle.Primary
-              
-            } else {
-              components[0].style = ButtonStyle.Primary
-              components[0].disabled = false
-              components[1].disabled = false
-              components[1].style = ButtonStyle.Primary
-            }
-            start -= 10, end -= 10, page--
-
-            collaboratorsEb
-            .setDescription(descripcion + tabla.slice(start, end).join("\n\n"))
-            .setFooter({text: `Pagina - ${page}/${allPages}`, iconURL: int.guild?.iconURL() || undefined})
-            btn.update({ embeds: [collaboratorsEb], components: [collaboratorsArb] })
-          }
-
-          if(btn.customId == 'next'){
-            if (end + 10 >= tabla.length) {
-              components[0].style = ButtonStyle.Primary
-              components[0].disabled = false
-              components[1].disabled = true
-              components[1].style = ButtonStyle.Secondary
-              
-            } else {
-              components[0].style = ButtonStyle.Primary
-              components[0].disabled = false
-              components[1].disabled = false
-              components[1].style = ButtonStyle.Primary
-            }
-            start -= 10, end -= 10, page--
-
-            collaboratorsEb
-            .setDescription(descripcion + tabla.slice(start, end).join("\n\n"))
-            .setFooter({text: `Pagina - ${page}/${allPages}`, iconURL: int.guild?.iconURL() || undefined})
-            btn.update({ embeds: [collaboratorsEb], components: [collaboratorsArb] })
-          }
-        })
-
-        collaboratorsCollector.on('end', (asd) => {
-          int.editReply({embeds: [collaboratorsEb], components: []})
-        })
-      }, 600)
-    }
+    int.reply({ephemeral: true, content: "Not found"})
   }
 
   if(subCommand == 'personal'){

@@ -2,7 +2,7 @@ import { ChannelType, Client, EmbedBuilder, GuildMember, PartialGuildMember } fr
 import ms from "ms";
 import { estadisticas } from "..";
 import { botDB } from "../db";
-import { botModel, collaboratorsModel, invitesModel, personalModel } from "../models";
+import { botModel, invitesModel, personalModel } from "../models";
 
 export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, client: Client) => {
   const { color, serverId } = botDB
@@ -57,13 +57,6 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
       miembro.tiempo = Math.floor(Date.now()+ms("30d"))
     }
     await invitesModel.findByIdAndUpdate(botDB.serverId, {miembros: arrayMi})
-
-    // Colaboradores
-    let dataCol = await collaboratorsModel.findById(botDB.serverId), arrayCo = dataCol?.colaboradores
-    if(arrayCo?.some(s=>s.id == gmr.id)){
-      arrayCo.splice(arrayCo.findIndex(f=>f.id == gmr.id),1)
-      await collaboratorsModel.findByIdAndUpdate(botDB.serverId, {colaboradores: arrayCo})
-    }
 
     // Personal
     let dataPer = await personalModel.findById(botDB.serverId), arrayPr = dataPer?.personal

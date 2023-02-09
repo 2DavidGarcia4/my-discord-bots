@@ -227,68 +227,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         });
     }
     carcel();
-    function colaboradores() {
-        return __awaiter(this, void 0, void 0, function* () {
-            let dataCol = yield models_1.collaboratorsModel.findById(db_1.botDB.serverId), arrayCo = dataCol === null || dataCol === void 0 ? void 0 : dataCol.colaboradores;
-            arrayCo === null || arrayCo === void 0 ? void 0 : arrayCo.filter(f => f.colaborador).forEach((col, ps) => __awaiter(this, void 0, void 0, function* () {
-                var _a, _b, _c, _d, _e;
-                let canal = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get(col.canalID), colaborador = client.users.cache.get(col.id);
-                if (!canal || !colaborador)
-                    return;
-                if (canal.type != discord_js_1.ChannelType.GuildText)
-                    return;
-                if (!(colaborador === null || colaborador === void 0 ? void 0 : colaborador.dmChannel)) {
-                    colaborador === null || colaborador === void 0 ? void 0 : colaborador.createDM();
-                }
-                const embNotificaccion = new discord_js_1.EmbedBuilder()
-                    .setTitle(`🔔 Notificación`)
-                    .setDescription(`${colaborador} ya puedes utilizar @everyone o @here en tu canal ${canal}.`)
-                    .setColor(((_a = servidor === null || servidor === void 0 ? void 0 : servidor.members.cache.get(col.id)) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'Random')
-                    .setFooter({ text: `¡Gracias por ser colaborador del servidor.!`, iconURL: (_b = client.user) === null || _b === void 0 ? void 0 : _b.displayAvatarURL() });
-                const boton = new discord_js_1.ActionRowBuilder()
-                    .addComponents([
-                    new discord_js_1.ButtonBuilder()
-                        .setCustomId("eliminarMsgMD")
-                        .setEmoji(db_1.botDB.emoji.negative)
-                        .setLabel("Eliminar mensaje")
-                        .setStyle(discord_js_1.ButtonStyle.Danger)
-                ]);
-                if (col.tiempo == false) {
-                    if (!col.notificado) {
-                        colaborador === null || colaborador === void 0 ? void 0 : colaborador.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c);
-                        col.notificado = true;
-                    }
-                    if (canal && canal.type == discord_js_1.ChannelType.GuildText && !((_c = canal.permissionsFor(col.id)) === null || _c === void 0 ? void 0 : _c.has('MentionEveryone'))) {
-                        canal.permissionOverwrites.edit(col.id, { 'MentionEveryone': true, });
-                    }
-                }
-                else {
-                    if (col.tiempo <= Date.now()) {
-                        if (!col.notificado) {
-                            colaborador === null || colaborador === void 0 ? void 0 : colaborador.send({ embeds: [embNotificaccion], components: [boton] }).catch(c => c);
-                            col.notificado = true;
-                            col.tiempo = false;
-                        }
-                        else {
-                            col.tiempo = false;
-                        }
-                        if (!((_d = canal.permissionsFor(col.id)) === null || _d === void 0 ? void 0 : _d.has("MentionEveryone"))) {
-                            canal.permissionOverwrites.edit(col.id, { "MentionEveryone": true, });
-                        }
-                    }
-                    else {
-                        if ((_e = canal.permissionsFor(col.id)) === null || _e === void 0 ? void 0 : _e.has("MentionEveryone")) {
-                            canal.permissionOverwrites.edit(col.id, { "MentionEveryone": false, });
-                        }
-                    }
-                }
-            }));
-            setTimeout(() => __awaiter(this, void 0, void 0, function* () {
-                yield models_1.collaboratorsModel.findByIdAndUpdate(db_1.botDB.serverId, { colaboradores: arrayCo });
-            }), 2000);
-        });
-    }
-    colaboradores();
     function vips() {
         var _a, _b;
         let tiempo = new Date(), canal = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get("826193847943037018");
@@ -475,7 +413,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     // mensajesTemporales()
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         presencias();
-        colaboradores();
         sorteos();
         encuestas();
     }), 60 * 60000);
