@@ -29,7 +29,7 @@ const eval_1 = require("../commands/text/eval");
 const utils_1 = require("../utils");
 const reglas_1 = require("../commands/text/reglas");
 const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w;
     const { member } = msg, { prefix, emoji, color } = db_1.botDB;
     if (msg.guildId == db_1.botDB.serverId) {
         __1.estadisticas.mensajes++;
@@ -37,9 +37,9 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         let dataTs = yield models_1.ticketsModel.findById(db_1.botDB.serverId), arrayTs = dataTs === null || dataTs === void 0 ? void 0 : dataTs.tickets, servidor2 = client.guilds.cache.get('949860813915705354');
         if (arrayTs) {
             arrayTs.forEach((objeto) => __awaiter(void 0, void 0, void 0, function* () {
-                var _w;
+                var _x;
                 if (objeto.id == msg.channelId) {
-                    if (objeto.publico && ((_w = msg.member) === null || _w === void 0 ? void 0 : _w.roles.cache.has('887444598715219999')) && msg.channel.type == discord_js_1.ChannelType.GuildText) {
+                    if (objeto.publico && ((_x = msg.member) === null || _x === void 0 ? void 0 : _x.roles.cache.has('887444598715219999')) && msg.channel.type == discord_js_1.ChannelType.GuildText) {
                         objeto.publico = false;
                         objeto.personalID = msg.author.id;
                         yield models_1.ticketsModel.findByIdAndUpdate(db_1.botDB.serverId, { tickets: arrayTs });
@@ -188,12 +188,11 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         //* Auto moderación -----------------------------
         const discordDomains = ["discord.gg/", "discord.com/invite/"];
         const urlIncludes = ['https://', 'http://', '.com', 'discord.'];
-        // && !msg.member?.permissions.has('Administrator')
-        if (!((_o = msg.member) === null || _o === void 0 ? void 0 : _o.roles.cache.has('887444598715219999')) && urlIncludes.some(s => msg.content.includes(s))) {
-            const dataBot = yield models_1.botModel.findById((_p = client.user) === null || _p === void 0 ? void 0 : _p.id);
+        if (!((_o = msg.member) === null || _o === void 0 ? void 0 : _o.roles.cache.has('887444598715219999')) && !((_p = msg.member) === null || _p === void 0 ? void 0 : _p.permissions.has('Administrator')) && urlIncludes.some(s => msg.content.includes(s))) {
+            const dataBot = yield models_1.botModel.findById((_q = client.user) === null || _q === void 0 ? void 0 : _q.id);
             if (!dataBot)
                 return;
-            const canalesPerIDs = (_q = msg.guild) === null || _q === void 0 ? void 0 : _q.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
+            const canalesPerIDs = (_r = msg.guild) === null || _r === void 0 ? void 0 : _r.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
             const otrosIDCha = dataBot.autoModeration.ignoreChannels;
             canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.push(...otrosIDCha);
             if (!(canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.some(s => s == msg.channelId))) {
@@ -204,12 +203,12 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
                     .setTitle(`🔗 Auto moderación de enlaces`)
                     .setDescription(`En este canal no están permitidos los enlaces, hay otros canales que si los permiten pero no todo tipo de enlaces.\n\n*Lee la descripción de cada canal, normalmente contiene información de que esta permitido en el canal o puedes preguntarle a un administrador o moderador*`)
                     .setColor(color.negative)
-                    .setFooter({ text: ((_r = msg.guild) === null || _r === void 0 ? void 0 : _r.name) || 'undefined', iconURL: ((_s = msg.guild) === null || _s === void 0 ? void 0 : _s.iconURL()) || undefined });
+                    .setFooter({ text: ((_s = msg.guild) === null || _s === void 0 ? void 0 : _s.name) || 'undefined', iconURL: ((_t = msg.guild) === null || _t === void 0 ? void 0 : _t.iconURL()) || undefined });
                 if (urls.every(e => discordDomains.some(s => e.includes(s)))) {
                     for (let url of urls) {
                         console.log(url);
                         let invitation = yield client.fetchInvite(url);
-                        if (!(((_t = invitation.guild) === null || _t === void 0 ? void 0 : _t.id) == msg.guildId)) {
+                        if (!(((_u = invitation.guild) === null || _u === void 0 ? void 0 : _u.id) == msg.guildId)) {
                             msg.reply({ embeds: [UrlWarningEb], content: `<@${msg.author.id}>` }).then(te => {
                                 __1.exemptMessagesIds.push(te.id);
                                 setTimeout(() => msg.delete().catch(), 300);
@@ -253,12 +252,12 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const command = (_u = args.shift()) === null || _u === void 0 ? void 0 : _u.toLowerCase();
+    const command = (_v = args.shift()) === null || _v === void 0 ? void 0 : _v.toLowerCase();
     if (command == 'ayuda')
         (0, help_1.helpCommand)(msg, client);
     if (['comandos', 'cmds'].some(s => s == command))
         (0, commands_1.commandsCommand)(msg, client, args);
-    if ((_v = msg.member) === null || _v === void 0 ? void 0 : _v.permissions.has('Administrator')) {
+    if ((_w = msg.member) === null || _w === void 0 ? void 0 : _w.permissions.has('Administrator')) {
         if (['addreaction', 'addrc'].some(s => s == command))
             (0, addReaction_1.addReactionCommand)(msg, client, args);
         if (command == 'roles')

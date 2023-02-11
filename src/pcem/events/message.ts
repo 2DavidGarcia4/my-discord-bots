@@ -187,8 +187,7 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
     //* Auto moderación -----------------------------
     const discordDomains = ["discord.gg/","discord.com/invite/"]
     const urlIncludes = ['https://', 'http://', '.com', 'discord.']
-    // && !msg.member?.permissions.has('Administrator')
-    if(!msg.member?.roles.cache.has('887444598715219999') && urlIncludes.some(s=> msg.content.includes(s))){
+    if(!msg.member?.roles.cache.has('887444598715219999') && !msg.member?.permissions.has('Administrator') && urlIncludes.some(s=> msg.content.includes(s))){
       const dataBot = await botModel.findById(client.user?.id)
       if(!dataBot) return
       const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id)
