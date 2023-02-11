@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addDataMarcar = exports.addUserIdCoolSug = exports.coolSugerencias = exports.sistemMarcar = exports.cooldowns = exports.autoModeracion = exports.estadisticas = void 0;
+exports.addDataMarcar = exports.addUserIdCoolSug = exports.coolSugerencias = exports.sistemMarcar = exports.cooldowns = exports.exemptMessagesIds = exports.autoModeration = exports.estadisticas = void 0;
 const discord_js_1 = require("discord.js");
 const colors_1 = __importDefault(require("colors"));
 const db_1 = require("./db");
@@ -34,7 +34,8 @@ const reactionRemove_1 = require("./events/reactionRemove");
 const messageUpdate_1 = require("./events/messageUpdate");
 colors_1.default;
 const PCEM = new discord_js_1.Client({ intents: 131071 });
-exports.estadisticas = { entradas: 0, salidas: 0, mensajes: 0, comandos: 0 }, exports.autoModeracion = [{ miembroID: "717420870267830382", advertencias: 0 }];
+exports.estadisticas = { entradas: 0, salidas: 0, mensajes: 0, comandos: 0 }, exports.autoModeration = [{ memberId: "717420870267830382", warnings: 0 }];
+exports.exemptMessagesIds = [];
 exports.cooldowns = new Map();
 exports.sistemMarcar = [], exports.coolSugerencias = [];
 const addUserIdCoolSug = (id) => {

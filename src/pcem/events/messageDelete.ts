@@ -1,11 +1,16 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js";
 import { botDB } from "../db";
 import { botModel, rafflesModel, surveysModel, ticketsModel } from "../models";
+import { exemptMessagesIds } from "..";
 
 
 export const messageDeleteEvent = async (msgd: Message | PartialMessage, client: Client) => {
-  const { serverId, color, emoji } = botDB
+  const { serverId, emoji } = botDB
   if(msgd.guildId != serverId) return;
+  if(exemptMessagesIds.some(s=> s == msgd.id)){
+    exemptMessagesIds.splice(exemptMessagesIds.findIndex(f=> f == msgd.id), 1)
+    return
+  }
 
   let dataTs = await ticketsModel.findById(serverId), arrayTs = dataTs?.tickets, ticket = arrayTs?.find(f=> f.id==msgd.channelId)
   if(arrayTs?.some(s=> s.id==msgd.channelId) && ticket.msgCerrarID == msgd.id && !ticket.cerrado){

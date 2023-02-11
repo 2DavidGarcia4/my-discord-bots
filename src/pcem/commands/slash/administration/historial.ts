@@ -7,7 +7,6 @@ import { sendMessageSlash, setSlashError, setSlashErrors } from "../../../../uti
 export const historialSmb = new SlashCommandBuilder()
 .setName(`historial`)
 .setDescription(`🗒️ Historial, DX`)
-.addSubcommand(colaboradores=> colaboradores.setName(`colaboradores`).setDescription(`💎 Muestra una lista de todos los colaboradores actuales y los antiguos.`))
 .addSubcommand(personal=> personal.setName(`personal`).setDescription(`🦺 Muestra tu historial o el de un miembro del personal.`)
   .addUserOption(miembro=> miembro.setName(`miembro`).setDescription(`👮 Miembro del personal del servidor a ver su historial.`).setRequired(false))
 ).toJSON()

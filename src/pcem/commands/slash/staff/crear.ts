@@ -15,13 +15,6 @@ export const crearScb = new SlashCommandBuilder()
   .addUserOption(us=> us.setName("aliado").setDescription("🧑 Proporciona el aliado (el miembro con el que has creado la alianza).").setRequired(false))
 )
 
-.addSubcommand(colaborador=> 
-  colaborador.setName(`colaborador`)
-  .setDescription(`💎 Crea un canal para el colaborador y le agrega el rol.`)
-  .addUserOption(usuario=> usuario.setName(`colaborador`).setDescription(`🧑 El nuevo colaborador.`).setRequired(true))
-  .addStringOption(nombre=> nombre.setName(`nombre`).setDescription(`🔖 Nombre del canal para el colaborador.`).setRequired(true))
-)
-
 .addSubcommand(encuesta => 
   encuesta.setName(`encuesta`)
   .setDescription(`📊 Crea una encuesta.`)
@@ -242,11 +235,6 @@ export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
         // console.log("No paso nada", plantilla)
       }
     })
-  }
-
-  if(subCommand == "colaborador"){
-    estadisticas.comandos++
-    int.reply({ephemeral: true, content: "Not found"})
   }
 
   if(subCommand == "encuesta"){

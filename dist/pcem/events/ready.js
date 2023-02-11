@@ -98,7 +98,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         var _a, _b, _c, _d, _e, _f, _g, _h;
         const estadosDia = [
             {
-                name: "p.ayuda",
+                name: db_1.botDB.prefix + "ayuda",
                 type: discord_js_1.ActivityType.Listening
             },
             {
@@ -125,10 +125,10 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
                 name: `${(_e = client.guilds.cache.get(db_1.botDB.serverId)) === null || _e === void 0 ? void 0 : _e.channels.cache.filter(ft => ft.type === discord_js_1.ChannelType.GuildVoice).size} canales de voz.`,
                 type: discord_js_1.ActivityType.Watching
             },
-            {
-                name: `sus promociones`,
-                type: discord_js_1.ActivityType.Watching
-            },
+            // {
+            //   name: `sus códigos`,
+            //   type: ActivityType.Watching
+            // },
             {
                 name: `moderar con ${(_f = client.users.cache.get('935707268090056734')) === null || _f === void 0 ? void 0 : _f.username}`,
                 type: discord_js_1.ActivityType.Playing
@@ -136,11 +136,11 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         ];
         const estadosNoche = [
             {
-                name: `mis sueños, estoy durmiendo.`,
+                name: `mis sueños.`,
                 type: discord_js_1.ActivityType.Watching
             },
             {
-                name: `a los miembros y durmiendo.`,
+                name: `zzz`,
                 type: discord_js_1.ActivityType.Listening
             }
         ];
@@ -430,8 +430,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         }
     }));
     // console.log((await servidor?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
-    // const command = slashComands.get('encarcelar')
-    // ;(await servidor?.commands.fetch('972168438321651752', {force: true}))?.edit({defaultMemberPermissions: 'ManageMessages'}).then(c=> console.log('Comando actualizado'))
-    // ;(await servidor?.commands.fetch('961732766112841768', {force: true}))?.delete().then(c=> console.log('Comando eliminado'))
+    // const command = slashComands.get('historial')
+    // ;(await servidor?.commands.fetch('971246633998221312', {force: true}))?.edit({options: command?.options}).then(c=> console.log('Comando actualizado'))
+    // ;(await servidor?.commands.fetch('1023283962749124729', {force: true}))?.delete().then(c=> console.log('Comando eliminado'))
 });
 exports.readyEvent = readyEvent;

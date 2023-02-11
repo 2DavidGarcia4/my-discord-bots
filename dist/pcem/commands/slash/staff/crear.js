@@ -26,10 +26,6 @@ exports.crearScb = new discord_js_1.SlashCommandBuilder()
     .setDescription(`🤝 !Crea una alianza¡.`)
     .addBooleanOption(ping => ping.setName("notificación").setDescription(`🔔 Notifica a los miembros que tienen el rol de alianza.`).setRequired(true))
     .addUserOption(us => us.setName("aliado").setDescription("🧑 Proporciona el aliado (el miembro con el que has creado la alianza).").setRequired(false)))
-    .addSubcommand(colaborador => colaborador.setName(`colaborador`)
-    .setDescription(`💎 Crea un canal para el colaborador y le agrega el rol.`)
-    .addUserOption(usuario => usuario.setName(`colaborador`).setDescription(`🧑 El nuevo colaborador.`).setRequired(true))
-    .addStringOption(nombre => nombre.setName(`nombre`).setDescription(`🔖 Nombre del canal para el colaborador.`).setRequired(true)))
     .addSubcommand(encuesta => encuesta.setName(`encuesta`)
     .setDescription(`📊 Crea una encuesta.`)
     .addStringOption(titulo => titulo.setName(`titulo`)
@@ -199,10 +195,6 @@ const crearSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, fun
                 // console.log("No paso nada", plantilla)
             }
         }));
-    }
-    if (subCommand == "colaborador") {
-        __1.estadisticas.comandos++;
-        int.reply({ ephemeral: true, content: "Not found" });
     }
     if (subCommand == "encuesta") {
         __1.estadisticas.comandos++;

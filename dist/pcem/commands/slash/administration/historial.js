@@ -18,7 +18,6 @@ const functions_1 = require("../../../../utils/functions");
 exports.historialSmb = new discord_js_1.SlashCommandBuilder()
     .setName(`historial`)
     .setDescription(`🗒️ Historial, DX`)
-    .addSubcommand(colaboradores => colaboradores.setName(`colaboradores`).setDescription(`💎 Muestra una lista de todos los colaboradores actuales y los antiguos.`))
     .addSubcommand(personal => personal.setName(`personal`).setDescription(`🦺 Muestra tu historial o el de un miembro del personal.`)
     .addUserOption(miembro => miembro.setName(`miembro`).setDescription(`👮 Miembro del personal del servidor a ver su historial.`).setRequired(false))).toJSON();
 const historialSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {

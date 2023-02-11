@@ -612,49 +612,6 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(customId == 'select-type-role'){
       const guildColor = guild?.members.me?.displayHexColor || 'White'
 
-      if(values[0] == 'access'){
-        const accesEb = new EmbedBuilder()
-        .setTitle(`💂 Roles de acceso`)
-        .setDescription(`Estos roles te otorgan acceso a categorías ocultas.\n*Selecciona uno para obtenerlo*\n\n**<@&1041161492126507118>:** Este rol te da acceso a la categoría *👥 User x user* en la cual hay canales en los que puedes publicar e encontrar a personas que hagan join x join, alianzas, etc.\n\n**<@&1041162293683159101>:** Este rol te da acceso a la categoría *🔞 NSFW* en la cual hay canales con contenido sexual para mayore.\n\n**<@&1041161785186725919>:** Este rol te da acceso a la categoría *📝 Registros* la cual tiene canales en los que se registran acciones en el servidor, como sanciones.\n\n**<@&1041161797434081450>:** Este rol te da acceso a la categoría *🎮 Entretenimiento* en la que encontraras canales de bots de entretenimiento como el bot de economía.`)
-        .setColor(guildColor)
-
-        const accesMenu = new ActionRowBuilder<StringSelectMenuBuilder>()
-        .addComponents(
-          new StringSelectMenuBuilder()
-          .setCustomId('acces-roles')
-          .setPlaceholder("📑 Elige varias opciones.")
-          .setMaxValues(4)
-          .addOptions(
-            [
-              {
-                emoji: '👥',
-                label: 'J4J',
-                description: 'Te da acceso a la categoría 👥 User x user.',
-                value: 'j4j'
-              },
-              {
-                emoji: '🔞',
-                label: 'NSFW',
-                description: 'Te da acceso a la categoría 🔞 NSFW.',
-                value: 'nsfw'
-              },
-              {
-                emoji: '📝',
-                label: 'Registros',
-                description: 'Te da acceso a la categoría 📝 Registros.',
-                value: 'logs'
-              },
-              {
-                emoji: '🎮',
-                label: 'Entretenimiento',
-                description: 'Te da acceso a la categoría 🎮 Entretenimiento.',
-                value: 'entertainment'
-              },
-            ]
-          )
-        )
-        int.reply({ephemeral: true, embeds: [accesEb], components: [accesMenu]})
-      }
 
       if(values[0] == 'colors'){
         const colorsEb = new EmbedBuilder()
@@ -762,7 +719,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
       if(values[0] == 'notifications'){
         const notificationsEb = new EmbedBuilder()
         .setTitle("🔔 Roles de notificaciones")
-        .setDescription(`Elige una opción para obtener un rol que te notificará de nuevos anuncios, alianzas, sorteos, encuestas, eventos, sugerencias de la comunidad o postulaciones a staff del servidor o puedes obtener un rol que te notifica cuando se necesite revivir el chat general el cual es <@&850932923573338162> y puede ser muy usado.\n\n**<@&840704358949584926>\n\n<@&840704364158910475>\n\n<@&840704370387451965>\n\n<@&840704372911505418>\n\n<@&915015715239637002>\n\n<@&840704367467954247>\n\n<@&840704375190061076>\n\n<@&850932923573338162>**`)
+        .setDescription(`Elige una opción para obtener un rol que te notificará de nuevos anuncios, alianzas, sorteos, encuestas, eventos, sugerencias de la comunidad o postulaciones a staff del servidor o puedes obtener un rol que te notifica cuando se necesite revivir el chat general el cual es <@&850932923573338162> y puede ser muy usado.\n\n**<@&840704358949584926>\n\n<@&840704364158910475>\n\n<@&840704370387451965>\n\n<@&840704372911505418>\n\n<@&915015715239637002>\n\n<@&840704367467954247>\n\n<@&850932923573338162>**`)
         .setColor(guildColor)
 
         const notificationsBtns = new ActionRowBuilder<StringSelectMenuBuilder>()
@@ -808,12 +765,6 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
                 emoji: "📧",
                 description: "Te notifica cuándo haya una nueva Sugerencia.",
                 value: "sugerencia"
-              },
-              {
-                label: "Postulaciones",
-                emoji: "📝",
-                description: "Te notifica cuándo haya una actualización sobre las Postulaciones.",
-                value: "postulacion"
               },
               {
                 label: "Revivir chat",
@@ -1137,32 +1088,6 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
         {
           value: 'revivir',
           rol: '850932923573338162',
-          status: ''
-        },
-      ]
-      if(author) selectMultipleRoles(int, values, dictionary, author)
-    }
-
-    if(customId == 'acces-roles'){
-      const author = guild?.members.cache.get(user.id), dictionary = [
-        {
-          value: 'j4j',
-          rol: '1041161492126507118',
-          status: ''
-        },
-        {
-          value: 'nsfw',
-          rol: '1041162293683159101',
-          status: ''
-        },
-        {
-          value: 'logs',
-          rol: '1041161785186725919',
-          status: ''
-        },
-        {
-          value: 'entertainment',
-          rol: '1041161797434081450',
           status: ''
         },
       ]

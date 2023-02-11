@@ -1,4 +1,4 @@
-import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder, ButtonStyle } from "discord.js"
+import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder } from "discord.js"
 import ms from "ms"
 import colors from "colors"
 import { suggestionsModel, ticketsModel, rafflesModel, surveysModel, carcelModel, invitesModel, botModel } from "../models"
@@ -85,7 +85,7 @@ export const readyEvent = async (client: Client) => {
   function presencias() {
     const estadosDia: ActivitiesOptions[] = [
       {
-        name: "p.ayuda",
+        name: botDB.prefix+"ayuda",
         type: ActivityType.Listening
       },
       {
@@ -112,10 +112,10 @@ export const readyEvent = async (client: Client) => {
         name: `${client.guilds.cache.get(botDB.serverId)?.channels.cache.filter(ft => ft.type === ChannelType.GuildVoice).size} canales de voz.`,
         type: ActivityType.Watching
       },
-      {
-        name: `sus promociones`,
-        type: ActivityType.Watching
-      },
+      // {
+      //   name: `sus códigos`,
+      //   type: ActivityType.Watching
+      // },
       {
         name: `moderar con ${client.users.cache.get('935707268090056734')?.username}`,
         type: ActivityType.Playing
@@ -124,11 +124,11 @@ export const readyEvent = async (client: Client) => {
 
     const estadosNoche: ActivitiesOptions[] = [
       {
-        name: `mis sueños, estoy durmiendo.`,
+        name: `mis sueños.`,
         type: ActivityType.Watching
       },
       {
-        name: `a los miembros y durmiendo.`,
+        name: `zzz`,
         type: ActivityType.Listening
       }
     ]
@@ -426,7 +426,7 @@ export const readyEvent = async (client: Client) => {
 
   // console.log((await servidor?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
 
-  // const command = slashComands.get('encarcelar')
-  // ;(await servidor?.commands.fetch('972168438321651752', {force: true}))?.edit({defaultMemberPermissions: 'ManageMessages'}).then(c=> console.log('Comando actualizado'))
-  // ;(await servidor?.commands.fetch('961732766112841768', {force: true}))?.delete().then(c=> console.log('Comando eliminado'))
+  // const command = slashComands.get('historial')
+  // ;(await servidor?.commands.fetch('971246633998221312', {force: true}))?.edit({options: command?.options}).then(c=> console.log('Comando actualizado'))
+  // ;(await servidor?.commands.fetch('1023283962749124729', {force: true}))?.delete().then(c=> console.log('Comando eliminado'))
 }

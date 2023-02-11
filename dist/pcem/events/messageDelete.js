@@ -13,11 +13,16 @@ exports.messageDeleteEvent = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const models_1 = require("../models");
+const __1 = require("..");
 const messageDeleteEvent = (msgd, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g;
-    const { serverId, color, emoji } = db_1.botDB;
+    const { serverId, emoji } = db_1.botDB;
     if (msgd.guildId != serverId)
         return;
+    if (__1.exemptMessagesIds.some(s => s == msgd.id)) {
+        __1.exemptMessagesIds.splice(__1.exemptMessagesIds.findIndex(f => f == msgd.id), 1);
+        return;
+    }
     let dataTs = yield models_1.ticketsModel.findById(serverId), arrayTs = dataTs === null || dataTs === void 0 ? void 0 : dataTs.tickets, ticket = arrayTs === null || arrayTs === void 0 ? void 0 : arrayTs.find(f => f.id == msgd.channelId);
     if ((arrayTs === null || arrayTs === void 0 ? void 0 : arrayTs.some(s => s.id == msgd.channelId)) && ticket.msgCerrarID == msgd.id && !ticket.cerrado) {
         const botonCerrar = new discord_js_1.ActionRowBuilder()

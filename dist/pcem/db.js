@@ -11,7 +11,7 @@ colors_1.default;
 (0, mongoose_1.connect)(config_1.connectMongo || '').then(() => console.log('Conectado corectamente a la base de datos'.green))
     .catch((err) => console.error('Ocurrió un error al conectarse a la DB'.red, err));
 exports.botDB = {
-    prefix: 'p.',
+    prefix: 'b!',
     serverId: '773249398431809586',
     creatorId: '717420870267830382',
     owners: ['717420870267830382', '825186118050775052'],

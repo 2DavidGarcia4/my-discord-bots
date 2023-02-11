@@ -21,7 +21,8 @@ import { messageUpdateEvent } from "./events/messageUpdate";
 colors
 
 const PCEM = new Client({intents: 131071}) 
-export let estadisticas = {entradas: 0, salidas: 0, mensajes: 0, comandos: 0}, autoModeracion = [{miembroID: "717420870267830382", advertencias: 0}]
+export let estadisticas = {entradas: 0, salidas: 0, mensajes: 0, comandos: 0}, autoModeration = [{memberId: "717420870267830382", warnings: 0}]
+export const exemptMessagesIds: string[] = []
 export const cooldowns = new Map()
 
 export const sistemMarcar: {autorID: string, sugID: string}[] = [], coolSugerencias: string[] = []

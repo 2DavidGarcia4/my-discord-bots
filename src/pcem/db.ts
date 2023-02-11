@@ -9,7 +9,7 @@ connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la b
 
 
 export const botDB: BotDB = {
-  prefix: 'p.',
+  prefix: 'b!',
   serverId: '773249398431809586',
   creatorId: '717420870267830382',
   owners: ['717420870267830382', '825186118050775052'],
