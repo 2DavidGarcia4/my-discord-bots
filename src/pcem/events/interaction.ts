@@ -1,88 +1,51 @@
-import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandType, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
 import { botDB } from "../db";
-import { sistemMarcar } from "..";
-import { suggestionsModel } from "../models";
+import { readdirSync } from 'fs'
+import { selectMultipleRoles, selectRole } from "../../shared/functions";
 
-// Generals
-import { websSlashCommand, websScb } from "../commands/slash/generals/webs";
-import { pingSlashCommand, pingScb } from "../commands/slash/generals/ping";
-import { ayudaSlashCommand, ayudaScb } from "../commands/slash/generals/ayuda";
-import { reglasSlashCommand, reglasScb } from "../commands/slash/generals/reglas";
-import { plantillaSlashCommand, plantillaScb } from "../commands/slash/generals/plantilla";
-import { informacionSlashCommand, informacionScb } from "../commands/slash/generals/informacion";
-import { estadisticasSlashCommand, estadisticasScb } from "../commands/slash/generals/estadisticas";
-import { clasificacionesSlashCommand, clasificacionesScb } from "../commands/slash/generals/clasificaciones";
-import { sugerirSlashCommand, sugerirScb } from "../commands/slash/generals/sugerir";
+const isDist = __dirname.includes('src') ? 'src' : 'dist'
 
-import { usuarioContextMenu, usuarioCmcb } from "../commands/contextMenu/usuario";
-import { rolesBaseContextMenu, rolesBaseCmcb } from "../commands/contextMenu/rolesBase";
+export const svInteractionCommands = new Collection<string, {struct: RESTPostAPIApplicationCommandsJSONBody, run: ((int: any, client: any)=> void)}>()
+readdirSync(`./${isDist}/pcem/commands/server/slash/`).forEach(async file=> {
+  const command = await import(`../commands/server/slash/${file}`)
+  const struct = command[Object.keys(command)[0]]
+  const cmdFunction = command[Object.keys(command)[1]]
+  svInteractionCommands.set(struct.name, {struct, run: cmdFunction})
+})
 
-// Staff
-import { examenSlashCommand, examenScb } from "../commands/slash/staff/examen";
-import { crearSlashCommand, crearScb } from "../commands/slash/staff/crear";
+export const interactionCommands = new Collection<string, {struct: RESTPostAPIApplicationCommandsJSONBody, run: ((int: any, client: any)=> void)}>()
+readdirSync(`./${isDist}/pcem/commands/slash/`).forEach(async folder=> {
+  readdirSync(`./${isDist}/pcem/commands/slash/${folder}/`).forEach(async file=> {
+    // console.log(file)
+    const command = await import(`../commands/slash/${folder}/${file}`)
+    const struct = command[Object.keys(command)[0]]
+    const cmdFunction = command[Object.keys(command)[1]]
+    interactionCommands.set(struct.name, {struct, run: cmdFunction})
+  })
+})
 
-// Moderation
-import { limpiarSlashCommand, limpiarScb } from "../commands/slash/moderation/limpiar";
-import { encarcelarSlashCommand, encarcelarScb } from "../commands/slash/moderation/encarcelar";
-import { expulsarSlashCommand, expulsarScb } from "../commands/slash/moderation/expulsar";
-import { banearSlashCommand, banearScb } from "../commands/slash/moderation/banear";
-import { desbanearSlashCommand, desbanearScb } from "../commands/slash/moderation/desbanear";
 
-// Administration
-import { historialSlashCommand, historialSmb } from "../commands/slash/administration/historial";
-import { ascenderSlashCommand, ascenderScb } from "../commands/slash/administration/ascender";
-import { degradarSlashCommand, degradarScb } from "../commands/slash/administration/degradar";
-import { finalizarSlashCommand, finalizarScb } from "../commands/slash/administration/finalizar";
-import { marcarSlashCommadn, marcarScb } from "../commands/slash/administration/marcar";
-import { nuevoSlashCommand, nuevoScb } from "../commands/slash/administration/nuevo";
-import { rerollSlashCommand, rerollScb } from "../commands/slash/administration/reroll";
-import { selectMultipleRoles, selectRole } from "../../utils/functions";
+import { usuarioContextMenu, usuarioCmcb } from "../commands/context/usuario";
+import { rolesBaseContextMenu, rolesBaseCmcb } from "../commands/server/context/baseRoles";
 
-export const slashComands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
-const cmds = [
-  websScb, pingScb, ayudaScb, reglasScb, plantillaScb, informacionScb, estadisticasScb, clasificacionesScb, sugerirScb, usuarioCmcb, rolesBaseCmcb, 
-  examenScb, crearScb,
-  limpiarScb, encarcelarScb, expulsarScb, banearScb, desbanearScb,
-  historialSmb, ascenderScb, degradarScb, finalizarScb, marcarScb, nuevoScb, rerollScb
-]
-cmds.forEach((cmd, ps)=> slashComands.set(cmd.name, cmd))
 
 export const interactionEvent = async (int: Interaction<CacheType>, client: Client) => {
-  const { emoji, owners, color, serverId } = botDB
+  const { emoji, owners, serverId } = botDB
 
   if(int.isChatInputCommand()){
-    const { commandName } = int
+    const { commandName, guildId } = int
 
-    //? Generals
-    if(commandName == 'webs') websSlashCommand(int)
-    if(commandName == 'sugerir') sugerirSlashCommand(int)
-    if(commandName == 'información') informacionSlashCommand(int)
-    if(commandName == 'ping') pingSlashCommand(int, client)
-    if(commandName == 'ayuda') ayudaSlashCommand(int, client)
-    if(commandName == 'reglas') reglasSlashCommand(int, client)
-    if(commandName == 'plantilla') plantillaSlashCommand(int, client)
-    if(commandName == 'estadísticas') estadisticasSlashCommand(int, client)
-    if(commandName == 'clasificaciones') clasificacionesSlashCommand(int, client)
+    if(guildId == serverId){
+      const svCommand = svInteractionCommands.get(commandName)
+      botDB.usedCommands++
+      if(svCommand) return svCommand.run(int, client) 
+    }
+
+    const publicCommand = interactionCommands.get(commandName)
+    botDB.usedCommands++
+    if(publicCommand) return publicCommand.run(int, client)
     
-    //? Staff
-    if(commandName == 'examen') examenSlashCommand(int)
-    if(commandName == 'crear') crearSlashCommand(int, client)
     
-    //? Moderation
-    if(commandName == 'limpiar') limpiarSlashCommand(int, client)
-    if(commandName == 'encarcelar') encarcelarSlashCommand(int, client)
-    if(commandName == 'expulsar') expulsarSlashCommand(int, client)
-    if(commandName == 'banear') banearSlashCommand(int, client)
-    if(commandName == 'desbanear') desbanearSlashCommand(int, client)
-    
-    //? Administration
-    if(commandName == 'historial') historialSlashCommand(int, client)
-    if(commandName == 'ascender') ascenderSlashCommand(int, client)
-    if(commandName == 'degradar') degradarSlashCommand(int, client)
-    if(commandName == 'finalizar') finalizarSlashCommand(int, client)
-    if(commandName == 'marcar') marcarSlashCommadn(int, client)
-    if(commandName == 'nuevo') nuevoSlashCommand(int, client)
-    if(commandName == 'reroll') rerollSlashCommand(int)
   }
   
   if(int.isContextMenuCommand()){
@@ -91,519 +54,14 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     if(commandType == ApplicationCommandType.User){
       if(commandName == 'Usuario') usuarioContextMenu(int)
       if(commandName == 'Roles base') rolesBaseContextMenu(int)
+      botDB.usedCommands++
     }
   }
 
   if(int.isButton()){
     const { customId, guild, user } = int
     if(customId == 'eliminarMsgMD') int.message.delete()
-    
-    //? Sistema de sugerencias
-    if(customId == 'confirmar'){
-      const dataSug = await suggestionsModel.findById(serverId), statsSug = dataSug?.sugerencias, arrayMsgSug = dataSug?.mensajes, arrayMiemSug = dataSug?.miembros, canalRevicion = client.channels.cache.get("831773866228449280")
-      if(!statsSug) return
-
-      let posicion = 0
-      if(arrayMsgSug){
-        for(let i=0; i<arrayMsgSug.length; i++){
-          if(arrayMsgSug[i].autorID === user.id) posicion = i
-        }
-      }
-
-      let suger = dataSug?.mensajes[posicion].sugerencia
-      console.log(suger)
-
-      const embCanfirmada = new EmbedBuilder()
-      .setTitle(`${emoji.afirmative} Acción confirmada`)
-      .setDescription(`**¡Tu sugerencia ha sido enviada al personal del servidor!**\nPara que la revisen y determinen si es apta o no para ser publicada en <#828300239488024587>.`)
-      .setColor("#00ff00")
-      .setFooter({text: `Se te notificara al MD en cualquiera de los 2 casos.`})
-      int.update({embeds: [embCanfirmada], components: []})
-
-      const revicionEb = new EmbedBuilder()
-      .setAuthor({name: user.tag, iconURL: user.displayAvatarURL()})
-      .setTitle("🔎 Sugerencia esperando revisión")
-      .addFields(
-        {name: `✉️ **Sugerencia:**`, value: `${suger}`}
-      )
-      .setColor(guild?.members.me?.displayHexColor || 'White')
-      .setTimestamp()
-
-      const revicionBtns = new ActionRowBuilder<ButtonBuilder>()
-      .addComponents(
-        [
-          new ButtonBuilder()
-          .setCustomId("aprobar")
-          .setEmoji(emoji.afirmative)
-          .setLabel("Aprobar")
-          .setStyle(ButtonStyle.Success),
-
-          new ButtonBuilder()
-          .setCustomId("denegar")
-          .setEmoji(emoji.negative)
-          .setLabel("Denegar")
-          .setStyle(ButtonStyle.Danger)
-        ]
-      )
-
-      if(canalRevicion?.type == ChannelType.GuildText && arrayMsgSug) canalRevicion.send({embeds: [revicionEb], components: [revicionBtns]}).then(async t=>{
-        arrayMsgSug[posicion] = {id: "", origenID: t.id, autorID: int.user.id, sugerencia: suger || '', estado: "normal", positivas: 0, negativas: 0}
-        statsSug.cantidad++
-      })
-
-      if(arrayMiemSug?.some(s=> s.id === int.user.id)){
-        let posicionData = 0
-        for(let i=0; i<arrayMiemSug.length; i++){
-          if(arrayMiemSug[i].id === int.user.id){
-            posicionData = i
-          }
-        }
-
-        arrayMiemSug[posicionData].sugerencias++
-      }else{
-        arrayMiemSug?.push({id: int.user.id, sugerencias: 1, aceptadas: 0, denegadas: 0})
-      }
-      await suggestionsModel.findByIdAndUpdate(serverId, {sugerencias: statsSug, mensajes: arrayMsgSug, miembros: arrayMiemSug})
-    }
-
-    if(customId == "cancelar"){
-      const dataSug = await suggestionsModel.findById(serverId), arrayMsgSug = dataSug?.mensajes
-
-      if(arrayMsgSug){
-        for(let i=0; i<arrayMsgSug.length; i++){
-          if(arrayMsgSug[i].autorID == int.user.id) arrayMsgSug.splice(i, 1)
-        }
-      }
-
-      await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug})
-      
-      const cancelarEb = new EmbedBuilder()
-      .setTitle(`${emoji.negative} Acción cancelada`)
-      .setDescription(`Has cancelado la sugerencia.`)
-      .setColor(color.negative)
-      int.update({embeds: [cancelarEb], components: []})
-    }
-
-    if(customId == "aprobar"){
-      const dataSug = await suggestionsModel.findById(serverId)
-      if(!dataSug) return
-      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
-      const rolSugerencia = guild?.roles.cache.get('840704367467954247')
-      const canalSugs = guild?.channels.cache.get('828300239488024587')
-
-      let posicion = 0
-      if(arrayMsgSug){
-        for(let i=0; i<arrayMsgSug.length; i++){
-          if(arrayMsgSug[i].origenID === int.message.id) posicion = i
-        }
-      }
-
-      let member = guild?.members.cache.get(dataSug?.mensajes[posicion].autorID || '')
-
-      const sugAceptadaEb = new EmbedBuilder()
-      .setTitle(`${emoji.afirmative} Sugerencia aprobada`)
-      .setColor(color.afirmative)
-      .setFooter({text: int.user.tag, iconURL: int.user.displayAvatarURL()})
-      .setTimestamp()
-
-      const sugerenciaEb = new EmbedBuilder()
-      .setTitle("✉️ Sugerencia:")
-      .setDescription(`${dataSug.mensajes[posicion].sugerencia}`)
-      .setColor(rolSugerencia?.hexColor || 'White')
-      .setTimestamp()
-
-      if(member){
-        sugAceptadaEb
-        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
-        .setDescription(`Sugerencia de ${member?.user.tag} aprobada por ${user.tag}`)
-        .addFields(
-          {name: `✉️ **Sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
-        )
-        int.update({embeds: [sugAceptadaEb], components: []})
-
-        const sugAceptDmEb = new EmbedBuilder()
-        .setAuthor({name: member?.user.tag, iconURL: member?.user.displayAvatarURL()})
-        .setTitle(`${emoji.afirmative} Tu sugerencia ha sido aprobada`)
-        .setDescription(`Tu sugerencia ha sido publicada en el canal ${canalSugs}`)
-        .addFields(
-          {name: `✉️ **Tu sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
-        )
-        .setColor(color.afirmative)
-        .setFooter({text: `Sugerencia aceptada por ${int.user.tag}`, iconURL: int.user.  displayAvatarURL()})
-        .setTimestamp()
-        member.send({embeds: [sugAceptDmEb]}).catch(()=> '')
-
-        sugerenciaEb
-        .setAuthor({name: `Nueva sugerencia de ${member?.user.tag}`, iconURL: member?.displayAvatarURL()})
-
-        member?.roles.add('830260561044176896')
-
-        if(dataSug.miembros.some(s=> s.id == member?.id)){
-          let posicionData = 0
-          for(let i=0; i<dataSug.miembros.length; i++){
-            posicionData = i
-          }
-          
-          let sugerenciasDeData = dataSug.miembros[posicionData].sugerencias
-          let aceptadasDeData = dataSug.miembros[posicionData].aceptadas
-          let denegadasDeData = dataSug.miembros[posicionData].denegadas
-
-          dataSug.miembros[posicionData] = {id: member?.id, sugerencias: sugerenciasDeData, aceptadas: aceptadasDeData + 1, denegadas: denegadasDeData}
-          await dataSug.save()
-        }
-
-      }else{
-        const user = await client.users.fetch(dataSug?.mensajes[posicion].autorID || '', {force: true})
-
-        sugAceptadaEb
-        .setAuthor({name: user.tag, iconURL: user.displayAvatarURL()})
-        .setDescription(`Sugerencia de **${user.tag}** aprobada por **${int.user.tag}**.`)
-        .addFields(
-          {name: `✉️ **Sugerencia:**`, value: `${dataSug?.mensajes[posicion].sugerencia}`}
-        )
-        int.update({embeds: [sugAceptadaEb], components: []})
-
-        sugerenciaEb
-        .setAuthor({name: `Nueva sugerencia de ${user.tag}`, iconURL: user.displayAvatarURL()})
-
-      }
-
-      if(canalSugs?.type == ChannelType.GuildText) canalSugs.send({embeds: [sugerenciaEb], content: "<@&840704367467954247>"}).then(async tm=>{
-        tm.react('946826193032851516')
-        tm.react('946826212960010251')
-        let orID = arrayMsgSug[posicion].origenID
-        let miemID = arrayMsgSug[posicion].autorID
-        let sug = arrayMsgSug[posicion].sugerencia
-        arrayMsgSug[posicion] = {id: tm.id, origenID: orID, autorID: miemID, sugerencia: sug, estado: "normal", positivas: 0, negativas: 0}
-        
-        statsSug.aceptadas++
-      })  
-
-      await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug, sugerencias: statsSug})
-    }
-
-    if(customId == "denegar"){
-      const dataSug = await suggestionsModel.findById(serverId)
-      if(!dataSug) return
-      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias, membersSug = dataSug.miembros
-
-      let posicion = 0
-      for(let i=0; i<dataSug.mensajes.length; i++){
-        if(dataSug.mensajes[i].origenID == int.message.id) posicion = i
-      }
-
-      const member = guild?.members.cache.get(dataSug.mensajes[posicion].autorID)
-
-      const denegadaEb = new EmbedBuilder()
-      .setTitle(`${emoji.negative} Sugerencia denegada`)
-      .addFields(
-        {name: `✉️ **Sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
-      )
-      .setColor(color.negative)
-      .setFooter({text: user.tag, iconURL: user.displayAvatarURL()})
-      .setTimestamp()
-
-      if(member){
-        denegadaEb
-        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
-        .setDescription(`Sugerencia de **${member.user.tag}** denegada por **${int.user.tag}**.`)
-
-        const denegadaDmEb = new EmbedBuilder()
-        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
-        .setTitle(`${emoji.negative} Tu sugerencia ha sido denegada`)
-        .addFields(
-          {name: `✉️ **Sugerencia:**`, value: `${dataSug.mensajes[posicion].sugerencia}`}
-        )
-        .setColor(color.negative)
-        .setFooter({text: `Sugerencia denegada por ${int.user.tag}`, iconURL:int.user.displayAvatarURL()})
-        .setTimestamp()
-
-        member.send({embeds: [denegadaDmEb]}).catch(c=> console.log(c))
-
-        if(dataSug.miembros.some(s=> s.id == member.id)){
-          let posicionData = 0
-          for(let i=0; i<dataSug.miembros.length; i++){
-            posicionData = i
-          }
-          membersSug[posicionData].denegadas++
-        }
-
-      }else{
-        let user = await client.users.fetch(dataSug.mensajes[posicion].autorID, {force: true})
-
-        denegadaEb
-        .setAuthor({name: user.tag, iconURL: user.displayAvatarURL()})
-        .setDescription(`Sugerencia de **${user.tag}** denegada por **${user.tag}**.`)
-        
-      }
-
-      int.update({embeds: [denegadaEb], components: []}).then(async t=>{
-        statsSug.denegadas++
-        arrayMsgSug.splice(posicion, 1)
-        await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug, sugerencias: statsSug, miembros: membersSug})
-      })
-    }
-
-    if(customId == "implementada"){
-      const dataSug = await suggestionsModel.findById(serverId)
-      if(!dataSug) return
-      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
-      const channel = guild?.channels.cache.get("828300239488024587")
-      if(!(channel && channel.type == ChannelType.GuildText)) return
-
-      let posMar = 0
-      for(let i=0; i<sistemMarcar.length; i++){
-        if(sistemMarcar[i].autorID == int.user.id) posMar = i
-      }
-
-      let posicion = 0
-      for(let i=0; i<arrayMsgSug.length; i++){
-        if(arrayMsgSug[i].id == sistemMarcar[posMar].sugID) posicion = i
-      }
-
-      const member = guild?.members.cache.get(arrayMsgSug[posicion].autorID)
-      const message = channel.messages.cache.get(arrayMsgSug[posicion].id)
-      message?.reactions.removeAll()
-      const embed = message?.embeds[0]
-      if(!embed) return
-      const editedEb = new EmbedBuilder({
-        title: embed.title || undefined,
-        fields: embed.fields,
-        description: embed.description || undefined,
-        timestamp: embed.timestamp || ''
-      })
-
-      // let antField = embed.fields[0]
-      const nuevoField = {name: '🚥 **Estado:**', value: "**sugerencia implementada**", inline: false}
-
-      arrayMsgSug[posicion].estado = 'implementada'
-      arrayMsgSug[posicion].id = sistemMarcar[posMar].sugID
-
-      statsSug.implementadas++
-
-      const estadoEb = new EmbedBuilder()
-      .setTitle("🚥 Estado agregado a la sugerencia")
-      .setDescription(`Se le ha agregado a la sugerencia el estado 🟢 **Implementada**.`)
-      .setColor("#00ff00")
-      int.reply({embeds: [estadoEb], ephemeral: true})
-      member?.roles.add("946139081367240714")
-
-      editedEb
-      .setFields(
-        nuevoField
-      )
-      .setColor(color.afirmative)
-      
-      if(member){
-        editedEb
-        .setAuthor({name: `Sugerencia de ${member.user.tag}`, iconURL: member.displayAvatarURL()})
-
-        const embEstadoMD = new EmbedBuilder()
-        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
-        .setTitle("El estado de tu sugerencia a sido actualizado")
-        .setDescription(`🚥 **Estado:** sugerencia implementada`)
-        .addFields(
-          {name: "✉️ **Sugerencia:**", value: `${dataSug.mensajes[posicion].sugerencia}`}
-        )
-        .setColor(color.afirmative)
-        .setFooter({text: `Actualizado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
-        member.send({embeds: [embEstadoMD]}).catch(c=> console.log(c))
-
-      }else{
-        editedEb.setAuthor(embed.author)
-      }
-      message.edit({embeds: [editedEb]})
-    }
-
-    if(customId == "en progreso"){
-      const dataSug = await suggestionsModel.findById(serverId)
-      if(!dataSug) return
-      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
-      const channel = guild?.channels.cache.get("828300239488024587")
-      if(channel?.type != ChannelType.GuildText) return
-
-      let posMar = 0
-      for(let i=0; i<sistemMarcar.length; i++){
-        if(sistemMarcar[i].autorID == int.user.id) posMar = i
-      }
-      let posicion = 0
-      for(let i=0; i<dataSug.mensajes.length; i++){
-        if(dataSug.mensajes[i].id == sistemMarcar[posMar].sugID) posicion = i
-      }
-
-      const member = guild?.members.cache.get(dataSug.mensajes[posicion].autorID)
-      const message = channel.messages?.cache.get(dataSug.mensajes[posicion].id)
-      const embed = message?.embeds[0]
-      if(!embed) return
-      const editedEb = new EmbedBuilder({
-        title: embed.title || undefined,
-        fields: embed.fields,
-        description: embed.description || undefined,
-        timestamp: embed.timestamp || ''
-      })
-
-      const nuevoField = {name: '🚥 **Estado:**', value: "__sugerencia en progreso__", inline: false}
-
-      arrayMsgSug[posicion].id = sistemMarcar[posMar].sugID
-      arrayMsgSug[posicion].estado = 'en progreso'
-      statsSug.en_progreso++
-      
-      editedEb
-      .setFields(
-        nuevoField
-      )
-      .setColor('#FFC300')
-
-      const estadoEb = new EmbedBuilder()
-      .setTitle("🚥 Estado agregado a la sugerencia")
-      .setDescription(`Se le ha agregado a la sugerencia el estado 🟢 **Implementada**.`)
-      .setColor("#00ff00")
-      int.reply({embeds: [estadoEb], ephemeral: true})
-      member?.roles.add("946139081367240714")
-
-      const embEstado = new EmbedBuilder()
-      .setTitle("🚥 Estado agregado a la sugerencia")
-      .setDescription(`Se le ha agregado a la sugerencia el estado 🟡 **en progreso**.`)
-      .setColor("#FFC300")
-      int.reply({embeds: [embEstado], ephemeral: true})
-
-      if(member){
-        editedEb
-        .setAuthor({name: `Sugerencia de ${member.user.tag}`, iconURL: member.displayAvatarURL()})
-
-        const embEstadoMD = new EmbedBuilder()
-        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
-        .setTitle("El estado de tu sugerencia a sido actualizado")
-        .setDescription(`🚥 **Estado:** sugerencia __en progreso__`)
-        .addFields(
-          {name: "✉️ **Sugerencia:**", value: `${dataSug.mensajes[posicion].sugerencia}`}
-        )
-        .setColor("#FFC300")
-        .setFooter({text: `Actualizado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
-        member.send({embeds: [embEstadoMD]}).catch(c=> console.log(c))
-      
-      }else{
-        editedEb.setAuthor(embed.author)
-      }
-
-      await suggestionsModel.findByIdAndUpdate(serverId, {mensajes: arrayMsgSug, sugerencias: statsSug})
-    }
-
-    if(int.customId == "no sucedera"){
-      const dataSug = await suggestionsModel.findById(serverId)
-      if(!dataSug) return
-      const arrayMsgSug = dataSug.mensajes, statsSug = dataSug.sugerencias
-      const channel = guild?.channels.cache.get("828300239488024587")
-      if(channel?.type != ChannelType.GuildText) return
-
-      let posMar = 0
-      for(let i=0; i<sistemMarcar.length; i++){
-        if(sistemMarcar[i].autorID === int.user.id) posMar = i  
-      }
-
-      let posicion = 0
-      for(let i=0; i<dataSug.mensajes.length; i++){
-        if(dataSug.mensajes[i].id === sistemMarcar[posMar].sugID) posicion = i  
-      }
-
-      const member = guild?.members.cache.get(dataSug.mensajes[posicion].autorID)
-      const message = channel.messages.cache.get(dataSug.mensajes[posicion].id)
-      message?.reactions.removeAll()
-      let embed = message?.embeds[0]
-      if(!embed) return
-      const editedEb = new EmbedBuilder({
-        title: embed.title || undefined,
-        fields: embed.fields,
-        description: embed.description || undefined,
-        timestamp: embed.timestamp || ''
-      })
-
-      let nuevoField = {name: '🚥 **Estado:**', value: "__***no sucederá***__", inline: false}
-
-      editedEb
-      .setFields(
-        nuevoField
-      )
-      .setColor(color.negative)
-
-      arrayMsgSug[posicion].id = sistemMarcar[posMar].sugID
-      arrayMsgSug[posicion].estado = 'no sucederá'
-      statsSug.no_sucedera++
-
-      const embEstado = new EmbedBuilder()
-      .setTitle("🚥 Estado agregado a la sugerencia")
-      .setDescription(`Se le ha agregado a la sugerencia el estado 🔴 **no sucederá**.`)
-      .setColor(color.negative)
-      int.reply({embeds: [embEstado], ephemeral: true})
-
-      if(member){
-        editedEb.setAuthor({name: ``, iconURL: member.displayAvatarURL()})
-
-        const embEstadoMD = new EmbedBuilder()
-        .setAuthor({name: member.user.tag, iconURL: member.user.displayAvatarURL()})
-        .setTitle("El estado de tu sugerencia a sido actualizado")
-        .setDescription(`🚥 **Estado:** sugerencia __no sucederá__`)
-        .addFields(
-          {name: "✉️ **Sugerencia:**", value: `${dataSug.mensajes[posicion].sugerencia}`}
-        )
-        .setColor(color.negative)
-        .setFooter({text: `Actualizado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
-        member.send({embeds: [embEstadoMD]}).catch(c=> console.log(c))
-      }else{
-        editedEb.setAuthor(embed.author)
-      }
-    }
-
-    // if(int.customId == "normal"){
-    //   let dataSug = await systemSug.findOne({_id: int.guildId})
-    //   let canal = int.guild.channels.cache.get("828300239488024587")
-    //   let rol = int.guild.roles.cache.get("840704367467954247")
-
-    //   let posMar
-    //   for(let i=0; i<sistemMarcar.length; i++){
-    //       if(sistemMarcar[i].autorID == int.user.id){
-    //           posMar = i
-    //       }
-    //   }
-    //   let posicion 
-    //   for(let i=0; i<dataSug.mensajes.length; i++){
-    //       if(dataSug.mensajes[i].id == sistemMarcar[posMar].sugID){
-    //           posicion = i
-    //       }
-    //   }
-
-    //   let mensaje = canal.messages.cache.get(dataSug.mensajes[posicion].id)
-    //   let embed = mensaje.embeds[0]
-
-      
-    //   embed.fields.splice(1,1)
-    //   embed.color = rol.hexColor
-    //   mensaje.edit({embeds: [embed]})
-
-    //   let orID = dataSug.mensajes[posicion].origenID
-    //   let auID = dataSug.mensajes[posicion].autorID
-    //   let sug = dataSug.mensajes[posicion].sugerencia
-    //   let positi = dataSug.mensajes[posicion].positivas
-    //   let negati = dataSug.mensajes[posicion].negativas
-    //   dataSug.mensajes[posicion] = {id: sistemMarcar[posMar].sugID, origenID: orID, autorID: auID, sugerencia: sug, estado: "normal", positivas: positi, negativas: negati}
-      
-
-    //   let cant = dataSug.sugerencias.cantidad
-    //   let acept = dataSug.sugerencias.aceptadas
-    //   let den = dataSug.sugerencias.denegadas
-    //   let imple = dataSug.sugerencias.implementadas
-    //   let enP = dataSug.sugerencias.en_progreso
-    //   let noSus = dataSug.sugerencias.no_sucedera
-    //   dataSug.sugerencias = {cantidad: cant, aceptadas: acept, denegadas: den, implementadas: imple, en_progreso: enP, no_sucedera: noSus}
-    //   await dataSug.save()
-      
-
-    //   const embEstado = new Discord.MessageEmbed()
-    //   .setTitle("🚥 Estado agregado a la sugerencia")
-    //   .setDescription(`Se le ha agregado a la sugerencia el estado 🔵 **normal**.`)
-    //   .setColor(rol.hexColor)
-    //   int.reply({embeds: [embEstado], ephemeral: true})
-    // }
+  
   }
 
   if(int.isStringSelectMenu()){

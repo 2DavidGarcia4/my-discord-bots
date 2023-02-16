@@ -1,13 +1,13 @@
 import { ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js"
 import { botDB } from "../db"
-import { botModel } from "../models"
+import { getBotData } from "../utils"
 
 export const messageUpdateEvent = async (oldMsg: Message<boolean> | PartialMessage, newMsg: Message<boolean> | PartialMessage, client: Client) => {
   const { serverId, emoji } = botDB
   if(oldMsg.guildId != serverId) return
 
   if(oldMsg.content && oldMsg.content != newMsg.content){
-    const dataBot = await botModel.findById(client.user?.id)
+    const dataBot = await getBotData(client)
     if(!dataBot) return
     const channelLog = client.channels.cache.get(dataBot.logs.editedMessages)
 

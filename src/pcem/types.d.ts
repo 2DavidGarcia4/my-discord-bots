@@ -4,9 +4,11 @@ export type BotDB = {
   prefix: string
   serverId: string
   creatorId: string
+  serverInvite: string
   owners: string[]
   mainRoles: string[]
   levelRoles: string[]
+  usedCommands: number
   emoji: {
     cat: string
     like: string
@@ -69,10 +71,10 @@ export type BotLogs = {
   alliances: string
   deleteMessages: string
   editedMessages: string
+  alliancesChannel: string
 }
 
 export type DataBot = {
-  _id: string
   logs: BotLogs
   autoModeration: {
     ignoreCategories: string[]

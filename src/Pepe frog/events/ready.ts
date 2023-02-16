@@ -3,7 +3,7 @@ import { setGuildStatus } from "../utils/functions";
 import { frogDb } from "../db";
 import { isDevelopment } from "../../config";
 import { commands } from "./interactionCreate";
-import { presences } from "../../utils/functions";
+import { presences } from "../../shared/functions";
 
 import { registerFont, createCanvas, loadImage } from "canvas";
 registerFont("tipo.otf", {family: 'MADE TOMMY'})

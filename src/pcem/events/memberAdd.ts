@@ -1,16 +1,16 @@
 import { ChannelType, Client, EmbedBuilder, AttachmentBuilder, GuildMember, WebhookClient } from "discord.js";
-import { estadisticas } from "..";
+import { svStatistics } from "..";
 import { botDB } from "../db";
-import { botModel, invitesModel } from "../models";
 import { registerFont, createCanvas, loadImage } from "canvas";
+import { getBotData } from "../utils";
 registerFont("tipo.otf", {family: 'MADE TOMMY'})
 
 export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
   if(gmd.guild.id != botDB.serverId) return
-  estadisticas.entradas++
+  svStatistics.joins++
 
   const { color, emoji, serverId, creatorId, mainRoles } = botDB
-  const dataBot = await botModel.findById(client.user?.id), dataInv = await invitesModel.findById(serverId), arrayMi = dataInv?.miembros
+  const dataBot = await getBotData(client)
   if(!dataBot) return
   const welcomeLog = client.channels.cache.get(dataBot.logs.entry)
 
@@ -110,77 +110,12 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
     .setFooter({text: gmd.guild.name, iconURL: gmd.guild.iconURL() || undefined})
     .setTimestamp()
 
-    await gmd.guild.invites.fetch().then(async invites=> {
-      // console.log(invites.map(m => `${m.code} || ${m.uses}`))
-      if(!arrayMi) return
-      const invitacion = invites.find(f=> arrayMi.find(fm=> fm.id==f.inviterId)?.codes.find(fc=> fc.code==f.code) ? (arrayMi?.find(fm=> fm.id==f.inviterId)?.codes.find(fc=> fc.code==f.code)?.usos || 0) < (f.uses || 0) : false)
-      // console.log(invitacion)
 
-      let miembro = arrayMi.find(f=> f.id==invitacion?.inviterId)
-      if(miembro){
-        if(miembro.codes.some(s=> s.code==invitacion?.code)){
-          let invite = miembro.codes.find(f=> f.code==invitacion?.code)
-          if(!invitacion?.uses || !invite) return
-          if(invitacion?.uses > invite?.usos){
-            if(miembro.id == gmd.user.id){
-              miembro.falsas++
-              embBienvenida.setDescription(`*Has sido invitado/a por ti mismo con una invitación creada por ti.*\n\n💈 Pásate por el canal <#823639152922460170> en el podrás obtener roles que cambiarán el color de tu nombre dentro del servidor, y muchos otros roles.\n\n📢 Promociona todo tipo de contenido en el canal **<#836315643070251008>**.\n\n📜 También pásate por el canal <#823343749039259648> el canal de reglas, léelas para evitar sanciones.`)
-              embBien.data.description = `Se unió ${gmd} *ha sido invitado/a por el mismo con una invitación suya.*\n📅 **Creacion de la cueta:**\n<t:${Math.round(gmd.user.createdAt.valueOf() / 1000)}:R>`
-            
-            }else{
-              miembro.verdaderas++
-              if(miembro.invitados.some(s=> s.id==gmd.user.id)){
-                let invitado = miembro.invitados.find(f=> f.id==gmd.user.id)
-                if(invitado?.miembro) invitado.miembro = true
-                
-              }else{
-                miembro.invitados.push({id: gmd.user.id, tag: gmd.user.tag, miembro: true})
-              }
-
-              const miembroSV = gmd.guild.members.cache.get(invitacion.inviterId || '')
-              const channelLog = client.channels.cache.get(dataBot.logs.bot)
-              if(miembroSV && !miembroSV.user.bot){
-                const rolVIPEb = new EmbedBuilder()
-                .setThumbnail(miembroSV.displayAvatarURL({size: 1024}))
-                .setTitle("➕ Rol agregado a miembro")
-                .setColor(color.afirmative)
-                .setTimestamp()
-
-                if(!miembroSV.roles.cache.has(dataInv.datos.roles[0].id) && miembro.verdaderas>=10){
-                  miembroSV.roles.add(dataInv.datos.roles[0].id)
-                  rolVIPEb
-                  .setDescription(`Le he agregado el rol <@&${dataInv.datos.roles[0].id}> a <@${miembroSV.id}> ya que ha invitado a **${dataInv.datos.roles[0].invitaciones}** miembros.`)
-                  if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [rolVIPEb]})
-                }
-
-                if(!miembroSV.roles.cache.has(dataInv.datos.roles[1].id) && miembro.verdaderas>=20){
-                  miembroSV.roles.add(dataInv.datos.roles[1].id)
-                  rolVIPEb
-                  .setDescription(`Le he agregado el rol <@&${dataInv.datos.roles[1].id}> a <@${miembroSV.id}> ya que ha invitado a **${dataInv.datos.roles[1].invitaciones}** miembros.`)
-                  if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [rolVIPEb]})
-                }
-              }
-
-              embBienvenida.setDescription(`*Has sido invitado/a por <@${miembro.id}> quien ahora tiene **${miembro.verdaderas.toLocaleString()}** ${miembro.verdaderas==1 ? "invitación": "invitaciones"}.*\n\n💈 Pásate por el canal <#823639152922460170> en el podrás obtener roles que cambiarán el color de tu nombre dentro del servidor, y muchos otros roles.\n\n📢 Promociona todo tipo de contenido en el canal **<#836315643070251008>**.\n\n📜 También pásate por el canal <#823343749039259648> el canal de reglas, léelas para evitar sanciones.`)
-              embBien.data.description = `Se unió ${gmd} *ha sido invitado/a por <@${miembro.id}> quien ahora tiene **${miembro.verdaderas.toLocaleString()}** ${miembro.verdaderas==1 ? "invitación": "invitaciones"}.*\n📅 **Creacion de la cueta:**\n<t:${Math.round(gmd.user.createdAt.valueOf() / 1000)}:R>`
-            }
-            
-            miembro.totales++
-            if(invite.usos) invite.usos = invitacion.uses     
-          }
-        }
-      }
-    })
 
     // console.log('nuevo miembro')
     // welcomeMsg.send({embeds: [embBienvenida], files: [finalImg], content: `**¡Hola ${gmd}!**`})
     // .then(()=> console.log('send webhook'))
     if(welcomeLog?.type == ChannelType.GuildText) welcomeLog.send({embeds: [embBien]})
-    let miembroInv = arrayMi?.find(f=> f.id==gmd.user.id)
-    if(miembroInv) miembroInv.tiempo = null
-    
-    await invitesModel.findByIdAndUpdate(serverId, {miembros: arrayMi})
-
     gmd.roles.add(mainRoles)
   }
 }

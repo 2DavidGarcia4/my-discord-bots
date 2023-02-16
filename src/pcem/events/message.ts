@@ -1,59 +1,38 @@
-import { ChannelType, Client, ColorResolvable, EmbedBuilder, Message, MessageType, WebhookClient } from "discord.js";
+import { ChannelType, Client, Collection, EmbedBuilder, Message, MessageType } from "discord.js";
 import ms from "ms";
-import { botModel, ticketsModel } from "../models";
+import { readdirSync } from 'fs'
 import { botDB } from "../db";
-import { helpCommand } from "../commands/text/help";
-import { commandsCommand } from "../commands/text/commands";
-import { addReactionCommand } from "../commands/text/addReaction";
-import { rolesCommand } from "../commands/text/roles";
-import { ticketCommand } from "../commands/text/ticket";
-import { informationCommand } from "../commands/text/information";
-import { autoModeration, estadisticas, exemptMessagesIds } from "..";
-import { sendMessageText } from "../../utils/functions";
-import { evalCommand } from "../commands/text/eval";
-import { moderationSanction } from "../utils";
-import { rulesCommand } from "../commands/text/reglas";
+import { autoModeration, svStatistics, exemptMessagesIds } from "..";
+import { getBotData, moderationSanction } from "../utils";
+import { sendMessageText } from "../../shared/functions";
+
+const isDist = __dirname.includes('src') ? 'src' : 'dist'
+
+const svTextCommands = new Collection<string, {run: ((msg: any, client: any, args: string[])=> any), alias: string[]}>()
+readdirSync(`./${isDist}/pcem/commands/server/text/`).forEach(async file=> {
+  const command = require(`../commands/server/text/${file}`)
+  const cmdFunction = command[Object.keys(command)[1]]
+  const alias = command[Object.keys(command)[2]] || []
+  svTextCommands.set(command.name, {run: cmdFunction, alias})
+})
+
+export const textCommands = new Collection<string, {run: ((msg: any, client: any, args: string[])=> any), alias: string[]}>()
+readdirSync(`./${isDist}/pcem/commands/text/`).forEach(async folder=> {
+  readdirSync(`./${isDist}/pcem/commands/text/${folder}/`).forEach(async file=> {
+    const command = require(`../commands/text/${folder}/${file}`)
+    const cmdFunction = command[Object.keys(command)[1]]
+    const alias = command[Object.keys(command)[2]] || []
+    textCommands.set(command.name, {run: cmdFunction, alias})
+  })
+})
 
 
 export const messageEvent = async (msg: Message<boolean>, client: Client) => {
-  const { member } = msg, { prefix, emoji, color } = botDB
+  const { member } = msg, { prefix, emoji, color, serverId } = botDB
 
   if(msg.guildId == botDB.serverId){
-    estadisticas.mensajes++
+    svStatistics.messages++
 
-    //TODO: Sistema de tickets
-    let dataTs = await ticketsModel.findById(botDB.serverId), arrayTs = dataTs?.tickets, servidor2 = client.guilds.cache.get('949860813915705354')
-    if(arrayTs){
-      arrayTs.forEach(async (objeto) =>{
-        if(objeto.id == msg.channelId){
-          if(objeto.publico && msg.member?.roles.cache.has('887444598715219999') && msg.channel.type == ChannelType.GuildText){
-            objeto.publico = false
-            objeto.personalID = msg.author.id
-            await ticketsModel.findByIdAndUpdate(botDB.serverId, {tickets: arrayTs})
-
-            msg.channel.permissionOverwrites.edit(msg.author.id, {'ViewChannel': true, 'SendMessages': true})
-            msg.channel.permissionOverwrites.delete('773271945894035486')
-            msg.channel.permissionOverwrites.delete('831669132607881236')
-          }
-  
-          if(msg.content.length == 0 && msg.embeds.length == 0 && msg.components.length == 0 && msg.attachments.size == 0) return;
-          const channelServer2 = servidor2?.channels.cache.get(objeto.copiaID)
-          if(channelServer2?.type == ChannelType.GuildText){
-            let webhook = (await channelServer2.fetchWebhooks()).map(w=>w.url)
-            const webhookCl = new WebhookClient({url: webhook[0]})
-            const contentWebhook = {
-              username: msg.author.username, 
-              avatarURL: msg.author.displayAvatarURL(), 
-              content: msg.content || undefined, 
-              embeds: msg.embeds, 
-              components: msg.components, 
-              files: msg.attachments.map(a=>a)
-            }
-            webhookCl.send(contentWebhook)
-          }
-        }
-      })
-    }
     if(msg.author.bot) return
 
     //TODO: Roles de timpo
@@ -188,7 +167,7 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
     const discordDomains = ["discord.gg/","discord.com/invite/"]
     const urlIncludes = ['https://', 'http://', '.com', 'discord.']
     if(!msg.member?.roles.cache.has('887444598715219999') && !msg.member?.permissions.has('Administrator') && urlIncludes.some(s=> msg.content.includes(s))){
-      const dataBot = await botModel.findById(client.user?.id)
+      const dataBot = await getBotData(client)
       if(!dataBot) return
       const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id)
       const otrosIDCha = dataBot.autoModeration.ignoreChannels
@@ -196,7 +175,6 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
       
 
       if(!canalesPerIDs?.some(s=> s == msg.channelId)){
-        console.log('aaa')
         let urls = msg.content.split(/ +/g).map(m=> m.split('\n')).flat().filter(f=> urlIncludes.some(s=> f.includes(s)))
         const UrlWarningEb = new EmbedBuilder()
         .setAuthor({name: msg.author.tag, iconURL: msg.author.displayAvatarURL()})
@@ -256,21 +234,20 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
 
   if(msg.author.bot || !msg.content.toLowerCase().startsWith(prefix)) return
   const args = msg.content.slice(prefix.length).trim().split(/ +/g)
-  const command = args.shift()?.toLowerCase()
+  const commandName = args.shift()?.toLowerCase()
 
-  if(command == 'ayuda') helpCommand(msg, client)
-
-  if(['comandos', 'cmds'].some(s=> s==command)) commandsCommand(msg, client, args)
-
-  if(msg.member?.permissions.has('Administrator')){
-    if(['addreaction', 'addrc'].some(s=> s==command)) addReactionCommand(msg, client, args)
-    if(command == 'roles') rolesCommand(msg)
-    if(command == 'ticket') ticketCommand(msg)
-    if(command == 'informacion') informationCommand(msg)
-    if(command == 'rules') rulesCommand(msg, client)
-  }
-
-  if(botDB.owners.some(s=> s==msg.author.id)){
-    if(['eval', 'ev'].some(s=> s==command)) evalCommand(msg, client, args.join(' '))
+  if(commandName) {
+    if(msg.guildId == serverId){
+      const svCommand = svTextCommands.get(commandName) || svTextCommands.find(f=> f.alias.some(s=> s==commandName))
+      svStatistics.commands++
+      botDB.usedCommands++
+      if(svCommand) return svCommand.run(msg, client, args)
+    }else{
+      const command = textCommands.get(commandName) || textCommands.find(f=> f.alias.some(s=> s==commandName))
+      svStatistics.commands++
+      botDB.usedCommands++
+      if(command) return command.run(msg, client, args)
+    }
+    
   }
 }

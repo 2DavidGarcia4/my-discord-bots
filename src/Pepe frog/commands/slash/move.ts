@@ -1,5 +1,5 @@
 import { CacheType, ChannelType, ChatInputCommandInteraction, Client, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
-import { sendMessageSlash, setSlashError } from "../../../utils/functions";
+import { sendMessageSlash, setSlashError } from "../../../shared/functions";
 
 export const moveScb = new SlashCommandBuilder()
 .setName('move')

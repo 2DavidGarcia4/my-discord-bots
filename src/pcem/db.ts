@@ -1,20 +1,20 @@
 import { connect } from "mongoose";
 import { connectMongo } from "../config";
-import colors from "colors"
 import { BotDB } from "./types"
 
-colors
-connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la base de datos'.green))
-.catch((err)=> console.error('Ocurrió un error al conectarse a la DB'.red, err))
+connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la base de datos'))
+.catch((err)=> console.error('Ocurrió un error al conectarse a la DB', err))
 
 
 export const botDB: BotDB = {
-  prefix: 'b!',
+  prefix: '|',
   serverId: '773249398431809586',
   creatorId: '717420870267830382',
+  serverInvite: 'https://discord.gg/xDG86jAXEZ',
   owners: ['717420870267830382', '825186118050775052'],
   mainRoles: ['823372926707171358'],
   levelRoles: ['831671368776024104', '831671377396367360', '838498326512140329', '838498329650003969', '876273805494988821', '876273903452975134', '876274096990724097', '876274137239265340', '891446815700967434', '891446820851564584', '891446820851564584', '971515112567476354', '971515118837956699', '971515126144442448'],
+  usedCommands: 0,
   emoji: {
     cat: '<a:gatito:909919946140684288>',
     like: '<:blueLike:946826193032851516>',

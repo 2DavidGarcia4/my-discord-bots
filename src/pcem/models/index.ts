@@ -1,224 +1,94 @@
-import { model, Schema } from "mongoose";
 import { prop, getModelForClass } from "@typegoose/typegoose"
-import { BotLogs, DataBot } from "../types";
-
-//? Bot db
-class PCEMbot {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public logs: BotLogs
-
-  @prop({type: Object, required: true})
-  autoModeration: {
-    ignoreCategories: string[]
-    ignoreChannels: string[]
-  }
-}
-
-export const botModel = getModelForClass(PCEMbot)
-botModel.syncIndexes()
 
 //? Sistema de alianzas
-class Alianzas {
+class Alliances {
   @prop({type: String, required: true})
   public _id: string
 
-  @prop({type: String, required: true})
-  public canalID: string
-
   @prop({type: Array,required: true})
-  public miembros: {
+  public members: {
     id: string
     tag: string
-    cantidad: number
+    amount: number
   }[]
 
   @prop({type: Array, required: true})
-  public servidores: {
+  public servers: {
     id: string
-    nombre: string
-    tiempo: number
-    miembros: number | null
-    invitacion: string
+    name: string
+    time: number
+    members: number | null
+    invitation: string
   }[]
 }
-export const alliancesModel = getModelForClass(Alianzas)
-
-//? Sistema de sugerencias
-class Sugerencias {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public sugerencias: {
-    cantidad: number
-    aceptadas: number
-    denegadas: number
-    implementadas: number
-    en_progreso: number
-    no_sucedera: number
-  }
-
-  @prop({type: Array,required: true})
-  public mensajes: {
-    id: string
-    origenID: string
-    autorID: string
-    sugerencia: string
-    estado: string
-    positivas: number
-    negativas: number
-  }[]
-
-  @prop({type: Array, required: true})
-  public miembros: {
-    id: string
-    sugerencias: number
-    aceptadas: number
-    denegadas: number
-  }[]
-}
-export const suggestionsModel = getModelForClass(Sugerencias)
+export const alliancesModel = getModelForClass(Alliances)
 
 //? Carcél 
 class Carcel {
   @prop({type: String, required: true})
   public _id: string
 
-  @prop({type: Number, required: true})
-  public cantidad: number
-
   @prop({type: Array, required: true})
-  public prisioneros: {
+  public prisoners: {
     id: string
     tag: string
-    razon: string
-    condena: string
-    tiempo: number
+    time: number
+    reazon: string
+    sentence: string
   }[]
 }
 export const carcelModel = getModelForClass(Carcel)
 
-//? Sistema de tickets
-export const ticketsModel = model("Tickets", new Schema({
-  _id: {type: String, required: true},
-  datos: {type: Object, required: true},
-  tickets: {type: Array, required: true},
-  miembros: {type: Array, required: true}
-}))
 
-//? Sistema de invitaciones
-class Ivitaciones {
+//? Raffles system
+class Raffles {
   @prop({type: String, required: true})
   public _id: string
 
   @prop({type: Object, required: true})
-  public datos: {
-    roles: {
-      id: string
-      invitaciones: number
-    }[]
+  public data: {
+    rolId: string
+    emojiId: string
   }
 
   @prop({type: Array, required: true})
-  public miembros: {
+  public raffles: {
     id: string
-    tag: string
-    verdaderas: number
-    totales: number
-    restantes: number
-    falsas: number
-    tiempo: number | null
-    codes: {
-      code: string
-      usos: number
-    }[]
-    invitados: {
-      id: string
-      tag: string
-      miembro: boolean
-    }[]
+    channelId: string
+    ends: number
+    winners: number
+    authorId: string
+    createdAt: number
+    active: boolean
+    participants: string[]
   }[]
 }
-export const invitesModel = getModelForClass(Ivitaciones)
+export const rafflesModel = getModelForClass(Raffles)
 
-//? Historial del personal
-class Personal {
+//? Surveys system
+class Surveys {
   @prop({type: String, required: true})
   public _id: string
 
   @prop({type: Object, required: true})
-  public datos: {
-    rolID: string,
-    roles: string[],
-    canalRegistro: string
-  }
-
-  @prop({type: Array, required: true})
-  public personal: {
-    id: string,
-    tag: string,
-    rango: number,
-    miembro: boolean,
-    historial: {
-      fecha: number,
-      accion: string
-    }[]
-  }[]
-}
-export const personalModel = getModelForClass(Personal)
-
-//? Sistema de sorteos
-class Sorteos {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public datos: {
-    rolID: string
-    emojiID: string
-  }
-
-  @prop({type: Array, required: true})
-  public sorteos: {
-    id: string
-    canalID: string
-    finaliza: number
-    ganadores: number
-    autorID: string
-    creado: number
-    activo: boolean
-    participantes: string[]
-  }[]
-}
-export const rafflesModel = getModelForClass(Sorteos)
-
-//? Sistema de encuestas
-class Encuestas {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public datos: {
-    rolID: string
+  public data: {
+    rolId: string
     emojis: string[]
   }
 
   @prop({type: Array, required: true})
-  public encuestas: {
+  public surveys: {
     id: string
-    canalID: string
-    autorID: string
-    finaliza: number
-    creado: number
-    activa: boolean
-    opciones: {
+    channelId: string
+    authorId: string
+    ends: number
+    createdAt: number
+    active: boolean
+    options: {
       emoji: string
-      opcion: string
-      votos: number
+      option: string
+      votes: number
     }[]
   }[]
 }
-export const surveysModel = getModelForClass(Encuestas)
+export const surveysModel = getModelForClass(Surveys)

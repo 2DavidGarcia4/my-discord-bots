@@ -1,6 +1,6 @@
 import { CacheType, ContextMenuCommandBuilder, MessageContextMenuCommandInteraction, Client, PermissionFlagsBits, ChannelType, EmbedBuilder } from "discord.js";
 import { frogDb } from "../../db";
-import { sendMessageSlash, setSlashError } from '../../../utils/functions'
+import { sendMessageSlash, setSlashError } from '../../../shared/functions'
 
 export const sendCmcb = new ContextMenuCommandBuilder()
 .setName('Send')

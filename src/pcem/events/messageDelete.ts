@@ -1,7 +1,8 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js";
 import { botDB } from "../db";
-import { botModel, rafflesModel, surveysModel, ticketsModel } from "../models";
+import { rafflesModel, surveysModel } from "../models";
 import { exemptMessagesIds } from "..";
+import { getBotData } from "../utils";
 
 
 export const messageDeleteEvent = async (msgd: Message | PartialMessage, client: Client) => {
@@ -12,38 +13,20 @@ export const messageDeleteEvent = async (msgd: Message | PartialMessage, client:
     return
   }
 
-  let dataTs = await ticketsModel.findById(serverId), arrayTs = dataTs?.tickets, ticket = arrayTs?.find(f=> f.id==msgd.channelId)
-  if(arrayTs?.some(s=> s.id==msgd.channelId) && ticket.msgCerrarID == msgd.id && !ticket.cerrado){
-    const botonCerrar = new ActionRowBuilder<ButtonBuilder>()
-    .addComponents(
-      new ButtonBuilder()
-      .setCustomId("cerrarTicket")
-      .setEmoji("962574398190145566")
-      .setLabel("Cerrar ticket")
-      .setStyle(ButtonStyle.Secondary)
-      .setDisabled(false)
-    )
-    await msgd.channel.messages.fetch(ticket.msgPrincipalID).then(msgPrincipal => {
-      msgPrincipal.edit({components: [botonCerrar]})
-    }).catch(c=> console.log(c))
-    ticket.msgCerrarID = false
-    await ticketsModel.findByIdAndUpdate(serverId, {tickets: arrayTs})
-  }
-
-  let dataSor = await rafflesModel.findById(serverId), arraySo = dataSor?.sorteos
+  let dataSor = await rafflesModel.findById(serverId), arraySo = dataSor?.raffles
   if(arraySo?.some(s=>s.id == msgd.id)){
     arraySo.splice(arraySo.findIndex(f=>f.id == msgd.id),1)
     await rafflesModel.findByIdAndUpdate(serverId, {sorteos: arraySo})
   }
 
-  let dataEnc = await surveysModel.findById(serverId), arrayEn = dataEnc?.encuestas
+  let dataEnc = await surveysModel.findById(serverId), arrayEn = dataEnc?.surveys
   if(arrayEn?.some(s=>s.id == msgd.id)){
     arrayEn.splice(arrayEn.findIndex(f=>f.id == msgd.id),1)
     await surveysModel.findByIdAndUpdate(serverId, {encuestas: arrayEn})
   }
 
   if(msgd.content){
-    const dataBot = await botModel.findById(client.user?.id)
+    const dataBot = await getBotData(client)
     if(!dataBot) return
     const channelLog = client.channels.cache.get(dataBot?.logs.deleteMessages)
   

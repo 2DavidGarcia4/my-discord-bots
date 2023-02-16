@@ -1,8 +1,6 @@
 import { ChannelType, Client, EmbedBuilder } from "discord.js";
-import colors from "colors"
 import { botDB } from "./db"
-import { botModel } from "./models";
-import { tokenBot } from "../config";
+import { isDevelopment, tokenBot } from "../config";
 import { readyEvent } from "./events/ready"
 import { messageEvent } from "./events/message";
 import { interactionEvent } from "./events/interaction";
@@ -17,11 +15,10 @@ import { invitationDeleteEvent } from "./events/invitationDelete";
 import { reactionAddEvent } from "./events/reactionAdd";
 import { reactionRemoveEvent } from "./events/reactionRemove";
 import { messageUpdateEvent } from "./events/messageUpdate";
-
-colors
+import { getBotData } from "./utils";
 
 const PCEM = new Client({intents: 131071}) 
-export let estadisticas = {entradas: 0, salidas: 0, mensajes: 0, comandos: 0}, autoModeration = [{memberId: "717420870267830382", warnings: 0}]
+export const svStatistics = {joins: 0, leaves: 0, messages: 0, commands: 0}, autoModeration = [{memberId: "717420870267830382", warnings: 0}]
 export const exemptMessagesIds: string[] = []
 export const cooldowns = new Map()
 
@@ -89,25 +86,25 @@ PCEM.on('messageReactionRemove', (reaction, user) => {
 
 //! Errors events
 PCEM.on("shardError", async err => {
-  const dataBot = await botModel.findById(PCEM.user?.id), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
+  const dataBot = await getBotData(PCEM), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
   console.log(err)
   const embErr = new EmbedBuilder()
   .setTitle(`${botDB.emoji.negative} Ocurrió un error`)
   .setDescription(`\`\`\`js\n${err.name}\n\n${err.message}\n\n${err.stack}\`\`\``)
   .setColor(botDB.color.negative)
   .setTimestamp()
-  if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [embErr]})
+  if((!isDevelopment) && channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [embErr]})
 })
 
 process.on("unhandledRejection", async err => {
-  const dataBot = await botModel.findById(PCEM.user?.id), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
+  const dataBot = await getBotData(PCEM), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
   console.log(err)
   const embErr = new EmbedBuilder()
   .setTitle(`${botDB.emoji.negative} Ocurrió un error`)
   .setDescription(`\`\`\`js\n${err}\`\`\``)
   .setColor(botDB.color.negative)
   .setTimestamp()
-  if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [embErr]})
+  if((!isDevelopment) && channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [embErr]})
 })
 
 PCEM.login(tokenBot)

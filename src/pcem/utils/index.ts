@@ -1,5 +1,6 @@
 import { Message, EmbedBuilder, Client, ChannelType } from "discord.js"
 import { botDB } from "../db"
+import { DataBot } from "../types"
 
 const { color } = botDB
 
@@ -35,4 +36,14 @@ export const moderationSanction = (msg: Message<boolean>, autoModMember: {member
 export const fetchServerRules = async (client: Client) => {
   const rulesChannel = client.channels.cache.get('1073819301661913219')
   if(rulesChannel?.type == ChannelType.GuildText) return (await rulesChannel.messages.fetch('1073819326420897922')).content
+}
+
+export const getBotData = async (client: Client): Promise<DataBot | undefined> => {
+  const channelDb = client.channels.cache.get('1075494668386705428')
+  if(channelDb?.isTextBased()) {
+    const message = (await channelDb.messages.fetch('1075494740595847289')).content
+    const data = eval(message)
+    return data
+  }
+  return undefined
 }

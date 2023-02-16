@@ -1,5 +1,5 @@
 import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, CacheType, Client, Collection, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
-import { selectMultipleRoles, selectRole } from "../../utils/functions";
+import { selectMultipleRoles, selectRole } from "../../shared/functions";
 
 import { moveScb, moveSlashCommand } from "../commands/slash/move";
 

@@ -1,16 +1,15 @@
 import { ChannelType, Client, EmbedBuilder, GuildMember, PartialGuildMember } from "discord.js";
 import ms from "ms";
-import { estadisticas } from "..";
+import { svStatistics } from "..";
 import { botDB } from "../db";
-import { botModel, invitesModel, personalModel } from "../models";
+import { getBotData } from "../utils";
 
 export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, client: Client) => {
   const { color, serverId } = botDB
   if(gmr.guild.id != serverId) return;
-  estadisticas.salidas++
+  svStatistics.leaves++
   
-  const dataBot = await botModel.findById(client.user?.id)
-  const dataInv = await invitesModel.findById(serverId), arrayMi = dataInv?.miembros
+  const dataBot = await getBotData(client)
   if(!dataBot) return
 
   const leaveLog = client.channels.cache.get(dataBot.logs.exit)
@@ -36,34 +35,6 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
     .setColor(color.negative)
     .setFooter({text: gmr.guild.name, iconURL: gmr.guild.iconURL() || undefined})
 
-    if(arrayMi){
-      for(let m of arrayMi){
-        if(m.invitados.some(s=> s.id==gmr.user.id)){
-          const invitado = m.invitados.find(f=> f.id==gmr.user.id)
-          if(invitado?.miembro){
-            m.verdaderas--
-            m.restantes++
-            invitado.miembro = false
-            leaveLogEb.data.description = `Se fue ${gmr} *había sido invitado/a por <@${m.id}> quien ahora tiene **${m.verdaderas.toLocaleString()}** ${m.verdaderas==1 ? "invitación": "invitaciones"}.*\n📥 **Seunio:**\n<t:${Math.round((gmr.joinedAt?.valueOf() || 0) / 1000)}:R>`
-          }
-        }
-      }
-
-    }
     leaveLog.send({embeds: [leaveLogEb]})
-
-    const miembro = arrayMi?.find(f=> f.id==gmr.user.id)
-    if(miembro){
-      miembro.tiempo = Math.floor(Date.now()+ms("30d"))
-    }
-    await invitesModel.findByIdAndUpdate(botDB.serverId, {miembros: arrayMi})
-
-    // Personal
-    let dataPer = await personalModel.findById(botDB.serverId), arrayPr = dataPer?.personal
-    if(arrayPr?.some(s=> s.id==gmr.id)){
-      let persona = arrayPr.find(f=> f.id==gmr.id)
-      if(persona) persona.miembro = false
-      await personalModel.findByIdAndUpdate(botDB.serverId, {personal: arrayPr})
-    }
   }
 }

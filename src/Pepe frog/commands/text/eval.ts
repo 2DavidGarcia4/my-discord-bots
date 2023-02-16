@@ -1,7 +1,7 @@
 import { Client, EmbedBuilder, Message } from "discord.js"
 import { inspect } from 'util'
 import { modDb } from "../.."
-import { sendMessageText, setError } from "../../../utils/functions"
+import { sendMessageText, setError } from "../../../shared/functions"
 import { frogDb } from "../../db"
 import { setGuildStatus } from "../../utils/functions"
 // import { modDb } from "../../events/messageCreate"
