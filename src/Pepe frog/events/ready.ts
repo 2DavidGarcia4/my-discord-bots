@@ -3,26 +3,17 @@ import { setGuildStatus } from "../utils/functions";
 import { frogDb } from "../db";
 import { isDevelopment } from "../../config";
 import { commands } from "./interactionCreate";
-import { presences } from "../../shared/functions";
+import { defaultReady, presences } from "../../shared/functions";
 
 import { registerFont, createCanvas, loadImage } from "canvas";
 registerFont("tipo.otf", {family: 'MADE TOMMY'})
 
 export const readyEvent = async (client: Client) => {
   const { serverId, principalServerId } = frogDb
-  console.log(client.user?.username+' Estoy listo')
+  defaultReady(client, '1053425705385467904', 'DarkGold')
+  
   const principalServer = client.guilds.cache.get(principalServerId)
   const server = client.guilds.cache.get(serverId)
-  
-  const readyChannel = client.channels.cache.get('1053425705385467904')
-  const ReadyEb = new EmbedBuilder()
-  .setTitle('✅ I am ready')
-  .setColor('DarkGold')
-  .setDescription('Connected again')
-  if(!isDevelopment && readyChannel?.type == ChannelType.GuildText){
-    readyChannel.sendTyping()
-    setTimeout(()=> readyChannel.send({embeds: [ReadyEb]}), 2000)
-  } 
 
   const logos = client.channels.cache.get('1064289166462042137')
   let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1067870216157147156/banner_2023-01.jpg?width=468&height=468"

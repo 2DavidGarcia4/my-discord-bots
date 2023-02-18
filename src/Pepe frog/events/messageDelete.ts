@@ -7,7 +7,6 @@ export const messageDeleteEvent = async (msgd: Message<boolean> | PartialMessage
   if(msgd.guildId != serverId || msgd.author?.bot) return
   if(exemptMessagesIds.some(s=> s == msgd.id)){
     exemptMessagesIds.splice(exemptMessagesIds.findIndex(f=> f == msgd.id), 1)
-    console.log(exemptMessagesIds)
     return
   }
 

@@ -1,11 +1,12 @@
 import { ContextMenuCommandBuilder, UserContextMenuCommandInteraction, CacheType, EmbedBuilder } from "discord.js"
-import { sendMessageSlash } from "../../../shared/functions"
+import { sendMessageSlash } from "../../../../shared/functions"
 
-export const usuarioCmcb = new ContextMenuCommandBuilder()
-.setName("Usuario")
+export const userCmcb = new ContextMenuCommandBuilder()
+.setName("Information")
+.setNameLocalization('es-ES', 'Información')
 .setType(2)
 
-export const usuarioContextMenu = async (int: UserContextMenuCommandInteraction<CacheType>) => {
+export const userContextMenu = async (int: UserContextMenuCommandInteraction<CacheType>) => {
   const { guild, user } = int, author = guild?.members.cache.get(user.id)
 
   const member = guild?.members.cache.get(int.targetId)

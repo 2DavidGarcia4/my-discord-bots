@@ -9,10 +9,27 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.presences = exports.selectMultipleRoles = exports.selectRole = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = void 0;
+exports.presences = exports.selectMultipleRoles = exports.selectRole = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = exports.defaultReady = void 0;
 const discord_js_1 = require("discord.js");
+const config_1 = require("../config");
 const db_1 = require("../pcem/db");
 const { color, emoji } = db_1.botDB;
+const defaultReady = (client, channelId, rcolor) => {
+    var _a;
+    if (!client.user)
+        return;
+    const readyChannel = client.channels.cache.get(channelId);
+    console.log(`|> ${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username}: i'm ready`);
+    const ReadyEb = new discord_js_1.EmbedBuilder()
+        .setTitle(`${emoji.afirmative} I'm ready`)
+        .setColor(rcolor)
+        .setDescription('Connected again');
+    if (!config_1.isDevelopment && (readyChannel === null || readyChannel === void 0 ? void 0 : readyChannel.isTextBased())) {
+        readyChannel.sendTyping();
+        setTimeout(() => readyChannel.send({ embeds: [ReadyEb] }), 4000);
+    }
+};
+exports.defaultReady = defaultReady;
 const sendMessageText = (msg, optionsMessage) => {
     setTimeout(() => {
         msg.reply(optionsMessage);

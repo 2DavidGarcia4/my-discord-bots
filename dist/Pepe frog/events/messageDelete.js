@@ -20,7 +20,6 @@ const messageDeleteEvent = (msgd, client) => __awaiter(void 0, void 0, void 0, f
         return;
     if (__1.exemptMessagesIds.some(s => s == msgd.id)) {
         __1.exemptMessagesIds.splice(__1.exemptMessagesIds.findIndex(f => f == msgd.id), 1);
-        console.log(__1.exemptMessagesIds);
         return;
     }
     if (msgd.content && !(msgd.content.startsWith(prefix) && owners.some(s => { var _a; return s == ((_a = msgd.author) === null || _a === void 0 ? void 0 : _a.id); }))) {

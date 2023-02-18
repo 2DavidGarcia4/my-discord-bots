@@ -17,7 +17,7 @@ export const commandsSlashComand = async (int: ChatInputCommandInteraction<Cache
   const CommandsEb = new EmbedBuilder()
   .setAuthor({name: `Hola ${author?.nickname || author?.user.username}`, iconURL: author?.user.displayAvatarURL()})
   .setTitle(`📄 ${isEnglish ? 'Commands' : 'Comandos'}`)
-  .setDescription((isEnglish ? 'A **command** is an order/instruction that you give to the Bot and to which the Bot responds in a certain way according to the order or name of the command.' : 'Un **comando** es una orden/instrucción que les das al Bot y a la que el Bot responde de cierta forma de acuerdo a la orden o nombre del comando.')+`\n\n${commands?.map((c)=> c.options.length ? c.options.map(a=> `</${c.name} ${a.name}:${c.id}>`) : `</${c.name}:${c.id}>`).flat().join(', ')}`)
+  .setDescription((isEnglish ? 'A **command** is an order/instruction that you give to the Bot and to which the Bot responds in a certain way according to the order or name of the command.' : 'Un **comando** es una orden/instrucción que les das al Bot y a la que el Bot responde de cierta forma de acuerdo a la orden o nombre del comando.')+`\n\n${commands?.map((c)=> c.options.filter(f=> f.type == 1).length ? c.options.map(a=> `</${c.name} ${a.name}:${c.id}>`) : `</${c.name}:${c.id}>`).flat().join(', ')}`)
   .setFooter({text: guild?.name || 'undefined', iconURL: guild?.iconURL() || undefined})
   .setColor(guild?.members.me?.displayHexColor || 'White')
   .setTimestamp()

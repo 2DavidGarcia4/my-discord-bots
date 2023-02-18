@@ -5,20 +5,16 @@ import { botDB } from "../db"
 import { svInteractionCommands, interactionCommands } from "./interaction"
 import { isDevelopment } from "../../config"
 import { getBotData } from "../utils"
+import { defaultReady } from "../../shared/functions"
 
 export const readyEvent = async (client: Client) => {
   if (!client.user) return
-  console.log(`| Estoy listo ${client.user?.username}`)
-
+  
   const dataBot = await getBotData(client)
-  const servidor = client.guilds.cache.get(botDB.serverId), readyChannel = client.channels.cache.get(dataBot?.logs.connections || '')
+  defaultReady(client, dataBot?.logs.connections || '', botDB.color.afirmative)
+  
+  const servidor = client.guilds.cache.get(botDB.serverId)
   const channelSuggestions = servidor?.channels.cache.get(dataBot?.logs.suggestions || '828300239488024587')
-  const embEncendido = new EmbedBuilder()
-  .setTitle(`${botDB.emoji.afirmative} Encendido de nuevo.`)
-  .setColor(botDB.color.afirmative)
-  .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
-  .setTimestamp()
-  if (!isDevelopment && readyChannel?.type == ChannelType.GuildText) readyChannel.send({ embeds: [embEncendido] })
 
   // const newModel = new carcelModel({
   //   _id: botDB.serverId,
@@ -332,14 +328,15 @@ export const readyEvent = async (client: Client) => {
   
   // console.log((await servidor?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
   // console.log((await client.application?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
-  
-  // const command1 = slashComands.get('clasificaciones')
+
+  // const command = svInteractionCommands.get('clasificaciones')
+
   // ;(await servidor?.commands.fetch('964578653369409556', {force: true}))?.edit({options: command1?.options}).then(c=> console.log('Comando actualizado'))
-  // ;(await servidor?.commands.fetch('941377782930350110', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
+  // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
   
   //! Public
-  // const command = interactionCommands.get('kick')
+  // const command = interactionCommands.get('warn')
   
-  // ;(await client.application?.commands.fetch('1075637283841122385', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+  // ;(await client.application?.commands.fetch('1075637372647125042', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
   // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 }

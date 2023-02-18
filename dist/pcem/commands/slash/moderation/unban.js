@@ -34,11 +34,17 @@ const desbanearSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0,
         return (0, functions_1.setSlashError)(int, (isEnglish ? `The provided ID *(${id})* cannot be valid as it is not numeric.` : `La ID proporcionada *(${id})* no puede ser valida ya que no es numérica.`));
     if (!((_a = (yield (guild === null || guild === void 0 ? void 0 : guild.bans.fetch()))) === null || _a === void 0 ? void 0 : _a.some(s => s.user.id == id)))
         return (0, functions_1.setSlashError)(int, (isEnglish ? `The user *(<@${id}>)* is not banned.` : `El usuario *(<@${id}>)* no esta baneado.`));
-    const moderatorTxt = isEnglish ? 'Moderator' : 'Moderador';
     client.users.fetch(id, { force: true }).then((user) => __awaiter(void 0, void 0, void 0, function* () {
+        var _b;
+        const isBot = user.bot;
+        const unbanReazon = `${isEnglish ? `Unbanned ${isBot ? 'bot' : 'user'}` : `${isBot ? 'Bot' : 'User'} desbaneado`}: ${user.tag} | ${isEnglish ? 'Moderator' : 'Moderador'}: ${int.user.tag} ID: ${int.user.id}`;
         const UnbanEb = new discord_js_1.EmbedBuilder()
             .setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || int.user.username, iconURL: int.user.avatarURL() || undefined })
-            .setThumbnail(user.displayAvatarURL({ size: 1024, extension: 'png' }))
+            .setTitle(emoji.afirmative + ' ' + (isEnglish ?
+            `Unbanned ${isBot ? 'bot' : 'user'}` :
+            `${isBot ? 'Bot' : 'Usuario'} desbaneado`))
+            .setDescription(`**${isEnglish ? (isBot ? '🤖 Bot' : '🧑 User') : (isBot ? '🤖 Bot' : '🧑 Usuario')}:** ${user}\n**ID:** ${user.id}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}`)
+            .setThumbnail(user.displayAvatarURL({ size: 1024, extension: ((_b = user === null || user === void 0 ? void 0 : user.avatar) === null || _b === void 0 ? void 0 : _b.includes('a_')) ? 'gif' : 'png' }))
             .setFooter({ text: (guild === null || guild === void 0 ? void 0 : guild.name) || '', iconURL: (guild === null || guild === void 0 ? void 0 : guild.iconURL()) || undefined })
             .setColor(color.afirmative)
             .setTimestamp();
@@ -50,25 +56,16 @@ const desbanearSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0,
             .setTimestamp();
         yield int.deferReply();
         if (user.bot) {
-            UnbanEb
-                .setTitle(`${emoji.afirmative} ${isEnglish ? 'Unbanned bot' : 'Bot desbaneado'}`)
-                .setDescription(`🤖 **Bot:** ${user}\n**ID:** ${user.id}\n\n👮 **${moderatorTxt}:** ${int.user}`);
-            guild === null || guild === void 0 ? void 0 : guild.members.unban(user.id, `${moderatorTxt}: ${int.user.tag} ID: ${int.user.id} | ${isEnglish ? 'Unbanned bot' : 'Bot desbaneado'}: ${user.tag}, ID: ${user.id}`).then(k => {
-                (0, functions_1.sendMessageSlash)(int, { embeds: [UnbanEb] });
-            });
             UnbanLogEb
                 .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "🤖 **Bot desbaneado:**", value: `${user}\n**ID:** ${user.id}` });
         }
         else {
-            UnbanEb
-                .setTitle(`${emoji.afirmative} ${isEnglish ? 'Unbanned user' : 'Usuario desbaneado'}`)
-                .setDescription(`👤 **Usuario:** ${user}\n**ID:** ${user.id}\n\n👮 **Moderador:** ${int.user}`);
-            guild === null || guild === void 0 ? void 0 : guild.members.unban(user.id, `${moderatorTxt}: ${int.user.tag} ID: ${int.user.id} | ${isEnglish ? 'Unbanned user' : 'Usuario desbaneado'}: ${user.tag}, ID: ${user.id}`).then(k => {
-                (0, functions_1.sendMessageSlash)(int, { embeds: [UnbanEb] });
-            });
             UnbanLogEb
                 .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "👤 **Usuario desbaneado:**", value: `${user}\n**ID:** ${user.id}` });
         }
+        guild === null || guild === void 0 ? void 0 : guild.members.unban(user.id, unbanReazon).then(() => {
+            (0, functions_1.sendMessageSlash)(int, { embeds: [UnbanEb] });
+        });
         // if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [UnbanLogEb]})
     })).catch(c => {
         (0, functions_1.setSlashError)(int, `${isEnglish ? `The ID you provided *(${id})* is not an ID of any Discord user` : `La ID que has proporcionado *(${id})* no es una ID de ningún usuario de Discord`}.`);

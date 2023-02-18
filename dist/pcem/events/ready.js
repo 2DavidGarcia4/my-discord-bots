@@ -18,23 +18,15 @@ const discord_js_1 = require("discord.js");
 const models_1 = require("../models");
 const db_1 = require("../db");
 const interaction_1 = require("./interaction");
-const config_1 = require("../../config");
 const utils_1 = require("../utils");
+const functions_1 = require("../../shared/functions");
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     if (!client.user)
         return;
-    console.log(`| Estoy listo ${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username}`);
     const dataBot = yield (0, utils_1.getBotData)(client);
-    const servidor = client.guilds.cache.get(db_1.botDB.serverId), readyChannel = client.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.connections) || '');
+    (0, functions_1.defaultReady)(client, (dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.connections) || '', db_1.botDB.color.afirmative);
+    const servidor = client.guilds.cache.get(db_1.botDB.serverId);
     const channelSuggestions = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.suggestions) || '828300239488024587');
-    const embEncendido = new discord_js_1.EmbedBuilder()
-        .setTitle(`${db_1.botDB.emoji.afirmative} Encendido de nuevo.`)
-        .setColor(db_1.botDB.color.afirmative)
-        .setFooter({ text: client.user.username, iconURL: client.user.displayAvatarURL() })
-        .setTimestamp();
-    if (!config_1.isDevelopment && (readyChannel === null || readyChannel === void 0 ? void 0 : readyChannel.type) == discord_js_1.ChannelType.GuildText)
-        readyChannel.send({ embeds: [embEncendido] });
     // const newModel = new carcelModel({
     //   _id: botDB.serverId,
     //   prisoners: [],
@@ -317,29 +309,29 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     // console.log(svInteractionCommands.map(m=> m))
     // console.log(interactionCommands.map(m=> m))
     interaction_1.svInteractionCommands === null || interaction_1.svInteractionCommands === void 0 ? void 0 : interaction_1.svInteractionCommands.forEach((command, key) => __awaiter(void 0, void 0, void 0, function* () {
-        var _b;
-        if (!((_b = (yield (servidor === null || servidor === void 0 ? void 0 : servidor.commands.fetch()))) === null || _b === void 0 ? void 0 : _b.some(s => s.name == command.struct.name))) {
+        var _a;
+        if (!((_a = (yield (servidor === null || servidor === void 0 ? void 0 : servidor.commands.fetch()))) === null || _a === void 0 ? void 0 : _a.some(s => s.name == command.struct.name))) {
             servidor === null || servidor === void 0 ? void 0 : servidor.commands.create(command.struct).then((cmd) => {
                 console.log(`Comando ${key} creado`);
             }).catch((err) => console.log('Error: ', err));
         }
     }));
     interaction_1.interactionCommands === null || interaction_1.interactionCommands === void 0 ? void 0 : interaction_1.interactionCommands.forEach((command, key) => __awaiter(void 0, void 0, void 0, function* () {
-        var _c, _d, _e;
-        if (!((_d = (yield ((_c = client.application) === null || _c === void 0 ? void 0 : _c.commands.fetch()))) === null || _d === void 0 ? void 0 : _d.some(s => s.name == command.struct.name))) {
-            (_e = client.application) === null || _e === void 0 ? void 0 : _e.commands.create(command.struct).then((cmd) => {
+        var _b, _c, _d;
+        if (!((_c = (yield ((_b = client.application) === null || _b === void 0 ? void 0 : _b.commands.fetch()))) === null || _c === void 0 ? void 0 : _c.some(s => s.name == command.struct.name))) {
+            (_d = client.application) === null || _d === void 0 ? void 0 : _d.commands.create(command.struct).then((cmd) => {
                 console.log(`Comando publico ${key} creado`);
             }).catch((err) => console.log('Error: ', err));
         }
     }));
     // console.log((await servidor?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
     // console.log((await client.application?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
-    // const command1 = slashComands.get('clasificaciones')
+    // const command = svInteractionCommands.get('clasificaciones')
     // ;(await servidor?.commands.fetch('964578653369409556', {force: true}))?.edit({options: command1?.options}).then(c=> console.log('Comando actualizado'))
-    // ;(await servidor?.commands.fetch('941377782930350110', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
+    // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
     //! Public
-    // const command = interactionCommands.get('kick')
-    // ;(await client.application?.commands.fetch('1075637283841122385', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+    // const command = interactionCommands.get('warn')
+    // ;(await client.application?.commands.fetch('1075637372647125042', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
     // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 });
 exports.readyEvent = readyEvent;

@@ -1,13 +1,14 @@
 import { connect } from "mongoose";
 import { connectMongo } from "../config";
 import { BotDB } from "./types"
+import { isDevelopment } from "../config";
 
 connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la base de datos'))
 .catch((err)=> console.error('Ocurrió un error al conectarse a la DB', err))
 
 
 export const botDB: BotDB = {
-  prefix: '|',
+  prefix: isDevelopment ? '|' : 'd!',
   serverId: '773249398431809586',
   creatorId: '717420870267830382',
   serverInvite: 'https://discord.gg/xDG86jAXEZ',
@@ -49,8 +50,8 @@ export const botDB: BotDB = {
   },
   color: {
     blue: '#0095F7',
-    afirmative: '#00ff00',
-    negative: '#ff0000',
+    afirmative: '#38E54D',
+    negative: '#DC0000',
     yellow: '#F8CB01'
   }
 }

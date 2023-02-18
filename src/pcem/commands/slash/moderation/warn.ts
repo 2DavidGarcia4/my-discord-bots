@@ -17,6 +17,8 @@ export const warnScb = new SlashCommandBuilder()
   .setNameLocalization('es-ES', 'razón')
   .setDescription(`📝 Provide the reason why you will warn the member.`)
   .setDescriptionLocalization('es-ES', `📝 Proporciona la razón por la que advertiras al miembro.`)
+  .setMinLength(4)
+  .setMaxLength(800)
   .setRequired(true)
 )
 .addAttachmentOption(image=>

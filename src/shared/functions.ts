@@ -1,9 +1,25 @@
 import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from "discord.js";
 import ms from "ms";
+import { isDevelopment } from "../config";
 import { botDB } from "../pcem/db";
 import { DictionaryMenu, MembersPrl } from "../pcem/types";
 
 const { color, emoji } = botDB
+
+export const defaultReady = (client: Client, channelId: string, rcolor: ColorResolvable) => {
+  if(!client.user) return
+  const readyChannel = client.channels.cache.get(channelId)
+  console.log(`|> ${client.user?.username}: i'm ready`)
+  
+  const ReadyEb = new EmbedBuilder()
+  .setTitle(`${emoji.afirmative} I'm ready`)
+  .setColor(rcolor)
+  .setDescription('Connected again')
+  if (!isDevelopment && readyChannel?.isTextBased()) {
+    readyChannel.sendTyping()
+    setTimeout(()=> readyChannel.send({ embeds: [ReadyEb] }), 4000)
+  }
+}
 
 export const sendMessageText = (msg: Message, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
   setTimeout(()=> {

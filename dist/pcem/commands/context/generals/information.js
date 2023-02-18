@@ -9,13 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.usuarioContextMenu = exports.usuarioCmcb = void 0;
+exports.userContextMenu = exports.userCmcb = void 0;
 const discord_js_1 = require("discord.js");
-const functions_1 = require("../../../shared/functions");
-exports.usuarioCmcb = new discord_js_1.ContextMenuCommandBuilder()
-    .setName("Usuario")
+const functions_1 = require("../../../../shared/functions");
+exports.userCmcb = new discord_js_1.ContextMenuCommandBuilder()
+    .setName("Information")
+    .setNameLocalization('es-ES', 'Información')
     .setType(2);
-const usuarioContextMenu = (int) => __awaiter(void 0, void 0, void 0, function* () {
+const userContextMenu = (int) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
     const { guild, user } = int, author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     const member = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(int.targetId);
@@ -31,4 +32,4 @@ const usuarioContextMenu = (int) => __awaiter(void 0, void 0, void 0, function* 
         .setTimestamp();
     (0, functions_1.sendMessageSlash)(int, { embeds: [usuarioEb] });
 });
-exports.usuarioContextMenu = usuarioContextMenu;
+exports.userContextMenu = userContextMenu;

@@ -13,26 +13,15 @@ exports.readyEvent = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../utils/functions");
 const db_1 = require("../db");
-const config_1 = require("../../config");
 const interactionCreate_1 = require("./interactionCreate");
 const functions_2 = require("../../shared/functions");
 const canvas_1 = require("canvas");
 (0, canvas_1.registerFont)("tipo.otf", { family: 'MADE TOMMY' });
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a;
     const { serverId, principalServerId } = db_1.frogDb;
-    console.log(((_a = client.user) === null || _a === void 0 ? void 0 : _a.username) + ' Estoy listo');
+    (0, functions_2.defaultReady)(client, '1053425705385467904', 'DarkGold');
     const principalServer = client.guilds.cache.get(principalServerId);
     const server = client.guilds.cache.get(serverId);
-    const readyChannel = client.channels.cache.get('1053425705385467904');
-    const ReadyEb = new discord_js_1.EmbedBuilder()
-        .setTitle('✅ I am ready')
-        .setColor('DarkGold')
-        .setDescription('Connected again');
-    if (!config_1.isDevelopment && (readyChannel === null || readyChannel === void 0 ? void 0 : readyChannel.type) == discord_js_1.ChannelType.GuildText) {
-        readyChannel.sendTyping();
-        setTimeout(() => readyChannel.send({ embeds: [ReadyEb] }), 2000);
-    }
     const logos = client.channels.cache.get('1064289166462042137');
     let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1067870216157147156/banner_2023-01.jpg?width=468&height=468";
     const canvas = (0, canvas_1.createCanvas)(1000, 1000);
@@ -52,8 +41,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         suggestionsChannel.messages.fetch({ limit: 100 });
     [principalServer, server].forEach((sv) => __awaiter(void 0, void 0, void 0, function* () {
         interactionCreate_1.commands.forEach((cmd) => __awaiter(void 0, void 0, void 0, function* () {
-            var _b;
-            if (!((_b = (yield (sv === null || sv === void 0 ? void 0 : sv.commands.fetch()))) === null || _b === void 0 ? void 0 : _b.some(s => s.name == cmd.name))) {
+            var _a;
+            if (!((_a = (yield (sv === null || sv === void 0 ? void 0 : sv.commands.fetch()))) === null || _a === void 0 ? void 0 : _a.some(s => s.name == cmd.name))) {
                 sv === null || sv === void 0 ? void 0 : sv.commands.create(cmd).then(c => console.log(`Se creo el comando ${c.name}`));
             }
         }));
@@ -105,7 +94,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     (0, functions_2.presences)(dayStates, nightStates, client);
     const statsChannel = server === null || server === void 0 ? void 0 : server.channels.cache.get('1053389468993851472');
     const sendStats = () => __awaiter(void 0, void 0, void 0, function* () {
-        var _c;
+        var _b;
         if ((statsChannel === null || statsChannel === void 0 ? void 0 : statsChannel.type) != discord_js_1.ChannelType.GuildText)
             return;
         const { topic } = statsChannel, nowTime = Date.now();
@@ -126,7 +115,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
                 const StatsEb = new discord_js_1.EmbedBuilder()
                     .setTitle('Estadisticas diarias del servidor')
                     .setDescription(`Se unieron ${joins}, ${leaves} se fueron y ${members} se quedaron.\n\n**Miembros: ${porcentMembers}%**\n\`\`${barr}\`\``)
-                    .setColor(((_c = server === null || server === void 0 ? void 0 : server.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White');
+                    .setColor(((_b = server === null || server === void 0 ? void 0 : server.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White');
                 statsChannel.send({ embeds: [StatsEb] });
             }
         }

@@ -24,8 +24,16 @@ readdirSync(`./${isDist}/pcem/commands/slash/`).forEach(async folder=> {
   })
 })
 
+readdirSync(`./${isDist}/pcem/commands/context/`).forEach(async folder=> {
+  readdirSync(`./${isDist}/pcem/commands/context/${folder}/`).forEach(async file=> {
+    const command = await import(`../commands/context/${folder}/${file}`)
+    const struct = command[Object.keys(command)[0]]
+    const cmdFunction = command[Object.keys(command)[1]]
+    interactionCommands.set(struct.name, {struct, run: cmdFunction})
+  })
+})
 
-import { usuarioContextMenu, usuarioCmcb } from "../commands/context/usuario";
+
 import { rolesBaseContextMenu, rolesBaseCmcb } from "../commands/server/context/baseRoles";
 
 
@@ -52,7 +60,10 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
     const { commandName, commandType } = int
 
     if(commandType == ApplicationCommandType.User){
-      if(commandName == 'Usuario') usuarioContextMenu(int)
+      const publicCommand = interactionCommands.get(commandName)
+      botDB.usedCommands++
+      if(publicCommand) return publicCommand.run(int, client)
+
       if(commandName == 'Roles base') rolesBaseContextMenu(int)
       botDB.usedCommands++
     }

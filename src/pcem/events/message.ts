@@ -185,8 +185,6 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
 
         if(urls.every(e=> discordDomains.some(s=> e.includes(s)))){
           for(let url of urls) {
-            console.log(url)
-
             let invitation = await client.fetchInvite(url)
 
             if(!(invitation.guild?.id == msg.guildId)){
@@ -242,12 +240,13 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
       svStatistics.commands++
       botDB.usedCommands++
       if(svCommand) return svCommand.run(msg, client, args)
-    }else{
-      const command = textCommands.get(commandName) || textCommands.find(f=> f.alias.some(s=> s==commandName))
-      svStatistics.commands++
-      botDB.usedCommands++
-      if(command) return command.run(msg, client, args)
     }
+
+    const command = textCommands.get(commandName) || textCommands.find(f=> f.alias.some(s=> s==commandName))
+    svStatistics.commands++
+    botDB.usedCommands++
+    if(command) return command.run(msg, client, args)
+    
     
   }
 }

@@ -55,7 +55,14 @@ exports.interactionCommands = new discord_js_1.Collection();
         exports.interactionCommands.set(struct.name, { struct, run: cmdFunction });
     }));
 }));
-const usuario_1 = require("../commands/context/usuario");
+(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/`).forEach((folder) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/${folder}/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
+        const command = yield Promise.resolve().then(() => __importStar(require(`../commands/context/${folder}/${file}`)));
+        const struct = command[Object.keys(command)[0]];
+        const cmdFunction = command[Object.keys(command)[1]];
+        exports.interactionCommands.set(struct.name, { struct, run: cmdFunction });
+    }));
+}));
 const baseRoles_1 = require("../commands/server/context/baseRoles");
 const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f;
@@ -76,8 +83,10 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
     if (int.isContextMenuCommand()) {
         const { commandName, commandType } = int;
         if (commandType == discord_js_1.ApplicationCommandType.User) {
-            if (commandName == 'Usuario')
-                (0, usuario_1.usuarioContextMenu)(int);
+            const publicCommand = exports.interactionCommands.get(commandName);
+            db_1.botDB.usedCommands++;
+            if (publicCommand)
+                return publicCommand.run(int, client);
             if (commandName == 'Roles base')
                 (0, baseRoles_1.rolesBaseContextMenu)(int);
             db_1.botDB.usedCommands++;

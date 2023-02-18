@@ -20,6 +20,8 @@ export const expulsarScb = new SlashCommandBuilder()
   .setNameLocalization('es-ES', 'razón')
   .setDescription(`📝 Provide the reason why you will expel the member.`)
   .setDescriptionLocalization('es-ES', `📝 Proporciona la razón por la que expulsaras al miembro.`)
+  .setMinLength(4)
+  .setMaxLength(800)
   .setRequired(true)
 )
 .addAttachmentOption(image=>
@@ -37,43 +39,57 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
   const dataBot = await getBotData(client), canalRegistro = int.guild?.channels.cache.get(dataBot?.logs.moderation || '')
   const razon = options.getString("reazon", true), member = guild?.members.cache.get(options.getUser('member', true).id), image = options.getAttachment('image')
 
+
   if(setSlashErrors(int, [
     [
       Boolean(member?.id == client.user?.id),
-      `El miembro que has proporcionado *(${member})* soy yo, yo no me puedo expulsar a mi mismo.`
+      (isEnglish ? `The member who provided *(${member})* is me, I can't kick myself.` : `El miembro que has proporcionado *(${member})* soy yo, yo no me puedo expulsar a mi mismo.`)
     ],
     [
       Boolean(member?.id == user.id),
-      `El miembro que has proporcionado *(${member})* eres tu mismo, no te puedes expulsar a ti mismo.`
+      (isEnglish ? `The member you provided *(${member})* is yourself, you can't kick yourself.` : `El miembro que has proporcionado *(${member})* eres tu mismo, no te puedes expulsar a ti mismo.`)
     ],
     [
       Boolean(guild?.ownerId == member?.id),
-      `El miembro que has proporcionado *(${member})* es el dueño del servidor, 'que intentas hacer?'.`
+      (isEnglish ? `The member you provided *(${member})* is the owner of the server, what are you trying to do?` : `El miembro que has proporcionado *(${member})* es el dueño del servidor, 'que intentas hacer?'.`)
     ],
     [
       Boolean(member && (guild?.members.me?.roles.highest.comparePositionTo(member.roles.highest) || 0) <= 0),
-      `El miembro que has proporcionado *(${member})* tiene un rol o mas superiores a los míos, no lo puedo expulsar.`
+      (isEnglish ? `The member you provided *(${member})* has a role or more higher than mine, I can't kick him out.` : `El miembro que has proporcionado *(${member})* tiene un rol o mas superiores a los míos, no lo puedo expulsar.`)
     ],
     [
-      Boolean(member && (author?.roles.highest.comparePositionTo(member.roles.highest) || 0) <= 0),
-      `El miembro que has proporcionado *(${member})* tiene un rol o mas superiores a los tuyos, no lo puedes expulsar.`
+      Boolean((user.id != guild?.ownerId) && member && (author?.roles.highest.comparePositionTo(member.roles.highest) || 0) <= 0),
+      (isEnglish ? `The member you provided *(${member})* has a role or more higher than yours, you can't kick them.` : `El miembro que has proporcionado *(${member})* tiene un rol o mas superiores a los tuyos, no lo puedes expulsar.`)
     ],
     [
-      Boolean(razon.length > 600),
-      `La razón por la que el miembro sera expulsado excede el máximo de caracteres los cueles son **600** caracteres, proporciona una razón mas corta.`
+      Boolean(image && image.contentType?.split('/')[0] != 'image'),
+      (isEnglish ? `The file provided is not an image, please provide an image as evidence.` : `El archivo proporcionado no es una imagen, proporciona una imagen como evidencia.`)
     ],
+    [
+      Boolean(image && image.size >= 8000000),
+      (isEnglish ? `The image weight is equal to or greater than **8MB**, it provides a lighter image.` : `El peso de la imagen es igual o mayor a **8MB**, proporciona una imagen mas ligera.`)
+    ]
   ])) return
 
   const KickEb = new EmbedBuilder()
   .setAuthor({name: author?.nickname || int.user.username, iconURL: int.user.avatarURL() || undefined})
-  .setThumbnail(member?.displayAvatarURL({size: 1024}) || null)
+  .setTitle(`${botDB.emoji.exit} `+(member?.user.bot ? 
+    (isEnglish ? `Bot kicked` : `Bot expulsado`) : 
+    (isEnglish ? 'Member kicked' : `Miembro expulsado`))
+  )
+  .setDescription(member?.user.bot ? 
+    `🤖 **${isEnglish ? 'Former bot' : 'Ex bot'}:** ${member}\n**ID:** ${member?.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${razon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}` :
+    `🧑 **${isEnglish ? 'Former member' : 'Ex miembro'}:** ${member}\n**ID:** ${member?.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${razon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}`
+  )
+  .setThumbnail(member?.displayAvatarURL({size: 1024, extension: member.avatar?.includes('a_') ? 'gif' : 'png'}) || null)
   .setColor("#ff8001")
   .setTimestamp()
+  .setFooter({text: guild?.name || 'undefined', iconURL: guild?.iconURL() || undefined})
 
-  const KickDmEb = new EmbedBuilder()
+  const KickDMEb = new EmbedBuilder()
   .setAuthor({name: member?.user.tag || 'undefined', iconURL: member?.displayAvatarURL()})
   .setThumbnail(guild?.iconURL({size: 1024}) || null)
-  .setTitle("<:salir12:879519859694776360> Has sido expulsado")
+  .setTitle(`${botDB.emoji.exit} Has sido expulsado/a`)
   .setDescription(`**de:** ${guild?.name}\n\n📑 **Razón:** ${razon}`)
   .setFooter({text: `Por el moderador: ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
   .setColor("#ff8001")
@@ -86,26 +102,18 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
   .setFooter({text: member?.user.tag || 'undefined', iconURL: member?.displayAvatarURL()})
   .setTimestamp()
 
-  if(int.user.id != guild?.ownerId){
-    if(setSlashErrors(int, [
-      [
-        Boolean(member?.id == guild?.ownerId),
-        `El miembro que has proporcionado *(${member})* es el dueño del servidor, ¿como se te ocurre intentar tal cosa?.`
-      ],
-      [
-        Boolean((member && author) && member.roles.highest.comparePositionTo(author.roles.highest)>=0),
-        `El rol mas alto del miembro que has proporcionado *(${member})* esta en una posición mayor o igual a la posición de tu rol mas alto, no puedes expulsar al miembro.`
-      ]
-    ])) return
+  if(image){
+    image.name = `evidence.${image.contentType?.split('/')[1]}`
+    KickEb.setImage('attachment://'+image.name)
+    KickDMEb.setImage('attachment://'+image.name)
   }
+
+  const isBot = user.bot
+  const kickReazon = `${razon} | ${isEnglish ? `Kicked ${isBot ? 'bot' : 'member'}` : `${isBot ? 'Bot' : 'Miembro'} expulsado`}: ${member?.user.tag} | ${isEnglish ? 'Moderator' : 'Moderador'}: ${user.tag} ID: ${user.id}`
   
   await int.deferReply()
-  if(member?.user.bot){
-    KickEb
-    .setTitle(`${botDB.emoji.exit} Bot expulsado`)
-    .setDescription(`🤖 **Ex bot:** ${member}\n**ID:** ${member?.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
-    .setFooter({text: member?.user.tag || 'undefined', iconURL: member?.displayAvatarURL()})
 
+  if(isBot){
     KickLogEb
     .addFields(
       {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
@@ -114,16 +122,12 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
       {name: "📑 **Razón:**", value: `${razon}`}
     )
 
-    member.kick(`Moderador: ${int.user.tag} ID: ${int.user.id} | Bot expulsado: ${member?.user.tag}, ID: ${member?.id} | Razón: ${razon}`).then(()=>{
-      sendMessageSlash(int, {embeds: [KickEb]})
+    member?.kick(kickReazon).then(()=>{
+      sendMessageSlash(int, {embeds: [KickEb], files: image ? [image] : []})
       // if(canalRegistro?.type == ChannelType.GuildText) canalRegistro.send({embeds: [KickLogEb]})
     })
  
   }else{
-    KickEb
-    .setTitle(`${botDB.emoji.exit} Miembro expulsado`)
-    .setDescription(`👤 **Ex miembro:** ${member}\n**ID:** ${member?.id}\n\n📑 **Razón:** ${razon}\n\n👮 **Moderador:** ${int.user}`)
-    
     KickLogEb
     .addFields(
       {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
@@ -132,20 +136,14 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
       {name: "📑 **Razón:**", value: `${razon}`}
     )
    
-    member?.kick(`Moderador ID: ${int.user.id} | Miembro expulsado: ${member?.user.tag}, ID: ${member?.id} | Razón: ${razon}`).then(k=>{
+    member?.kick(kickReazon).then(k=>{
       // if(canalRegistro?.type == ChannelType.GuildText) canalRegistro.send({embeds: [KickLogEb]})
-      member?.send({embeds: [KickDmEb]}).then(()=>{
-        KickEb
-        .setFooter({text: member?.user.tag || 'undefined', iconURL: member?.displayAvatarURL()})
-        
-      }).catch(()=> {
-        KickEb
-        .setFooter({text: `No he podido enviar el mensaje al exmiembro ${member?.user.tag}`, iconURL: member?.displayAvatarURL()})
-        
+      member?.send({embeds: [KickDMEb], files: image ? [image] : []}).catch(()=> {
+        if(KickEb.data.footer) KickEb.data.footer.text = isEnglish ? `I could not send the message to the former member ${member.user.tag}` : `No he podido enviar el mensaje al ex miembro ${member?.user.tag}`
       }).finally(()=> {
-        sendMessageSlash(int, {embeds: [KickEb]})
+        sendMessageSlash(int, {embeds: [KickEb], files: image ? [image] : []})
       })
     })
      
   }
-} //*? linesas 196 a 132
+}

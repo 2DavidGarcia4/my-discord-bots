@@ -181,7 +181,6 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
                     .setFooter({ text: ((_r = msg.guild) === null || _r === void 0 ? void 0 : _r.name) || 'undefined', iconURL: ((_s = msg.guild) === null || _s === void 0 ? void 0 : _s.iconURL()) || undefined });
                 if (urls.every(e => discordDomains.some(s => e.includes(s)))) {
                     for (let url of urls) {
-                        console.log(url);
                         let invitation = yield client.fetchInvite(url);
                         if (!(((_t = invitation.guild) === null || _t === void 0 ? void 0 : _t.id) == msg.guildId)) {
                             msg.reply({ embeds: [UrlWarningEb], content: `<@${msg.author.id}>` }).then(te => {
@@ -236,13 +235,11 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
             if (svCommand)
                 return svCommand.run(msg, client, args);
         }
-        else {
-            const command = exports.textCommands.get(commandName) || exports.textCommands.find(f => f.alias.some(s => s == commandName));
-            __1.svStatistics.commands++;
-            db_1.botDB.usedCommands++;
-            if (command)
-                return command.run(msg, client, args);
-        }
+        const command = exports.textCommands.get(commandName) || exports.textCommands.find(f => f.alias.some(s => s == commandName));
+        __1.svStatistics.commands++;
+        db_1.botDB.usedCommands++;
+        if (command)
+            return command.run(msg, client, args);
     }
 });
 exports.messageEvent = messageEvent;
