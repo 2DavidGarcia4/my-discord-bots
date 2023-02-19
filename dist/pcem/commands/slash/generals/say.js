@@ -23,7 +23,7 @@ exports.sayScb = new discord_js_1.SlashCommandBuilder()
     .setDescription('📄 The text to say.')
     .setDescriptionLocalization('es-ES', '📄 El texto para decir.')
     .setMaxLength(600)
-    .setRequired(true));
+    .setRequired(true)).toJSON();
 const saySlashCommand = (int) => {
     const { user, guild, options, locale } = int, isEnglish = locale == 'en-US', author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     let text = options.getString('text', true);

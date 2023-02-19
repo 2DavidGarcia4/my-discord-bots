@@ -14,7 +14,7 @@ export const sayScb = new SlashCommandBuilder()
   .setDescriptionLocalization('es-ES', '📄 El texto para decir.')
   .setMaxLength(600)
   .setRequired(true)
-)
+).toJSON()
 
 export const saySlashCommand = (int: ChatInputCommandInteraction<CacheType>) => {
   const { user, guild, options, locale } = int, isEnglish = locale == 'en-US', author = guild?.members.cache.get(user.id)
