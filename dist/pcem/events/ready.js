@@ -38,6 +38,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         if (ps + 1 == mapa.length)
             console.log(`Roles principales agregados a ${ps + 1} miembros.`);
     });
+    //? load raffles model
     let dataSor = yield models_1.rafflesModel.findById(db_1.botDB.serverId), msgsSorteos = 0;
     if (dataSor && dataSor.raffles.length) {
         for (let s of dataSor.raffles) {
@@ -51,6 +52,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         }
         console.log(msgsSorteos == 0 ? "No hay sorteos que cargar." : `Se han cargado ${msgsSorteos} sorteos.`);
     }
+    //? Load surveys model
     let dataEnc = yield models_1.surveysModel.findById(db_1.botDB.serverId), msgsEncuestas = 0;
     if (dataEnc && dataEnc.surveys.length) {
         for (let e of dataEnc.surveys) {
@@ -307,7 +309,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         vips();
     }), 30 * 60000);
     // console.log(svInteractionCommands.map(m=> m))
-    // console.log(interactionCommands.map(m=> m))
+    // console.log(interactionCommands.map(m=> ({name: m.struct.name, pr: m.struct.default_member_permissions})))
     interaction_1.svInteractionCommands === null || interaction_1.svInteractionCommands === void 0 ? void 0 : interaction_1.svInteractionCommands.forEach((command, key) => __awaiter(void 0, void 0, void 0, function* () {
         var _a;
         if (!((_a = (yield (servidor === null || servidor === void 0 ? void 0 : servidor.commands.fetch()))) === null || _a === void 0 ? void 0 : _a.some(s => s.name == command.struct.name))) {
@@ -330,8 +332,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     // ;(await servidor?.commands.fetch('964578653369409556', {force: true}))?.edit({options: command1?.options}).then(c=> console.log('Comando actualizado'))
     // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
     //! Public
-    // const command = interactionCommands.get('warn')
-    // ;(await client.application?.commands.fetch('1075637372647125042', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+    const command = interaction_1.interactionCommands.get('timeout');
+    // ;(await client.application?.commands.fetch('1075637369933410425', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
     // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 });
 exports.readyEvent = readyEvent;

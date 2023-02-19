@@ -17,7 +17,6 @@ const discord_js_1 = require("discord.js");
 const ms_1 = __importDefault(require("ms"));
 const db_1 = require("../../../db");
 const functions_1 = require("../../../../shared/functions");
-const utils_1 = require("../../../utils");
 exports.limpiarScb = new discord_js_1.SlashCommandBuilder()
     .setName(`sweep`)
     .setNameLocalization('es-ES', 'barrer')
@@ -37,43 +36,31 @@ exports.limpiarScb = new discord_js_1.SlashCommandBuilder()
     .setDescription(`🆔 ID of the author of the messages to be deleted.`)
     .setDescriptionLocalization('es-ES', `🆔 ID del autor de los mensajes a eliminar.`)
     .setRequired(false))
+    .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.ManageMessages)
     .toJSON();
 const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    const { Flags: per } = discord_js_1.PermissionsBitField, dataBot = yield (0, utils_1.getBotData)(client), author = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(int.user.id);
-    const { options } = int, { emoji, color } = db_1.botDB;
-    if (!dataBot)
-        return;
-    // await int.deferReply({ephemeral: true})
-    let cantidad = int.options.getString('cantidad', true), autorId = int.options.getString('autorid'), id = int.options.getUser("miembro") ? (_b = options.getUser("miembro")) === null || _b === void 0 ? void 0 : _b.id : false || autorId, canalRegistros = client.channels.cache.get(dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.moderation);
+    const { user, guild, options, locale } = int, { emoji, color } = db_1.botDB, isEnglish = locale == 'en-US';
+    const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+    const amount = options.getString('amount', true), member = options.getUser('member'), id = options.getString("id") || (member === null || member === void 0 ? void 0 : member.id);
     if ((0, functions_1.setSlashErrors)(int, [
         [
-            ![per.ModerateMembers, per.KickMembers, per.BanMembers].some(s => author === null || author === void 0 ? void 0 : author.permissions.has(s)),
-            '¡No eres moderador del servidor!, no puede utilizar el comando.'
+            Boolean(isNaN(Number(amount)) && (!['todos', 'all'].some(s => s == amount))),
+            (isEnglish ? `The amount you provided *(${amount})* is not valid as it is not a numeric amount nor is it the word **all**.` : `La cantidad que has proporcionado *(${amount})* no es valida ya que no es una cantidad numérica ni es la palabra **todos**.`)
         ],
         [
-            isNaN(Number(cantidad)) && cantidad != "todos",
-            `La cantidad *(${cantidad})* no es valida ya que no es una cantidad numérica ni es la palabra **todos**.`
+            Boolean(Number(amount) > 400),
+            (isEnglish ? `The amount you have provided *(${amount})* is greater than the maximum amount of messages I can delete which is **400** messages.` : `La cantidad que has proporcionado *(${amount})* es mayora a la cantidad máxima de mensajes que puedo eliminar la cual es **400** mensajes.`)
         ],
         [
-            !isNaN(Number(cantidad)) && Number(cantidad) > 400,
-            `La cantidad que has proporcionado *(${cantidad})* es mayora a la cantidad máxima de mensajes que puedo eliminar la cual es **400** mensajes.`
+            Boolean(member && options.getString("id")),
+            (isEnglish ? `Do not provide a member and an author ID at the same time.` : `No proporciones un miembro y una ID de un autor a la vez.`)
         ],
         [
-            Boolean(int.options.getUser("miembro")) && Boolean(int.options.getString("autorid")),
-            `No proporciones un miembro y una ID de un autor a la vez.`
-        ],
-        [
-            Boolean(autorId && isNaN(Number(autorId))),
-            `La ID del autor *(${autorId})* no es valida ya que no es numérica.`
-        ],
-        [
-            Boolean(autorId && autorId.length != 18),
-            `La ID del autor *(${autorId})* no es valida ya que no contiene **18** caracteres numéricos contiene menos o mas.`
+            Boolean(id && isNaN(Number(id))),
+            (isEnglish ? `The author ID *(${id})* is not valid since it is not numeric.` : `La ID del autor *(${id})* no es valida ya que no es numérica.`)
         ]
     ]))
         return;
-    console.log("hello");
     if (id) {
         console.log('id');
         yield client.users.fetch(id, { force: true }).then((usuario) => __awaiter(void 0, void 0, void 0, function* () {
@@ -94,9 +81,9 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                         parado = true;
                         int.reply({ ephemeral: true, embeds: [embError1] });
                     }
-                    else if (typeof cantidad == 'number') {
-                        if (cantidad < 100 && Math.floor(cantidad / 100) - bueltas < 0) {
-                            filtro = filtro.splice(0, Math.floor(cantidad % 100));
+                    else if (typeof amount == 'number') {
+                        if (amount < 100 && Math.floor(amount / 100) - bueltas < 0) {
+                            filtro = filtro.splice(0, Math.floor(amount % 100));
                         }
                         mensajes += filtro.length;
                         let embElimiando = new discord_js_1.EmbedBuilder()
@@ -106,7 +93,7 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                             int.reply({ ephemeral: true, embeds: [embElimiando] });
                         }
                         int.channel.bulkDelete(filtro);
-                        if (mensajes == cantidad || (bueltas > 1 && filtro.length == 0)) {
+                        if (mensajes == amount || (bueltas > 1 && filtro.length == 0)) {
                             parado = true;
                             let embLimpiar = new discord_js_1.EmbedBuilder()
                                 .setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || int.user.username, iconURL: int.user.displayAvatarURL() })
@@ -114,7 +101,7 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                                 .setColor(((_f = (_e = int.guild) === null || _e === void 0 ? void 0 : _e.members.me) === null || _f === void 0 ? void 0 : _f.displayHexColor) || 'White')
                                 .setFooter({ text: ((_g = int.guild) === null || _g === void 0 ? void 0 : _g.name) || 'undefined', iconURL: ((_h = int.guild) === null || _h === void 0 ? void 0 : _h.iconURL()) || undefined })
                                 .setTimestamp();
-                            if (mensajes == cantidad) {
+                            if (mensajes == amount) {
                                 embLimpiar
                                     .setDescription(`Se han eliminado **${mensajes}** mensajes del ${((_j = int.guild) === null || _j === void 0 ? void 0 : _j.members.cache.has(id || '')) ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal.`);
                             }
@@ -122,17 +109,8 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                                 embLimpiar
                                     .setDescription(`Solo he podido eliminar **${mensajes}** mensajes del ${((_k = int.guild) === null || _k === void 0 ? void 0 : _k.members.cache.has(id || '')) ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal.`);
                             }
-                            const embRegistro = new discord_js_1.EmbedBuilder()
-                                .setAuthor({ name: `Comando ejecutado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL() })
-                                .setTitle(`📝 Registro del comando /limpiar`)
-                                .addFields({ name: `📌 **Utilizado en el canal:**`, value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: `👮 **Autor:**`, value: `${int.user}\n**ID:** ${int.user.id}` }, { name: `🗑️ **Mensajes eliminados:**`, value: `**${mensajes}** de ${usuario}\n**ID:** ${usuario.id}` })
-                                .setColor('Blue')
-                                .setFooter({ text: usuario.tag, iconURL: usuario.displayAvatarURL() })
-                                .setTimestamp();
                             setTimeout(() => {
                                 int.reply({ ephemeral: true, embeds: [embLimpiar] });
-                                if ((canalRegistros === null || canalRegistros === void 0 ? void 0 : canalRegistros.type) == discord_js_1.ChannelType.GuildText)
-                                    canalRegistros.send({ embeds: [embRegistro] });
                             }, mensajes * 100);
                         }
                     }
@@ -170,7 +148,7 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                 console.log(filtro.length);
                 const embError1 = new discord_js_1.EmbedBuilder()
                     .setTitle(`${emoji.negative} Error`)
-                    .setDescription(`No hay mensajes en este canal para eliminar o los mensajes que hay en este canal superan los **14** días y no puedo eliminar mensajes con ese tiempo.`)
+                    .setDescription(`No hay mensajes en este canal para eliminar o los mensajes que hay superan los **14** días y no puedo eliminar mensajes con ese tiempo.`)
                     .setColor(color.negative);
                 if (bueltas == 1 && filtro.length == 0) {
                     console.log('Error');
@@ -179,9 +157,9 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                 }
                 else {
                     console.log('numero');
-                    const amount = Number(cantidad);
-                    if (amount < 100 && Math.floor(amount / 100) - bueltas < 0) {
-                        filtro = filtro.splice(0, Math.floor(amount % 100));
+                    const amountN = Number(amount);
+                    if (amountN < 100 && Math.floor(amountN / 100) - bueltas < 0) {
+                        filtro = filtro.splice(0, Math.floor(amountN % 100));
                     }
                     mensajes += filtro.length;
                     let embElimiando = new discord_js_1.EmbedBuilder()
@@ -191,7 +169,7 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                         int.reply({ ephemeral: true, embeds: [embElimiando] });
                     }
                     yield int.channel.bulkDelete(filtro);
-                    if (mensajes == amount || (bueltas > 1 && filtro.length == 0)) {
+                    if (mensajes == amountN || (bueltas > 1 && filtro.length == 0)) {
                         parado = true;
                         let embLimpiar = new discord_js_1.EmbedBuilder()
                             .setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || int.user.username, iconURL: int.user.displayAvatarURL() })
@@ -199,24 +177,16 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
                             .setColor(((_d = (_c = int.guild) === null || _c === void 0 ? void 0 : _c.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White')
                             .setFooter({ text: ((_e = int.guild) === null || _e === void 0 ? void 0 : _e.name) || 'undefined', iconURL: ((_f = int.guild) === null || _f === void 0 ? void 0 : _f.iconURL()) || undefined })
                             .setTimestamp();
-                        if (mensajes == amount) {
+                        if (mensajes == amountN) {
                             embLimpiar
                                 .setDescription(`Se han eliminado **${mensajes}** mensajes en este canal.`);
                         }
                         else {
                             embLimpiar
-                                .setDescription(`Solo he podido eliminar **${mensajes}** mensajes de los **${cantidad}** que me pediste en este canal.`);
+                                .setDescription(`Solo he podido eliminar **${mensajes}** mensajes de los **${amount}** que me pediste en este canal.`);
                         }
-                        const embRegistro = new discord_js_1.EmbedBuilder()
-                            .setAuthor({ name: `Comando ejecutado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL() })
-                            .setTitle(`📝 Registro del comando /limpiar`)
-                            .addFields({ name: `📌 **Utilizado en el canal:**`, value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: `👮 **Autor:**`, value: `${int.user}\n**ID:** ${int.user.id}` }, { name: `🗑️ **Mensajes eliminados:**`, value: `**${mensajes}**` })
-                            .setColor('Blue')
-                            .setTimestamp();
                         setTimeout(() => {
                             int.reply({ embeds: [embLimpiar] });
-                            if ((canalRegistros === null || canalRegistros === void 0 ? void 0 : canalRegistros.type) == discord_js_1.ChannelType.GuildText)
-                                canalRegistros.send({ embeds: [embRegistro] });
                         }, mensajes * 100);
                     }
                 }

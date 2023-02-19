@@ -42,7 +42,7 @@ const expulsarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, 
     var _a, _b, _c, _d, _e, _f;
     const { guild, user, options, locale } = int, isEnglish = locale == 'en-US', author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     const dataBot = yield (0, utils_1.getBotData)(client), canalRegistro = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.moderation) || '');
-    const razon = options.getString("reazon", true), member = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(options.getUser('member', true).id), image = options.getAttachment('image');
+    const reazon = options.getString("reazon", true), member = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(options.getUser('member', true).id), image = options.getAttachment('image');
     if ((0, functions_1.setSlashErrors)(int, [
         [
             Boolean((member === null || member === void 0 ? void 0 : member.id) == ((_b = client.user) === null || _b === void 0 ? void 0 : _b.id)),
@@ -80,8 +80,8 @@ const expulsarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, 
         (isEnglish ? `Bot kicked` : `Bot expulsado`) :
         (isEnglish ? 'Member kicked' : `Miembro expulsado`)))
         .setDescription((member === null || member === void 0 ? void 0 : member.user.bot) ?
-        `🤖 **${isEnglish ? 'Former bot' : 'Ex bot'}:** ${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${razon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}` :
-        `🧑 **${isEnglish ? 'Former member' : 'Ex miembro'}:** ${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${razon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}`)
+        `🤖 **${isEnglish ? 'Former bot' : 'Ex bot'}:** ${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${reazon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}` :
+        `🧑 **${isEnglish ? 'Former member' : 'Ex miembro'}:** ${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${reazon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}`)
         .setThumbnail((member === null || member === void 0 ? void 0 : member.displayAvatarURL({ size: 1024, extension: ((_e = member.avatar) === null || _e === void 0 ? void 0 : _e.includes('a_')) ? 'gif' : 'png' })) || null)
         .setColor("#ff8001")
         .setTimestamp()
@@ -90,7 +90,7 @@ const expulsarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, 
         .setAuthor({ name: (member === null || member === void 0 ? void 0 : member.user.tag) || 'undefined', iconURL: member === null || member === void 0 ? void 0 : member.displayAvatarURL() })
         .setThumbnail((guild === null || guild === void 0 ? void 0 : guild.iconURL({ size: 1024 })) || null)
         .setTitle(`${db_1.botDB.emoji.exit} Has sido expulsado/a`)
-        .setDescription(`**de:** ${guild === null || guild === void 0 ? void 0 : guild.name}\n\n📑 **Razón:** ${razon}`)
+        .setDescription(`**de:** ${guild === null || guild === void 0 ? void 0 : guild.name}\n\n📑 **Razón:** ${reazon}`)
         .setFooter({ text: `Por el moderador: ${int.user.tag}`, iconURL: int.user.displayAvatarURL() })
         .setColor("#ff8001")
         .setTimestamp();
@@ -106,11 +106,11 @@ const expulsarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, 
         KickDMEb.setImage('attachment://' + image.name);
     }
     const isBot = user.bot;
-    const kickReazon = `${razon} | ${isEnglish ? `Kicked ${isBot ? 'bot' : 'member'}` : `${isBot ? 'Bot' : 'Miembro'} expulsado`}: ${member === null || member === void 0 ? void 0 : member.user.tag} | ${isEnglish ? 'Moderator' : 'Moderador'}: ${user.tag} ID: ${user.id}`;
+    const kickReazon = `${reazon} | ${isEnglish ? `Kicked ${isBot ? 'bot' : 'member'}` : `${isBot ? 'Bot' : 'Miembro'} expulsado`}: ${member === null || member === void 0 ? void 0 : member.user.tag} | ${isEnglish ? 'Moderator' : 'Moderador'}: ${user.tag} ID: ${user.id}`;
     yield int.deferReply();
     if (isBot) {
         KickLogEb
-            .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "🤖 **Bot expulsado:**", value: `${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}` }, { name: "📑 **Razón:**", value: `${razon}` });
+            .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "🤖 **Bot expulsado:**", value: `${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}` }, { name: "📑 **Razón:**", value: `${reazon}` });
         member === null || member === void 0 ? void 0 : member.kick(kickReazon).then(() => {
             (0, functions_1.sendMessageSlash)(int, { embeds: [KickEb], files: image ? [image] : [] });
             // if(canalRegistro?.type == ChannelType.GuildText) canalRegistro.send({embeds: [KickLogEb]})
@@ -118,7 +118,7 @@ const expulsarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, 
     }
     else {
         KickLogEb
-            .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "👤 **Miembro expulsado:**", value: `${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}` }, { name: "📑 **Razón:**", value: `${razon}` });
+            .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "👤 **Miembro expulsado:**", value: `${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}` }, { name: "📑 **Razón:**", value: `${reazon}` });
         member === null || member === void 0 ? void 0 : member.kick(kickReazon).then(k => {
             // if(canalRegistro?.type == ChannelType.GuildText) canalRegistro.send({embeds: [KickLogEb]})
             member === null || member === void 0 ? void 0 : member.send({ embeds: [KickDMEb], files: image ? [image] : [] }).catch(() => {

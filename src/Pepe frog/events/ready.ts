@@ -16,7 +16,7 @@ export const readyEvent = async (client: Client) => {
   const server = client.guilds.cache.get(serverId)
 
   const logos = client.channels.cache.get('1064289166462042137')
-  let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1067870216157147156/banner_2023-01.jpg?width=468&height=468"
+  let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1076587151271137350/my_avatar_23-02-18.png?width=468&height=468"
   const canvas = createCanvas(1000, 1000);
   const fondo = await loadImage(imagen);
   const context = canvas.getContext("2d");

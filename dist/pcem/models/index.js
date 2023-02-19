@@ -12,8 +12,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.surveysModel = exports.rafflesModel = exports.carcelModel = exports.alliancesModel = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
 //? Sistema de alianzas
-class Alliances {
-}
+let Alliances = class Alliances {
+};
 __decorate([
     (0, typegoose_1.prop)({ type: String, required: true }),
     __metadata("design:type", String)
@@ -26,10 +26,13 @@ __decorate([
     (0, typegoose_1.prop)({ type: Array, required: true }),
     __metadata("design:type", Array)
 ], Alliances.prototype, "servers", void 0);
+Alliances = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], Alliances);
 exports.alliancesModel = (0, typegoose_1.getModelForClass)(Alliances);
 //? Carcél 
-class Carcel {
-}
+let Carcel = class Carcel {
+};
 __decorate([
     (0, typegoose_1.prop)({ type: String, required: true }),
     __metadata("design:type", String)
@@ -38,10 +41,13 @@ __decorate([
     (0, typegoose_1.prop)({ type: Array, required: true }),
     __metadata("design:type", Array)
 ], Carcel.prototype, "prisoners", void 0);
+Carcel = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], Carcel);
 exports.carcelModel = (0, typegoose_1.getModelForClass)(Carcel);
 //? Raffles system
-class Raffles {
-}
+let Raffles = class Raffles {
+};
 __decorate([
     (0, typegoose_1.prop)({ type: String, required: true }),
     __metadata("design:type", String)
@@ -54,10 +60,13 @@ __decorate([
     (0, typegoose_1.prop)({ type: Array, required: true }),
     __metadata("design:type", Array)
 ], Raffles.prototype, "raffles", void 0);
+Raffles = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], Raffles);
 exports.rafflesModel = (0, typegoose_1.getModelForClass)(Raffles);
 //? Surveys system
-class Surveys {
-}
+let Surveys = class Surveys {
+};
 __decorate([
     (0, typegoose_1.prop)({ type: String, required: true }),
     __metadata("design:type", String)
@@ -70,4 +79,7 @@ __decorate([
     (0, typegoose_1.prop)({ type: Array, required: true }),
     __metadata("design:type", Array)
 ], Surveys.prototype, "surveys", void 0);
+Surveys = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], Surveys);
 exports.surveysModel = (0, typegoose_1.getModelForClass)(Surveys);

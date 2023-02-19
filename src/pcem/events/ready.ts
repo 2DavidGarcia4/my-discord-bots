@@ -1,5 +1,5 @@
 import ms from "ms"
-import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder } from "discord.js"
+import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder, PermissionFlagsBits } from "discord.js"
 import { rafflesModel, surveysModel, carcelModel } from "../models"
 import { botDB } from "../db"
 import { svInteractionCommands, interactionCommands } from "./interaction"
@@ -28,6 +28,7 @@ export const readyEvent = async (client: Client) => {
     if (ps + 1 == mapa.length) console.log(`Roles principales agregados a ${ps + 1} miembros.`)
   })
 
+  //? load raffles model
   let dataSor = await rafflesModel.findById(botDB.serverId), msgsSorteos = 0
   if (dataSor && dataSor.raffles.length) {
     for (let s of dataSor.raffles) {
@@ -41,6 +42,7 @@ export const readyEvent = async (client: Client) => {
     console.log(msgsSorteos == 0 ? "No hay sorteos que cargar." : `Se han cargado ${msgsSorteos} sorteos.`)
   }
 
+  //? Load surveys model
   let dataEnc = await surveysModel.findById(botDB.serverId), msgsEncuestas = 0
   if (dataEnc && dataEnc.surveys.length) {
     for (let e of dataEnc.surveys) {
@@ -307,8 +309,7 @@ export const readyEvent = async (client: Client) => {
 
 
   // console.log(svInteractionCommands.map(m=> m))
-  // console.log(interactionCommands.map(m=> m))
-
+  // console.log(interactionCommands.map(m=> ({name: m.struct.name, pr: m.struct.default_member_permissions})))
   
   svInteractionCommands?.forEach(async (command, key) => {
     if(!(await servidor?.commands.fetch())?.some(s=> s.name == command.struct.name)){
@@ -335,8 +336,8 @@ export const readyEvent = async (client: Client) => {
   // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
   
   //! Public
-  // const command = interactionCommands.get('warn')
+  const command = interactionCommands.get('timeout')
   
-  // ;(await client.application?.commands.fetch('1075637372647125042', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+  // ;(await client.application?.commands.fetch('1075637369933410425', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
   // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 }

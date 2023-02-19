@@ -1,6 +1,7 @@
-import { prop, getModelForClass } from "@typegoose/typegoose"
+import { prop, getModelForClass, modelOptions, Severity } from "@typegoose/typegoose"
 
 //? Sistema de alianzas
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
 class Alliances {
   @prop({type: String, required: true})
   public _id: string
@@ -24,6 +25,7 @@ class Alliances {
 export const alliancesModel = getModelForClass(Alliances)
 
 //? Carcél 
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
 class Carcel {
   @prop({type: String, required: true})
   public _id: string
@@ -41,6 +43,7 @@ export const carcelModel = getModelForClass(Carcel)
 
 
 //? Raffles system
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
 class Raffles {
   @prop({type: String, required: true})
   public _id: string
@@ -66,6 +69,7 @@ class Raffles {
 export const rafflesModel = getModelForClass(Raffles)
 
 //? Surveys system
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
 class Surveys {
   @prop({type: String, required: true})
   public _id: string

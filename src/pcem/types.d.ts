@@ -7,7 +7,6 @@ export type BotDB = {
   serverInvite: string
   owners: string[]
   mainRoles: string[]
-  levelRoles: string[]
   usedCommands: number
   emoji: {
     cat: string

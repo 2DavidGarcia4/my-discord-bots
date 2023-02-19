@@ -23,10 +23,11 @@ const commandsSlashComand = (int, client) => __awaiter(void 0, void 0, void 0, f
     const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     const commands = yield ((_a = client.application) === null || _a === void 0 ? void 0 : _a.commands.fetch());
     yield int.deferReply();
+    const mentionCommands = commands === null || commands === void 0 ? void 0 : commands.filter(c => c.type == 1).map((c) => c.options.filter(f => f.type == 1).length ? c.options.map(a => `</${c.name} ${a.name}:${c.id}>`) : `</${c.name}:${c.id}>`).flat().join(', ');
     const CommandsEb = new discord_js_1.EmbedBuilder()
         .setAuthor({ name: `Hola ${(author === null || author === void 0 ? void 0 : author.nickname) || (author === null || author === void 0 ? void 0 : author.user.username)}`, iconURL: author === null || author === void 0 ? void 0 : author.user.displayAvatarURL() })
         .setTitle(`📄 ${isEnglish ? 'Commands' : 'Comandos'}`)
-        .setDescription((isEnglish ? 'A **command** is an order/instruction that you give to the Bot and to which the Bot responds in a certain way according to the order or name of the command.' : 'Un **comando** es una orden/instrucción que les das al Bot y a la que el Bot responde de cierta forma de acuerdo a la orden o nombre del comando.') + `\n\n${commands === null || commands === void 0 ? void 0 : commands.map((c) => c.options.filter(f => f.type == 1).length ? c.options.map(a => `</${c.name} ${a.name}:${c.id}>`) : `</${c.name}:${c.id}>`).flat().join(', ')}`)
+        .setDescription((isEnglish ? 'A **command** is an order/instruction that you give to the Bot and to which the Bot responds in a certain way according to the order or name of the command.' : 'Un **comando** es una orden/instrucción que les das al Bot y a la que el Bot responde de cierta forma de acuerdo a la orden o nombre del comando.') + `\n\n${mentionCommands}`)
         .setFooter({ text: (guild === null || guild === void 0 ? void 0 : guild.name) || 'undefined', iconURL: (guild === null || guild === void 0 ? void 0 : guild.iconURL()) || undefined })
         .setColor(((_b = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White')
         .setTimestamp();

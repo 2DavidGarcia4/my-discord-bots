@@ -37,7 +37,7 @@ export const expulsarScb = new SlashCommandBuilder()
 export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
   const { guild, user, options, locale } = int, isEnglish = locale == 'en-US', author = guild?.members.cache.get(user.id)
   const dataBot = await getBotData(client), canalRegistro = int.guild?.channels.cache.get(dataBot?.logs.moderation || '')
-  const razon = options.getString("reazon", true), member = guild?.members.cache.get(options.getUser('member', true).id), image = options.getAttachment('image')
+  const reazon = options.getString("reazon", true), member = guild?.members.cache.get(options.getUser('member', true).id), image = options.getAttachment('image')
 
 
   if(setSlashErrors(int, [
@@ -78,8 +78,8 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
     (isEnglish ? 'Member kicked' : `Miembro expulsado`))
   )
   .setDescription(member?.user.bot ? 
-    `🤖 **${isEnglish ? 'Former bot' : 'Ex bot'}:** ${member}\n**ID:** ${member?.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${razon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}` :
-    `🧑 **${isEnglish ? 'Former member' : 'Ex miembro'}:** ${member}\n**ID:** ${member?.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${razon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}`
+    `🤖 **${isEnglish ? 'Former bot' : 'Ex bot'}:** ${member}\n**ID:** ${member?.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${reazon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}` :
+    `🧑 **${isEnglish ? 'Former member' : 'Ex miembro'}:** ${member}\n**ID:** ${member?.id}\n\n📑 **${isEnglish ? 'Reazon' : 'Razón'}:** ${reazon}\n\n👮 **${isEnglish ? 'Moderator' : 'Moderador'}:** ${int.user}`
   )
   .setThumbnail(member?.displayAvatarURL({size: 1024, extension: member.avatar?.includes('a_') ? 'gif' : 'png'}) || null)
   .setColor("#ff8001")
@@ -90,7 +90,7 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
   .setAuthor({name: member?.user.tag || 'undefined', iconURL: member?.displayAvatarURL()})
   .setThumbnail(guild?.iconURL({size: 1024}) || null)
   .setTitle(`${botDB.emoji.exit} Has sido expulsado/a`)
-  .setDescription(`**de:** ${guild?.name}\n\n📑 **Razón:** ${razon}`)
+  .setDescription(`**de:** ${guild?.name}\n\n📑 **Razón:** ${reazon}`)
   .setFooter({text: `Por el moderador: ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
   .setColor("#ff8001")
   .setTimestamp()
@@ -109,7 +109,7 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
   }
 
   const isBot = user.bot
-  const kickReazon = `${razon} | ${isEnglish ? `Kicked ${isBot ? 'bot' : 'member'}` : `${isBot ? 'Bot' : 'Miembro'} expulsado`}: ${member?.user.tag} | ${isEnglish ? 'Moderator' : 'Moderador'}: ${user.tag} ID: ${user.id}`
+  const kickReazon = `${reazon} | ${isEnglish ? `Kicked ${isBot ? 'bot' : 'member'}` : `${isBot ? 'Bot' : 'Miembro'} expulsado`}: ${member?.user.tag} | ${isEnglish ? 'Moderator' : 'Moderador'}: ${user.tag} ID: ${user.id}`
   
   await int.deferReply()
 
@@ -119,7 +119,7 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
       {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
       {name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}`},
       {name: "🤖 **Bot expulsado:**", value: `${member}\n**ID:** ${member?.id}`},
-      {name: "📑 **Razón:**", value: `${razon}`}
+      {name: "📑 **Razón:**", value: `${reazon}`}
     )
 
     member?.kick(kickReazon).then(()=>{
@@ -133,7 +133,7 @@ export const expulsarSlashCommand = async (int: ChatInputCommandInteraction<Cach
       {name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}`},
       {name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}`},
       {name: "👤 **Miembro expulsado:**", value: `${member}\n**ID:** ${member?.id}`},
-      {name: "📑 **Razón:**", value: `${razon}`}
+      {name: "📑 **Razón:**", value: `${reazon}`}
     )
    
     member?.kick(kickReazon).then(k=>{

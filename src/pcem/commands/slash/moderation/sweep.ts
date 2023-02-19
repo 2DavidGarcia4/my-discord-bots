@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, ApplicationCommandPermissionType, PermissionsBitField, ChannelType } from "discord.js";
+import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, ChannelType, PermissionFlagsBits, bold } from "discord.js";
 import ms from "ms";
 import { botDB } from "../../../db";
 import { setSlashErrors } from "../../../../shared/functions";
@@ -29,45 +29,35 @@ export const limpiarScb = new SlashCommandBuilder()
   .setDescriptionLocalization('es-ES', `🆔 ID del autor de los mensajes a eliminar.`)
   .setRequired(false)
 )
+.setDefaultMemberPermissions(PermissionFlagsBits.ManageMessages)
 .toJSON()
 
 export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
-  const { Flags: per} = PermissionsBitField, dataBot = await getBotData(client), author = int.guild?.members.cache.get(int.user.id)
-  const { options } = int, { emoji, color } = botDB
+  const { user, guild, options, locale } = int, { emoji, color } = botDB, isEnglish = locale == 'en-US'
+  const author = guild?.members.cache.get(user.id)
+  const amount = options.getString('amount', true), member = options.getUser('member'), id = options.getString("id") || member?.id 
 
-  if(!dataBot) return
-  
-  // await int.deferReply({ephemeral: true})
-  let cantidad = int.options.getString('cantidad', true), autorId = int.options.getString('autorid'), id = int.options.getUser("miembro") ? options.getUser("miembro")?.id: false || autorId, canalRegistros = client.channels.cache.get(dataBot?.logs.moderation)
 
   if(setSlashErrors(int, [
     [
-      ![per.ModerateMembers, per.KickMembers, per.BanMembers].some(s=> author?.permissions.has(s)),
-      '¡No eres moderador del servidor!, no puede utilizar el comando.'
+      Boolean(isNaN(Number(amount)) && (!['todos', 'all'].some(s=> s==amount))),
+      (isEnglish ? `The amount you provided *(${amount})* is not valid as it is not a numeric amount nor is it the word **all**.` : `La cantidad que has proporcionado *(${amount})* no es valida ya que no es una cantidad numérica ni es la palabra **todos**.`)
     ],
     [
-      isNaN(Number(cantidad)) && cantidad != "todos",
-      `La cantidad *(${cantidad})* no es valida ya que no es una cantidad numérica ni es la palabra **todos**.`
+      Boolean(Number(amount) > 400),
+      (isEnglish ? `The amount you have provided *(${amount})* is greater than the maximum amount of messages I can delete which is **400** messages.` : `La cantidad que has proporcionado *(${amount})* es mayora a la cantidad máxima de mensajes que puedo eliminar la cual es **400** mensajes.`)
     ],
     [
-      !isNaN(Number(cantidad)) && Number(cantidad) > 400,
-      `La cantidad que has proporcionado *(${cantidad})* es mayora a la cantidad máxima de mensajes que puedo eliminar la cual es **400** mensajes.`
+      Boolean(member && options.getString("id")),
+      (isEnglish ? `Do not provide a member and an author ID at the same time.` : `No proporciones un miembro y una ID de un autor a la vez.`)
     ],
     [
-      Boolean(int.options.getUser("miembro")) && Boolean(int.options.getString("autorid")),
-      `No proporciones un miembro y una ID de un autor a la vez.`
-    ],
-    [
-      Boolean(autorId && isNaN(Number(autorId))),
-      `La ID del autor *(${autorId})* no es valida ya que no es numérica.`
-    ],
-    [
-      Boolean(autorId && autorId.length != 18),
-      `La ID del autor *(${autorId})* no es valida ya que no contiene **18** caracteres numéricos contiene menos o mas.`
+      Boolean(id && isNaN(Number(id))),
+      (isEnglish ? `The author ID *(${id})* is not valid since it is not numeric.` : `La ID del autor *(${id})* no es valida ya que no es numérica.`)
     ]
   ])) return
 
-  console.log("hello")
+
   if(id){
     console.log('id')
     await client.users.fetch(id, {force: true}).then(async usuario=> {
@@ -85,10 +75,10 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
         if(bueltas == 1 && filtro.length==0){
           parado = true
           int.reply({ephemeral: true, embeds: [embError1]})
-        }else if(typeof cantidad == 'number') {
+        }else if(typeof amount == 'number') {
 
-          if(cantidad<100 && Math.floor(cantidad/100)-bueltas<0){
-            filtro = filtro.splice(0,Math.floor(cantidad%100))
+          if(amount<100 && Math.floor(amount/100)-bueltas<0){
+            filtro = filtro.splice(0,Math.floor(amount%100))
           }
           mensajes+=filtro.length
           let embElimiando = new EmbedBuilder()
@@ -99,7 +89,7 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
           }
 
           int.channel.bulkDelete(filtro)
-          if(mensajes == cantidad || (bueltas > 1 && filtro.length==0)){
+          if(mensajes == amount || (bueltas > 1 && filtro.length==0)){
             parado = true
             let embLimpiar = new EmbedBuilder()
             .setAuthor({name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL()})
@@ -108,27 +98,16 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
             .setFooter({text: int.guild?.name || 'undefined', iconURL: int.guild?.iconURL() || undefined})
             .setTimestamp()
 
-            if(mensajes == cantidad){
+            if(mensajes == amount){
               embLimpiar
               .setDescription(`Se han eliminado **${mensajes}** mensajes del ${int.guild?.members.cache.has(id || '') ? `miembro <@${id}>`: `usuario <@${id}>`} en este canal.`)
             }else{
               embLimpiar
               .setDescription(`Solo he podido eliminar **${mensajes}** mensajes del ${int.guild?.members.cache.has(id || '') ? `miembro <@${id}>`: `usuario <@${id}>`} en este canal.`)
             }
-            const embRegistro = new EmbedBuilder()
-            .setAuthor({name: `Comando ejecutado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
-            .setTitle(`📝 Registro del comando /limpiar`)
-            .addFields(
-              {name: `📌 **Utilizado en el canal:**`, value: `${int.channel}\n**ID:** ${int.channelId}`},
-              {name: `👮 **Autor:**`, value: `${int.user}\n**ID:** ${int.user.id}`},
-              {name: `🗑️ **Mensajes eliminados:**`, value: `**${mensajes}** de ${usuario}\n**ID:** ${usuario.id}`},
-            )
-            .setColor('Blue')
-            .setFooter({text: usuario.tag, iconURL: usuario.displayAvatarURL()})
-            .setTimestamp()
+            
             setTimeout(()=>{
               int.reply({ephemeral: true, embeds: [embLimpiar]})
-              if(canalRegistros?.type == ChannelType.GuildText) canalRegistros.send({embeds: [embRegistro]})
             }, mensajes*100)
           }
         }
@@ -153,6 +132,7 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
   }else{
     console.log('else id')
     let bueltas = 0, mensajes = 0, parado = false
+
     async function clearMessages(){
       console.log('función')
       if(int.channel?.type != ChannelType.GuildText) return
@@ -160,9 +140,10 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
       // ;(await int.channel.messages.fetch({limit: 10})).forEach(msg=> console.log(msg.createdAt, msg.createdTimestamp))
       let filtro = (await int.channel?.messages.fetch({limit: 100})).filter(f=> Date.now() - f.createdTimestamp < ms("14d")).map(m=>m)
       console.log(filtro.length)
+
       const embError1 = new EmbedBuilder()
       .setTitle(`${emoji.negative} Error`)
-      .setDescription(`No hay mensajes en este canal para eliminar o los mensajes que hay en este canal superan los **14** días y no puedo eliminar mensajes con ese tiempo.`)
+      .setDescription(`No hay mensajes en este canal para eliminar o los mensajes que hay superan los **14** días y no puedo eliminar mensajes con ese tiempo.`)
       .setColor(color.negative)
 
       if(bueltas == 1 && filtro.length==0){
@@ -172,10 +153,10 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
 
       }else {
         console.log('numero')
-        const amount = Number(cantidad)
+        const amountN = Number(amount)
 
-        if(amount<100 && Math.floor(amount/100)-bueltas<0){
-          filtro = filtro.splice(0,Math.floor(amount%100))
+        if(amountN<100 && Math.floor(amountN/100)-bueltas<0){
+          filtro = filtro.splice(0,Math.floor(amountN%100))
         }
 
         mensajes+=filtro.length
@@ -187,7 +168,7 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
         }
 
         await int.channel.bulkDelete(filtro)
-        if(mensajes == amount || (bueltas > 1 && filtro.length==0)){
+        if(mensajes == amountN || (bueltas > 1 && filtro.length==0)){
           parado = true
           let embLimpiar = new EmbedBuilder()
           .setAuthor({name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL()})
@@ -195,26 +176,16 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
           .setColor(int.guild?.members.me?.displayHexColor || 'White')
           .setFooter({text: int.guild?.name || 'undefined', iconURL: int.guild?.iconURL() || undefined})
           .setTimestamp()
-          if(mensajes == amount){
+          if(mensajes == amountN){
             embLimpiar
             .setDescription(`Se han eliminado **${mensajes}** mensajes en este canal.`)
           }else{
             embLimpiar
-            .setDescription(`Solo he podido eliminar **${mensajes}** mensajes de los **${cantidad}** que me pediste en este canal.`)
+            .setDescription(`Solo he podido eliminar **${mensajes}** mensajes de los **${amount}** que me pediste en este canal.`)
           }
-          const embRegistro = new EmbedBuilder()
-          .setAuthor({name: `Comando ejecutado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL()})
-          .setTitle(`📝 Registro del comando /limpiar`)
-          .addFields(
-            {name: `📌 **Utilizado en el canal:**`, value: `${int.channel}\n**ID:** ${int.channelId}`},
-            {name: `👮 **Autor:**`, value: `${int.user}\n**ID:** ${int.user.id}`},
-            {name: `🗑️ **Mensajes eliminados:**`, value: `**${mensajes}**`},
-          )
-          .setColor('Blue')
-          .setTimestamp()
+          
           setTimeout(()=>{
             int.reply({embeds: [embLimpiar]})
-            if(canalRegistros?.type == ChannelType.GuildText) canalRegistros.send({embeds: [embRegistro]})
           }, mensajes*100)
         }
       }
