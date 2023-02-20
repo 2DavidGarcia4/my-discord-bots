@@ -11,6 +11,7 @@ export const readyEvent = async (client: Client) => {
   if (!client.user) return
   
   const dataBot = await getBotData(client)
+  console.log(dataBot)
   defaultReady(client, dataBot?.logs.connections || '', botDB.color.afirmative)
   
   const servidor = client.guilds.cache.get(botDB.serverId)
@@ -201,8 +202,7 @@ export const readyEvent = async (client: Client) => {
     const dataSor = await rafflesModel.findById(botDB.serverId), arraySo = dataSor?.raffles
     if(arraySo){
       for (let s of arraySo) {
-        if (s.active && s.ends < Date.now()) {
-          
+        if (s.active && s.ends < Date.now()) {          
           const channel = client.channels.cache.get(s.channelId)
           if(channel?.type != ChannelType.GuildText && channel?.type != ChannelType.GuildAnnouncement) return
           const mensage = channel?.messages?.cache.get(s.id)
@@ -232,7 +232,7 @@ export const readyEvent = async (client: Client) => {
             }
             s.active = false
             mensage.edit({ embeds: [emb], content: `*¡Sorteo finalizado!*` })
-            await rafflesModel.findByIdAndUpdate(botDB.serverId, { sorteos: arraySo })
+            await rafflesModel.findByIdAndUpdate(botDB.serverId, { raffles: arraySo })
           }
         }
       }

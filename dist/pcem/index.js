@@ -28,6 +28,8 @@ const reactionAdd_1 = require("./events/reactionAdd");
 const reactionRemove_1 = require("./events/reactionRemove");
 const messageUpdate_1 = require("./events/messageUpdate");
 const utils_1 = require("./utils");
+const guildDelete_1 = require("./events/guildDelete");
+const guildCreate_1 = require("./events/guildCreate");
 const PCEM = new discord_js_1.Client({ intents: 131071 });
 exports.svStatistics = { joins: 0, leaves: 0, messages: 0, commands: 0 }, exports.autoModeration = [{ memberId: "717420870267830382", warnings: 0 }];
 exports.exemptMessagesIds = [];
@@ -59,6 +61,12 @@ PCEM.on('guildMemberAdd', (member) => {
 });
 PCEM.on('guildMemberRemove', (member) => {
     (0, memberRemove_1.memberRemoveEvent)(member, PCEM);
+});
+PCEM.on('guildCreate', (guild) => {
+    (0, guildCreate_1.guildCreateEvent)(guild, PCEM);
+});
+PCEM.on('guildDelete', (guild) => {
+    (0, guildDelete_1.guildDeleteEvent)(guild, PCEM);
 });
 PCEM.on('guildBanAdd', (ban) => {
     (0, banAdd_1.banAddEvent)(ban, PCEM);

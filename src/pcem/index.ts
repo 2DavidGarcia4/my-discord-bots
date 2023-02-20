@@ -16,6 +16,8 @@ import { reactionAddEvent } from "./events/reactionAdd";
 import { reactionRemoveEvent } from "./events/reactionRemove";
 import { messageUpdateEvent } from "./events/messageUpdate";
 import { getBotData } from "./utils";
+import { guildDeleteEvent } from "./events/guildDelete";
+import { guildCreateEvent } from "./events/guildCreate";
 
 const PCEM = new Client({intents: 131071}) 
 export const svStatistics = {joins: 0, leaves: 0, messages: 0, commands: 0}, autoModeration = [{memberId: "717420870267830382", warnings: 0}]
@@ -54,6 +56,14 @@ PCEM.on('guildMemberAdd', (member) => {
 
 PCEM.on('guildMemberRemove', (member) => {
   memberRemoveEvent(member, PCEM)
+})
+
+PCEM.on('guildCreate', (guild) => {
+  guildCreateEvent(guild, PCEM)
+})
+
+PCEM.on('guildDelete', (guild) => {
+  guildDeleteEvent(guild, PCEM)  
 })
 
 PCEM.on('guildBanAdd', (ban) => {
