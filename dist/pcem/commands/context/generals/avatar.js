@@ -13,7 +13,7 @@ exports.avatarContextMenu = exports.avatarCmcb = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../../../shared/functions");
 exports.avatarCmcb = new discord_js_1.ContextMenuCommandBuilder()
-    .setName('avatar')
+    .setName('Avatar')
     .setType(2);
 const avatarContextMenu = (int) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;

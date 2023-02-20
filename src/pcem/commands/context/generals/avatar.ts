@@ -2,7 +2,7 @@ import { ContextMenuCommandBuilder, UserContextMenuCommandInteraction, CacheType
 import { sendMessageSlash } from "../../../../shared/functions";
 
 export const avatarCmcb = new ContextMenuCommandBuilder()
-.setName('avatar')
+.setName('Avatar')
 .setType(2)
 
 export const avatarContextMenu = async (int: UserContextMenuCommandInteraction<CacheType>) => {
