@@ -30,7 +30,7 @@ const messageUpdate_1 = require("./events/messageUpdate");
 const utils_1 = require("./utils");
 const guildDelete_1 = require("./events/guildDelete");
 const guildCreate_1 = require("./events/guildCreate");
-const PCEM = new discord_js_1.Client({ intents: 131071 });
+const Bot = new discord_js_1.Client({ intents: 131071 });
 exports.svStatistics = { joins: 0, leaves: 0, messages: 0, commands: 0 }, exports.autoModeration = [{ memberId: "717420870267830382", warnings: 0 }];
 exports.exemptMessagesIds = [];
 exports.cooldowns = new Map();
@@ -41,57 +41,57 @@ const addUserIdCoolSug = (id) => {
 exports.addUserIdCoolSug = addUserIdCoolSug;
 const addDataMarcar = (data) => exports.sistemMarcar.push(data);
 exports.addDataMarcar = addDataMarcar;
-PCEM.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
-    (0, ready_1.readyEvent)(PCEM);
+Bot.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
+    (0, ready_1.readyEvent)(Bot);
 }));
-PCEM.on('messageCreate', (message) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, message_1.messageEvent)(message, PCEM);
+Bot.on('messageCreate', (message) => __awaiter(void 0, void 0, void 0, function* () {
+    (0, message_1.messageEvent)(message, Bot);
 }));
-PCEM.on('messageDelete', (message) => {
-    (0, messageDelete_1.messageDeleteEvent)(message, PCEM);
+Bot.on('messageDelete', (message) => {
+    (0, messageDelete_1.messageDeleteEvent)(message, Bot);
 });
-PCEM.on('messageUpdate', (oldMessage, newMessage) => {
-    (0, messageUpdate_1.messageUpdateEvent)(oldMessage, newMessage, PCEM);
+Bot.on('messageUpdate', (oldMessage, newMessage) => {
+    (0, messageUpdate_1.messageUpdateEvent)(oldMessage, newMessage, Bot);
 });
-PCEM.on('interactionCreate', (interaction) => {
-    (0, interaction_1.interactionEvent)(interaction, PCEM);
+Bot.on('interactionCreate', (interaction) => {
+    (0, interaction_1.interactionEvent)(interaction, Bot);
 });
-PCEM.on('guildMemberAdd', (member) => {
-    (0, memberAdd_1.memberAddEvent)(member, PCEM);
+Bot.on('guildMemberAdd', (member) => {
+    (0, memberAdd_1.memberAddEvent)(member, Bot);
 });
-PCEM.on('guildMemberRemove', (member) => {
-    (0, memberRemove_1.memberRemoveEvent)(member, PCEM);
+Bot.on('guildMemberRemove', (member) => {
+    (0, memberRemove_1.memberRemoveEvent)(member, Bot);
 });
-PCEM.on('guildCreate', (guild) => {
-    (0, guildCreate_1.guildCreateEvent)(guild, PCEM);
+Bot.on('guildCreate', (guild) => {
+    (0, guildCreate_1.guildCreateEvent)(guild, Bot);
 });
-PCEM.on('guildDelete', (guild) => {
-    (0, guildDelete_1.guildDeleteEvent)(guild, PCEM);
+Bot.on('guildDelete', (guild) => {
+    (0, guildDelete_1.guildDeleteEvent)(guild, Bot);
 });
-PCEM.on('guildBanAdd', (ban) => {
-    (0, banAdd_1.banAddEvent)(ban, PCEM);
+Bot.on('guildBanAdd', (ban) => {
+    (0, banAdd_1.banAddEvent)(ban, Bot);
 });
-PCEM.on('guildBanRemove', (ban) => {
-    (0, banRemove_1.banRemoveEvent)(ban, PCEM);
+Bot.on('guildBanRemove', (ban) => {
+    (0, banRemove_1.banRemoveEvent)(ban, Bot);
 });
-PCEM.on('channelDelete', (channel) => {
-    (0, channelDelete_1.channelDeleteEvent)(channel, PCEM);
+Bot.on('channelDelete', (channel) => {
+    (0, channelDelete_1.channelDeleteEvent)(channel, Bot);
 });
-PCEM.on('inviteCreate', (invite) => {
-    (0, invitationCreate_1.invitationCreateEvent)(invite, PCEM);
+Bot.on('inviteCreate', (invite) => {
+    (0, invitationCreate_1.invitationCreateEvent)(invite, Bot);
 });
-PCEM.on('inviteDelete', (invite) => {
-    (0, invitationDelete_1.invitationDeleteEvent)(invite, PCEM);
+Bot.on('inviteDelete', (invite) => {
+    (0, invitationDelete_1.invitationDeleteEvent)(invite, Bot);
 });
-PCEM.on('messageReactionAdd', (reaction, user) => {
-    (0, reactionAdd_1.reactionAddEvent)(reaction, user, PCEM);
+Bot.on('messageReactionAdd', (reaction, user) => {
+    (0, reactionAdd_1.reactionAddEvent)(reaction, user, Bot);
 });
-PCEM.on('messageReactionRemove', (reaction, user) => {
-    (0, reactionRemove_1.reactionRemoveEvent)(reaction, user, PCEM);
+Bot.on('messageReactionRemove', (reaction, user) => {
+    (0, reactionRemove_1.reactionRemoveEvent)(reaction, user, Bot);
 });
 //! Errors events
-PCEM.on("shardError", (err) => __awaiter(void 0, void 0, void 0, function* () {
-    const dataBot = yield (0, utils_1.getBotData)(PCEM), channelLog = PCEM.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.errors) || '');
+Bot.on("shardError", (err) => __awaiter(void 0, void 0, void 0, function* () {
+    const dataBot = yield (0, utils_1.getBotData)(Bot), channelLog = Bot.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.errors) || '');
     console.log(err);
     const embErr = new discord_js_1.EmbedBuilder()
         .setTitle(`${db_1.botDB.emoji.negative} Ocurrió un error`)
@@ -102,7 +102,7 @@ PCEM.on("shardError", (err) => __awaiter(void 0, void 0, void 0, function* () {
         channelLog.send({ embeds: [embErr] });
 }));
 process.on("unhandledRejection", (err) => __awaiter(void 0, void 0, void 0, function* () {
-    const dataBot = yield (0, utils_1.getBotData)(PCEM), channelLog = PCEM.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.errors) || '');
+    const dataBot = yield (0, utils_1.getBotData)(Bot), channelLog = Bot.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.errors) || '');
     console.log(err);
     const embErr = new discord_js_1.EmbedBuilder()
         .setTitle(`${db_1.botDB.emoji.negative} Ocurrió un error`)
@@ -112,4 +112,4 @@ process.on("unhandledRejection", (err) => __awaiter(void 0, void 0, void 0, func
     if ((!config_1.isDevelopment) && (channelLog === null || channelLog === void 0 ? void 0 : channelLog.type) == discord_js_1.ChannelType.GuildText)
         channelLog.send({ embeds: [embErr] });
 }));
-PCEM.login(config_1.tokenBot);
+Bot.login(config_1.tokenBot);

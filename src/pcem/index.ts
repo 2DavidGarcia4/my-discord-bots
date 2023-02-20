@@ -19,7 +19,7 @@ import { getBotData } from "./utils";
 import { guildDeleteEvent } from "./events/guildDelete";
 import { guildCreateEvent } from "./events/guildCreate";
 
-const PCEM = new Client({intents: 131071}) 
+const Bot = new Client({intents: 131071}) 
 export const svStatistics = {joins: 0, leaves: 0, messages: 0, commands: 0}, autoModeration = [{memberId: "717420870267830382", warnings: 0}]
 export const exemptMessagesIds: string[] = []
 export const cooldowns = new Map()
@@ -30,73 +30,73 @@ export const addUserIdCoolSug = (id: string) => {
 }
 export const addDataMarcar = (data: {autorID: string, sugID: string}) => sistemMarcar.push(data)
 
-PCEM.on('ready', async () => {
-  readyEvent(PCEM)
+Bot.on('ready', async () => {
+  readyEvent(Bot)
 })
 
-PCEM.on('messageCreate', async (message) => {
-  messageEvent(message, PCEM)
+Bot.on('messageCreate', async (message) => {
+  messageEvent(message, Bot)
 })
 
-PCEM.on('messageDelete', (message) => {
-  messageDeleteEvent(message, PCEM)
+Bot.on('messageDelete', (message) => {
+  messageDeleteEvent(message, Bot)
 })
 
-PCEM.on('messageUpdate', (oldMessage, newMessage) => {
-  messageUpdateEvent(oldMessage, newMessage, PCEM)
+Bot.on('messageUpdate', (oldMessage, newMessage) => {
+  messageUpdateEvent(oldMessage, newMessage, Bot)
 })
 
-PCEM.on('interactionCreate', (interaction) => {
-  interactionEvent(interaction, PCEM)
+Bot.on('interactionCreate', (interaction) => {
+  interactionEvent(interaction, Bot)
 })
 
-PCEM.on('guildMemberAdd', (member) => {
-  memberAddEvent(member, PCEM)
+Bot.on('guildMemberAdd', (member) => {
+  memberAddEvent(member, Bot)
 })
 
-PCEM.on('guildMemberRemove', (member) => {
-  memberRemoveEvent(member, PCEM)
+Bot.on('guildMemberRemove', (member) => {
+  memberRemoveEvent(member, Bot)
 })
 
-PCEM.on('guildCreate', (guild) => {
-  guildCreateEvent(guild, PCEM)
+Bot.on('guildCreate', (guild) => {
+  guildCreateEvent(guild, Bot)
 })
 
-PCEM.on('guildDelete', (guild) => {
-  guildDeleteEvent(guild, PCEM)  
+Bot.on('guildDelete', (guild) => {
+  guildDeleteEvent(guild, Bot)  
 })
 
-PCEM.on('guildBanAdd', (ban) => {
-  banAddEvent(ban, PCEM)
+Bot.on('guildBanAdd', (ban) => {
+  banAddEvent(ban, Bot)
 })
 
-PCEM.on('guildBanRemove', (ban) => {
-  banRemoveEvent(ban, PCEM)
+Bot.on('guildBanRemove', (ban) => {
+  banRemoveEvent(ban, Bot)
 })
 
-PCEM.on('channelDelete', (channel) => {
-  channelDeleteEvent(channel, PCEM)
+Bot.on('channelDelete', (channel) => {
+  channelDeleteEvent(channel, Bot)
 })
 
-PCEM.on('inviteCreate', (invite) => {
-  invitationCreateEvent(invite, PCEM)
+Bot.on('inviteCreate', (invite) => {
+  invitationCreateEvent(invite, Bot)
 })
 
-PCEM.on('inviteDelete', (invite) => {
-  invitationDeleteEvent(invite, PCEM)
+Bot.on('inviteDelete', (invite) => {
+  invitationDeleteEvent(invite, Bot)
 })
 
-PCEM.on('messageReactionAdd', (reaction, user) => {
-  reactionAddEvent(reaction, user, PCEM)
+Bot.on('messageReactionAdd', (reaction, user) => {
+  reactionAddEvent(reaction, user, Bot)
 })
 
-PCEM.on('messageReactionRemove', (reaction, user) => {
-  reactionRemoveEvent(reaction, user, PCEM)
+Bot.on('messageReactionRemove', (reaction, user) => {
+  reactionRemoveEvent(reaction, user, Bot)
 })
 
 //! Errors events
-PCEM.on("shardError", async err => {
-  const dataBot = await getBotData(PCEM), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
+Bot.on("shardError", async err => {
+  const dataBot = await getBotData(Bot), channelLog = Bot.channels.cache.get(dataBot?.logs.errors || '')
   console.log(err)
   const embErr = new EmbedBuilder()
   .setTitle(`${botDB.emoji.negative} Ocurrió un error`)
@@ -107,7 +107,7 @@ PCEM.on("shardError", async err => {
 })
 
 process.on("unhandledRejection", async err => {
-  const dataBot = await getBotData(PCEM), channelLog = PCEM.channels.cache.get(dataBot?.logs.errors || '')
+  const dataBot = await getBotData(Bot), channelLog = Bot.channels.cache.get(dataBot?.logs.errors || '')
   console.log(err)
   const embErr = new EmbedBuilder()
   .setTitle(`${botDB.emoji.negative} Ocurrió un error`)
@@ -117,4 +117,4 @@ process.on("unhandledRejection", async err => {
   if((!isDevelopment) && channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [embErr]})
 })
 
-PCEM.login(tokenBot)
+Bot.login(tokenBot)

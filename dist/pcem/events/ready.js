@@ -24,7 +24,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     if (!client.user)
         return;
     const dataBot = yield (0, utils_1.getBotData)(client);
-    console.log(dataBot);
+    // console.log(dataBot)
     (0, functions_1.defaultReady)(client, (dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.connections) || '', db_1.botDB.color.afirmative);
     const servidor = client.guilds.cache.get(db_1.botDB.serverId);
     const channelSuggestions = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.suggestions) || '828300239488024587');

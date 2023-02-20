@@ -11,7 +11,7 @@ export const readyEvent = async (client: Client) => {
   if (!client.user) return
   
   const dataBot = await getBotData(client)
-  console.log(dataBot)
+  // console.log(dataBot)
   defaultReady(client, dataBot?.logs.connections || '', botDB.color.afirmative)
   
   const servidor = client.guilds.cache.get(botDB.serverId)
