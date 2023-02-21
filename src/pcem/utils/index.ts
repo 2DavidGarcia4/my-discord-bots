@@ -1,6 +1,7 @@
-import { Message, EmbedBuilder, Client, ChannelType } from "discord.js"
+import { Message, EmbedBuilder, Client, ChannelType, CacheType, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, ColorResolvable, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js"
 import { botDB } from "../db"
 import { DataBot } from "../types"
+import { sendMessageSlash } from "../../shared/functions"
 
 const { color } = botDB
 
@@ -46,4 +47,105 @@ export const getBotData = async (client: Client): Promise<DataBot | undefined> =
     return data
   }
   return undefined
+}
+
+export const interactiveList = async (int: ChatInputCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, list: string[], title: string, description: string, color: ColorResolvable)  => {
+  const isEnglish = int.locale == 'en-US'
+  await int.deferReply()
+
+  list = list.map((el, i)=> `${i+1}. ${el}`)
+  
+  let allPages = 0
+  if(list && String(list.length).slice(-1) == '0'){
+    allPages = Math.floor(list.length / 10)
+  }else{
+    allPages = Math.floor(list.length / 10 + 1)
+  }
+
+  let start = 0, end = 10, page = 1;
+  
+  const ListEb = new EmbedBuilder({title})
+  .setColor(color)
+  .setTimestamp()
+
+  if((list?.length || 0) <= 10){
+    ListEb
+    .setDescription(description+list.join('\n'))
+    .setFooter({text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}` , iconURL: int.guild?.iconURL() || undefined})
+    sendMessageSlash(int, {embeds: [ListEb]})
+  }else{
+    ListEb
+    .setDescription(description+list.slice(start, end).join("\n"))
+    .setFooter({text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}` , iconURL: int.guild?.iconURL() || undefined})
+
+    const ListButtons = new ActionRowBuilder<ButtonBuilder>()
+    .addComponents(
+      [
+        new ButtonBuilder()
+        .setCustomId('previous')
+        .setLabel("Anterior")
+        .setEmoji(botDB.emoji.leftArrow)
+        .setStyle(ButtonStyle.Secondary),
+
+        new ButtonBuilder()
+        .setCustomId('next')
+        .setLabel("Siguiente")
+        .setEmoji(botDB.emoji.rightArrow)
+        .setStyle(ButtonStyle.Primary)
+      ]
+    ).toJSON()
+        
+    setTimeout(async ()=>{
+      const alliansesMessage = await int.editReply({embeds: [ListEb], components: [ListButtons]})
+      const alliancesCollection = alliansesMessage.createMessageComponentCollector({time: allPages*60000})
+      
+      alliancesCollection.on('collect', async btn => {
+        if (btn.customId == 'previous') {
+          if (end - 10 <= 10) {
+            ListButtons.components[0].style = ButtonStyle.Secondary
+            ListButtons.components[0].disabled = true
+            ListButtons.components[1].disabled = false
+            ListButtons.components[1].style = ButtonStyle.Primary
+            
+          } else {
+            ListButtons.components[0].style = ButtonStyle.Primary
+            ListButtons.components[0].disabled = false
+            ListButtons.components[1].disabled = false
+            ListButtons.components[1].style = ButtonStyle.Primary
+          }
+          start -= 10, end -= 10, page--
+
+          ListEb
+          .setDescription(description + list.slice(start, end).join('\n'))
+          .setFooter({text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}`, iconURL: int.guild?.iconURL() || undefined})
+          await btn.update({ embeds: [ListEb], components: [ListButtons] })
+        }
+
+        if(btn.customId == 'next') {
+          if(end + 10 >= list.length){
+            ListButtons.components[0].disabled = false
+            ListButtons.components[0].style = ButtonStyle.Primary
+            ListButtons.components[1].style = ButtonStyle.Secondary
+            ListButtons.components[1].disabled = true
+
+          }else{
+            ListButtons.components[0].style = ButtonStyle.Primary
+            ListButtons.components[0].disabled = false
+            ListButtons.components[1].disabled = false
+            ListButtons.components[1].style = ButtonStyle.Primary
+          }
+          start += 10, end += 10, page++
+
+          ListEb
+          .setDescription(description + list.slice(start, end).join('\n'))
+          .setFooter({text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}`, iconURL: int.guild?.iconURL() || undefined})
+          await btn.update({ embeds: [ListEb], components: [ListButtons] })
+        }
+      })
+
+      alliancesCollection.on("end", () => {
+        int.editReply({embeds: [ListEb], components: []})
+      })
+    }, 600)
+  }
 }

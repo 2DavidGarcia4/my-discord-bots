@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getBotData = exports.fetchServerRules = exports.moderationSanction = void 0;
+exports.interactiveList = exports.getBotData = exports.fetchServerRules = exports.moderationSanction = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
+const functions_1 = require("../../shared/functions");
 const { color } = db_1.botDB;
 const moderationSanction = (msg, autoModMember) => {
     var _a, _b, _c, _d, _e;
@@ -57,3 +58,93 @@ const getBotData = (client) => __awaiter(void 0, void 0, void 0, function* () {
     return undefined;
 });
 exports.getBotData = getBotData;
+const interactiveList = (int, list, title, description, color) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
+    const isEnglish = int.locale == 'en-US';
+    yield int.deferReply();
+    list = list.map((el, i) => `${i + 1}. ${el}`);
+    let allPages = 0;
+    if (list && String(list.length).slice(-1) == '0') {
+        allPages = Math.floor(list.length / 10);
+    }
+    else {
+        allPages = Math.floor(list.length / 10 + 1);
+    }
+    let start = 0, end = 10, page = 1;
+    const ListEb = new discord_js_1.EmbedBuilder({ title })
+        .setColor(color)
+        .setTimestamp();
+    if (((list === null || list === void 0 ? void 0 : list.length) || 0) <= 10) {
+        ListEb
+            .setDescription(description + list.join('\n'))
+            .setFooter({ text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}`, iconURL: ((_a = int.guild) === null || _a === void 0 ? void 0 : _a.iconURL()) || undefined });
+        (0, functions_1.sendMessageSlash)(int, { embeds: [ListEb] });
+    }
+    else {
+        ListEb
+            .setDescription(description + list.slice(start, end).join("\n"))
+            .setFooter({ text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}`, iconURL: ((_b = int.guild) === null || _b === void 0 ? void 0 : _b.iconURL()) || undefined });
+        const ListButtons = new discord_js_1.ActionRowBuilder()
+            .addComponents([
+            new discord_js_1.ButtonBuilder()
+                .setCustomId('previous')
+                .setLabel("Anterior")
+                .setEmoji(db_1.botDB.emoji.leftArrow)
+                .setStyle(discord_js_1.ButtonStyle.Secondary),
+            new discord_js_1.ButtonBuilder()
+                .setCustomId('next')
+                .setLabel("Siguiente")
+                .setEmoji(db_1.botDB.emoji.rightArrow)
+                .setStyle(discord_js_1.ButtonStyle.Primary)
+        ]).toJSON();
+        setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
+            const alliansesMessage = yield int.editReply({ embeds: [ListEb], components: [ListButtons] });
+            const alliancesCollection = alliansesMessage.createMessageComponentCollector({ time: allPages * 60000 });
+            alliancesCollection.on('collect', (btn) => __awaiter(void 0, void 0, void 0, function* () {
+                var _c, _d;
+                if (btn.customId == 'previous') {
+                    if (end - 10 <= 10) {
+                        ListButtons.components[0].style = discord_js_1.ButtonStyle.Secondary;
+                        ListButtons.components[0].disabled = true;
+                        ListButtons.components[1].disabled = false;
+                        ListButtons.components[1].style = discord_js_1.ButtonStyle.Primary;
+                    }
+                    else {
+                        ListButtons.components[0].style = discord_js_1.ButtonStyle.Primary;
+                        ListButtons.components[0].disabled = false;
+                        ListButtons.components[1].disabled = false;
+                        ListButtons.components[1].style = discord_js_1.ButtonStyle.Primary;
+                    }
+                    start -= 10, end -= 10, page--;
+                    ListEb
+                        .setDescription(description + list.slice(start, end).join('\n'))
+                        .setFooter({ text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}`, iconURL: ((_c = int.guild) === null || _c === void 0 ? void 0 : _c.iconURL()) || undefined });
+                    yield btn.update({ embeds: [ListEb], components: [ListButtons] });
+                }
+                if (btn.customId == 'next') {
+                    if (end + 10 >= list.length) {
+                        ListButtons.components[0].disabled = false;
+                        ListButtons.components[0].style = discord_js_1.ButtonStyle.Primary;
+                        ListButtons.components[1].style = discord_js_1.ButtonStyle.Secondary;
+                        ListButtons.components[1].disabled = true;
+                    }
+                    else {
+                        ListButtons.components[0].style = discord_js_1.ButtonStyle.Primary;
+                        ListButtons.components[0].disabled = false;
+                        ListButtons.components[1].disabled = false;
+                        ListButtons.components[1].style = discord_js_1.ButtonStyle.Primary;
+                    }
+                    start += 10, end += 10, page++;
+                    ListEb
+                        .setDescription(description + list.slice(start, end).join('\n'))
+                        .setFooter({ text: `${isEnglish ? 'Page' : 'Pagina'} ${page}/${allPages}`, iconURL: ((_d = int.guild) === null || _d === void 0 ? void 0 : _d.iconURL()) || undefined });
+                    yield btn.update({ embeds: [ListEb], components: [ListButtons] });
+                }
+            }));
+            alliancesCollection.on("end", () => {
+                int.editReply({ embeds: [ListEb], components: [] });
+            });
+        }), 600);
+    }
+});
+exports.interactiveList = interactiveList;
