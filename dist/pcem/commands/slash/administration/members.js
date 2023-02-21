@@ -12,6 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.membersSlashCommand = exports.membersScb = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../../../shared/functions");
+const utils_1 = require("../../../utils");
 exports.membersScb = new discord_js_1.SlashCommandBuilder()
     .setName('members')
     .setNameLocalization('es-ES', 'miembros')
@@ -21,6 +22,10 @@ exports.membersScb = new discord_js_1.SlashCommandBuilder()
     .setNameLocalization('es-ES', 'con')
     .setDescription('⚙️ Filter members by.')
     .setDescriptionLocalization('es-ES', '⚙️ Filtrar miembros por.')
+    .addBooleanOption(bot => bot.setName('bot')
+    .setDescription('🤖 Include bots?.')
+    .setDescriptionLocalization('es-ES', '🤖 ¿Incluir bots?.')
+    .setRequired(true))
     .addRoleOption(rol => rol.setName('rol')
     .setDescription('🏅 Filter by role.')
     .setDescriptionLocalization('es-ES', '🏅 Filtrar por rol.')
@@ -34,6 +39,10 @@ exports.membersScb = new discord_js_1.SlashCommandBuilder()
     .setNameLocalization('es-ES', 'sin')
     .setDescription('⚙️ Filter members without.')
     .setDescriptionLocalization('es-ES', '⚙️ Filtrar miembros sin')
+    .addBooleanOption(bot => bot.setName('bot')
+    .setDescription('🤖 Include bots?.')
+    .setDescriptionLocalization('es-ES', '🤖 ¿Incluir bots?.')
+    .setRequired(true))
     .addRoleOption(rol => rol.setName('rol')
     .setDescription('🏅 Filter without role.')
     .setDescriptionLocalization('es-ES', '🏅 Filtrar sin rol.')
@@ -46,18 +55,32 @@ exports.membersScb = new discord_js_1.SlashCommandBuilder()
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
     .toJSON();
 const membersSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b;
     const { user, guild, options, locale } = int, subCommandName = options.getSubcommand(true), isEnglish = locale == 'en-US';
-    const rol = options.getRole('rol'), includes = options.getString('includes');
+    const bot = options.getBoolean('bot', true), rol = options.getRole('rol'), includes = options.getString('includes');
     if (subCommandName == 'with') {
         if (!rol && !includes)
             return (0, functions_1.setSlashError)(int, (isEnglish ?
                 'Provide at least one value to filter members.' :
                 'Proporciona al menos un valor para filtrar los miembros.'));
-        const membersFilter = guild === null || guild === void 0 ? void 0 : guild.members.cache.filter(f => (rol ? f.roles.cache.has(rol.id) : true && includes ? f.user.username.includes(includes) : true));
-        int.reply({ ephemeral: true, content: `${rol} ${includes}` });
+        const membersFilter = guild === null || guild === void 0 ? void 0 : guild.members.cache.filter(f => (bot || !f.user.bot) && (rol ? f.roles.cache.has(rol.id) : true) && (includes ? f.user.username.includes(includes) : true));
+        const filterEmoji = '<:filter:1077404400764596275>';
+        if (membersFilter)
+            (0, utils_1.interactiveList)(int, membersFilter.map((m, key) => `[${m.user.tag}](${m.displayAvatarURL({ size: 1024 })})\n<@${key}>\n`), (isEnglish ? `${filterEmoji} members filtered by` : `${filterEmoji} miembros filtrados por`), (isEnglish ?
+                `**${membersFilter.size}** Members filtered by:\n${rol ? `Rol ${rol}\n` : ``}${includes ? `Includes \`\`${includes}\`\`` : ''}\n\n` :
+                `**${membersFilter.size}** Miembros filtrados por:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`), (((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White'));
     }
     if (subCommandName == 'without') {
-        int.reply({ ephemeral: true, content: `${rol} ${includes}` });
+        if (!rol && !includes)
+            return (0, functions_1.setSlashError)(int, (isEnglish ?
+                'Provide at least one value to filter members.' :
+                'Proporciona al menos un valor para filtrar los miembros.'));
+        const membersFilter = guild === null || guild === void 0 ? void 0 : guild.members.cache.filter(f => (bot || !f.user.bot) && (rol ? !f.roles.cache.has(rol.id) : true) && (includes ? !f.user.username.includes(includes) : true));
+        const filterEmoji = '<:filter:1077404400764596275>';
+        if (membersFilter)
+            (0, utils_1.interactiveList)(int, membersFilter.map((m, key) => `[${m.user.tag}](${m.displayAvatarURL({ size: 1024 })})\n<@${key}>\n`), (isEnglish ? `${filterEmoji} members filtered without` : `${filterEmoji} miembros filtrados sin`), (isEnglish ?
+                `**${membersFilter.size}** Members filtered without:\n${rol ? `Rol ${rol}\n` : ``}${includes ? `Includes \`\`${includes}\`\`` : ''}\n\n` :
+                `**${membersFilter.size}** Miembros filtrados sin:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`), (((_b = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White'));
     }
 });
 exports.membersSlashCommand = membersSlashCommand;
