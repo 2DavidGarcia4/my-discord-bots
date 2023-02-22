@@ -26,6 +26,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     const dataBot = yield (0, utils_1.getBotData)(client);
     // console.log(dataBot)
     (0, functions_1.defaultReady)(client, (dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.connections) || '', db_1.botDB.color.afirmative);
+    db_1.botDB.color = Object.assign(Object.assign({}, db_1.botDB.color), dataBot === null || dataBot === void 0 ? void 0 : dataBot.color);
     const servidor = client.guilds.cache.get(db_1.botDB.serverId);
     const channelSuggestions = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.suggestions) || '828300239488024587');
     // const newModel = new carcelModel({
@@ -333,8 +334,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     // ;(await servidor?.commands.fetch('964578653369409556', {force: true}))?.edit({options: command1?.options}).then(c=> console.log('Comando actualizado'))
     // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
     //! Public
-    const command = interaction_1.interactionCommands.get('timeout');
-    // ;(await client.application?.commands.fetch('1075637369933410425', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+    // const command = interactionCommands.get('members')
+    // ;(await client.application?.commands.fetch('1077078955917590538', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
     // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 });
 exports.readyEvent = readyEvent;

@@ -8,6 +8,7 @@ export type BotDB = {
   owners: string[]
   mainRoles: string[]
   usedCommands: number
+  botInvite: string
   emoji: {
     cat: string
     like: string
@@ -41,6 +42,7 @@ export type BotDB = {
     animateBoost: string
   }
   color: {
+    bot: ColorResolvable
     blue: ColorResolvable
     afirmative: ColorResolvable
     negative: ColorResolvable
@@ -80,6 +82,9 @@ export type DataBot = {
   autoModeration: {
     ignoreCategories: string[]
     ignoreChannels: string[]
+  }
+  color: {
+    bot: ColorResolvable
   }
 }
 

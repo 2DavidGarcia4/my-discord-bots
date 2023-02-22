@@ -2,6 +2,7 @@ import { connect } from "mongoose";
 import { connectMongo } from "../config";
 import { BotDB } from "./types"
 import { isDevelopment } from "../config";
+import { getBotData } from "./utils";
 
 connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la base de datos'))
 .catch((err)=> console.error('Ocurrió un error al conectarse a la DB', err))
@@ -14,6 +15,7 @@ export const botDB: BotDB = {
   owners: ['717420870267830382', '825186118050775052'],
   mainRoles: ['823372926707171358'],
   usedCommands: 0,
+  botInvite: 'https://discord.com/api/oauth2/authorize?client_id=843185929002025030&permissions=1391838756087&scope=bot%20applications.commands',
   emoji: {
     cat: '<a:gatito:909919946140684288>',
     like: '<:blueLike:946826193032851516>',
@@ -47,6 +49,7 @@ export const botDB: BotDB = {
     animateBoost: '<a:BoostAnimado:931289485700911184>',
   },
   color: {
+    bot: '#fff',
     blue: '#0095F7',
     afirmative: '#38E54D',
     negative: '#DC0000',

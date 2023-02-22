@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, ChannelType, PermissionFlagsBits, bold } from "discord.js";
 import ms from "ms";
 import { botDB } from "../../../db";
-import { setSlashErrors } from "../../../../shared/functions";
+import { setSlashError, setSlashErrors } from "../../../../shared/functions";
 import { getBotData } from "../../../utils";
 
 export const limpiarScb = new SlashCommandBuilder()
@@ -33,7 +33,7 @@ export const limpiarScb = new SlashCommandBuilder()
 .toJSON()
 
 export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
-  const { user, guild, options, locale } = int, { emoji, color } = botDB, isEnglish = locale == 'en-US'
+  const { user, channel, guild, options, locale } = int, { emoji, color } = botDB, isEnglish = locale == 'en-US'
   const author = guild?.members.cache.get(user.id)
   const amount = options.getString('amount', true), member = options.getUser('member'), id = options.getString("id") || member?.id 
 
@@ -58,9 +58,37 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
   ])) return
 
 
-  if(id){
+  const amountMessages = Number(amount)
+  if(amountMessages && channel?.type == ChannelType.GuildText){
+    let leakedMessages = (await channel.messages.fetch({limit: (amountMessages > 100 ? 100 : amountMessages)})).filter(f=> (id ? id == f.author.id : true) && (Date.now() - f.createdTimestamp) < ms("14d")).map(m=>m)
+    console.log(leakedMessages.length)
+
+    const SweeepEb = new EmbedBuilder()
+    .setTitle(`${emoji.loop} Eliminando mensajes`)
+    .setColor('Blue')
+
+    int.reply({ephemeral: true, embeds: [SweeepEb]}).then(()=> {
+      SweeepEb.setAuthor({name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL()})
+      .setTitle(`🗑️ Mensajes eliminados`)
+      .setColor('Blurple')
+      .setFooter({text: int.guild?.name || 'undefined', iconURL: int.guild?.iconURL() || undefined})
+      .setTimestamp()
+
+      if(leakedMessages.length == amountMessages){
+        SweeepEb.setDescription(`Se han eliminado **${leakedMessages.length}** mensajes en este canal.`)
+      }else{
+        SweeepEb.setDescription(`Solo he podido eliminar **${leakedMessages.length}** mensajes de los **${amount}** que me pediste en este canal.`)
+      }
+      
+      channel.bulkDelete(leakedMessages).then(async ()=> {
+        await int.editReply({embeds: [SweeepEb]})
+      })
+    })
+  }
+
+  if(false){
     console.log('id')
-    await client.users.fetch(id, {force: true}).then(async usuario=> {
+    await client.users.fetch(id || '', {force: true}).then(async usuario=> {
       let bueltas = 0, mensajes = 0, parado = false
       async function clearMessages(){
         if(int.channel?.type != ChannelType.GuildText) return
@@ -129,10 +157,14 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
       int.reply({ephemeral: true, embeds: [embErrorNoEncontrado]})
     })
 
-  }else{
+  }else if(false) {
     console.log('else id')
+    
+
+
     let bueltas = 0, mensajes = 0, parado = false
 
+  
     async function clearMessages(){
       console.log('función')
       if(int.channel?.type != ChannelType.GuildText) return
@@ -141,22 +173,19 @@ export const limpiarSlashCommand = async (int: ChatInputCommandInteraction<Cache
       let filtro = (await int.channel?.messages.fetch({limit: 100})).filter(f=> Date.now() - f.createdTimestamp < ms("14d")).map(m=>m)
       console.log(filtro.length)
 
-      const embError1 = new EmbedBuilder()
-      .setTitle(`${emoji.negative} Error`)
-      .setDescription(`No hay mensajes en este canal para eliminar o los mensajes que hay superan los **14** días y no puedo eliminar mensajes con ese tiempo.`)
-      .setColor(color.negative)
 
       if(bueltas == 1 && filtro.length==0){
         console.log('Error')
         parado = true
-        int.reply({ephemeral: true, embeds: [embError1]})
+        setSlashError(int, `No hay mensajes en este canal para eliminar o los mensajes que hay superan los **14** días y no puedo eliminar mensajes con ese tiempo.`)
 
       }else {
         console.log('numero')
         const amountN = Number(amount)
+        console.log({op: Math.floor(amountN/100)-bueltas})
 
-        if(amountN<100 && Math.floor(amountN/100)-bueltas<0){
-          filtro = filtro.splice(0,Math.floor(amountN%100))
+        if(amountN<100 && Math.floor(amountN/100)-bueltas < 0){
+          filtro = filtro.splice(0, Math.floor(amountN%100))
         }
 
         mensajes+=filtro.length

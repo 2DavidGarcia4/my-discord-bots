@@ -13,7 +13,8 @@ export const readyEvent = async (client: Client) => {
   const dataBot = await getBotData(client)
   // console.log(dataBot)
   defaultReady(client, dataBot?.logs.connections || '', botDB.color.afirmative)
-  
+  botDB.color = {...botDB.color, ...dataBot?.color}
+
   const servidor = client.guilds.cache.get(botDB.serverId)
   const channelSuggestions = servidor?.channels.cache.get(dataBot?.logs.suggestions || '828300239488024587')
 
@@ -336,8 +337,8 @@ export const readyEvent = async (client: Client) => {
   // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
   
   //! Public
-  const command = interactionCommands.get('timeout')
+  // const command = interactionCommands.get('members')
   
-  // ;(await client.application?.commands.fetch('1075637369933410425', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+  // ;(await client.application?.commands.fetch('1077078955917590538', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
   // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 }

@@ -21,13 +21,26 @@ exports.helpScb = new discord_js_1.SlashCommandBuilder()
     .toJSON();
 const helpSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c;
-    const author = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(int.user.id);
+    const { guild, user, locale } = int, isEnglish = locale == 'en-US';
+    const { color, emoji, serverInvite, botInvite } = db_1.botDB;
+    const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     yield int.deferReply();
     const HelpEb = new discord_js_1.EmbedBuilder()
-        .setAuthor({ name: `Hola ${(author === null || author === void 0 ? void 0 : author.nickname) || (author === null || author === void 0 ? void 0 : author.user.username)}`, iconURL: int.user.displayAvatarURL() })
-        .setTitle(`Soy **${(_b = client.user) === null || _b === void 0 ? void 0 : _b.username}** Bot multi funcional`)
+        .setAuthor({ name: `${isEnglish ? 'Hello' : 'Hola'} ${(author === null || author === void 0 ? void 0 : author.nickname) || (author === null || author === void 0 ? void 0 : author.user.username)}`, iconURL: int.user.displayAvatarURL() })
+        .setTitle(isEnglish ? `I am multifunctional ${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username} Bot` : `Soy **${(_b = client.user) === null || _b === void 0 ? void 0 : _b.username}** Bot multi funcional`)
         .setThumbnail(((_c = client.user) === null || _c === void 0 ? void 0 : _c.displayAvatarURL()) || null)
+        .setColor(color.bot)
         .setTimestamp();
+    const HelpButtons = new discord_js_1.ActionRowBuilder()
+        .addComponents(new discord_js_1.ButtonBuilder()
+        .setLabel(isEnglish ? 'Invite me' : 'Invitame')
+        .setEmoji('📨')
+        .setStyle(discord_js_1.ButtonStyle.Link)
+        .setURL(botInvite), new discord_js_1.ButtonBuilder()
+        .setLabel(isEnglish ? 'Support server' : 'Servidor de soporte')
+        .setEmoji('🔧')
+        .setStyle(discord_js_1.ButtonStyle.Link)
+        .setURL(serverInvite));
     if (int.guildId == db_1.botDB.serverId) {
         HelpEb
             .setDescription(`**Bot publico** y personalizado de este servidor, ¿necesitas información o ayuda?`)
@@ -35,8 +48,10 @@ const helpSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, func
     }
     else {
         HelpEb
-            .setDescription(`[📨 **Invítame a tu servidor**](${'invitacion'})\n[🔧 **Servidor de soporte**](${db_1.botDB.serverInvite})`);
+            .setDescription(isEnglish ?
+            `To see my commands you can use my command </commands:1075587552133783612>\n\n*If you want to report a bug or you don't know how a command works you can join my support server*` :
+            `Para ver mis comandos puede utilizar mi comando </commands:1075587552133783612>\n\n*Si quieres reportar un fallo o no sabes como funciona un comando puedes unirte a mi servidor de soporte*`);
     }
-    (0, functions_1.sendMessageSlash)(int, { embeds: [HelpEb] });
+    (0, functions_1.sendMessageSlash)(int, { embeds: [HelpEb], components: [HelpButtons] });
 });
 exports.helpSlashCommand = helpSlashCommand;

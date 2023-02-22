@@ -1,4 +1,4 @@
-import { CacheType, ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandBuilder } from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { botDB } from "../../../db";
 import { sendMessageSlash } from "../../../../shared/functions";
 
@@ -10,15 +10,33 @@ export const helpScb = new SlashCommandBuilder()
 .toJSON()
 
 export const helpSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
-  const author = int.guild?.members.cache.get(int.user.id)
+  const { guild, user, locale } = int, isEnglish = locale == 'en-US'
+  const { color, emoji, serverInvite, botInvite } = botDB
+  const author = guild?.members.cache.get(user.id)
   
   await int.deferReply()
 
   const HelpEb = new EmbedBuilder()
-  .setAuthor({name: `Hola ${author?.nickname || author?.user.username}`, iconURL: int.user.displayAvatarURL()})
-  .setTitle(`Soy **${client.user?.username}** Bot multi funcional`)
+  .setAuthor({name: `${isEnglish ? 'Hello' : 'Hola'} ${author?.nickname || author?.user.username}`, iconURL: int.user.displayAvatarURL()})
+  .setTitle(isEnglish ? `I am multifunctional ${client.user?.username} Bot` : `Soy **${client.user?.username}** Bot multi funcional`)
   .setThumbnail(client.user?.displayAvatarURL() || null)
+  .setColor(color.bot)
   .setTimestamp()
+
+  const HelpButtons = new ActionRowBuilder<ButtonBuilder>()
+  .addComponents(
+    new ButtonBuilder()
+    .setLabel(isEnglish ? 'Invite me' : 'Invitame')
+    .setEmoji('📨')
+    .setStyle(ButtonStyle.Link)
+    .setURL(botInvite),
+
+    new ButtonBuilder()
+    .setLabel(isEnglish ? 'Support server' : 'Servidor de soporte')
+    .setEmoji('🔧')
+    .setStyle(ButtonStyle.Link)
+    .setURL(serverInvite)
+  )
 
   if(int.guildId == botDB.serverId){
     HelpEb
@@ -30,8 +48,11 @@ export const helpSlashCommand = async (int: ChatInputCommandInteraction<CacheTyp
   
   }else{
     HelpEb
-    .setDescription(`[📨 **Invítame a tu servidor**](${'invitacion'})\n[🔧 **Servidor de soporte**](${botDB.serverInvite})`)
+    .setDescription(isEnglish ? 
+      `To see my commands you can use my command </commands:1075587552133783612>\n\n*If you want to report a bug or you don't know how a command works you can join my support server*` :
+      `Para ver mis comandos puede utilizar mi comando </commands:1075587552133783612>\n\n*Si quieres reportar un fallo o no sabes como funciona un comando puedes unirte a mi servidor de soporte*`
+    )
   }
 
-  sendMessageSlash(int, {embeds: [HelpEb]})
+  sendMessageSlash(int, {embeds: [HelpEb], components: [HelpButtons]})
 }
