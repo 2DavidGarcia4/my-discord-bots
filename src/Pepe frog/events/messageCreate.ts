@@ -49,14 +49,14 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
 
   
   if(msg.guildId == serverId){
-    if(msg.channel.type != ChannelType.GuildText) return
-    const { parentId } = msg.channel
+    if(!msg.channel.isTextBased()) return
+    const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == '1053401639454773338')
 
     
     //? Auto moderation links
     const enlaceActivators = ['http://', 'https://']
     const filesLinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3']
-    if(parentId != '1053401639454773338' && !msg.member?.permissions.has('Administrator') && enlaceActivators.some(s=> msg.content.includes(s))){
+    if(!verifiedsCahnnels?.some(s=> s.id == msg.channelId) && !msg.member?.permissions.has('Administrator') && enlaceActivators.some(s=> msg.content.includes(s))){
       const texts = msg.content.split(/ +/g).map(m=> m.includes('\n') ? m.split('\n') : m).flat()
       const filter = texts.filter(f=> enlaceActivators.some(s=> f.includes(s))) 
       
@@ -91,7 +91,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
 
     //? Auto moderation discord invites
     const discordInvites = ['discord.gg/', 'discord.com/invite/']
-    if(parentId != '1053401639454773338' && !msg.member?.permissions.has('Administrator') && discordInvites.some(s=> msg.content.includes(s))){
+    if(!verifiedsCahnnels?.some(s=> s.id == msg.channelId) && !msg.member?.permissions.has('Administrator') && discordInvites.some(s=> msg.content.includes(s))){
       const AutoModEb = new EmbedBuilder()
       .setTitle('Auto moderation')
       .setDescription('Discord server invites are not allowed.')
@@ -123,7 +123,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
     if(msg.channelId == '1053401642915082392' && !msg.member?.permissions.has('Administrator')) msg.react('1059641676798377995'), msg.react('1059641726387626015')
     
 
-    if(msg.attachments.size && parentId != '1054485238413266965' && msg.attachments.some(s=> s.size < 8000000)){
+    if(msg.channel.type == ChannelType.GuildText && msg.attachments.size && msg.channel.parentId != '1054485238413266965' && msg.attachments.some(s=> s.size < 8000000)){
       const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
       if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 8000000).map(m=> m)})
     }
@@ -192,7 +192,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
       }
   
       //? Auto reactions for verified messages
-      if(msg.channel.parentId == '1053401639454773338' && msg.channel.position) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
+      if(msg.channel.type == ChannelType.GuildText && msg.channel.parentId == '1053401639454773338' && msg.channel.position) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
     }
   }
 
