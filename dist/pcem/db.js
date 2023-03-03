@@ -7,7 +7,7 @@ const config_2 = require("../config");
 (0, mongoose_1.connect)(config_1.connectMongo || '').then(() => console.log('Conectado corectamente a la base de datos'))
     .catch((err) => console.error('Ocurrió un error al conectarse a la DB', err));
 exports.botDB = {
-    prefix: config_2.isDevelopment ? '|' : 'd!',
+    prefix: config_2.isDevelopment ? '|' : 'q!',
     serverId: '773249398431809586',
     creatorId: '717420870267830382',
     serverInvite: 'https://discord.gg/xDG86jAXEZ',
@@ -53,5 +53,6 @@ exports.botDB = {
         afirmative: '#38E54D',
         negative: '#DC0000',
         yellow: '#F8CB01'
-    }
+    },
+    guilds: []
 };

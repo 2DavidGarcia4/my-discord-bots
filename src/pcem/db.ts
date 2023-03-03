@@ -1,6 +1,6 @@
 import { connect } from "mongoose";
 import { connectMongo } from "../config";
-import { BotDB } from "./types"
+import { BotDB, GuildsData } from "./types"
 import { isDevelopment } from "../config";
 import { getBotData } from "./utils";
 
@@ -8,7 +8,7 @@ connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la b
 .catch((err)=> console.error('Ocurrió un error al conectarse a la DB', err))
 
 export const botDB: BotDB = {
-  prefix: isDevelopment ? '|' : 'd!',
+  prefix: isDevelopment ? '|' : 'q!',
   serverId: '773249398431809586',
   creatorId: '717420870267830382',
   serverInvite: 'https://discord.gg/xDG86jAXEZ',
@@ -54,5 +54,6 @@ export const botDB: BotDB = {
     afirmative: '#38E54D',
     negative: '#DC0000',
     yellow: '#F8CB01'
-  }
+  },
+  guilds: []
 }
