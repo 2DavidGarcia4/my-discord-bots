@@ -1,6 +1,6 @@
-import { Message, EmbedBuilder, Client, ChannelType, CacheType, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, ColorResolvable, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js"
+import { Message, EmbedBuilder, Client, ChannelType, CacheType, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, ColorResolvable, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild } from "discord.js"
 import { botDB } from "../db"
-import { DataBot } from "../types"
+import { DataBot, GuildsData, UsersData } from "../types"
 import { sendMessageSlash } from "../../shared/functions"
 
 const { color } = botDB
@@ -147,5 +147,55 @@ export const interactiveList = async (int: ChatInputCommandInteraction<CacheType
         int.editReply({embeds: [ListEb], components: []})
       })
     }, 600)
+  }
+}
+
+//? Guilds data
+const guildsChannelId = '1081285638923489362', guidlsMessageId = '1081289925074370602'
+export const getGuildsData = async (client: Client): Promise<GuildsData[] | undefined> => {
+  const channelDb = client.channels.cache.get(guildsChannelId)
+  if(channelDb?.isTextBased()) {
+    const message = (await channelDb.messages.fetch(guidlsMessageId)).content
+    const data = JSON.parse(message)
+    return data
+  }
+}
+
+export const updateGuildsData = async (client: Client, newData: GuildsData[]) => {
+  const channelDb = client.channels.cache.get(guildsChannelId)
+  if(channelDb?.isTextBased()) {
+    const newDataStr = JSON.stringify(newData)
+    const message = await channelDb.messages.fetch(guidlsMessageId)
+    if(newDataStr != message.content) message.edit({content: JSON.stringify(newData)})
+  }
+}
+
+export const getEmbedColor = (guild: Guild | null): ColorResolvable => {
+  const guildData = botDB.guilds.find(f=> f.guildId == guild?.id)
+  return guildData ? (guildData.autoColor ? (guild?.members.me?.displayHexColor || 'White') : botDB.color.bot) : botDB.color.bot 
+}
+
+export const getGuildPrefix = (guild: Guild | null) => {
+  const guildData = botDB.guilds.find(f=> f.guildId == guild?.id)
+  return  guildData?.prefix || botDB.prefix
+}
+
+//? Users data
+const usersChanneId = '1081326241069670462', usersMessageId = '1081327317130940457'
+export const getUsersData = async (client: Client): Promise<UsersData[] | undefined> => {
+  const channelDb = client.channels.cache.get(usersChanneId)
+  if(channelDb?.isTextBased()) {
+    const message = (await channelDb.messages.fetch(usersMessageId)).content
+    const data = JSON.parse(message)
+    return data
+  }
+}
+
+export const updateUsersData = async (client: Client, newData: UsersData[]) => {
+  const channelDb = client.channels.cache.get(usersChanneId)
+  if(channelDb?.isTextBased()) {
+    const newDataStr = JSON.stringify(newData)
+    const message = await channelDb.messages.fetch(usersMessageId)
+    if(newDataStr != message.content) message.edit({content: JSON.stringify(newData)})
   }
 }

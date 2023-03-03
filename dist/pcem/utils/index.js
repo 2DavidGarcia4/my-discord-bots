@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.interactiveList = exports.getBotData = exports.fetchServerRules = exports.moderationSanction = void 0;
+exports.updateUsersData = exports.getUsersData = exports.getGuildPrefix = exports.getEmbedColor = exports.updateGuildsData = exports.getGuildsData = exports.interactiveList = exports.getBotData = exports.fetchServerRules = exports.moderationSanction = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const functions_1 = require("../../shared/functions");
@@ -148,3 +148,56 @@ const interactiveList = (int, list, title, description, color) => __awaiter(void
     }
 });
 exports.interactiveList = interactiveList;
+//? Guilds data
+const guildsChannelId = '1081285638923489362', guidlsMessageId = '1081289925074370602';
+const getGuildsData = (client) => __awaiter(void 0, void 0, void 0, function* () {
+    const channelDb = client.channels.cache.get(guildsChannelId);
+    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+        const message = (yield channelDb.messages.fetch(guidlsMessageId)).content;
+        const data = JSON.parse(message);
+        return data;
+    }
+});
+exports.getGuildsData = getGuildsData;
+const updateGuildsData = (client, newData) => __awaiter(void 0, void 0, void 0, function* () {
+    const channelDb = client.channels.cache.get(guildsChannelId);
+    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+        const newDataStr = JSON.stringify(newData);
+        const message = yield channelDb.messages.fetch(guidlsMessageId);
+        if (newDataStr != message.content)
+            message.edit({ content: JSON.stringify(newData) });
+    }
+});
+exports.updateGuildsData = updateGuildsData;
+const getEmbedColor = (guild) => {
+    var _a;
+    const guildData = db_1.botDB.guilds.find(f => f.guildId == (guild === null || guild === void 0 ? void 0 : guild.id));
+    return guildData ? (guildData.autoColor ? (((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White') : db_1.botDB.color.bot) : db_1.botDB.color.bot;
+};
+exports.getEmbedColor = getEmbedColor;
+const getGuildPrefix = (guild) => {
+    const guildData = db_1.botDB.guilds.find(f => f.guildId == (guild === null || guild === void 0 ? void 0 : guild.id));
+    return (guildData === null || guildData === void 0 ? void 0 : guildData.prefix) || db_1.botDB.prefix;
+};
+exports.getGuildPrefix = getGuildPrefix;
+//? Users data
+const usersChanneId = '1081326241069670462', usersMessageId = '1081327317130940457';
+const getUsersData = (client) => __awaiter(void 0, void 0, void 0, function* () {
+    const channelDb = client.channels.cache.get(usersChanneId);
+    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+        const message = (yield channelDb.messages.fetch(usersMessageId)).content;
+        const data = JSON.parse(message);
+        return data;
+    }
+});
+exports.getUsersData = getUsersData;
+const updateUsersData = (client, newData) => __awaiter(void 0, void 0, void 0, function* () {
+    const channelDb = client.channels.cache.get(usersChanneId);
+    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+        const newDataStr = JSON.stringify(newData);
+        const message = yield channelDb.messages.fetch(usersMessageId);
+        if (newDataStr != message.content)
+            message.edit({ content: JSON.stringify(newData) });
+    }
+});
+exports.updateUsersData = updateUsersData;
