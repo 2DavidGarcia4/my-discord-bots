@@ -13,12 +13,13 @@ exports.pingSlashCommand = exports.pingScb = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../../../db");
 const functions_1 = require("../../../../shared/functions");
+const utils_1 = require("../../../utils");
 exports.pingScb = new discord_js_1.SlashCommandBuilder()
     .setName("ping")
     .setDescription('🏓 My latency')
     .setDescriptionLocalization('es-ES', "🏓 Mi latencia").toJSON();
 const pingSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+    var _a, _b, _c;
     const author = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(int.user.id), { ws: { ping } } = client, { emoji } = db_1.botDB;
     const latency = ping <= 60 ? emoji.ping30ms : ping <= 120 ? emoji.ping60ms : emoji.ping100ms;
     yield int.deferReply();
@@ -26,8 +27,8 @@ const pingSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, func
         .setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || (author === null || author === void 0 ? void 0 : author.user.username) || 'undefined', iconURL: author === null || author === void 0 ? void 0 : author.displayAvatarURL() })
         .setTitle("🏓 Pong")
         .setDescription(`${latency} ${client.ws.ping} ms`)
-        .setColor(((_c = (_b = int.guild) === null || _b === void 0 ? void 0 : _b.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White')
-        .setFooter({ text: ((_d = int.guild) === null || _d === void 0 ? void 0 : _d.name) || 'undefined', iconURL: ((_e = int.guild) === null || _e === void 0 ? void 0 : _e.iconURL()) || undefined })
+        .setColor((0, utils_1.getEmbedColor)(int.guild))
+        .setFooter({ text: ((_b = int.guild) === null || _b === void 0 ? void 0 : _b.name) || 'undefined', iconURL: ((_c = int.guild) === null || _c === void 0 ? void 0 : _c.iconURL()) || undefined })
         .setTimestamp();
     (0, functions_1.sendMessageSlash)(int, { embeds: [embPing] });
 });

@@ -13,6 +13,7 @@ exports.helpSlashCommand = exports.helpScb = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../../../db");
 const functions_1 = require("../../../../shared/functions");
+const utils_1 = require("../../../utils");
 exports.helpScb = new discord_js_1.SlashCommandBuilder()
     .setName("help")
     .setNameLocalization('es-ES', 'ayuda')
@@ -29,7 +30,7 @@ const helpSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, func
         .setAuthor({ name: `${isEnglish ? 'Hello' : 'Hola'} ${(author === null || author === void 0 ? void 0 : author.nickname) || (author === null || author === void 0 ? void 0 : author.user.username)}`, iconURL: int.user.displayAvatarURL() })
         .setTitle(isEnglish ? `I am multifunctional ${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username} Bot` : `Soy **${(_b = client.user) === null || _b === void 0 ? void 0 : _b.username}** Bot multi funcional`)
         .setThumbnail(((_c = client.user) === null || _c === void 0 ? void 0 : _c.displayAvatarURL()) || null)
-        .setColor(color.bot)
+        .setColor((0, utils_1.getEmbedColor)(guild))
         .setTimestamp();
     const HelpButtons = new discord_js_1.ActionRowBuilder()
         .addComponents(new discord_js_1.ButtonBuilder()

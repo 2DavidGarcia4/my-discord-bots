@@ -1,5 +1,6 @@
 import { Client, EmbedBuilder, SlashCommandBuilder, ChatInputCommandInteraction, CacheType } from "discord.js";
 import { sendMessageSlash } from "../../../../shared/functions";
+import { getEmbedColor } from "../../../utils";
 
 export const commandsScb = new SlashCommandBuilder()
 .setName('commands')
@@ -21,7 +22,7 @@ export const commandsSlashComand = async (int: ChatInputCommandInteraction<Cache
   .setTitle(`📄 ${isEnglish ? 'Commands' : 'Comandos'}`)
   .setDescription((isEnglish ? 'A **command** is an order/instruction that you give to the Bot and to which the Bot responds in a certain way according to the order or name of the command.' : 'Un **comando** es una orden/instrucción que les das al Bot y a la que el Bot responde de cierta forma de acuerdo a la orden o nombre del comando.')+`\n\n${mentionCommands}`)
   .setFooter({text: guild?.name || 'undefined', iconURL: guild?.iconURL() || undefined})
-  .setColor(guild?.members.me?.displayHexColor || 'White')
+  .setColor(getEmbedColor(guild))
   .setTimestamp()
 
   sendMessageSlash(int, {embeds: [CommandsEb]})

@@ -55,7 +55,6 @@ exports.membersScb = new discord_js_1.SlashCommandBuilder()
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
     .toJSON();
 const membersSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
     const { user, guild, options, locale } = int, subCommandName = options.getSubcommand(true), isEnglish = locale == 'en-US';
     const bot = options.getBoolean('bot', true), rol = options.getRole('rol'), includes = options.getString('includes');
     if (subCommandName == 'with') {
@@ -68,7 +67,7 @@ const membersSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
         if (membersFilter)
             (0, utils_1.interactiveList)(int, membersFilter.map((m, key) => `[${m.user.tag}](${m.displayAvatarURL({ size: 1024 })})\n<@${key}>\n`), (isEnglish ? `${filterEmoji} members filtered by` : `${filterEmoji} miembros filtrados por`), (isEnglish ?
                 `**${membersFilter.size}** Members filtered by:\n${rol ? `Rol ${rol}\n` : ``}${includes ? `Includes \`\`${includes}\`\`` : ''}\n\n` :
-                `**${membersFilter.size}** Miembros filtrados por:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`), (((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White'));
+                `**${membersFilter.size}** Miembros filtrados por:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`), (0, utils_1.getEmbedColor)(guild));
     }
     if (subCommandName == 'without') {
         if (!rol && !includes)
@@ -80,7 +79,7 @@ const membersSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
         if (membersFilter)
             (0, utils_1.interactiveList)(int, membersFilter.map((m, key) => `[${m.user.tag}](${m.displayAvatarURL({ size: 1024 })})\n<@${key}>\n`), (isEnglish ? `${filterEmoji} members filtered without` : `${filterEmoji} miembros filtrados sin`), (isEnglish ?
                 `**${membersFilter.size}** Members filtered without:\n${rol ? `Rol ${rol}\n` : ``}${includes ? `Includes \`\`${includes}\`\`` : ''}\n\n` :
-                `**${membersFilter.size}** Miembros filtrados sin:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`), (((_b = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White'));
+                `**${membersFilter.size}** Miembros filtrados sin:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`), (0, utils_1.getEmbedColor)(guild));
     }
 });
 exports.membersSlashCommand = membersSlashCommand;

@@ -5,6 +5,7 @@ import { botDB } from "../../../db";
 import { alliancesModel } from "../../../models";
 import { sendMessageSlash } from "../../../../shared/functions";
 import { interactionCommands } from "../../../events/interaction";
+import { getEmbedColor } from "../../../utils";
 
 export const statsScb = new SlashCommandBuilder()
 .setName("stats")
@@ -34,7 +35,7 @@ export const statsSlashCommand = async (int: ChatInputCommandInteraction<CacheTy
     { name: `👥 **${isEnglish ? 'Users' : 'Usuarios'}: ${client.users.cache.size.toLocaleString()}**`, value: `👤 ${client.users.cache.filter(fu => !fu.bot).size.toLocaleString()} ${isEnglish ? 'members' : 'miembros'}\n🤖 ${client.users.cache.filter(fb => fb.bot).size.toLocaleString()} bots`, inline: true },
     { name: ` **${isEnglish ? 'Channels' : 'Canales'}: ${(textCh + voiseCH + cateCh).toLocaleString()}**`, value: `<:canaldetexto:904812801925738557> ${textCh.toLocaleString()} ${isEnglish ? 'text' : 'texto'}\n <:canaldevoz:904812835295596544> ${voiseCH.toLocaleString()} ${isEnglish ? 'voice' : 'voz'}\n<:carpeta:920494540111093780> ${cateCh.toLocaleString()} ${isEnglish ? 'categories' : 'categorías'}`, inline: true },
   )
-  .setColor(guild?.members.me?.displayHexColor || 'White')
+  .setColor(getEmbedColor(guild))
   .setFooter({text: guild?.name || '', iconURL: guild?.iconURL() || undefined})
   .setTimestamp()
 

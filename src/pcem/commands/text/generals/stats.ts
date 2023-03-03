@@ -3,6 +3,7 @@ import ms from 'ms'
 import { botDB } from '../../../db'
 import { sendMessageText } from '../../../../shared/functions'
 import { textCommands } from '../../../events/message'
+import { getEmbedColor } from '../../../utils'
 
 export const name = 'stats'
 
@@ -27,7 +28,7 @@ export const statsCommand = (msg: Message<boolean>, client: Client) => {
     { name: `👥 **Usuarios: ${client.users.cache.size.toLocaleString()}**`, value: `👤 ${client.users.cache.filter(fu => !fu.bot).size.toLocaleString()} miembros\n🤖 ${client.users.cache.filter(fb => fb.bot).size.toLocaleString()} bots`, inline: true },
     { name: ` **Canales: ${(textCh + voiseCH + cateCh).toLocaleString()}**`, value: `<:canaldetexto:904812801925738557> ${textCh.toLocaleString()} texto\n <:canaldevoz:904812835295596544> ${voiseCH.toLocaleString()} voz\n<:carpeta:920494540111093780> ${cateCh.toLocaleString()} categorías`, inline: true },
   )
-  .setColor(guild?.members.me?.displayHexColor || 'White')
+  .setColor(getEmbedColor(msg.guild))
   .setFooter({text: guild?.name || '', iconURL: guild?.iconURL() || undefined})
   .setTimestamp()
 

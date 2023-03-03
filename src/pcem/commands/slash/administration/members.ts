@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, ChatInputCommandInteraction, CacheType, PermissionFlagsBits, Client, EmbedBuilder } from "discord.js";
 import { sendMessageSlash, setSlashError } from "../../../../shared/functions";
-import { interactiveList } from "../../../utils";
+import { getEmbedColor, interactiveList } from "../../../utils";
 
 export const membersScb = new SlashCommandBuilder()
 .setName('members')
@@ -80,7 +80,7 @@ export const membersSlashCommand = async (int: ChatInputCommandInteraction<Cache
         `**${membersFilter.size}** Members filtered by:\n${rol ? `Rol ${rol}\n` : ``}${includes ? `Includes \`\`${includes}\`\`` : ''}\n\n` : 
         `**${membersFilter.size}** Miembros filtrados por:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`
       ), 
-      (guild?.members.me?.displayHexColor || 'White')
+      getEmbedColor(guild)
     )
   }
   
@@ -100,7 +100,7 @@ export const membersSlashCommand = async (int: ChatInputCommandInteraction<Cache
         `**${membersFilter.size}** Members filtered without:\n${rol ? `Rol ${rol}\n` : ``}${includes ? `Includes \`\`${includes}\`\`` : ''}\n\n` : 
         `**${membersFilter.size}** Miembros filtrados sin:\n${rol ? `Rol ${rol}\n` : ''}${includes ? `Incluye \`\`${includes}\`\`` : ''}\n\n`
       ), 
-      (guild?.members.me?.displayHexColor || 'White')
+      getEmbedColor(guild)
     )
   }
 }

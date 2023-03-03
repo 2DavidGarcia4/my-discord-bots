@@ -1,6 +1,7 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, CacheType, ChatInputCommandInteraction, Client, EmbedBuilder, SlashCommandBuilder } from "discord.js";
 import { botDB } from "../../../db";
 import { sendMessageSlash } from "../../../../shared/functions";
+import { getEmbedColor } from "../../../utils";
 
 export const helpScb = new SlashCommandBuilder()
 .setName("help")
@@ -20,7 +21,7 @@ export const helpSlashCommand = async (int: ChatInputCommandInteraction<CacheTyp
   .setAuthor({name: `${isEnglish ? 'Hello' : 'Hola'} ${author?.nickname || author?.user.username}`, iconURL: int.user.displayAvatarURL()})
   .setTitle(isEnglish ? `I am multifunctional ${client.user?.username} Bot` : `Soy **${client.user?.username}** Bot multi funcional`)
   .setThumbnail(client.user?.displayAvatarURL() || null)
-  .setColor(color.bot)
+  .setColor(getEmbedColor(guild))
   .setTimestamp()
 
   const HelpButtons = new ActionRowBuilder<ButtonBuilder>()

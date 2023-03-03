@@ -1,20 +1,38 @@
-import { Client, EmbedBuilder, Message } from "discord.js"
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, Client, EmbedBuilder, Message } from "discord.js"
 import { sendMessageText } from "../../../../shared/functions"
 import { botDB } from "../../../db"
+import { getEmbedColor, getGuildPrefix } from "../../../utils"
 
 export const name = "help"
 
 export const helpCommand = (msg: Message<boolean>, client: Client) => {
-  const { member, guild, guildId } = msg
+  const { member, guild, guildId, author } = msg
+  const { botInvite, serverInvite } = botDB
+
+  const prefix = getGuildPrefix(guild)
 
   msg.channel.sendTyping()
   const HelpEb = new EmbedBuilder()
-  .setAuthor({name: `Hola ${member?.nickname || member?.user.username}`, iconURL: member?.user.displayAvatarURL()})
+  .setAuthor({name: `Hola ${member?.nickname || author?.username}`, iconURL: member?.displayAvatarURL()})
   .setTitle(`Soy **${client.user?.username}** Bot multi funcional`)
   .setThumbnail(client.user?.displayAvatarURL() || null)
-  .setFooter({text: guild?.name || 'undefined', iconURL: guild?.iconURL() || undefined})
-  .setColor(guild?.members.me?.displayHexColor || 'White')
+  .setColor(getEmbedColor(guild))
   .setTimestamp()
+
+  const HelpButtons = new ActionRowBuilder<ButtonBuilder>()
+  .addComponents(
+    new ButtonBuilder()
+    .setLabel('Invitame')
+    .setEmoji('📨')
+    .setStyle(ButtonStyle.Link)
+    .setURL(botInvite),
+
+    new ButtonBuilder()
+    .setLabel('Servidor de soporte')
+    .setEmoji('🔧')
+    .setStyle(ButtonStyle.Link)
+    .setURL(serverInvite)
+  )
 
   if(guildId == botDB.serverId){
     HelpEb
@@ -26,10 +44,10 @@ export const helpCommand = (msg: Message<boolean>, client: Client) => {
   
   }else{
     HelpEb
-    .setDescription(`Usa el comando \`\`${botDB.prefix}comandos\`\` para conocer todos mis comandos.\nMi prefijo en este servidor es: \`\`${botDB.prefix}\`\`\n[📨 **Invítame a tu servidor**](${'https://invitation.com'})\n[🔧 **Servidor de soporte**](${botDB.serverInvite})`)
+    .setDescription(`Mi prefijo en este servidor es \`\`${prefix}\`\` \nPara ver mis comandos puede utilizar mi comando \`\`${prefix}comandos\`\`\n\n*Si quieres reportar un fallo o no sabes como funciona un comando puedes unirte a mi servidor de soporte*`)
   }
 
-  sendMessageText(msg, {embeds: [HelpEb]})
+  sendMessageText(msg, {embeds: [HelpEb], components: [HelpButtons]})
 }
 
 export const alias = ['ayuda']

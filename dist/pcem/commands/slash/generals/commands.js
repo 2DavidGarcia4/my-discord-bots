@@ -12,13 +12,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.commandsSlashComand = exports.commandsScb = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../../../shared/functions");
+const utils_1 = require("../../../utils");
 exports.commandsScb = new discord_js_1.SlashCommandBuilder()
     .setName('commands')
     .setNameLocalization('es-ES', 'comandos')
     .setDescription('📄 My slash commands')
     .setDescriptionLocalization('es-ES', '📄 Mis comandos de barra').toJSON();
 const commandsSlashComand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
+    var _a;
     const { user, guild, locale } = int, isEnglish = locale == 'en-US';
     const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     const commands = yield ((_a = client.application) === null || _a === void 0 ? void 0 : _a.commands.fetch());
@@ -29,7 +30,7 @@ const commandsSlashComand = (int, client) => __awaiter(void 0, void 0, void 0, f
         .setTitle(`📄 ${isEnglish ? 'Commands' : 'Comandos'}`)
         .setDescription((isEnglish ? 'A **command** is an order/instruction that you give to the Bot and to which the Bot responds in a certain way according to the order or name of the command.' : 'Un **comando** es una orden/instrucción que les das al Bot y a la que el Bot responde de cierta forma de acuerdo a la orden o nombre del comando.') + `\n\n${mentionCommands}`)
         .setFooter({ text: (guild === null || guild === void 0 ? void 0 : guild.name) || 'undefined', iconURL: (guild === null || guild === void 0 ? void 0 : guild.iconURL()) || undefined })
-        .setColor(((_b = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White')
+        .setColor((0, utils_1.getEmbedColor)(guild))
         .setTimestamp();
     (0, functions_1.sendMessageSlash)(int, { embeds: [CommandsEb] });
 });

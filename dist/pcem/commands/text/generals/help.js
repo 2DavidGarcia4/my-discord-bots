@@ -4,18 +4,30 @@ exports.alias = exports.helpCommand = exports.name = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../../../shared/functions");
 const db_1 = require("../../../db");
+const utils_1 = require("../../../utils");
 exports.name = "help";
 const helpCommand = (msg, client) => {
-    var _a, _b, _c;
-    const { member, guild, guildId } = msg;
+    var _a, _b;
+    const { member, guild, guildId, author } = msg;
+    const { botInvite, serverInvite } = db_1.botDB;
+    const prefix = (0, utils_1.getGuildPrefix)(guild);
     msg.channel.sendTyping();
     const HelpEb = new discord_js_1.EmbedBuilder()
-        .setAuthor({ name: `Hola ${(member === null || member === void 0 ? void 0 : member.nickname) || (member === null || member === void 0 ? void 0 : member.user.username)}`, iconURL: member === null || member === void 0 ? void 0 : member.user.displayAvatarURL() })
+        .setAuthor({ name: `Hola ${(member === null || member === void 0 ? void 0 : member.nickname) || (author === null || author === void 0 ? void 0 : author.username)}`, iconURL: member === null || member === void 0 ? void 0 : member.displayAvatarURL() })
         .setTitle(`Soy **${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username}** Bot multi funcional`)
         .setThumbnail(((_b = client.user) === null || _b === void 0 ? void 0 : _b.displayAvatarURL()) || null)
-        .setFooter({ text: (guild === null || guild === void 0 ? void 0 : guild.name) || 'undefined', iconURL: (guild === null || guild === void 0 ? void 0 : guild.iconURL()) || undefined })
-        .setColor(((_c = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White')
+        .setColor((0, utils_1.getEmbedColor)(guild))
         .setTimestamp();
+    const HelpButtons = new discord_js_1.ActionRowBuilder()
+        .addComponents(new discord_js_1.ButtonBuilder()
+        .setLabel('Invitame')
+        .setEmoji('📨')
+        .setStyle(discord_js_1.ButtonStyle.Link)
+        .setURL(botInvite), new discord_js_1.ButtonBuilder()
+        .setLabel('Servidor de soporte')
+        .setEmoji('🔧')
+        .setStyle(discord_js_1.ButtonStyle.Link)
+        .setURL(serverInvite));
     if (guildId == db_1.botDB.serverId) {
         HelpEb
             .setDescription(`**Bot publico** y personalizado de este servidor, ¿necesitas información o ayuda?`)
@@ -23,9 +35,9 @@ const helpCommand = (msg, client) => {
     }
     else {
         HelpEb
-            .setDescription(`Usa el comando \`\`${db_1.botDB.prefix}comandos\`\` para conocer todos mis comandos.\nMi prefijo en este servidor es: \`\`${db_1.botDB.prefix}\`\`\n[📨 **Invítame a tu servidor**](${'https://invitation.com'})\n[🔧 **Servidor de soporte**](${db_1.botDB.serverInvite})`);
+            .setDescription(`Mi prefijo en este servidor es \`\`${prefix}\`\` \nPara ver mis comandos puede utilizar mi comando \`\`${prefix}comandos\`\`\n\n*Si quieres reportar un fallo o no sabes como funciona un comando puedes unirte a mi servidor de soporte*`);
     }
-    (0, functions_1.sendMessageText)(msg, { embeds: [HelpEb] });
+    (0, functions_1.sendMessageText)(msg, { embeds: [HelpEb], components: [HelpButtons] });
 };
 exports.helpCommand = helpCommand;
 exports.alias = ['ayuda'];

@@ -1,6 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client } from "discord.js";
 import { botDB } from "../../../db";
 import { sendMessageSlash } from "../../../../shared/functions";
+import { getEmbedColor } from "../../../utils";
 
 export const pingScb = new SlashCommandBuilder()
 .setName("ping")
@@ -17,7 +18,7 @@ export const pingSlashCommand = async (int: ChatInputCommandInteraction<CacheTyp
   .setAuthor({name: author?.nickname || author?.user.username || 'undefined', iconURL: author?.displayAvatarURL()})
   .setTitle("🏓 Pong")
   .setDescription(`${latency} ${client.ws.ping} ms`)
-  .setColor(int.guild?.members.me?.displayHexColor || 'White')
+  .setColor(getEmbedColor(int.guild))
   .setFooter({text: int.guild?.name || 'undefined', iconURL: int.guild?.iconURL() || undefined})
   .setTimestamp()
   
