@@ -1,6 +1,6 @@
 import { ColorResolvable } from "discord.js"
 
-export type BotDB = {
+export interface BotDB {
   prefix: string
   serverId: string
   creatorId: string
@@ -47,17 +47,18 @@ export type BotDB = {
     afirmative: ColorResolvable
     negative: ColorResolvable
     yellow: ColorResolvable
-  }
+  },
+  guilds: GuildsData[]
 }
 
-export type MembersPrl = {
+export interface MembersPrl {
   id: string;
   tag: string;
   tiempo: number | null
   notificado: boolean;
 }[] | undefined
 
-export type BotLogs = {
+export interface BotLogs {
   bot: string
   ban: string
   unban: string
@@ -77,7 +78,7 @@ export type BotLogs = {
   alliancesChannel: string
 }
 
-export type DataBot = {
+export interface DataBot {
   logs: BotLogs
   autoModeration: {
     ignoreCategories: string[]
@@ -88,8 +89,19 @@ export type DataBot = {
   }
 }
 
-export type DictionaryMenu = {
+export interface DictionaryMenu {
   value: string 
   rol: string
   status: string
+}
+
+export interface GuildsData {
+  guildId: string
+  prefix: string  
+  autoColor: boolean
+}
+
+export interface UsersData {
+  userId: string
+  guilds: string[]
 }
