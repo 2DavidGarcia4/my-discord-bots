@@ -19,7 +19,6 @@ const fs_1 = require("fs");
 const db_1 = require("../db");
 const __1 = require("..");
 const utils_1 = require("../utils");
-const functions_1 = require("../../shared/functions");
 const isDist = __dirname.includes('src') ? 'src' : 'dist';
 const svTextCommands = new discord_js_1.Collection();
 (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/server/text/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
@@ -38,8 +37,8 @@ exports.textCommands = new discord_js_1.Collection();
     }));
 }));
 const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u;
-    const { member } = msg, { prefix, emoji, color, serverId } = db_1.botDB;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    const { member, guild, guildId } = msg, { prefix, emoji, color, serverId } = db_1.botDB;
     if (msg.guildId == db_1.botDB.serverId) {
         __1.svStatistics.messages++;
         if (msg.author.bot)
@@ -147,28 +146,14 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
                 }, 600);
             }
         }
-        //TODO: Mensaje por mención
-        if (msg.content.match(`^<@!?${(_e = client.user) === null || _e === void 0 ? void 0 : _e.id}>( |)$`)) {
-            msg.channel.sendTyping();
-            const embedMen = new discord_js_1.EmbedBuilder()
-                .setAuthor({ name: `Hola ${msg.author.username}`, iconURL: msg.author.displayAvatarURL() })
-                .setThumbnail(((_f = client.user) === null || _f === void 0 ? void 0 : _f.displayAvatarURL()) || null)
-                .setTitle(`Soy ${(_g = client.user) === null || _g === void 0 ? void 0 : _g.username}`)
-                .setDescription(`**El bot de ${(_h = msg.guild) === null || _h === void 0 ? void 0 : _h.name}**, ¿necesitas información o ayuda?`)
-                .addFields({ name: `${emoji.information} **Información**`, value: "Puedes obtener información sobre los canales y roles del servidor en el canal <#840364744228995092>." }, { name: `${emoji.staff} **Soporte**`, value: "Puedes obtener soporte sobre cualquier duda que tengas con relación al servidor, su configuración, obtener información mas detallada de algún rol, canal, sistema o reportar a un usuario en el canal <#830165896743223327> solo abre un ticket pregunta y espera el equipo de soporte te atenderá en un momento." })
-                .setColor(((_k = (_j = msg.guild) === null || _j === void 0 ? void 0 : _j.members.me) === null || _k === void 0 ? void 0 : _k.displayHexColor) || 'White')
-                .setFooter({ text: ((_l = msg.guild) === null || _l === void 0 ? void 0 : _l.name) || 'undefined', iconURL: ((_m = msg.guild) === null || _m === void 0 ? void 0 : _m.iconURL()) || undefined })
-                .setTimestamp();
-            (0, functions_1.sendMessageText)(msg, { embeds: [embedMen] });
-        }
         //* Auto moderación -----------------------------
         const discordDomains = ["discord.gg/", "discord.com/invite/"];
         const urlIncludes = ['https://', 'http://', '.com', 'discord.'];
-        if (!((_o = msg.member) === null || _o === void 0 ? void 0 : _o.roles.cache.has('887444598715219999')) && !((_p = msg.member) === null || _p === void 0 ? void 0 : _p.permissions.has('Administrator')) && urlIncludes.some(s => msg.content.includes(s))) {
+        if (!((_e = msg.member) === null || _e === void 0 ? void 0 : _e.roles.cache.has('887444598715219999')) && !((_f = msg.member) === null || _f === void 0 ? void 0 : _f.permissions.has('Administrator')) && urlIncludes.some(s => msg.content.includes(s))) {
             const dataBot = yield (0, utils_1.getBotData)(client);
             if (!dataBot)
                 return;
-            const canalesPerIDs = (_q = msg.guild) === null || _q === void 0 ? void 0 : _q.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
+            const canalesPerIDs = (_g = msg.guild) === null || _g === void 0 ? void 0 : _g.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
             const otrosIDCha = dataBot.autoModeration.ignoreChannels;
             canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.push(...otrosIDCha);
             if (!(canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.some(s => s == msg.channelId))) {
@@ -178,11 +163,11 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
                     .setTitle(`🔗 Auto moderación de enlaces`)
                     .setDescription(`En este canal no están permitidos los enlaces, hay otros canales que si los permiten pero no todo tipo de enlaces.\n\n*Lee la descripción de cada canal, normalmente contiene información de que esta permitido en el canal o puedes preguntarle a un administrador o moderador*`)
                     .setColor(color.negative)
-                    .setFooter({ text: ((_r = msg.guild) === null || _r === void 0 ? void 0 : _r.name) || 'undefined', iconURL: ((_s = msg.guild) === null || _s === void 0 ? void 0 : _s.iconURL()) || undefined });
+                    .setFooter({ text: ((_h = msg.guild) === null || _h === void 0 ? void 0 : _h.name) || 'undefined', iconURL: ((_j = msg.guild) === null || _j === void 0 ? void 0 : _j.iconURL()) || undefined });
                 if (urls.every(e => discordDomains.some(s => e.includes(s)))) {
                     for (let url of urls) {
                         let invitation = yield client.fetchInvite(url);
-                        if (!(((_t = invitation.guild) === null || _t === void 0 ? void 0 : _t.id) == msg.guildId)) {
+                        if (!(((_k = invitation.guild) === null || _k === void 0 ? void 0 : _k.id) == msg.guildId)) {
                             msg.reply({ embeds: [UrlWarningEb], content: `<@${msg.author.id}>` }).then(te => {
                                 __1.exemptMessagesIds.push(te.id);
                                 setTimeout(() => msg.delete().catch(), 300);
@@ -223,10 +208,14 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
             }
         }
     }
+    //TODO: Mensaje por mención
+    if (msg.content.match(`^<@!?${(_l = client.user) === null || _l === void 0 ? void 0 : _l.id}>( |)$`)) {
+        (_m = exports.textCommands.get('help')) === null || _m === void 0 ? void 0 : _m.run(msg, client, []);
+    }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const commandName = (_u = args.shift()) === null || _u === void 0 ? void 0 : _u.toLowerCase();
+    const commandName = (_o = args.shift()) === null || _o === void 0 ? void 0 : _o.toLowerCase();
     if (commandName) {
         if (msg.guildId == serverId) {
             const svCommand = svTextCommands.get(commandName) || svTextCommands.find(f => f.alias.some(s => s == commandName));

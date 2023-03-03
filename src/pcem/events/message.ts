@@ -3,7 +3,7 @@ import ms from "ms";
 import { readdirSync } from 'fs'
 import { botDB } from "../db";
 import { autoModeration, svStatistics, exemptMessagesIds } from "..";
-import { getBotData, moderationSanction } from "../utils";
+import { getBotData, getEmbedColor, moderationSanction } from "../utils";
 import { sendMessageText } from "../../shared/functions";
 
 const isDist = __dirname.includes('src') ? 'src' : 'dist'
@@ -28,7 +28,7 @@ readdirSync(`./${isDist}/pcem/commands/text/`).forEach(async folder=> {
 
 
 export const messageEvent = async (msg: Message<boolean>, client: Client) => {
-  const { member } = msg, { prefix, emoji, color, serverId } = botDB
+  const { member, guild, guildId } = msg, { prefix, emoji, color, serverId } = botDB
 
   if(msg.guildId == botDB.serverId){
     svStatistics.messages++
@@ -144,24 +144,6 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
       }
     }
 
-    //TODO: Mensaje por mención
-    if(msg.content.match(`^<@!?${client.user?.id}>( |)$`)){
-      msg.channel.sendTyping()
-      const embedMen = new EmbedBuilder()
-      .setAuthor({name: `Hola ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
-      .setThumbnail(client.user?.displayAvatarURL() || null)
-      .setTitle(`Soy ${client.user?.username}`)
-      .setDescription(`**El bot de ${msg.guild?.name}**, ¿necesitas información o ayuda?`)
-      .addFields(
-        {name: `${emoji.information} **Información**`, value: "Puedes obtener información sobre los canales y roles del servidor en el canal <#840364744228995092>."},
-        {name: `${emoji.staff} **Soporte**`, value: "Puedes obtener soporte sobre cualquier duda que tengas con relación al servidor, su configuración, obtener información mas detallada de algún rol, canal, sistema o reportar a un usuario en el canal <#830165896743223327> solo abre un ticket pregunta y espera el equipo de soporte te atenderá en un momento."}
-      )
-      .setColor(msg.guild?.members.me?.displayHexColor || 'White')
-      .setFooter({text: msg.guild?.name || 'undefined', iconURL: msg.guild?.iconURL() || undefined})
-      .setTimestamp()
-      sendMessageText(msg, {embeds: [embedMen]})
-    }
-
 
     //* Auto moderación -----------------------------
     const discordDomains = ["discord.gg/","discord.com/invite/"]
@@ -230,9 +212,16 @@ export const messageEvent = async (msg: Message<boolean>, client: Client) => {
     }
   }
 
+  //TODO: Mensaje por mención
+  if(msg.content.match(`^<@!?${client.user?.id}>( |)$`)){
+    textCommands.get('help')?.run(msg, client, [])
+  }
+
   if(msg.author.bot || !msg.content.toLowerCase().startsWith(prefix)) return
   const args = msg.content.slice(prefix.length).trim().split(/ +/g)
   const commandName = args.shift()?.toLowerCase()
+
+  
 
   if(commandName) {
     if(msg.guildId == serverId){
