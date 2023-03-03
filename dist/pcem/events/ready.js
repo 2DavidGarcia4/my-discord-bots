@@ -23,8 +23,11 @@ const functions_1 = require("../../shared/functions");
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     if (!client.user)
         return;
+    const guildsDB = yield (0, utils_1.getGuildsData)(client);
+    if (guildsDB)
+        db_1.botDB.guilds = guildsDB;
     const dataBot = yield (0, utils_1.getBotData)(client);
-    // console.log(dataBot)
+    // console.log(botDB)
     (0, functions_1.defaultReady)(client, (dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.connections) || '', db_1.botDB.color.afirmative);
     db_1.botDB.color = Object.assign(Object.assign({}, db_1.botDB.color), dataBot === null || dataBot === void 0 ? void 0 : dataBot.color);
     const servidor = client.guilds.cache.get(db_1.botDB.serverId);
@@ -334,8 +337,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     // ;(await servidor?.commands.fetch('964578653369409556', {force: true}))?.edit({options: command1?.options}).then(c=> console.log('Comando actualizado'))
     // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
     //! Public
-    // const command = interactionCommands.get('members')
-    // ;(await client.application?.commands.fetch('1077078955917590538', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+    // const command = interactionCommands.get('set')
+    // ;(await client.application?.commands.fetch('1076941760753840200', {force: true}))?.edit({options: command?.struct.options, defaultMemberPermissions: PermissionFlagsBits.ManageGuild}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
     // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 });
 exports.readyEvent = readyEvent;

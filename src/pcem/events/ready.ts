@@ -3,15 +3,17 @@ import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder, Per
 import { rafflesModel, surveysModel, carcelModel } from "../models"
 import { botDB } from "../db"
 import { svInteractionCommands, interactionCommands } from "./interaction"
-import { isDevelopment } from "../../config"
-import { getBotData } from "../utils"
+import { getBotData, getGuildsData } from "../utils"
 import { defaultReady } from "../../shared/functions"
 
 export const readyEvent = async (client: Client) => {
   if (!client.user) return
+
+  const guildsDB = await getGuildsData(client)
+  if(guildsDB) botDB.guilds = guildsDB 
   
   const dataBot = await getBotData(client)
-  // console.log(dataBot)
+  // console.log(botDB)
   defaultReady(client, dataBot?.logs.connections || '', botDB.color.afirmative)
   botDB.color = {...botDB.color, ...dataBot?.color}
 
@@ -337,8 +339,8 @@ export const readyEvent = async (client: Client) => {
   // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
   
   //! Public
-  // const command = interactionCommands.get('members')
+  // const command = interactionCommands.get('set')
   
-  // ;(await client.application?.commands.fetch('1077078955917590538', {force: true}))?.edit({options: command?.struct.options}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
+  // ;(await client.application?.commands.fetch('1076941760753840200', {force: true}))?.edit({options: command?.struct.options, defaultMemberPermissions: PermissionFlagsBits.ManageGuild}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
   // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 }
