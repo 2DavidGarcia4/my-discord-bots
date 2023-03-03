@@ -1,6 +1,8 @@
 import { Client, SlashCommandBuilder, ChatInputCommandInteraction, CacheType, ChannelType, PermissionFlagsBits, EmbedBuilder } from "discord.js";
 import ms from "ms";
 import { sendMessageSlash, setSlashErrors } from "../../../../shared/functions";
+import { botDB } from "../../../db";
+import { getEmbedColor, updateGuildsData } from "../../../utils";
 
 export const setScb = new SlashCommandBuilder()
 .setName('set')
@@ -29,10 +31,22 @@ export const setScb = new SlashCommandBuilder()
     .setRequired(false)
   )
 )
-.setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
+.addSubcommand(autoColor => 
+  autoColor.setName('color')
+  .setDescription('🌈 Set auto color in embed messages.')
+  .setDescriptionLocalization('es-ES', '🌈 Establecer color automático en mensajes incrustados.')
+  .addBooleanOption(establish=> 
+    establish.setName('establish')
+    .setNameLocalization('es-ES', 'establecer')
+    .setDescription('🔃 Set to enabled or disabled (true or false).')
+    .setDescriptionLocalization('es-ES', '🔃 Establecer en habilitado o deshabilitado (true o false).')
+    .setRequired(true)
+  )
+)
+.setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild)
 .toJSON()
 
-export const setSlashCommand = async (int: ChatInputCommandInteraction<CacheType>) => {
+export const setSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
   const { guild, user, options, locale } = int, subCommandName = options.getSubcommand(true), isEnglish = locale == 'en-US'
   const author = guild?.members.cache.get(user.id)
 
@@ -74,12 +88,59 @@ export const setSlashCommand = async (int: ChatInputCommandInteraction<CacheType
       `Paused mode for channel ${channel || int.channel} has been set to **${time}**.` :
       `El modo pausado del canal ${channel || int.channel} se ha establecido a **${time}**.`
     )
-    .setColor(guild?.members.me?.displayHexColor || 'White')
+    .setColor(getEmbedColor(guild))
     .setTimestamp()
 
     const finalChannel = channel || int.channel
     guild?.channels.cache.get(finalChannel?.id || '')?.edit({rateLimitPerUser: Math.floor(ms(time)/1000)}).then(()=> {
       sendMessageSlash(int, {embeds: [SlowmodeEb]})
     })
+  }
+
+  if(subCommandName == 'color'){
+    const { guilds } = botDB
+    const establish = options.getBoolean('establish', true)
+    if(!guild) return
+
+    const EstablishEb = new EmbedBuilder()
+    .setTitle('🌈 '+(isEnglish ? 
+      'Color of embedded messages' :
+      'Color de los mensajes incrustados'
+    ))
+    .setFooter({text: isEnglish ? 
+      'Auto color of embed messages is the color of the role that changes the color of the bot name on the server.' :
+      'El color automático de los mensajes incrustados es el color del rol que cambia el color del nombre del bot en el servidor.'  
+    , iconURL: guild.iconURL() || undefined})
+    
+    await int.deferReply()
+    
+    const guildDB = guilds.find(f=> f.guildId == guild?.id)
+    EstablishEb.setDescription(guildDB?.autoColor == establish ? 
+      (isEnglish ? 
+        `Auto color of embedded messages is already ${establish ? 'enabled' : 'disabled'} *\`\`(${establish})\`\`*.`:
+        `El color automático de los mensajes incrustados ya está ${establish ? 'habilitado' : 'deshabilitado '} *\`\`(${establish})\`\`*.`  
+      ) :
+      (isEnglish ? 
+        `Auto color of embedded messages has been ${establish ? 'enabled' : 'disabled'} *\`\`(${establish})\`\`*.` :
+        `El color automático de los mensajes incrustados se ha ${establish ? 'habilitado' : 'deshabilitado '} *\`\`(${establish})\`\`*.`
+      )  
+    )
+
+    if(guildDB){
+      if(!guildDB.autoColor == establish){
+        guildDB.autoColor = establish
+      }
+      
+    }else{
+      guilds.push({
+        guildId: guild.id,
+        prefix: 'q!',
+        autoColor: establish
+      })
+    }
+
+    await updateGuildsData(client, guilds)
+    EstablishEb.setColor(getEmbedColor(guild))
+    sendMessageSlash(int, {embeds: [EstablishEb]})
   }
 }

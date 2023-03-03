@@ -16,6 +16,8 @@ exports.setSlashCommand = exports.setScb = void 0;
 const discord_js_1 = require("discord.js");
 const ms_1 = __importDefault(require("ms"));
 const functions_1 = require("../../../../shared/functions");
+const db_1 = require("../../../db");
+const utils_1 = require("../../../utils");
 exports.setScb = new discord_js_1.SlashCommandBuilder()
     .setName('set')
     .setNameLocalization('es-ES', 'establecer')
@@ -37,10 +39,18 @@ exports.setScb = new discord_js_1.SlashCommandBuilder()
     .setDescriptionLocalization('es-ES', '✍️ Canal de texto para establecer el modo lento.')
     .addChannelTypes(discord_js_1.ChannelType.GuildText, discord_js_1.ChannelType.PublicThread, discord_js_1.ChannelType.PrivateThread, discord_js_1.ChannelType.GuildAnnouncement, discord_js_1.ChannelType.AnnouncementThread, discord_js_1.ChannelType.GuildVoice)
     .setRequired(false)))
-    .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
+    .addSubcommand(autoColor => autoColor.setName('color')
+    .setDescription('🌈 Set auto color in embed messages.')
+    .setDescriptionLocalization('es-ES', '🌈 Establecer color automático en mensajes incrustados.')
+    .addBooleanOption(establish => establish.setName('establish')
+    .setNameLocalization('es-ES', 'establecer')
+    .setDescription('🔃 Set to enabled or disabled (true or false).')
+    .setDescriptionLocalization('es-ES', '🔃 Establecer en habilitado o deshabilitado (true o false).')
+    .setRequired(true)))
+    .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.ManageGuild)
     .toJSON();
-const setSlashCommand = (int) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e;
+const setSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a, _b, _c, _d;
     const { guild, user, options, locale } = int, subCommandName = options.getSubcommand(true), isEnglish = locale == 'en-US';
     const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     if (subCommandName == 'slowmode') {
@@ -77,12 +87,50 @@ const setSlashCommand = (int) => __awaiter(void 0, void 0, void 0, function* () 
             .setDescription(isEnglish ?
             `Paused mode for channel ${channel || int.channel} has been set to **${time}**.` :
             `El modo pausado del canal ${channel || int.channel} se ha establecido a **${time}**.`)
-            .setColor(((_d = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White')
+            .setColor((0, utils_1.getEmbedColor)(guild))
             .setTimestamp();
         const finalChannel = channel || int.channel;
-        (_e = guild === null || guild === void 0 ? void 0 : guild.channels.cache.get((finalChannel === null || finalChannel === void 0 ? void 0 : finalChannel.id) || '')) === null || _e === void 0 ? void 0 : _e.edit({ rateLimitPerUser: Math.floor((0, ms_1.default)(time) / 1000) }).then(() => {
+        (_d = guild === null || guild === void 0 ? void 0 : guild.channels.cache.get((finalChannel === null || finalChannel === void 0 ? void 0 : finalChannel.id) || '')) === null || _d === void 0 ? void 0 : _d.edit({ rateLimitPerUser: Math.floor((0, ms_1.default)(time) / 1000) }).then(() => {
             (0, functions_1.sendMessageSlash)(int, { embeds: [SlowmodeEb] });
         });
+    }
+    if (subCommandName == 'color') {
+        const { guilds } = db_1.botDB;
+        const establish = options.getBoolean('establish', true);
+        if (!guild)
+            return;
+        const EstablishEb = new discord_js_1.EmbedBuilder()
+            .setTitle('🌈 ' + (isEnglish ?
+            'Color of embedded messages' :
+            'Color de los mensajes incrustados'))
+            .setFooter({ text: isEnglish ?
+                'Auto color of embed messages is the color of the role that changes the color of the bot name on the server.' :
+                'El color automático de los mensajes incrustados es el color del rol que cambia el color del nombre del bot en el servidor.',
+            iconURL: guild.iconURL() || undefined });
+        yield int.deferReply();
+        const guildDB = guilds.find(f => f.guildId == (guild === null || guild === void 0 ? void 0 : guild.id));
+        EstablishEb.setDescription((guildDB === null || guildDB === void 0 ? void 0 : guildDB.autoColor) == establish ?
+            (isEnglish ?
+                `Auto color of embedded messages is already ${establish ? 'enabled' : 'disabled'} *\`\`(${establish})\`\`*.` :
+                `El color automático de los mensajes incrustados ya está ${establish ? 'habilitado' : 'deshabilitado '} *\`\`(${establish})\`\`*.`) :
+            (isEnglish ?
+                `Auto color of embedded messages has been ${establish ? 'enabled' : 'disabled'} *\`\`(${establish})\`\`*.` :
+                `El color automático de los mensajes incrustados se ha ${establish ? 'habilitado' : 'deshabilitado '} *\`\`(${establish})\`\`*.`));
+        if (guildDB) {
+            if (!guildDB.autoColor == establish) {
+                guildDB.autoColor = establish;
+            }
+        }
+        else {
+            guilds.push({
+                guildId: guild.id,
+                prefix: 'q!',
+                autoColor: establish
+            });
+        }
+        yield (0, utils_1.updateGuildsData)(client, guilds);
+        EstablishEb.setColor((0, utils_1.getEmbedColor)(guild));
+        (0, functions_1.sendMessageSlash)(int, { embeds: [EstablishEb] });
     }
 });
 exports.setSlashCommand = setSlashCommand;
