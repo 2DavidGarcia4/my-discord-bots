@@ -11,13 +11,39 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.guildCreateEvent = void 0;
 const discord_js_1 = require("discord.js");
+const db_1 = require("../db");
 const utils_1 = require("../utils");
 const guildCreateEvent = (guild, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h;
     const botData = yield (0, utils_1.getBotData)(client), channelLog = client.channels.cache.get((botData === null || botData === void 0 ? void 0 : botData.logs.guildCreate) || '');
     const owner = guild.members.cache.get(guild.ownerId);
+    const usersData = yield (0, utils_1.getUsersData)(client);
     const guildRoles = guild.roles.cache.filter(f => !f.managed && f.id != guild.id).map(m => Object({ posicion: m.position, nombre: m.name })).slice(0, 10).sort((a, b) => b.posicion - a.posicion).map(r => r.nombre).slice(0, 10).join(", ");
     const invited = (yield guild.fetchAuditLogs({ limit: 1, type: discord_js_1.AuditLogEvent.BotAdd })).entries.first();
+    if (usersData) {
+        const user = usersData === null || usersData === void 0 ? void 0 : usersData.find(f => { var _a; return f.userId == ((_a = invited === null || invited === void 0 ? void 0 : invited.executor) === null || _a === void 0 ? void 0 : _a.id); }), rol = '851577906828148766';
+        const server = client.guilds.cache.get(db_1.botDB.serverId);
+        if (user) {
+            user.guilds.push(guild.id);
+            const member = server === null || server === void 0 ? void 0 : server.members.cache.get(user.userId);
+            if (member) {
+                if (!member.roles.cache.has(rol))
+                    member.roles.add(rol);
+            }
+        }
+        else if (invited === null || invited === void 0 ? void 0 : invited.executor) {
+            usersData === null || usersData === void 0 ? void 0 : usersData.push({
+                userId: invited.executor.id,
+                guilds: [guild.id]
+            });
+            const member = server === null || server === void 0 ? void 0 : server.members.cache.get(invited.executor.id);
+            if (member) {
+                if (!member.roles.cache.has(rol))
+                    member.roles.add(rol);
+            }
+        }
+        yield (0, utils_1.updateUsersData)(client, usersData);
+    }
     const InvitedEb = new discord_js_1.EmbedBuilder()
         .setAuthor({ name: guild.name, iconURL: guild.iconURL() || undefined })
         .setTitle(`👋 Hello ${(_a = invited === null || invited === void 0 ? void 0 : invited.executor) === null || _a === void 0 ? void 0 : _a.username}`)

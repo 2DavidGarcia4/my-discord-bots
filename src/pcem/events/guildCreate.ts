@@ -1,12 +1,38 @@
 import { Guild, Client, EmbedBuilder, ChannelType, AuditLogEvent } from "discord.js";
-import { getBotData } from "../utils";
+import { botDB } from "../db";
+import { getBotData, getUsersData, updateUsersData } from "../utils";
 
 export const guildCreateEvent = async (guild: Guild, client: Client) => {
   const botData = await getBotData(client), channelLog = client.channels.cache.get(botData?.logs.guildCreate || '')
   const owner = guild.members.cache.get(guild.ownerId)
   
+  const usersData = await getUsersData(client)
+  
   const guildRoles = guild.roles.cache.filter(f => !f.managed && f.id != guild.id).map(m => Object({ posicion: m.position, nombre: m.name })).slice(0, 10).sort((a, b) => b.posicion - a.posicion).map(r => r.nombre).slice(0, 10).join(", ")
   const invited = (await guild.fetchAuditLogs({limit: 1, type: AuditLogEvent.BotAdd})).entries.first()
+
+  if(usersData){
+    const user = usersData?.find(f=> f.userId == invited?.executor?.id), rol = '851577906828148766'
+    const server = client.guilds.cache.get(botDB.serverId)
+    if(user){
+      user.guilds.push(guild.id)
+      const member = server?.members.cache.get(user.userId)
+      if(member){
+        if(!member.roles.cache.has(rol)) member.roles.add(rol)
+      }
+  
+    }else if(invited?.executor){
+      usersData?.push({
+        userId: invited.executor.id,
+        guilds: [guild.id]
+      })
+      const member = server?.members.cache.get(invited.executor.id)
+      if(member){
+        if(!member.roles.cache.has(rol)) member.roles.add(rol)
+      }
+    }
+    await updateUsersData(client, usersData)
+  }
   
   const InvitedEb = new EmbedBuilder()
   .setAuthor({name: guild.name, iconURL: guild.iconURL() || undefined})
