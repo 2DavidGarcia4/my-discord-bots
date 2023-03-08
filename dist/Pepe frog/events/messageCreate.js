@@ -194,7 +194,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 //? Auto reactions for verified messages
                 if (msg.channel.parentId == '1053401639454773338' && msg.channel.position > 1)
                     msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596');
-                if (msg.mentions.everyone && msg.channel.parentId == '1053401639454773338' && ((_l = msg.member) === null || _l === void 0 ? void 0 : _l.roles.cache.has('1057720388253122600'))) {
+                if (msg.mentions.everyone && msg.channel.parentId == '1053401639454773338' && ((_l = msg.member) === null || _l === void 0 ? void 0 : _l.roles.cache.has('1057720387464593478'))) {
                     const verifiedsData = yield (0, functions_1.getVerifiedsData)(client);
                     const channelLog = client.channels.cache.get('1083075799634157669');
                     msg.channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });

@@ -197,7 +197,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         if(msg.channel.parentId == '1053401639454773338' && msg.channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
         
 
-        if(msg.mentions.everyone && msg.channel.parentId == '1053401639454773338' && msg.member?.roles.cache.has('1057720388253122600')){
+        if(msg.mentions.everyone && msg.channel.parentId == '1053401639454773338' && msg.member?.roles.cache.has('1057720387464593478')){
           const verifiedsData = await getVerifiedsData(client)
           const channelLog = client.channels.cache.get('1083075799634157669')
           
