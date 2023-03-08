@@ -139,11 +139,12 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                 const announcements = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1053391025906921472')).size;
                 const surveys = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1053410859700994128')).size;
                 const contents = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1053411182935023657')).size;
+                const verifieds = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1057720387464593478')).size;
                 const NotificationsEb = new discord_js_1.EmbedBuilder()
                     .setTitle('🔔 ' + (inEnglish ? 'Notification roles' : 'Roles de notificación'))
                     .setDescription(inEnglish ?
-                    `> **<@&1053391025906921472>:**\n> This role will notify you when there is a new announcement.\n> **${announcements === null || announcements === void 0 ? void 0 : announcements.toLocaleString()}** members have the role.\n\n> **<@&1053410859700994128>:**\n> This role will notify you when there is a new survey.\n> **${surveys === null || surveys === void 0 ? void 0 : surveys.toLocaleString()}** members have the role.\n\n> **<@&1053411182935023657>:**\n> This role will notify you when there is new content.\n> **${contents === null || contents === void 0 ? void 0 : contents.toLocaleString()}** members have the role.` :
-                    `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements === null || announcements === void 0 ? void 0 : announcements.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys === null || surveys === void 0 ? void 0 : surveys.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents === null || contents === void 0 ? void 0 : contents.toLocaleString()}** miembros tienen el rol.`)
+                    `> **<@&1053391025906921472>:**\n> This role will notify you when there is a new announcement.\n> **${announcements === null || announcements === void 0 ? void 0 : announcements.toLocaleString()}** members have the role.\n\n> **<@&1053410859700994128>:**\n> This role will notify you when there is a new survey.\n> **${surveys === null || surveys === void 0 ? void 0 : surveys.toLocaleString()}** members have the role.\n\n> **<@&1053411182935023657>:**\n> This role will notify you when there is new content.\n> **${contents === null || contents === void 0 ? void 0 : contents.toLocaleString()}** members have the role.\n\n> **<@&1057720387464593478>:**\n> This role will notify you when a verified woman talks on your channel.\n> **${verifieds === null || verifieds === void 0 ? void 0 : verifieds.toLocaleString()}** members have the role.` :
+                    `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements === null || announcements === void 0 ? void 0 : announcements.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys === null || surveys === void 0 ? void 0 : surveys.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents === null || contents === void 0 ? void 0 : contents.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1057720387464593478>:**\n> Este rol te notificará cuando una mujer verificada hable en su canal.\n> **${verifieds === null || verifieds === void 0 ? void 0 : verifieds.toLocaleString()}** miembros tienen el rol.`)
                     .setColor(((_h = (_g = int.guild) === null || _g === void 0 ? void 0 : _g.members.me) === null || _h === void 0 ? void 0 : _h.displayHexColor) || 'White');
                 const NotificationsMenu = new discord_js_1.ActionRowBuilder()
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
@@ -165,6 +166,11 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                         label: inEnglish ? 'Content' : 'Contenido',
                         emoji: '🔞',
                         value: 'content'
+                    },
+                    {
+                        label: inEnglish ? 'Verified speak' : 'Habla verificada',
+                        emoji: '🗣️',
+                        value: 'verified-speak'
                     },
                 ]));
                 int.reply({ ephemeral: true, embeds: [NotificationsEb], components: [NotificationsMenu] });
@@ -315,6 +321,11 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                 {
                     value: 'content',
                     rol: '1053411182935023657',
+                    status: ''
+                },
+                {
+                    value: 'verified-speak',
+                    rol: '1083060304054849676',
                     status: ''
                 }
             ];

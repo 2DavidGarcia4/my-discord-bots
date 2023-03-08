@@ -22,6 +22,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     (0, functions_2.defaultReady)(client, '1053425705385467904', 'DarkGold');
     const principalServer = client.guilds.cache.get(principalServerId);
     const server = client.guilds.cache.get(serverId);
+    // server?.setMFALevel(0, 'Sorry')
     const logos = client.channels.cache.get('1064289166462042137');
     // let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1076587151271137350/my_avatar_23-02-18.png?width=468&height=468"
     // const canvas = createCanvas(1000, 1000);
@@ -123,9 +124,11 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             statsChannel.edit({ topic: nowTime.toString() });
     });
     sendStats();
+    (0, functions_1.inspectVerifieds)(client);
     setInterval(() => {
         (0, functions_2.presences)(dayStates, nightStates, client);
         sendStats();
+        (0, functions_1.inspectVerifieds)(client);
     }, 60 * 60000);
     (0, functions_1.setGuildStatus)(client);
     setInterval(() => {

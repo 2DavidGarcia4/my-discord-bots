@@ -1,6 +1,16 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.setGuildStatus = void 0;
+exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const getCategoryChannels = (id, server) => {
     return server === null || server === void 0 ? void 0 : server.channels.cache.filter(f => f.parentId == id).size.toLocaleString();
@@ -29,3 +39,44 @@ const setGuildStatus = (client) => {
         packChannel === null || packChannel === void 0 ? void 0 : packChannel.edit({ name: packName });
 };
 exports.setGuildStatus = setGuildStatus;
+//? Verifieds data
+const verifiedsChanneId = '1083064332260212768', verifiedsMessageId = '1083069070896812154';
+const getVerifiedsData = (client) => __awaiter(void 0, void 0, void 0, function* () {
+    const channelDb = client.channels.cache.get(verifiedsChanneId);
+    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+        const message = (yield channelDb.messages.fetch(verifiedsMessageId)).content;
+        const data = JSON.parse(message);
+        return data;
+    }
+});
+exports.getVerifiedsData = getVerifiedsData;
+const updateVerifiedsData = (client, newData) => __awaiter(void 0, void 0, void 0, function* () {
+    const channelDb = client.channels.cache.get(verifiedsChanneId);
+    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+        const newDataStr = JSON.stringify(newData);
+        const message = yield channelDb.messages.fetch(verifiedsMessageId);
+        if (newDataStr != message.content)
+            message.edit({ content: JSON.stringify(newData) });
+    }
+});
+exports.updateVerifiedsData = updateVerifiedsData;
+const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function* () {
+    const verifiedsData = yield (0, exports.getVerifiedsData)(client);
+    const channelLog = client.channels.cache.get('1083075799634157669');
+    verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.filter(f => !f.ping).forEach(v => {
+        if (Math.floor(v.pinedAt + (7 * 24 * 60 * 60000)) <= Date.now()) {
+            const channel = client.channels.cache.get(v.channelId);
+            if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
+                channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
+            v.ping = true;
+            const VerifiedLog = new discord_js_1.EmbedBuilder()
+                .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
+                .setColor('Green');
+            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+        }
+    });
+    if (verifiedsData)
+        yield (0, exports.updateVerifiedsData)(client, verifiedsData);
+});
+exports.inspectVerifieds = inspectVerifieds;

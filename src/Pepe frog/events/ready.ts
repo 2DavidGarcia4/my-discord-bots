@@ -1,5 +1,5 @@
 import { ActivitiesOptions, ActivityType, AttachmentBuilder, ChannelType, Client, EmbedBuilder } from "discord.js";
-import { getVerifiedsData, inspectVerifieds, setGuildStatus } from "../utils/functions";
+import { getVerifiedsData, inspectVerifieds, setGuildStatus, updateVerifiedsData } from "../utils/functions";
 import { frogDb } from "../db";
 import { commands } from "./interactionCreate";
 import { defaultReady, presences } from "../../shared/functions";
@@ -14,9 +14,6 @@ export const readyEvent = async (client: Client) => {
   const principalServer = client.guilds.cache.get(principalServerId)
   const server = client.guilds.cache.get(serverId)
   // server?.setMFALevel(0, 'Sorry')
-
-  const verifieds = await getVerifiedsData(client)
-  console.log(verifieds)
 
   const logos = client.channels.cache.get('1064289166462042137')
   // let imagen = "https://media.discordapp.net/attachments/1064289166462042137/1076587151271137350/my_avatar_23-02-18.png?width=468&height=468"
