@@ -1,9 +1,9 @@
 import { ChannelType, Client, EmbedBuilder, AttachmentBuilder, GuildMember, WebhookClient } from "discord.js";
 import { svStatistics } from "..";
 import { botDB } from "../db";
-import { registerFont, createCanvas, loadImage } from "canvas";
+// import { registerFont, createCanvas, loadImage } from "canvas";
 import { getBotData } from "../utils";
-registerFont("tipo.otf", {family: 'MADE TOMMY'})
+// registerFont("tipo.otf", {family: 'MADE TOMMY'})
 
 export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
   if(gmd.guild.id != botDB.serverId) return
@@ -52,44 +52,44 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
     if(!webhook) webhook = await welcomeChannel.createWebhook({name: 'Welcome', avatar: 'https://cdn-icons-png.flaticon.com/512/5167/5167400.png', reason: 'Para las bienvenidas.'})
     const welcomeMsg = new WebhookClient({url: webhook.url})
 
-    let imagen = "https://cdn.discordapp.com/attachments/901313790765854720/902607815359758356/fondoBienv.png"
-    const canvas = createCanvas(1000, 500);
-    const fondo = await loadImage(imagen);
-    const context = canvas.getContext("2d");
+    // let imagen = "https://cdn.discordapp.com/attachments/901313790765854720/902607815359758356/fondoBienv.png"
+    // const canvas = createCanvas(1000, 500);
+    // const fondo = await loadImage(imagen);
+    // const context = canvas.getContext("2d");
 
-    context.drawImage(fondo, 0, 0, canvas.width, canvas.height);
-    context.strokeStyle = "#000000";
-    context.strokeRect(0,0, canvas.width, canvas.height);
+    // context.drawImage(fondo, 0, 0, canvas.width, canvas.height);
+    // context.strokeStyle = "#000000";
+    // context.strokeRect(0,0, canvas.width, canvas.height);
 
-    context.beginPath();
-    context.arc(500, 160, 145, 0, Math.PI * 2, true);
-    context.fillStyle = `${gmd.guild.members.me?.displayHexColor}`;
-    context.stroke();
-    context.fill();
+    // context.beginPath();
+    // context.arc(500, 160, 145, 0, Math.PI * 2, true);
+    // context.fillStyle = `${gmd.guild.members.me?.displayHexColor}`;
+    // context.stroke();
+    // context.fill();
 
-    context.textAlign = "center"
-    context.font = "80px MADE TOMMY"
-    context.fillStyle = "#ffffff"
-    context.fillText("Bienvenid@", 500, 375)
+    // context.textAlign = "center"
+    // context.font = "80px MADE TOMMY"
+    // context.fillStyle = "#ffffff"
+    // context.fillText("Bienvenid@", 500, 375)
 
-    context.font = '45px MADE TOMMY';
-    context.fillStyle = '#ffffff';
-    context.fillText(`${gmd.user.tag}`, 500, 435);
+    // context.font = '45px MADE TOMMY';
+    // context.fillStyle = '#ffffff';
+    // context.fillText(`${gmd.user.tag}`, 500, 435);
 
-    context.font = '38px MADE TOMMY'
-    context.fillStyle = '#ffffff';
-    context.fillText(`disfruta del servidor`, 500, 480);
+    // context.font = '38px MADE TOMMY'
+    // context.fillStyle = '#ffffff';
+    // context.fillText(`disfruta del servidor`, 500, 480);
 
-    context.beginPath();
-    context.arc(500, 160, 140, 0, Math.PI * 2, true);
-    context.fillStyle = `${gmd.guild.members.me?.displayHexColor}`;
-    context.closePath();
-    context.clip();
+    // context.beginPath();
+    // context.arc(500, 160, 140, 0, Math.PI * 2, true);
+    // context.fillStyle = `${gmd.guild.members.me?.displayHexColor}`;
+    // context.closePath();
+    // context.clip();
 
-    const avatar = await loadImage(gmd.displayAvatarURL({size: 2048, extension: 'png'}))
-    context.drawImage(avatar, 360, 20, 280, 280);
+    // const avatar = await loadImage(gmd.displayAvatarURL({size: 2048, extension: 'png'}))
+    // context.drawImage(avatar, 360, 20, 280, 280);
 
-    const finalImg = new AttachmentBuilder(canvas.toBuffer(), {name: 'welcome.png'})
+    // const finalImg = new AttachmentBuilder(canvas.toBuffer(), {name: 'welcome.png'})
 
     const embBienvenida = new EmbedBuilder()
     .setAuthor({name: gmd.user.tag, iconURL: gmd.user.displayAvatarURL()})

@@ -1,5 +1,6 @@
-import { Client, Guild } from "discord.js"
+import { ChannelType, Client, EmbedBuilder, Guild } from "discord.js"
 import { frogDb } from "../db"
+import { VerifiedsData } from "../types"
 
 const getCategoryChannels = (id: string, server: Guild | undefined) => {
   return server?.channels.cache.filter(f=> f.parentId == id).size.toLocaleString()
@@ -29,4 +30,44 @@ export const setGuildStatus = (client: Client) => {
   if(nsfwChanel?.name != nsfwName) nsfwChanel?.edit({name: nsfwName})
   if(vipCahnnel?.name != nsfwName) vipCahnnel?.edit({name: vipName})
   if(packChannel?.name != nsfwName) packChannel?.edit({name: packName})
+}
+
+//? Verifieds data
+const verifiedsChanneId = '1083064332260212768', verifiedsMessageId = '1083069070896812154'
+export const getVerifiedsData = async (client: Client): Promise<VerifiedsData[] | undefined> => {
+  const channelDb = client.channels.cache.get(verifiedsChanneId)
+  if(channelDb?.isTextBased()) {
+    const message = (await channelDb.messages.fetch(verifiedsMessageId)).content
+    const data = JSON.parse(message)
+    return data
+  }
+}
+
+export const updateVerifiedsData = async (client: Client, newData: VerifiedsData[]) => {
+  const channelDb = client.channels.cache.get(verifiedsChanneId)
+  if(channelDb?.isTextBased()) {
+    const newDataStr = JSON.stringify(newData)
+    const message = await channelDb.messages.fetch(verifiedsMessageId)
+    if(newDataStr != message.content) message.edit({content: JSON.stringify(newData)})
+  }
+}
+
+export const inspectVerifieds = async (client: Client) => {
+  const verifiedsData = await getVerifiedsData(client)
+  const channelLog = client.channels.cache.get('1083075799634157669')
+  
+  verifiedsData?.filter(f=> !f.ping).forEach(v=> {
+    if(Math.floor(v.pinedAt + (7*24*60*60000)) <= Date.now()){
+      const channel = client.channels.cache.get(v.channelId)
+      if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
+      v.ping = true
+
+      const VerifiedLog = new EmbedBuilder()
+      .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
+      .setColor('Green')
+      if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+    } 
+  })
+
+  if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
 }

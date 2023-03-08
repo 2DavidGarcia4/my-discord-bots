@@ -152,12 +152,13 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
         const announcements = members?.filter(f=> f.roles.cache.has('1053391025906921472')).size
         const surveys = members?.filter(f=> f.roles.cache.has('1053410859700994128')).size
         const contents = members?.filter(f=> f.roles.cache.has('1053411182935023657')).size
+        const verifieds = members?.filter(f=> f.roles.cache.has('1057720387464593478')).size
 
         const NotificationsEb = new EmbedBuilder()
         .setTitle('🔔 '+(inEnglish ? 'Notification roles' : 'Roles de notificación'))
         .setDescription(inEnglish ? 
-        `> **<@&1053391025906921472>:**\n> This role will notify you when there is a new announcement.\n> **${announcements?.toLocaleString()}** members have the role.\n\n> **<@&1053410859700994128>:**\n> This role will notify you when there is a new survey.\n> **${surveys?.toLocaleString()}** members have the role.\n\n> **<@&1053411182935023657>:**\n> This role will notify you when there is new content.\n> **${contents?.toLocaleString()}** members have the role.` : 
-        `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents?.toLocaleString()}** miembros tienen el rol.`)
+        `> **<@&1053391025906921472>:**\n> This role will notify you when there is a new announcement.\n> **${announcements?.toLocaleString()}** members have the role.\n\n> **<@&1053410859700994128>:**\n> This role will notify you when there is a new survey.\n> **${surveys?.toLocaleString()}** members have the role.\n\n> **<@&1053411182935023657>:**\n> This role will notify you when there is new content.\n> **${contents?.toLocaleString()}** members have the role.\n\n> **<@&1057720387464593478>:**\n> This role will notify you when a verified woman talks on your channel.\n> **${verifieds?.toLocaleString()}** members have the role.` : 
+        `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1057720387464593478>:**\n> Este rol te notificará cuando una mujer verificada hable en su canal.\n> **${verifieds?.toLocaleString()}** miembros tienen el rol.`)
         .setColor(int.guild?.members.me?.displayHexColor || 'White')
 
         const NotificationsMenu = new ActionRowBuilder<StringSelectMenuBuilder>()
@@ -181,6 +182,11 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
               label: inEnglish ? 'Content' : 'Contenido',
               emoji: '🔞',
               value: 'content'
+            },
+            {
+              label: inEnglish ? 'Verified speak' : 'Habla verificada',
+              emoji: '🗣️',
+              value: 'verified-speak'
             },
           ])
         )
@@ -346,6 +352,11 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
         {
           value: 'content',
           rol: '1053411182935023657',
+          status: ''
+        },
+        {
+          value: 'verified-speak',
+          rol: '1083060304054849676',
           status: ''
         }
       ]

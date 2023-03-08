@@ -7,6 +7,7 @@ import { rolesCommand } from "../commands/text/roles";
 import { rulesCommand } from "../commands/text/rules";
 import { girlsCommand } from "../commands/text/girls";
 import { infoCommand } from "../commands/text/info";
+import { getVerifiedsData, updateVerifiedsData } from "../utils/functions";
 
 const sanctions = [
   {
@@ -191,8 +192,38 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         }, 60000)
       }
   
-      //? Auto reactions for verified messages
-      if(msg.channel.type == ChannelType.GuildText && msg.channel.parentId == '1053401639454773338' && msg.channel.position) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
+      if(msg.channel.type == ChannelType.GuildText){
+        //? Auto reactions for verified messages
+        if(msg.channel.parentId == '1053401639454773338' && msg.channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
+        
+
+        if(msg.mentions.everyone && msg.channel.parentId == '1053401639454773338' && msg.member?.roles.cache.has('1057720388253122600')){
+          const verifiedsData = await getVerifiedsData(client)
+          const channelLog = client.channels.cache.get('1083075799634157669')
+          
+          msg.channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
+          const verifiedUser = verifiedsData?.find(f=> f.id == msg.author.id)
+          if(verifiedUser){
+            verifiedUser.ping = false
+            verifiedUser.pinedAt = Date.now()
+          
+          }else{
+            verifiedsData?.push({
+              id: msg.author.id,
+              ping: false,
+              pinedAt: Date.now(),
+              channelId: msg.channelId
+            })
+          }
+    
+          if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
+          const VerifiedLog = new EmbedBuilder()
+          .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
+          .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now()/1000)+(7*24*60*60)}:R>`)
+          .setColor('Yellow')
+          if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
+        } 
+      }
     }
   }
 

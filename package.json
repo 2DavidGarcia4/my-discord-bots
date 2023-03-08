@@ -1,6 +1,6 @@
 {
   "name": "pcem",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "PCEM bot, bot para mi servidor PCEM.",
   "main": "src/index.ts",
   "type": "commonjs",
@@ -16,7 +16,6 @@
   "license": "ISC",
   "dependencies": {
     "@typegoose/typegoose": "^9.12.1",
-    "canvas": "^2.10.1",
     "discord.js": "^14.7.1",
     "dotenv": "^16.0.3",
     "mongoose": "^6.6.4",

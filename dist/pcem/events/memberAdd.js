@@ -13,11 +13,11 @@ exports.memberAddEvent = void 0;
 const discord_js_1 = require("discord.js");
 const __1 = require("..");
 const db_1 = require("../db");
-const canvas_1 = require("canvas");
+// import { registerFont, createCanvas, loadImage } from "canvas";
 const utils_1 = require("../utils");
-(0, canvas_1.registerFont)("tipo.otf", { family: 'MADE TOMMY' });
+// registerFont("tipo.otf", {family: 'MADE TOMMY'})
 const memberAddEvent = (gmd, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+    var _a, _b, _c, _d, _e, _f, _g;
     if (gmd.guild.id != db_1.botDB.serverId)
         return;
     __1.svStatistics.joins++;
@@ -60,42 +60,42 @@ const memberAddEvent = (gmd, client) => __awaiter(void 0, void 0, void 0, functi
         if (!webhook)
             webhook = yield welcomeChannel.createWebhook({ name: 'Welcome', avatar: 'https://cdn-icons-png.flaticon.com/512/5167/5167400.png', reason: 'Para las bienvenidas.' });
         const welcomeMsg = new discord_js_1.WebhookClient({ url: webhook.url });
-        let imagen = "https://cdn.discordapp.com/attachments/901313790765854720/902607815359758356/fondoBienv.png";
-        const canvas = (0, canvas_1.createCanvas)(1000, 500);
-        const fondo = yield (0, canvas_1.loadImage)(imagen);
-        const context = canvas.getContext("2d");
-        context.drawImage(fondo, 0, 0, canvas.width, canvas.height);
-        context.strokeStyle = "#000000";
-        context.strokeRect(0, 0, canvas.width, canvas.height);
-        context.beginPath();
-        context.arc(500, 160, 145, 0, Math.PI * 2, true);
-        context.fillStyle = `${(_g = gmd.guild.members.me) === null || _g === void 0 ? void 0 : _g.displayHexColor}`;
-        context.stroke();
-        context.fill();
-        context.textAlign = "center";
-        context.font = "80px MADE TOMMY";
-        context.fillStyle = "#ffffff";
-        context.fillText("Bienvenid@", 500, 375);
-        context.font = '45px MADE TOMMY';
-        context.fillStyle = '#ffffff';
-        context.fillText(`${gmd.user.tag}`, 500, 435);
-        context.font = '38px MADE TOMMY';
-        context.fillStyle = '#ffffff';
-        context.fillText(`disfruta del servidor`, 500, 480);
-        context.beginPath();
-        context.arc(500, 160, 140, 0, Math.PI * 2, true);
-        context.fillStyle = `${(_h = gmd.guild.members.me) === null || _h === void 0 ? void 0 : _h.displayHexColor}`;
-        context.closePath();
-        context.clip();
-        const avatar = yield (0, canvas_1.loadImage)(gmd.displayAvatarURL({ size: 2048, extension: 'png' }));
-        context.drawImage(avatar, 360, 20, 280, 280);
-        const finalImg = new discord_js_1.AttachmentBuilder(canvas.toBuffer(), { name: 'welcome.png' });
+        // let imagen = "https://cdn.discordapp.com/attachments/901313790765854720/902607815359758356/fondoBienv.png"
+        // const canvas = createCanvas(1000, 500);
+        // const fondo = await loadImage(imagen);
+        // const context = canvas.getContext("2d");
+        // context.drawImage(fondo, 0, 0, canvas.width, canvas.height);
+        // context.strokeStyle = "#000000";
+        // context.strokeRect(0,0, canvas.width, canvas.height);
+        // context.beginPath();
+        // context.arc(500, 160, 145, 0, Math.PI * 2, true);
+        // context.fillStyle = `${gmd.guild.members.me?.displayHexColor}`;
+        // context.stroke();
+        // context.fill();
+        // context.textAlign = "center"
+        // context.font = "80px MADE TOMMY"
+        // context.fillStyle = "#ffffff"
+        // context.fillText("Bienvenid@", 500, 375)
+        // context.font = '45px MADE TOMMY';
+        // context.fillStyle = '#ffffff';
+        // context.fillText(`${gmd.user.tag}`, 500, 435);
+        // context.font = '38px MADE TOMMY'
+        // context.fillStyle = '#ffffff';
+        // context.fillText(`disfruta del servidor`, 500, 480);
+        // context.beginPath();
+        // context.arc(500, 160, 140, 0, Math.PI * 2, true);
+        // context.fillStyle = `${gmd.guild.members.me?.displayHexColor}`;
+        // context.closePath();
+        // context.clip();
+        // const avatar = await loadImage(gmd.displayAvatarURL({size: 2048, extension: 'png'}))
+        // context.drawImage(avatar, 360, 20, 280, 280);
+        // const finalImg = new AttachmentBuilder(canvas.toBuffer(), {name: 'welcome.png'})
         const embBienvenida = new discord_js_1.EmbedBuilder()
             .setAuthor({ name: gmd.user.tag, iconURL: gmd.user.displayAvatarURL() })
             .setImage(`attachment://welcome.png`)
             .setTitle("👋 ¡Bienvenido/a!")
             .setDescription(`*No se por quien has sido invitado.*\n\n💈 Pásate por el canal <#823639152922460170> en el podrás obtener roles que cambiarán el color de tu nombre dentro del servidor, y muchos otros roles.\n\n📢 Promociona todo tipo de contenido en el canal **<#836315643070251008>**.\n\n📜 También pásate por el canal <#823343749039259648> el canal de reglas, léelas para evitar sanciones.`)
-            .setColor(((_j = gmd.guild.members.me) === null || _j === void 0 ? void 0 : _j.displayHexColor) || 'White')
+            .setColor(((_g = gmd.guild.members.me) === null || _g === void 0 ? void 0 : _g.displayHexColor) || 'White')
             .setFooter({ text: `Bienvenido/a a ${gmd.guild.name}`, iconURL: gmd.guild.iconURL() || undefined })
             .setTimestamp();
         const embBien = new discord_js_1.EmbedBuilder()
