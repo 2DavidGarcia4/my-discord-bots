@@ -16,6 +16,7 @@ const move_1 = require("../commands/slash/move");
 const send_1 = require("../commands/contextMenu/send");
 const deleteReactions_1 = require("../commands/contextMenu/deleteReactions");
 const delete_1 = require("../commands/contextMenu/delete");
+const functions_2 = require("../utils/functions");
 exports.commands = new discord_js_1.Collection();
 [send_1.sendCmcb, deleteReactions_1.deleteReactionsCmcb, delete_1.deleteCmcb, move_1.moveScb].forEach(cmd => exports.commands.set(cmd.name, cmd));
 const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
@@ -39,9 +40,10 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
     if (int.isButton()) {
         const { customId, guild, locale } = int, inEnglish = locale == 'en-US';
         if (customId == 'en-rules-btn') {
+            const rules = yield (0, functions_2.getRules)(client, 'en');
             const RulesEb = new discord_js_1.EmbedBuilder()
                 .setTitle('📖 Rules')
-                .setDescription(`> **1.** Mutual respect, treat others with respect. Harassment, witch hunts, sexism, racism, or hate speech will not be tolerated.\n\n> **2.** Do not encourage others to do malicious practices such as raiding, scam among others.\n\n> 3. No spamming or self-promotion (server invites, advertisements, etc.) without permission from a staff member. This also includes DMing other members.\n\n> **4.** No fotopollas, please do not send photos of your penis is prohibited at the moment since this server is a server focused on female sexual content.\n\n> **5.** The sexual content of minors is not allowed, in case of publishing content of this type you will be banned from the server.\n\n> **6.** If you see something that is against the rules or that doesn't make you feel safe, please let the staff know. We want this server to be a welcoming place!`)
+                .setDescription(`${rules}`)
                 .setColor(((_a = int.message.member) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
             int.reply({ ephemeral: true, embeds: [RulesEb] });
         }

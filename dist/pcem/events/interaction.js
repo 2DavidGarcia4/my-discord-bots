@@ -207,7 +207,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
                     .setCustomId("notifications-roles")
                     .setPlaceholder("📑 Elige varias opciones.")
-                    .setMaxValues(8)
+                    .setMaxValues(7)
                     .addOptions([
                     {
                         label: "Anuncios",

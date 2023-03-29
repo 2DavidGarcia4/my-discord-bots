@@ -6,6 +6,7 @@ import { moveScb, moveSlashCommand } from "../commands/slash/move";
 import { sendCmcb, sendCM } from "../commands/contextMenu/send";
 import { deleteReactionsCM, deleteReactionsCmcb } from "../commands/contextMenu/deleteReactions";
 import { deleteCM, deleteCmcb } from "../commands/contextMenu/delete";
+import { getRules } from "../utils/functions";
 
 export const commands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 ;[sendCmcb, deleteReactionsCmcb, deleteCmcb, moveScb].forEach(cmd=> commands.set(cmd.name, cmd))
@@ -32,9 +33,11 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
     const { customId, guild, locale } = int, inEnglish = locale == 'en-US'
 
     if(customId == 'en-rules-btn') {
+      const rules = await getRules(client, 'en')
+
       const RulesEb = new EmbedBuilder()
       .setTitle('📖 Rules')
-      .setDescription(`> **1.** Mutual respect, treat others with respect. Harassment, witch hunts, sexism, racism, or hate speech will not be tolerated.\n\n> **2.** Do not encourage others to do malicious practices such as raiding, scam among others.\n\n> 3. No spamming or self-promotion (server invites, advertisements, etc.) without permission from a staff member. This also includes DMing other members.\n\n> **4.** No fotopollas, please do not send photos of your penis is prohibited at the moment since this server is a server focused on female sexual content.\n\n> **5.** The sexual content of minors is not allowed, in case of publishing content of this type you will be banned from the server.\n\n> **6.** If you see something that is against the rules or that doesn't make you feel safe, please let the staff know. We want this server to be a welcoming place!`)
+      .setDescription(`${rules}`)
       .setColor(int.message.member?.displayHexColor || 'White')
       int.reply({ephemeral: true, embeds: [RulesEb]})
     }

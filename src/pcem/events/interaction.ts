@@ -196,7 +196,7 @@ export const interactionEvent = async (int: Interaction<CacheType>, client: Clie
           new StringSelectMenuBuilder()
           .setCustomId("notifications-roles")
           .setPlaceholder("📑 Elige varias opciones.")
-          .setMaxValues(8)
+          .setMaxValues(7)
           .addOptions(
             [ 
               {

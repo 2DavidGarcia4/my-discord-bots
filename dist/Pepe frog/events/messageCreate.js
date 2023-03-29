@@ -194,31 +194,36 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 //? Auto reactions for verified messages
                 if (msg.channel.parentId == '1053401639454773338' && msg.channel.position > 1)
                     msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596');
-                if (msg.mentions.everyone && msg.channel.parentId == '1053401639454773338' && ((_l = msg.member) === null || _l === void 0 ? void 0 : _l.roles.cache.has('1057720387464593478'))) {
-                    const verifiedsData = yield (0, functions_1.getVerifiedsData)(client);
-                    const channelLog = client.channels.cache.get('1083075799634157669');
-                    msg.channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });
-                    const verifiedUser = verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.find(f => f.id == msg.author.id);
-                    if (verifiedUser) {
-                        verifiedUser.ping = false;
-                        verifiedUser.pinedAt = Date.now();
+                if (msg.channel.parentId == '1053401639454773338' && ((_l = msg.member) === null || _l === void 0 ? void 0 : _l.roles.cache.has('1057720387464593478'))) {
+                    if (msg.mentions.everyone) {
+                        const verifiedsData = yield (0, functions_1.getVerifiedsData)(client);
+                        const channelLog = client.channels.cache.get('1083075799634157669');
+                        msg.channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });
+                        const verifiedUser = verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.find(f => f.id == msg.author.id);
+                        if (verifiedUser) {
+                            verifiedUser.ping = false;
+                            verifiedUser.pinedAt = Date.now();
+                        }
+                        else {
+                            verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.push({
+                                id: msg.author.id,
+                                ping: false,
+                                pinedAt: Date.now(),
+                                channelId: msg.channelId
+                            });
+                        }
+                        if (verifiedsData)
+                            yield (0, functions_1.updateVerifiedsData)(client, verifiedsData);
+                        const VerifiedLog = new discord_js_1.EmbedBuilder()
+                            .setAuthor({ name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL() })
+                            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)}:R>`)
+                            .setColor('Yellow');
+                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                            channelLog.send({ embeds: [VerifiedLog] });
                     }
                     else {
-                        verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.push({
-                            id: msg.author.id,
-                            ping: false,
-                            pinedAt: Date.now(),
-                            channelId: msg.channelId
-                        });
+                        msg.reply({ allowedMentions: { repliedUser: false }, content: '**<@&1083060304054849676>**' });
                     }
-                    if (verifiedsData)
-                        yield (0, functions_1.updateVerifiedsData)(client, verifiedsData);
-                    const VerifiedLog = new discord_js_1.EmbedBuilder()
-                        .setAuthor({ name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL() })
-                        .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)}:R>`)
-                        .setColor('Yellow');
-                    if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                        channelLog.send({ embeds: [VerifiedLog] });
                 }
             }
         }
@@ -231,7 +236,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         if (command == 'eval')
             (0, eval_1.evalCommand)(msg, client, args.join(' '));
         if (command == 'rules')
-            (0, rules_1.rulesCommand)(msg);
+            (0, rules_1.rulesCommand)(msg, client);
         if (command == 'roles')
             (0, roles_1.rolesCommand)(msg);
         if (command == 'girls')

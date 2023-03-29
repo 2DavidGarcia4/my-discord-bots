@@ -19,9 +19,9 @@ const defaultReady = (client, channelId, rcolor) => {
     if (!client.user)
         return;
     const readyChannel = client.channels.cache.get(channelId);
-    console.log(`|> ${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username}: i'm ready`);
+    console.log(`✅ ${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username}: i'm ready`);
     const ReadyEb = new discord_js_1.EmbedBuilder()
-        .setTitle(`${emoji.afirmative} I'm ready`)
+        .setTitle(`✅ I'm ready`)
         .setColor(rcolor)
         .setDescription('Connected again');
     if (!config_1.isDevelopment && (readyChannel === null || readyChannel === void 0 ? void 0 : readyChannel.isTextBased())) {

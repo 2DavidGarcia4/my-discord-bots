@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+exports.getRules = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const getCategoryChannels = (id, server) => {
@@ -64,7 +64,7 @@ const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function*
     const verifiedsData = yield (0, exports.getVerifiedsData)(client);
     const channelLog = client.channels.cache.get('1083075799634157669');
     verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.filter(f => !f.ping).forEach(v => {
-        if (Math.floor(v.pinedAt + (7 * 24 * 60 * 60000)) <= Date.now()) {
+        if (Math.floor(v.pinedAt + (10 * 24 * 60 * 60000)) <= Date.now()) {
             const channel = client.channels.cache.get(v.channelId);
             if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
                 channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
@@ -80,3 +80,12 @@ const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function*
         yield (0, exports.updateVerifiedsData)(client, verifiedsData);
 });
 exports.inspectVerifieds = inspectVerifieds;
+const rulesChannelId = '1090736733047492638';
+const getRules = (client, language) => __awaiter(void 0, void 0, void 0, function* () {
+    const rulesChannel = client.channels.cache.get(rulesChannelId);
+    if (rulesChannel === null || rulesChannel === void 0 ? void 0 : rulesChannel.isTextBased()) {
+        const rules = (yield rulesChannel.messages.fetch(language == 'en' ? '1090751484754415726' : '1090737102045597788')).content;
+        return rules;
+    }
+});
+exports.getRules = getRules;

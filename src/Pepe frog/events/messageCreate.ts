@@ -197,32 +197,36 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         if(msg.channel.parentId == '1053401639454773338' && msg.channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
         
 
-        if(msg.mentions.everyone && msg.channel.parentId == '1053401639454773338' && msg.member?.roles.cache.has('1057720387464593478')){
-          const verifiedsData = await getVerifiedsData(client)
-          const channelLog = client.channels.cache.get('1083075799634157669')
-          
-          msg.channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
-          const verifiedUser = verifiedsData?.find(f=> f.id == msg.author.id)
-          if(verifiedUser){
-            verifiedUser.ping = false
-            verifiedUser.pinedAt = Date.now()
-          
+        if(msg.channel.parentId == '1053401639454773338' && msg.member?.roles.cache.has('1057720387464593478')){
+          if(msg.mentions.everyone){
+            const verifiedsData = await getVerifiedsData(client)
+            const channelLog = client.channels.cache.get('1083075799634157669')
+            
+            msg.channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
+            const verifiedUser = verifiedsData?.find(f=> f.id == msg.author.id)
+            if(verifiedUser){
+              verifiedUser.ping = false
+              verifiedUser.pinedAt = Date.now()
+            
+            }else{
+              verifiedsData?.push({
+                id: msg.author.id,
+                ping: false,
+                pinedAt: Date.now(),
+                channelId: msg.channelId
+              })
+            }
+      
+            if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
+            const VerifiedLog = new EmbedBuilder()
+            .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
+            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now()/1000)+(7*24*60*60)}:R>`)
+            .setColor('Yellow')
+            if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
           }else{
-            verifiedsData?.push({
-              id: msg.author.id,
-              ping: false,
-              pinedAt: Date.now(),
-              channelId: msg.channelId
-            })
+            msg.reply({allowedMentions: { repliedUser: false }, content: '**<@&1083060304054849676>**'})
           }
-    
-          if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
-          const VerifiedLog = new EmbedBuilder()
-          .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
-          .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now()/1000)+(7*24*60*60)}:R>`)
-          .setColor('Yellow')
-          if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
-        } 
+        }
       }
     }
   }
@@ -234,7 +238,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
   if(owners.some(s=> s == msg.author.id)){
     if(command == 'eval') evalCommand(msg, client, args.join(' '))
 
-    if(command == 'rules') rulesCommand(msg)
+    if(command == 'rules') rulesCommand(msg, client)
 
     if(command == 'roles') rolesCommand(msg)
 

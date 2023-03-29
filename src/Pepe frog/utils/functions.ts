@@ -57,7 +57,7 @@ export const inspectVerifieds = async (client: Client) => {
   const channelLog = client.channels.cache.get('1083075799634157669')
   
   verifiedsData?.filter(f=> !f.ping).forEach(v=> {
-    if(Math.floor(v.pinedAt + (7*24*60*60000)) <= Date.now()){
+    if(Math.floor(v.pinedAt + (10*24*60*60000)) <= Date.now()){
       const channel = client.channels.cache.get(v.channelId)
       if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
       v.ping = true
@@ -70,4 +70,13 @@ export const inspectVerifieds = async (client: Client) => {
   })
 
   if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
+}
+
+const rulesChannelId = '1090736733047492638'
+export const getRules = async (client: Client, language: 'es' | 'en') => {
+  const rulesChannel = client.channels.cache.get(rulesChannelId)
+  if(rulesChannel?.isTextBased()) {
+    const rules = (await rulesChannel.messages.fetch(language == 'en' ? '1090751484754415726' : '1090737102045597788')).content
+    return rules
+  }
 }

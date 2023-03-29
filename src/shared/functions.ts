@@ -9,10 +9,10 @@ const { color, emoji } = botDB
 export const defaultReady = (client: Client, channelId: string, rcolor: ColorResolvable) => {
   if(!client.user) return
   const readyChannel = client.channels.cache.get(channelId)
-  console.log(`|> ${client.user?.username}: i'm ready`)
+  console.log(`✅ ${client.user?.username}: i'm ready`)
   
   const ReadyEb = new EmbedBuilder()
-  .setTitle(`${emoji.afirmative} I'm ready`)
+  .setTitle(`✅ I'm ready`)
   .setColor(rcolor)
   .setDescription('Connected again')
   if (!isDevelopment && readyChannel?.isTextBased()) {
