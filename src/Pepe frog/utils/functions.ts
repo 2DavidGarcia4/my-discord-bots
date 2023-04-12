@@ -1,6 +1,7 @@
 import { ChannelType, Client, EmbedBuilder, Guild } from "discord.js"
 import { frogDb } from "../db"
 import { VerifiedsData } from "../types"
+import { botDB } from "../../pcem/db"
 
 const getCategoryChannels = (id: string, server: Guild | undefined) => {
   return server?.channels.cache.filter(f=> f.parentId == id).size.toLocaleString()
@@ -57,7 +58,7 @@ export const inspectVerifieds = async (client: Client) => {
   const channelLog = client.channels.cache.get('1083075799634157669')
   
   verifiedsData?.filter(f=> !f.ping).forEach(v=> {
-    if(Math.floor(v.pinedAt + (10*24*60*60000)) <= Date.now()){
+    if(Math.floor(v.pinedAt + (frogDb.verifiedsCooldown)) <= Date.now()){
       const channel = client.channels.cache.get(v.channelId)
       if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
       v.ping = true

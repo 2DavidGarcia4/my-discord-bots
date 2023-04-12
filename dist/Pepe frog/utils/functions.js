@@ -64,7 +64,7 @@ const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function*
     const verifiedsData = yield (0, exports.getVerifiedsData)(client);
     const channelLog = client.channels.cache.get('1083075799634157669');
     verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.filter(f => !f.ping).forEach(v => {
-        if (Math.floor(v.pinedAt + (10 * 24 * 60 * 60000)) <= Date.now()) {
+        if (Math.floor(v.pinedAt + (db_1.frogDb.verifiedsCooldown)) <= Date.now()) {
             const channel = client.channels.cache.get(v.channelId);
             if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
                 channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });

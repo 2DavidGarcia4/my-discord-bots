@@ -43,7 +43,7 @@ const sanctions = [
 ];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-    const { prefix, serverId, principalServerId, owners } = db_1.frogDb;
+    const { prefix, serverId, principalServerId, owners, verifiedsCooldown } = db_1.frogDb;
     if (((_a = msg.mentions.roles.first()) === null || _a === void 0 ? void 0 : _a.id) == '1053411182935023657')
         msg.react('1053444752340680817');
     if (msg.author.bot)
@@ -216,7 +216,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                             yield (0, functions_1.updateVerifiedsData)(client, verifiedsData);
                         const VerifiedLog = new discord_js_1.EmbedBuilder()
                             .setAuthor({ name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL() })
-                            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now() / 1000) + (7 * 24 * 60 * 60)}:R>`)
+                            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now() / 1000) + (verifiedsCooldown)}:R>`)
                             .setColor('Yellow');
                         if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
                             channelLog.send({ embeds: [VerifiedLog] });

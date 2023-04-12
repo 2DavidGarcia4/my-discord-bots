@@ -3,6 +3,7 @@ export const frogDb = {
   serverId: '1053382837857943662',
   principalServerId: '1028793496674500659',
   joins: 0,
+  verifiedsCooldown: 10*24*60*60000,
   leaves: 0,
   roles: {
     verified: '1057720387464593478'

@@ -33,7 +33,7 @@ const sanctions = [
 ]
 
 export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
-  const { prefix, serverId, principalServerId, owners } = frogDb
+  const { prefix, serverId, principalServerId, owners, verifiedsCooldown } = frogDb
   if(msg.mentions.roles.first()?.id == '1053411182935023657') msg.react('1053444752340680817')
 
   if(msg.author.bot) return
@@ -220,7 +220,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
             const VerifiedLog = new EmbedBuilder()
             .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
-            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now()/1000)+(7*24*60*60)}:R>`)
+            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor(Date.now()/1000)+(verifiedsCooldown)}:R>`)
             .setColor('Yellow')
             if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
           }else{
