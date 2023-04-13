@@ -139,7 +139,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         member.messages.push({id: msg.id, content: msg.content, channelId: msg.channelId})
         setTimeout(()=> {
           member.messages.splice(member.messages.findIndex(f=> f.id == msg.id), 1)
-        }, 60000)
+        }, 4*60000)
         
         const ar: string[] = []
         const channels = member.messages.filter((f)=> {
@@ -157,7 +157,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
           member.warns++
           if(!member.message){
             member.message = msg.content
-            setTimeout(()=> member.message = '', 60000)
+            setTimeout(()=> member.message = '', 4*60000)
           }
           
           member.messages.filter(f=> f.content == msg.content && f.id != msg.id).forEach(async message=> {
@@ -189,7 +189,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         setTimeout(()=> {
           const user = modDb.find(f=> f.id == msg.author.id)
           user?.messages.splice(user.messages.findIndex(f=> f.id == msg.id), 1)
-        }, 60000)
+        }, 20*60000)
       }
   
       if(msg.channel.type == ChannelType.GuildText){

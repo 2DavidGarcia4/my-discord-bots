@@ -144,7 +144,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 member.messages.push({ id: msg.id, content: msg.content, channelId: msg.channelId });
                 setTimeout(() => {
                     member.messages.splice(member.messages.findIndex(f => f.id == msg.id), 1);
-                }, 60000);
+                }, 4 * 60000);
                 const ar = [];
                 const channels = member.messages.filter((f) => {
                     ar.push(f.channelId);
@@ -159,7 +159,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                     member.warns++;
                     if (!member.message) {
                         member.message = msg.content;
-                        setTimeout(() => member.message = '', 60000);
+                        setTimeout(() => member.message = '', 4 * 60000);
                     }
                     member.messages.filter(f => f.content == msg.content && f.id != msg.id).forEach((message) => __awaiter(void 0, void 0, void 0, function* () {
                         var _o;
@@ -188,7 +188,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 setTimeout(() => {
                     const user = index_1.modDb.find(f => f.id == msg.author.id);
                     user === null || user === void 0 ? void 0 : user.messages.splice(user.messages.findIndex(f => f.id == msg.id), 1);
-                }, 60000);
+                }, 20 * 60000);
             }
             if (msg.channel.type == discord_js_1.ChannelType.GuildText) {
                 //? Auto reactions for verified messages
