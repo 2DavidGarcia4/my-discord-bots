@@ -128,76 +128,18 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
       const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
       if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 8000000).map(m=> m)})
     }
+    
+    if(msg.channel.type == ChannelType.GuildText){
 
-    if(msg.content.split(/ +/g).length >= 3){
-      //? Automoderation spam
-      const member = modDb.find(f=> f.id == msg.author.id)
-      if(member){
-        const duplicatedMessages = member.messages.filter(f=> f.content == msg.content && f.channelId != msg.channelId).length
-        // console.log(member.messages.length)
-  
-        member.messages.push({id: msg.id, content: msg.content, channelId: msg.channelId})
-        setTimeout(()=> {
-          member.messages.splice(member.messages.findIndex(f=> f.id == msg.id), 1)
-        }, 4*60000)
+      if(msg.channel.parentId == '1053401639454773338'){
         
-        const ar: string[] = []
-        const channels = member.messages.filter((f)=> {
-          ar.push(f.channelId)
-          const channelIds = ar.filter(ci=> ci == f.channelId).length
-          return f.content == msg.content && channelIds <= 1
-        }).map(m=> `<#${m.channelId}>`)
-        
-        const AutoModEb = new EmbedBuilder()
-        .setTitle('Auto moderation')
-        .setDescription(`Don't send the same message on different channels\n\nYou have sent the message in the following channels ${channels.join(', ')}`)
-        .setColor('Red')
-  
-        if(duplicatedMessages >= 2 || member.message == msg.content) {
-          member.warns++
-          if(!member.message){
-            member.message = msg.content
-            setTimeout(()=> member.message = '', 4*60000)
+        //? Verifieds system
+        if(msg.member?.roles.cache.has('1057720387464593478')){
+          //? Auto reactions for verified messages
+          if(msg.content.split(/ +/g).length >= 3 || msg.attachments.size){
+            if(msg.channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
           }
-          
-          member.messages.filter(f=> f.content == msg.content && f.id != msg.id).forEach(async message=> {
-            const channel = msg.guild?.channels.cache.get(message.channelId)
-            if(channel?.isTextBased()) (await channel.messages.fetch(message.id)).delete().then(dem=> {
-              member.messages.splice(member.messages.findIndex(f=> f.id == dem.id), 1)
-            }).catch()
-          })
-          
-          msg.reply({embeds: [AutoModEb]}).then(tmsg=> {
-            setTimeout(()=> {
-              msg.delete().catch()
-              tmsg.delete()
-            }, 10000)
-          })
-        }
-        
-        if(member.warns == 2) {
-          msg.member?.timeout(4*60*60000, 'Spam auto moderation')
-        }
-  
-        if(member.warns == 3) {
-          msg.member?.roles.add('1053430826823594106')
-        }
-  
-      }else{
-        modDb.push({id: msg.author.id, message: '' , warns: 0, messages: [{id: msg.id, content: msg.content, channelId: msg.channelId}]})
-        
-        setTimeout(()=> {
-          const user = modDb.find(f=> f.id == msg.author.id)
-          user?.messages.splice(user.messages.findIndex(f=> f.id == msg.id), 1)
-        }, 20*60000)
-      }
-  
-      if(msg.channel.type == ChannelType.GuildText){
-        //? Auto reactions for verified messages
-        if(msg.channel.parentId == '1053401639454773338' && msg.channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
-        
 
-        if(msg.channel.parentId == '1053401639454773338' && msg.member?.roles.cache.has('1057720387464593478')){
           if(msg.mentions.everyone){
             const verifiedsData = await getVerifiedsData(client)
             const channelLog = client.channels.cache.get('1083075799634157669')
@@ -228,6 +170,68 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
           }
         }
       }
+    }
+
+    //? Automoderation spam
+    const member = modDb.find(f=> f.id == msg.author.id)
+    if(member){
+      const duplicatedMessages = member.messages.filter(f=> f.content == msg.content && f.channelId != msg.channelId).length
+      // console.log(member.messages.length)
+
+      member.messages.push({id: msg.id, content: msg.content, channelId: msg.channelId})
+      setTimeout(()=> {
+        member.messages.splice(member.messages.findIndex(f=> f.id == msg.id), 1)
+      }, 4*60000)
+      
+      const ar: string[] = []
+      const channels = member.messages.filter((f)=> {
+        ar.push(f.channelId)
+        const channelIds = ar.filter(ci=> ci == f.channelId).length
+        return f.content == msg.content && channelIds <= 1
+      }).map(m=> `<#${m.channelId}>`)
+      
+      const AutoModEb = new EmbedBuilder()
+      .setTitle('Auto moderation')
+      .setDescription(`Don't send the same message on different channels\n\nYou have sent the message in the following channels ${channels.join(', ')}`)
+      .setColor('Red')
+
+      if(duplicatedMessages >= 2 || member.message == msg.content) {
+        member.warns++
+        if(!member.message){
+          member.message = msg.content
+          setTimeout(()=> member.message = '', 4*60000)
+        }
+        
+        member.messages.filter(f=> f.content == msg.content && f.id != msg.id).forEach(async message=> {
+          const channel = msg.guild?.channels.cache.get(message.channelId)
+          if(channel?.isTextBased()) (await channel.messages.fetch(message.id)).delete().then(dem=> {
+            member.messages.splice(member.messages.findIndex(f=> f.id == dem.id), 1)
+          }).catch()
+        })
+        
+        msg.reply({embeds: [AutoModEb]}).then(tmsg=> {
+          setTimeout(()=> {
+            msg.delete().catch()
+            tmsg.delete()
+          }, 10000)
+        })
+      }
+      
+      if(member.warns == 2) {
+        msg.member?.timeout(4*60*60000, 'Spam auto moderation')
+      }
+
+      if(member.warns == 3) {
+        msg.member?.roles.add('1053430826823594106')
+      }
+
+    }else{
+      modDb.push({id: msg.author.id, message: '' , warns: 0, messages: [{id: msg.id, content: msg.content, channelId: msg.channelId}]})
+      
+      setTimeout(()=> {
+        const user = modDb.find(f=> f.id == msg.author.id)
+        user?.messages.splice(user.messages.findIndex(f=> f.id == msg.id), 1)
+      }, 20*60000)
     }
   }
 
