@@ -43,7 +43,8 @@ const sanctions = [
 ];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
-    const { prefix, serverId, principalServerId, owners, verifiedsCooldown } = db_1.frogDb;
+    const { channel, channelId } = msg;
+    const { prefix, serverId, principalServerId, owners, verifiedsCooldown, roles: { verified, verifiedSpeech } } = db_1.frogDb;
     if (((_a = msg.mentions.roles.first()) === null || _a === void 0 ? void 0 : _a.id) == '1053411182935023657')
         msg.react('1053444752340680817');
     if (msg.author.bot)
@@ -135,19 +136,19 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
                 serverChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 8000000).map(m => m) });
         }
-        if (msg.channel.type == discord_js_1.ChannelType.GuildText) {
-            if (msg.channel.parentId == '1053401639454773338') {
+        if (channel.type == discord_js_1.ChannelType.GuildText) {
+            if (channel.parentId == '1053401639454773338' && channel.nsfw) {
                 //? Verifieds system
-                if ((_j = msg.member) === null || _j === void 0 ? void 0 : _j.roles.cache.has('1057720387464593478')) {
+                if ((_j = msg.member) === null || _j === void 0 ? void 0 : _j.roles.cache.has(verified)) {
                     //? Auto reactions for verified messages
                     if (msg.content.split(/ +/g).length >= 3 || msg.attachments.size) {
-                        if (msg.channel.position > 1)
+                        if (channel.position > 1)
                             msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596');
                     }
                     if (msg.mentions.everyone) {
                         const verifiedsData = yield (0, functions_1.getVerifiedsData)(client);
                         const channelLog = client.channels.cache.get('1083075799634157669');
-                        msg.channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });
+                        channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });
                         const verifiedUser = verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.find(f => f.id == msg.author.id);
                         if (verifiedUser) {
                             verifiedUser.ping = false;
@@ -158,7 +159,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                                 id: msg.author.id,
                                 ping: false,
                                 pinedAt: Date.now(),
-                                channelId: msg.channelId
+                                channelId: channelId
                             });
                         }
                         if (verifiedsData)
@@ -171,7 +172,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                             channelLog.send({ embeds: [VerifiedLog] });
                     }
                     else {
-                        msg.reply({ allowedMentions: { repliedUser: false }, content: '**<@&1083060304054849676>**' });
+                        msg.reply({ allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**` });
                     }
                 }
             }

@@ -33,7 +33,8 @@ const sanctions = [
 ]
 
 export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
-  const { prefix, serverId, principalServerId, owners, verifiedsCooldown } = frogDb
+  const { channel, channelId } = msg
+  const { prefix, serverId, principalServerId, owners, verifiedsCooldown, roles: { verified, verifiedSpeech } } = frogDb
   if(msg.mentions.roles.first()?.id == '1053411182935023657') msg.react('1053444752340680817')
 
   if(msg.author.bot) return
@@ -129,22 +130,22 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
       if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 8000000).map(m=> m)})
     }
     
-    if(msg.channel.type == ChannelType.GuildText){
+    if(channel.type == ChannelType.GuildText){
 
-      if(msg.channel.parentId == '1053401639454773338'){
+      if(channel.parentId == '1053401639454773338' && channel.nsfw){
         
         //? Verifieds system
-        if(msg.member?.roles.cache.has('1057720387464593478')){
+        if(msg.member?.roles.cache.has(verified)){
           //? Auto reactions for verified messages
           if(msg.content.split(/ +/g).length >= 3 || msg.attachments.size){
-            if(msg.channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
+            if(channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
           }
 
           if(msg.mentions.everyone){
             const verifiedsData = await getVerifiedsData(client)
             const channelLog = client.channels.cache.get('1083075799634157669')
             
-            msg.channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
+            channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
             const verifiedUser = verifiedsData?.find(f=> f.id == msg.author.id)
             if(verifiedUser){
               verifiedUser.ping = false
@@ -155,7 +156,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
                 id: msg.author.id,
                 ping: false,
                 pinedAt: Date.now(),
-                channelId: msg.channelId
+                channelId: channelId
               })
             }
       
@@ -165,8 +166,9 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor((Date.now()+verifiedsCooldown) / 1000)}:R>`)
             .setColor('Yellow')
             if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
+
           }else{
-            msg.reply({allowedMentions: { repliedUser: false }, content: '**<@&1083060304054849676>**'})
+            msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
           }
         }
       }
