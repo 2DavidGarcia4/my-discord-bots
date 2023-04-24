@@ -55,7 +55,7 @@ export const updateVerifiedsData = async (client: Client, newData: VerifiedsData
 
 export const inspectVerifieds = async (client: Client) => {
   const verifiedsData = await getVerifiedsData(client)
-  const channelLog = client.channels.cache.get('1083075799634157669')
+  const channelLog = client.channels.cache.get('1100110861244301382')
   
   verifiedsData?.filter(f=> !f.ping).forEach(v=> {
     if(Math.floor(v.pinedAt + (frogDb.verifiedsCooldown)) <= Date.now()){

@@ -62,7 +62,7 @@ const updateVerifiedsData = (client, newData) => __awaiter(void 0, void 0, void 
 exports.updateVerifiedsData = updateVerifiedsData;
 const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function* () {
     const verifiedsData = yield (0, exports.getVerifiedsData)(client);
-    const channelLog = client.channels.cache.get('1083075799634157669');
+    const channelLog = client.channels.cache.get('1100110861244301382');
     verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.filter(f => !f.ping).forEach(v => {
         if (Math.floor(v.pinedAt + (db_1.frogDb.verifiedsCooldown)) <= Date.now()) {
             const channel = client.channels.cache.get(v.channelId);

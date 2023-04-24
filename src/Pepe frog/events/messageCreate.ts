@@ -141,9 +141,9 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             if(channel.position > 1) msg.react('1061464848967401502'), msg.react('1061467211329458216'), msg.react('1061467145122369596')
           }
 
+          const verifiedsData = await getVerifiedsData(client)
           if(msg.mentions.everyone){
-            const verifiedsData = await getVerifiedsData(client)
-            const channelLog = client.channels.cache.get('1083075799634157669')
+            const channelLog = client.channels.cache.get('1100110861244301382')
             
             channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
             const verifiedUser = verifiedsData?.find(f=> f.id == msg.author.id)
@@ -167,8 +167,16 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             .setColor('Yellow')
             if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
 
-          }else{
-            msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
+          }else {
+            const verifiedDb = verifiedsData?.find(v=> v.id == msg.author.id)
+            if(verifiedDb){
+              if(!verifiedDb.ping && verifiedDb.pinedAt < Math.floor(Date.now() - (60*60000))){
+                msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
+              }
+
+            }else{
+              msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
+            }
           }
         }
       }
