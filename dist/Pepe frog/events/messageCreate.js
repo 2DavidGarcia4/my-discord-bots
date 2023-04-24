@@ -131,12 +131,13 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         //? Auto reactions to suggestions
         if (msg.channelId == '1053401642915082392' && !((_h = msg.member) === null || _h === void 0 ? void 0 : _h.permissions.has('Administrator')))
             msg.react('1059641676798377995'), msg.react('1059641726387626015');
-        if (msg.channel.type == discord_js_1.ChannelType.GuildText && msg.attachments.size && msg.channel.parentId != '1054485238413266965' && msg.attachments.some(s => s.size < 8000000)) {
-            const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
-            if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
-                serverChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 8000000).map(m => m) });
-        }
         if (channel.type == discord_js_1.ChannelType.GuildText) {
+            //! Backup files
+            if (msg.attachments.size && msg.attachments.some(s => s.size < 25000000)) {
+                const principalServer = client.guilds.cache.get(principalServerId), channelName = channel.name, backupChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
+                if ((backupChannel === null || backupChannel === void 0 ? void 0 : backupChannel.type) == discord_js_1.ChannelType.GuildText)
+                    backupChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 8000000).map(m => m) });
+            }
             if (channel.parentId == '1053401639454773338' && channel.nsfw) {
                 //? Verifieds system
                 if ((_j = msg.member) === null || _j === void 0 ? void 0 : _j.roles.cache.has(verified)) {

@@ -124,13 +124,13 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
     //? Auto reactions to suggestions
     if(msg.channelId == '1053401642915082392' && !msg.member?.permissions.has('Administrator')) msg.react('1059641676798377995'), msg.react('1059641726387626015')
     
-
-    if(msg.channel.type == ChannelType.GuildText && msg.attachments.size && msg.channel.parentId != '1054485238413266965' && msg.attachments.some(s=> s.size < 8000000)){
-      const principalServer = client.guilds.cache.get(principalServerId), channelName = msg.channel.name, serverChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
-      if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 8000000).map(m=> m)})
-    }
     
     if(channel.type == ChannelType.GuildText){
+      //! Backup files
+      if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
+        const principalServer = client.guilds.cache.get(principalServerId), channelName = channel.name, backupChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
+        if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 8000000).map(m=> m)})
+      }
 
       if(channel.parentId == '1053401639454773338' && channel.nsfw){
         
