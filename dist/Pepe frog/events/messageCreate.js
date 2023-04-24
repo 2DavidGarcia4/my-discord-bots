@@ -136,7 +136,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             if (msg.attachments.size && msg.attachments.some(s => s.size < 25000000)) {
                 const principalServer = client.guilds.cache.get(principalServerId), channelName = channel.name, backupChannel = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channelName);
                 if ((backupChannel === null || backupChannel === void 0 ? void 0 : backupChannel.type) == discord_js_1.ChannelType.GuildText)
-                    backupChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 8000000).map(m => m) });
+                    backupChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 25000000).map(m => m) });
             }
             if (channel.parentId == '1053401639454773338' && channel.nsfw) {
                 //? Verifieds system
