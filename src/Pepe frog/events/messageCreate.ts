@@ -41,11 +41,18 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
   if(msg.mentions.members?.has('942860991698436156')) msg.react('1061737573959094422')
 
   if(msg.guildId == principalServerId){
-    if(msg.channel.type != ChannelType.GuildText) return
-    const { parentId } = msg.channel
+    if(channel.type != ChannelType.GuildText) return
+    const { parentId } = channel
     if(['1028793497295261828', '1054489737097908364', '1061436780500496394'].some(s=> s==parentId)){
-      const server = client.guilds.cache.get(serverId), channelName = msg.channel.name, serverChannel = server?.channels.cache.find((f)=>  f.name == channelName) 
+      const server = client.guilds.cache.get(serverId), channelName = channel.name, serverChannel = server?.channels.cache.find((f)=>  f.name == channelName) 
       if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: msg.content || ' ', files: msg.attachments.map(m=> m)})
+    }
+
+    if(channelId == '1053404146839081150'){
+      const announcementChannel = client.guilds.cache.get(serverId)?.channels.cache.find(f=> f.name == channel.name)
+      if(announcementChannel?.isTextBased()) {
+        announcementChannel.send({content: msg.content+"\n<@&1053391025906921472>", files: msg.attachments.map(a=> a)})
+      }
     }
   }
 

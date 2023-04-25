@@ -42,7 +42,7 @@ const sanctions = [
     },
 ];
 const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
     const { channel, channelId } = msg;
     const { prefix, serverId, principalServerId, owners, verifiedsCooldown, roles: { verified, verifiedSpeech } } = db_1.frogDb;
     if (((_a = msg.mentions.roles.first()) === null || _a === void 0 ? void 0 : _a.id) == '1053411182935023657')
@@ -52,23 +52,29 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
     if ((_b = msg.mentions.members) === null || _b === void 0 ? void 0 : _b.has('942860991698436156'))
         msg.react('1061737573959094422');
     if (msg.guildId == principalServerId) {
-        if (msg.channel.type != discord_js_1.ChannelType.GuildText)
+        if (channel.type != discord_js_1.ChannelType.GuildText)
             return;
-        const { parentId } = msg.channel;
+        const { parentId } = channel;
         if (['1028793497295261828', '1054489737097908364', '1061436780500496394'].some(s => s == parentId)) {
-            const server = client.guilds.cache.get(serverId), channelName = msg.channel.name, serverChannel = server === null || server === void 0 ? void 0 : server.channels.cache.find((f) => f.name == channelName);
+            const server = client.guilds.cache.get(serverId), channelName = channel.name, serverChannel = server === null || server === void 0 ? void 0 : server.channels.cache.find((f) => f.name == channelName);
             if ((serverChannel === null || serverChannel === void 0 ? void 0 : serverChannel.type) == discord_js_1.ChannelType.GuildText)
                 serverChannel.send({ content: msg.content || ' ', files: msg.attachments.map(m => m) });
+        }
+        if (channelId == '1053404146839081150') {
+            const announcementChannel = (_c = client.guilds.cache.get(serverId)) === null || _c === void 0 ? void 0 : _c.channels.cache.find(f => f.name == channel.name);
+            if (announcementChannel === null || announcementChannel === void 0 ? void 0 : announcementChannel.isTextBased()) {
+                announcementChannel.send({ content: msg.content + "\n<@&1053391025906921472>", files: msg.attachments.map(a => a) });
+            }
         }
     }
     if (msg.guildId == serverId) {
         if (!msg.channel.isTextBased())
             return;
-        const verifiedsCahnnels = (_c = msg.guild) === null || _c === void 0 ? void 0 : _c.channels.cache.filter(f => f.parentId == '1053401639454773338');
+        const verifiedsCahnnels = (_d = msg.guild) === null || _d === void 0 ? void 0 : _d.channels.cache.filter(f => f.parentId == '1053401639454773338');
         //? Auto moderation links
         const enlaceActivators = ['http://', 'https://'];
         const filesLinks = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3'];
-        if (!(verifiedsCahnnels === null || verifiedsCahnnels === void 0 ? void 0 : verifiedsCahnnels.some(s => s.id == msg.channelId)) && !((_d = msg.member) === null || _d === void 0 ? void 0 : _d.permissions.has('Administrator')) && enlaceActivators.some(s => msg.content.includes(s))) {
+        if (!(verifiedsCahnnels === null || verifiedsCahnnels === void 0 ? void 0 : verifiedsCahnnels.some(s => s.id == msg.channelId)) && !((_e = msg.member) === null || _e === void 0 ? void 0 : _e.permissions.has('Administrator')) && enlaceActivators.some(s => msg.content.includes(s))) {
             const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
             const filter = texts.filter(f => enlaceActivators.some(s => f.includes(s)));
             if (filter.some(f => !filesLinks.some(s => f.endsWith('.' + s)))) {
@@ -84,7 +90,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                 if (member) {
                     member.warns++;
                     if (member.warns >= 7) {
-                        (_e = msg.member) === null || _e === void 0 ? void 0 : _e.roles.add('1053430826823594106');
+                        (_f = msg.member) === null || _f === void 0 ? void 0 : _f.roles.add('1053430826823594106');
                     }
                     sanctions.forEach(sanction => {
                         var _a;
@@ -101,7 +107,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         }
         //? Auto moderation discord invites
         const discordInvites = ['discord.gg/', 'discord.com/invite/'];
-        if (!(verifiedsCahnnels === null || verifiedsCahnnels === void 0 ? void 0 : verifiedsCahnnels.some(s => s.id == msg.channelId)) && !((_f = msg.member) === null || _f === void 0 ? void 0 : _f.permissions.has('Administrator')) && discordInvites.some(s => msg.content.includes(s))) {
+        if (!(verifiedsCahnnels === null || verifiedsCahnnels === void 0 ? void 0 : verifiedsCahnnels.some(s => s.id == msg.channelId)) && !((_g = msg.member) === null || _g === void 0 ? void 0 : _g.permissions.has('Administrator')) && discordInvites.some(s => msg.content.includes(s))) {
             const AutoModEb = new discord_js_1.EmbedBuilder()
                 .setTitle('Auto moderation')
                 .setDescription('Discord server invites are not allowed.')
@@ -114,7 +120,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             if (member) {
                 member.warns++;
                 if (member.warns >= 7) {
-                    (_g = msg.member) === null || _g === void 0 ? void 0 : _g.roles.add('1053430826823594106');
+                    (_h = msg.member) === null || _h === void 0 ? void 0 : _h.roles.add('1053430826823594106');
                 }
                 sanctions.forEach(sanction => {
                     var _a;
@@ -129,7 +135,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             return;
         }
         //? Auto reactions to suggestions
-        if (msg.channelId == '1053401642915082392' && !((_h = msg.member) === null || _h === void 0 ? void 0 : _h.permissions.has('Administrator')))
+        if (msg.channelId == '1053401642915082392' && !((_j = msg.member) === null || _j === void 0 ? void 0 : _j.permissions.has('Administrator')))
             msg.react('1059641676798377995'), msg.react('1059641726387626015');
         if (channel.type == discord_js_1.ChannelType.GuildText) {
             //! Backup files
@@ -140,7 +146,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             }
             if (channel.parentId == '1053401639454773338' && channel.nsfw) {
                 //? Verifieds system
-                if ((_j = msg.member) === null || _j === void 0 ? void 0 : _j.roles.cache.has(verified)) {
+                if ((_k = msg.member) === null || _k === void 0 ? void 0 : _k.roles.cache.has(verified)) {
                     //? Auto reactions for verified messages
                     if (msg.content.split(/ +/g).length >= 3 || msg.attachments.size) {
                         if (channel.position > 1)
@@ -213,8 +219,8 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                         setTimeout(() => member.message = '', 4 * 60000);
                     }
                     member.messages.filter(f => f.content == msg.content && f.id != msg.id).forEach((message) => __awaiter(void 0, void 0, void 0, function* () {
-                        var _o;
-                        const channel = (_o = msg.guild) === null || _o === void 0 ? void 0 : _o.channels.cache.get(message.channelId);
+                        var _p;
+                        const channel = (_p = msg.guild) === null || _p === void 0 ? void 0 : _p.channels.cache.get(message.channelId);
                         if (channel === null || channel === void 0 ? void 0 : channel.isTextBased())
                             (yield channel.messages.fetch(message.id)).delete().then(dem => {
                                 member.messages.splice(member.messages.findIndex(f => f.id == dem.id), 1);
@@ -228,10 +234,10 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                     });
                 }
                 if (member.warns == 2) {
-                    (_k = msg.member) === null || _k === void 0 ? void 0 : _k.timeout(4 * 60 * 60000, 'Spam auto moderation');
+                    (_l = msg.member) === null || _l === void 0 ? void 0 : _l.timeout(4 * 60 * 60000, 'Spam auto moderation');
                 }
                 if (member.warns == 3) {
-                    (_l = msg.member) === null || _l === void 0 ? void 0 : _l.roles.add('1053430826823594106');
+                    (_m = msg.member) === null || _m === void 0 ? void 0 : _m.roles.add('1053430826823594106');
                 }
             }
             else {
@@ -246,7 +252,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const command = (_m = args.shift()) === null || _m === void 0 ? void 0 : _m.toLowerCase();
+    const command = (_o = args.shift()) === null || _o === void 0 ? void 0 : _o.toLowerCase();
     if (owners.some(s => s == msg.author.id)) {
         if (command == 'eval')
             (0, eval_1.evalCommand)(msg, client, args.join(' '));
