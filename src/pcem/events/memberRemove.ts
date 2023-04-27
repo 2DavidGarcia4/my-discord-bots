@@ -31,7 +31,7 @@ export const memberRemoveEvent = async (gmr: GuildMember | PartialGuildMember, c
     .setThumbnail(gmr.user.displayAvatarURL())
     .setImage(mbanner.bannerURL({size: 2048}) || null)
     .setTitle("📤 Se fue un miembro")
-    .setDescription(`Se fue ${gmr} (*no se por quien fue invitado/a*).\n📥 **Seunio:**\n<t:${Math.round((gmr.joinedAt?.valueOf() || 0) / 1000)}:R>`)
+    .setDescription(`Se fue ${gmr}\n📥 **Se únio:**\n<t:${Math.round((gmr.joinedAt?.valueOf() || 0) / 1000)}:R>`)
     .setColor(color.negative)
     .setFooter({text: gmr.guild.name, iconURL: gmr.guild.iconURL() || undefined})
 

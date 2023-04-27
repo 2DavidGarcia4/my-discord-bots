@@ -105,7 +105,7 @@ export const memberAddEvent = async (gmd: GuildMember, client: Client) => {
     .setThumbnail(gmd.user.displayAvatarURL({size: 4096}))
     .setImage(usBanner?.bannerURL({size: 4096}) || null)
     .setTitle("📥 Se unió un usuario")
-    .setDescription(`Se unió ${gmd} *(no se por quien fue invitado/a)*.\n📅 **Creacion de la cueta:**\n<t:${Math.round(gmd.user.createdAt.valueOf() / 1000)}:R>`)
+    .setDescription(`Se unió ${gmd}.\n📅 **Creacion de la cueta:**\n<t:${Math.round(gmd.user.createdAt.valueOf() / 1000)}:R>`)
     .setColor(color.afirmative)
     .setFooter({text: gmd.guild.name, iconURL: gmd.guild.iconURL() || undefined})
     .setTimestamp()

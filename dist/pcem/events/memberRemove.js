@@ -42,7 +42,7 @@ const memberRemoveEvent = (gmr, client) => __awaiter(void 0, void 0, void 0, fun
             .setThumbnail(gmr.user.displayAvatarURL())
             .setImage(mbanner.bannerURL({ size: 2048 }) || null)
             .setTitle("📤 Se fue un miembro")
-            .setDescription(`Se fue ${gmr} (*no se por quien fue invitado/a*).\n📥 **Seunio:**\n<t:${Math.round((((_b = gmr.joinedAt) === null || _b === void 0 ? void 0 : _b.valueOf()) || 0) / 1000)}:R>`)
+            .setDescription(`Se fue ${gmr}\n📥 **Se únio:**\n<t:${Math.round((((_b = gmr.joinedAt) === null || _b === void 0 ? void 0 : _b.valueOf()) || 0) / 1000)}:R>`)
             .setColor(color.negative)
             .setFooter({ text: gmr.guild.name, iconURL: gmr.guild.iconURL() || undefined });
         leaveLog.send({ embeds: [leaveLogEb] });
