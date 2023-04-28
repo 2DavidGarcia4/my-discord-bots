@@ -261,7 +261,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
         if (command == 'roles')
             (0, roles_1.rolesCommand)(msg);
         if (command == 'girls')
-            (0, girls_1.girlsCommand)(msg);
+            (0, girls_1.girlsCommand)(msg, client);
         if (command == 'info')
             (0, info_1.infoCommand)(msg);
     }

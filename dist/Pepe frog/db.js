@@ -1,8 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.frogDb = void 0;
+const config_1 = require("../config");
 exports.frogDb = {
-    prefix: 's!',
+    prefix: config_1.isDevelopment ? 'f!' : 's!',
     serverId: '1053382837857943662',
     principalServerId: '1028793496674500659',
     joins: 0,

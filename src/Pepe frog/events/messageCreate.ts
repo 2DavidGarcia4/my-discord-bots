@@ -265,7 +265,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
 
     if(command == 'roles') rolesCommand(msg)
 
-    if(command == 'girls') girlsCommand(msg)
+    if(command == 'girls') girlsCommand(msg, client)
 
     if(command == 'info') infoCommand(msg)
   }

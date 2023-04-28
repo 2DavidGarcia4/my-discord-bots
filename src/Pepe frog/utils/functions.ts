@@ -81,3 +81,12 @@ export const getRules = async (client: Client, language: 'es' | 'en') => {
     return rules
   }
 }
+
+const varifiedChannelId = '1053399734582263938'
+export const getVerifiedsInfo = async (client: Client, language: 'es' | 'en') => {
+  const rulesChannel = client.channels.cache.get(varifiedChannelId)
+  if(rulesChannel?.isTextBased()) {
+    const rules = (await rulesChannel.messages.fetch(language == 'en' ? '1101591835576639549' : '1101591652440735894')).content
+    return rules
+  }
+}

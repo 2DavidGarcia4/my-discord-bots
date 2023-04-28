@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getRules = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+exports.getVerifiedsInfo = exports.getRules = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const getCategoryChannels = (id, server) => {
@@ -89,3 +89,12 @@ const getRules = (client, language) => __awaiter(void 0, void 0, void 0, functio
     }
 });
 exports.getRules = getRules;
+const varifiedChannelId = '1053399734582263938';
+const getVerifiedsInfo = (client, language) => __awaiter(void 0, void 0, void 0, function* () {
+    const rulesChannel = client.channels.cache.get(varifiedChannelId);
+    if (rulesChannel === null || rulesChannel === void 0 ? void 0 : rulesChannel.isTextBased()) {
+        const rules = (yield rulesChannel.messages.fetch(language == 'en' ? '1101591835576639549' : '1101591652440735894')).content;
+        return rules;
+    }
+});
+exports.getVerifiedsInfo = getVerifiedsInfo;

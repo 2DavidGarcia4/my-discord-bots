@@ -40,7 +40,7 @@ const functions_1 = require("../../shared/functions");
 const isDist = __dirname.includes('src') ? 'src' : 'dist';
 exports.svInteractionCommands = new discord_js_1.Collection();
 (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/server/slash/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
-    const command = yield Promise.resolve().then(() => __importStar(require(`../commands/server/slash/${file}`)));
+    const command = yield Promise.resolve(`${`../commands/server/slash/${file}`}`).then(s => __importStar(require(s)));
     const struct = command[Object.keys(command)[0]];
     const cmdFunction = command[Object.keys(command)[1]];
     exports.svInteractionCommands.set(struct.name, { struct, run: cmdFunction });
@@ -49,7 +49,7 @@ exports.interactionCommands = new discord_js_1.Collection();
 (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/slash/`).forEach((folder) => __awaiter(void 0, void 0, void 0, function* () {
     (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/slash/${folder}/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
         // console.log(file)
-        const command = yield Promise.resolve().then(() => __importStar(require(`../commands/slash/${folder}/${file}`)));
+        const command = yield Promise.resolve(`${`../commands/slash/${folder}/${file}`}`).then(s => __importStar(require(s)));
         const struct = command[Object.keys(command)[0]];
         const cmdFunction = command[Object.keys(command)[1]];
         exports.interactionCommands.set(struct.name, { struct, run: cmdFunction });
@@ -57,7 +57,7 @@ exports.interactionCommands = new discord_js_1.Collection();
 }));
 (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/`).forEach((folder) => __awaiter(void 0, void 0, void 0, function* () {
     (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/${folder}/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
-        const command = yield Promise.resolve().then(() => __importStar(require(`../commands/context/${folder}/${file}`)));
+        const command = yield Promise.resolve(`${`../commands/context/${folder}/${file}`}`).then(s => __importStar(require(s)));
         const struct = command[Object.keys(command)[0]];
         const cmdFunction = command[Object.keys(command)[1]];
         exports.interactionCommands.set(struct.name, { struct, run: cmdFunction });

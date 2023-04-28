@@ -79,9 +79,10 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
             int.reply({ ephemeral: true, embeds: [RolesEb], components: [RolesMenu] });
         }
         if (customId == 'en-girls-btn') {
+            const verifiedInfo = yield (0, functions_2.getVerifiedsInfo)(client, 'en');
             const GirlsEb = new discord_js_1.EmbedBuilder()
-                .setTitle(`<a:info_animate:1052698253394710599> Information`)
-                .setDescription(`**Are you a woman and you sell your content?**, this is for you.\n\nYou can have a totally exclusive channel for you in this category, in the channel you can promote yourself, publish that you sell content and with it be able to use the mentions @everyone or @here the first mention notifies all members while the second only notifies members connected but these mentions can only be used once a week.\n\nTo obtain these benefits you have to be **18** years old or older and go through a verification, this consists of sending a photo of yourself with a piece of paper showing the name of the server *(you can write the name of the server wherever you want)*, once you pass the verification you will be given a unique role and the channel with the name of your choice.\n*Esta verificación es para comprobar que en realidad eres mujer y no un hombre haciéndose pasar por una.*\n\n*If you are satisfied with this and want to start with the verification or have questions, you can speak privately with one of the administrator who are <@853063286320922634>*`)
+                .setTitle(`<a:animate_info:1058179015938158592> Information`)
+                .setDescription(`${verifiedInfo}`)
                 .setColor(((_d = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White');
             const VerifiedsBtn = new discord_js_1.ActionRowBuilder()
                 .addComponents(new discord_js_1.ButtonBuilder()
@@ -178,26 +179,29 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                 int.reply({ ephemeral: true, embeds: [NotificationsEb], components: [NotificationsMenu] });
             }
             if (option == 'colors') {
-                const rolesIds = [
-                    '1053418871547248671',
-                    '1053418889649868800',
-                    '1053418924290621490',
-                    '1053419338029346817',
-                    '1053419357767745617',
-                    '1053419365820801044',
-                    '1053419380026908801',
-                    '1053419388625231952',
-                    '1053419392634994748',
-                    '1053419396179185685',
-                    '1053419401300430939',
-                    '1053419404924297277',
-                    '1053419409617735790',
-                ];
+                const witheColor = guild === null || guild === void 0 ? void 0 : guild.roles.cache.get('1053418871547248671');
+                const colorRoles = guild === null || guild === void 0 ? void 0 : guild.roles.cache.filter(f => f.position <= ((witheColor === null || witheColor === void 0 ? void 0 : witheColor.position) || 0) && f.position > ((witheColor === null || witheColor === void 0 ? void 0 : witheColor.position) ? witheColor.position - 25 : 0));
+                if (!colorRoles)
+                    return;
+                const rolesIds = colorRoles.sort((a, b) => b.position - a.position).map(m => `**<@&${m.id}>**`);
                 const ColorsEb = new discord_js_1.EmbedBuilder()
                     .setTitle('🔔 ' + (inEnglish ? 'Color roles' : 'Roles de colores'))
                     .setDescription((inEnglish ?
                     `These roles paint your name within the server, select one to change the color of your name.\n\n` :
-                    `estos roles pintan tu nombre dentro del servidor, selecciona uno para cambiar el color de tu nombre.\n\n`) + rolesIds.map(m => `**<@&${m}>**`).join('\n'))
+                    `estos roles pintan tu nombre dentro del servidor, selecciona uno para cambiar el color de tu nombre.`))
+                    .setFields({
+                    name: '\u200B',
+                    value: rolesIds.slice(0, 9).join('\n'),
+                    inline: true
+                }, {
+                    name: '\u200B',
+                    value: rolesIds.slice(9, 18).join('\n'),
+                    inline: true
+                }, {
+                    name: '\u200B',
+                    value: rolesIds.slice(18, 27).join('\n'),
+                    inline: true
+                })
                     .setColor(((_k = (_j = int.guild) === null || _j === void 0 ? void 0 : _j.members.me) === null || _k === void 0 ? void 0 : _k.displayHexColor) || 'White');
                 const ColorsMenu = new discord_js_1.ActionRowBuilder()
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
@@ -210,49 +214,19 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                         value: 'white'
                     },
                     {
-                        label: inEnglish ? 'Gray' : 'Gris',
-                        emoji: '🐺',
-                        value: 'gray'
+                        label: inEnglish ? 'Light grey' : 'Gris claro',
+                        emoji: '🏐',
+                        value: 'light grey'
                     },
                     {
-                        label: inEnglish ? 'Yellow' : 'Amarillo',
-                        emoji: '🍌',
-                        value: 'yellow'
+                        label: inEnglish ? 'Silver' : 'Plata',
+                        emoji: '🥈',
+                        value: 'silver'
                     },
                     {
-                        label: inEnglish ? 'Cyan' : 'Cían',
-                        emoji: '🧼',
-                        value: 'cyan'
-                    },
-                    {
-                        label: inEnglish ? 'Green' : 'Verde',
-                        emoji: '🌳',
-                        value: 'green'
-                    },
-                    {
-                        label: inEnglish ? 'Orange' : 'Naranja',
-                        emoji: '🧡',
-                        value: 'orange'
-                    },
-                    {
-                        label: inEnglish ? 'Blue' : 'Azul',
-                        emoji: '💦',
-                        value: 'blue'
-                    },
-                    {
-                        label: inEnglish ? 'Red' : 'Rojo',
-                        emoji: '❤️',
-                        value: 'red'
-                    },
-                    {
-                        label: inEnglish ? 'Violet' : 'Violeta',
-                        emoji: '☂️',
-                        value: 'violet'
-                    },
-                    {
-                        label: inEnglish ? 'Purple' : 'Morado',
-                        emoji: '🍆',
-                        value: 'purple'
+                        label: inEnglish ? 'Beige' : 'Beige',
+                        emoji: '🍞',
+                        value: 'beige'
                     },
                     {
                         label: inEnglish ? 'Pink' : 'Rosa',
@@ -260,9 +234,99 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                         value: 'pink'
                     },
                     {
+                        label: inEnglish ? 'Violet' : 'Violeta',
+                        emoji: '☂️',
+                        value: 'violet'
+                    },
+                    {
+                        label: inEnglish ? 'Magenta' : 'Magenta',
+                        emoji: '🌺',
+                        value: 'magenta'
+                    },
+                    {
+                        label: inEnglish ? 'Purple' : 'Morado',
+                        emoji: '🍆',
+                        value: 'purple'
+                    },
+                    {
+                        label: inEnglish ? 'Yellow' : 'Amarillo',
+                        emoji: '🍌',
+                        value: 'yellow'
+                    },
+                    {
+                        label: inEnglish ? 'Gold' : 'Oro',
+                        emoji: '🏆',
+                        value: 'gold'
+                    },
+                    {
+                        label: inEnglish ? 'Orange' : 'Naranja',
+                        emoji: '🧡',
+                        value: 'orange'
+                    },
+                    {
+                        label: inEnglish ? 'Bronze' : 'Bronce',
+                        emoji: '🥉',
+                        value: 'bronze'
+                    },
+                    {
+                        label: inEnglish ? 'Red' : 'Rojo',
+                        emoji: '❤️',
+                        value: 'red'
+                    },
+                    {
+                        label: inEnglish ? 'Green lime' : 'Verde lima',
+                        emoji: '🍃',
+                        value: 'green lime'
+                    },
+                    {
+                        label: inEnglish ? 'Green' : 'Verde',
+                        emoji: '🌳',
+                        value: 'green'
+                    },
+                    {
+                        label: inEnglish ? 'Olive green' : 'Verde oliva',
+                        emoji: '🫒',
+                        value: 'olive green'
+                    },
+                    {
+                        label: inEnglish ? 'Light blue' : 'Azul celeste',
+                        emoji: '🫧',
+                        value: 'light blue'
+                    },
+                    {
+                        label: inEnglish ? 'Turquoise' : 'Turquesa',
+                        emoji: '🧼',
+                        value: 'turquoise'
+                    },
+                    {
+                        label: inEnglish ? 'Cyan' : 'Cían',
+                        emoji: '🐬',
+                        value: 'cyan'
+                    },
+                    {
+                        label: inEnglish ? 'Blue' : 'Azul',
+                        emoji: '💦',
+                        value: 'blue'
+                    },
+                    {
+                        label: inEnglish ? 'Navy blue' : 'Azul marino',
+                        emoji: '🌊',
+                        value: 'navy blue'
+                    },
+                    {
                         label: inEnglish ? 'Brown' : 'Marrón',
                         emoji: '🍩',
                         value: 'brown'
+                    },
+                    {
+                        label: inEnglish ? 'Gray' : 'Gris',
+                        emoji: '🐺',
+                        value: 'gray'
+                    },
+                    {
+                        label: inEnglish ? 'Dark gray' : 'Gris oscuro',
+                        emoji: '🪨',
+                        value: 'dark gray'
                     },
                     {
                         label: inEnglish ? 'Black' : 'Negro',
@@ -337,71 +401,31 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
         if (customId == 'colors-menu') {
             const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
             const dictionary = [
-                {
-                    value: 'white',
-                    rol: '1053418871547248671',
-                    status: ''
-                },
-                {
-                    value: 'gray',
-                    rol: '1053418889649868800',
-                    status: ''
-                },
-                {
-                    value: 'yellow',
-                    rol: '1053418924290621490',
-                    status: ''
-                },
-                {
-                    value: 'cyan',
-                    rol: '1053419338029346817',
-                    status: ''
-                },
-                {
-                    value: 'green',
-                    rol: '1053419357767745617',
-                    status: ''
-                },
-                {
-                    value: 'orange',
-                    rol: '1053419365820801044',
-                    status: ''
-                },
-                {
-                    value: 'blue',
-                    rol: '1053419380026908801',
-                    status: ''
-                },
-                {
-                    value: 'red',
-                    rol: '1053419388625231952',
-                    status: ''
-                },
-                {
-                    value: 'violet',
-                    rol: '1053419392634994748',
-                    status: ''
-                },
-                {
-                    value: 'purple',
-                    rol: '1053419396179185685',
-                    status: ''
-                },
-                {
-                    value: 'pink',
-                    rol: '1053419401300430939',
-                    status: ''
-                },
-                {
-                    value: 'brown',
-                    rol: '1053419404924297277',
-                    status: ''
-                },
-                {
-                    value: 'black',
-                    rol: '1053419409617735790',
-                    status: ''
-                }
+                { value: 'white', rol: '1053418871547248671', status: '' },
+                { value: 'light grey', rol: '1101370592059457556', status: '' },
+                { value: 'silver', rol: '1101370938295066694', status: '' },
+                { value: 'beige', rol: '1101370930401386496', status: '' },
+                { value: 'pink', rol: '1053419401300430939', status: '' },
+                { value: 'violet', rol: '1053419392634994748', status: '' },
+                { value: 'magenta', rol: '1101370073526054972', status: '' },
+                { value: 'purple', rol: '1053419396179185685', status: '' },
+                { value: 'yellow', rol: '1053418924290621490', status: '' },
+                { value: 'gold', rol: '1101370934436311070', status: '' },
+                { value: 'orange', rol: '1053419365820801044', status: '' },
+                { value: 'bronze', rol: '1101370942220927017', status: '' },
+                { value: 'red', rol: '1053419388625231952', status: '' },
+                { value: 'green lime', rol: '1101370924307071049', status: '' },
+                { value: 'green', rol: '1053419357767745617', status: '' },
+                { value: 'olive green', rol: '1101370246859858031', status: '' },
+                { value: 'light blue', rol: '1101370919911440455', status: '' },
+                { value: 'turquoise', rol: '1101370605233786983', status: '' },
+                { value: 'cyan', rol: '1053419338029346817', status: '' },
+                { value: 'blue', rol: '1053419380026908801', status: '' },
+                { value: 'navy blue', rol: '1101370241528893470', status: '' },
+                { value: 'brown', rol: '1053419404924297277', status: '' },
+                { value: 'gray', rol: '1053418889649868800', status: '' },
+                { value: 'dark gray', rol: '1101370597520461894', status: '' },
+                { value: 'black', rol: '1053419409617735790', status: '' }
             ];
             if (author)
                 (0, functions_1.selectRole)(int, values[0], dictionary, author);
