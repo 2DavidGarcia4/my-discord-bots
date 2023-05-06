@@ -66,18 +66,18 @@ const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function*
     if (verifiedsData) {
         for (let v of verifiedsData) {
             const channel = client.channels.cache.get(v.channelId);
+            const day = 24 * 60 * 60000;
             if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
-                if ((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (30 * 24 * 60 * 60000)))
+                if ((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 30)))
                     yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ReadMessageHistory: false }).then(ed => {
                         v.contentHidden = true;
-                        console.log('assad');
                         const VerifiedLog = new discord_js_1.EmbedBuilder()
                             .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
                             .setColor('Blue');
                         if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
                             channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
                     });
-                if ((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (40 * 24 * 60 * 60000)))
+                if ((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 40)))
                     yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ViewChannel: false }).then(ed => {
                         v.channelHidden = true;
                         const VerifiedLog = new discord_js_1.EmbedBuilder()

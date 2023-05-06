@@ -159,8 +159,14 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
               verifiedUser.pinedAt = Date.now()
               verifiedUser.lastActivityAt = Date.now()
 
-              if(verifiedUser.contentHidden) verifiedUser.contentHidden = false 
-              if(verifiedUser.channelHidden) verifiedUser.channelHidden = false 
+              if(verifiedUser.contentHidden) {
+                verifiedUser.contentHidden = false 
+                channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
+              }
+              if(verifiedUser.channelHidden) {
+                verifiedUser.channelHidden = false 
+                channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
+              }
             
             }else{
               verifiedsData?.push({
@@ -182,14 +188,20 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
 
           }else {
-            
+
             const verifiedUser = verifiedsData?.find(v=> v.id == msg.author.id)
             if(verifiedUser){
               verifiedUser.lastActivityAt = Date.now()
 
               if(verifiedsData) {
-                if(verifiedUser.contentHidden) verifiedUser.contentHidden = false 
-                if(verifiedUser.channelHidden) verifiedUser.channelHidden = false
+                if(verifiedUser.contentHidden) {
+                  verifiedUser.contentHidden = false
+                  channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
+                }
+                if(verifiedUser.channelHidden) {
+                  verifiedUser.channelHidden = false
+                  channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
+                }
 
                 await updateVerifiedsData(client, verifiedsData)
               }

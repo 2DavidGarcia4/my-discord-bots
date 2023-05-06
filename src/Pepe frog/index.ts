@@ -69,7 +69,6 @@ Frog.on('channelUpdate', (oldChannel, newChannel) => {
 })
 
 Frog.on('channelDelete', (channel) => {
-  console.log('channel delete')
   channelDeleteEvent(channel, Frog)
 })
 

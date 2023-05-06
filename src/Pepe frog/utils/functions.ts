@@ -60,12 +60,12 @@ export const inspectVerifieds = async (client: Client) => {
   if(verifiedsData){
     for(let v of verifiedsData) {
       const channel = client.channels.cache.get(v.channelId)
+      const day = 24*60*60000
       
       if(channel?.type == ChannelType.GuildText) {
-        if((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (30*24*60*60000))) await channel.permissionOverwrites.edit(frogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
+        if((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(frogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
           v.contentHidden = true
     
-          console.log('assad')
           
           const VerifiedLog = new EmbedBuilder()
           .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
@@ -73,7 +73,7 @@ export const inspectVerifieds = async (client: Client) => {
           if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
         })
     
-        if((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (40*24*60*60000))) await channel.permissionOverwrites.edit(frogDb.serverId, {ViewChannel: false}).then(ed=> {
+        if((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(frogDb.serverId, {ViewChannel: false}).then(ed=> {
           v.channelHidden = true
           
           const VerifiedLog = new EmbedBuilder()
@@ -95,7 +95,7 @@ export const inspectVerifieds = async (client: Client) => {
         } 
       }
     }
-
+    
     await updateVerifiedsData(client, verifiedsData)
   }
 }

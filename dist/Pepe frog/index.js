@@ -64,7 +64,6 @@ Frog.on('channelUpdate', (oldChannel, newChannel) => {
     (0, channelUpdate_1.channelUpdateEvetn)(oldChannel, newChannel, Frog);
 });
 Frog.on('channelDelete', (channel) => {
-    console.log('channel delete');
     (0, channelDelete_1.channelDeleteEvent)(channel, Frog);
 });
 Frog.on('channelPinsUpdate', (channel) => {

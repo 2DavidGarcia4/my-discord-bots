@@ -161,10 +161,14 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                             verifiedUser.ping = false;
                             verifiedUser.pinedAt = Date.now();
                             verifiedUser.lastActivityAt = Date.now();
-                            if (verifiedUser.contentHidden)
+                            if (verifiedUser.contentHidden) {
                                 verifiedUser.contentHidden = false;
-                            if (verifiedUser.channelHidden)
+                                channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true });
+                            }
+                            if (verifiedUser.channelHidden) {
                                 verifiedUser.channelHidden = false;
+                                channel.permissionOverwrites.edit(serverId, { ViewChannel: true });
+                            }
                         }
                         else {
                             verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.push({
@@ -191,10 +195,14 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                         if (verifiedUser) {
                             verifiedUser.lastActivityAt = Date.now();
                             if (verifiedsData) {
-                                if (verifiedUser.contentHidden)
+                                if (verifiedUser.contentHidden) {
                                     verifiedUser.contentHidden = false;
-                                if (verifiedUser.channelHidden)
+                                    channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true });
+                                }
+                                if (verifiedUser.channelHidden) {
                                     verifiedUser.channelHidden = false;
+                                    channel.permissionOverwrites.edit(serverId, { ViewChannel: true });
+                                }
                                 yield (0, functions_1.updateVerifiedsData)(client, verifiedsData);
                             }
                             if (!verifiedUser.ping && verifiedUser.pinedAt < Math.floor(Date.now() - (60 * 60000))) {

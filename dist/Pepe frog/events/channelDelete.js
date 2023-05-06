@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.channelDeleteEvent = void 0;
 const db_1 = require("../db");
+const functions_1 = require("../utils/functions");
 const channelDeleteEvent = (channel, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { serverId, principalServerId } = db_1.frogDb;
@@ -18,5 +19,10 @@ const channelDeleteEvent = (channel, client) => __awaiter(void 0, void 0, void 0
         return;
     const principalServer = client.guilds.cache.get(principalServerId);
     (_a = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => f.name == channel.name)) === null || _a === void 0 ? void 0 : _a.delete();
+    const verifiedsData = yield (0, functions_1.getVerifiedsData)(client);
+    if (verifiedsData && verifiedsData.some(s => s.channelId == channel.id)) {
+        verifiedsData.splice(verifiedsData.findIndex(f => f.channelId == channel.id), 1);
+        yield (0, functions_1.updateVerifiedsData)(client, verifiedsData);
+    }
 });
 exports.channelDeleteEvent = channelDeleteEvent;
