@@ -157,13 +157,20 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             if(verifiedUser){
               verifiedUser.ping = false
               verifiedUser.pinedAt = Date.now()
+              verifiedUser.lastActivityAt = Date.now()
+
+              if(verifiedUser.contentHidden) verifiedUser.contentHidden = false 
+              if(verifiedUser.channelHidden) verifiedUser.channelHidden = false 
             
             }else{
               verifiedsData?.push({
                 id: msg.author.id,
                 ping: false,
                 pinedAt: Date.now(),
-                channelId: channelId
+                channelId: channelId,
+                contentHidden: false,
+                channelHidden: false,
+                lastActivityAt: Date.now()
               })
             }
       
@@ -175,9 +182,19 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
 
           }else {
-            const verifiedDb = verifiedsData?.find(v=> v.id == msg.author.id)
-            if(verifiedDb){
-              if(!verifiedDb.ping && verifiedDb.pinedAt < Math.floor(Date.now() - (60*60000))){
+            
+            const verifiedUser = verifiedsData?.find(v=> v.id == msg.author.id)
+            if(verifiedUser){
+              verifiedUser.lastActivityAt = Date.now()
+
+              if(verifiedsData) {
+                if(verifiedUser.contentHidden) verifiedUser.contentHidden = false 
+                if(verifiedUser.channelHidden) verifiedUser.channelHidden = false
+
+                await updateVerifiedsData(client, verifiedsData)
+              }
+
+              if(!verifiedUser.ping && verifiedUser.pinedAt < Math.floor(Date.now() - (60*60000))){
                 msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
               }
 

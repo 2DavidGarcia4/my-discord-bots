@@ -63,21 +63,45 @@ exports.updateVerifiedsData = updateVerifiedsData;
 const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function* () {
     const verifiedsData = yield (0, exports.getVerifiedsData)(client);
     const channelLog = client.channels.cache.get('1100110861244301382');
-    verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.filter(f => !f.ping).forEach(v => {
-        if (Math.floor(v.pinedAt + (db_1.frogDb.verifiedsCooldown)) <= Date.now()) {
+    if (verifiedsData) {
+        for (let v of verifiedsData) {
             const channel = client.channels.cache.get(v.channelId);
-            if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
-                channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
-            v.ping = true;
-            const VerifiedLog = new discord_js_1.EmbedBuilder()
-                .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
-                .setColor('Green');
-            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+            if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
+                if ((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (30 * 24 * 60 * 60000)))
+                    yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ReadMessageHistory: false }).then(ed => {
+                        v.contentHidden = true;
+                        console.log('assad');
+                        const VerifiedLog = new discord_js_1.EmbedBuilder()
+                            .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
+                            .setColor('Blue');
+                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                    });
+                if ((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (40 * 24 * 60 * 60000)))
+                    yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ViewChannel: false }).then(ed => {
+                        v.channelHidden = true;
+                        const VerifiedLog = new discord_js_1.EmbedBuilder()
+                            .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
+                            .setColor('Orange');
+                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                    });
+                if (!v.ping) {
+                    if (Math.floor(v.pinedAt + (db_1.frogDb.verifiedsCooldown)) <= Date.now()) {
+                        if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
+                            channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
+                        v.ping = true;
+                        const VerifiedLog = new discord_js_1.EmbedBuilder()
+                            .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
+                            .setColor('Green');
+                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                    }
+                }
+            }
         }
-    });
-    if (verifiedsData)
         yield (0, exports.updateVerifiedsData)(client, verifiedsData);
+    }
 });
 exports.inspectVerifieds = inspectVerifieds;
 const rulesChannelId = '1090736733047492638';

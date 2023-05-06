@@ -160,13 +160,21 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                         if (verifiedUser) {
                             verifiedUser.ping = false;
                             verifiedUser.pinedAt = Date.now();
+                            verifiedUser.lastActivityAt = Date.now();
+                            if (verifiedUser.contentHidden)
+                                verifiedUser.contentHidden = false;
+                            if (verifiedUser.channelHidden)
+                                verifiedUser.channelHidden = false;
                         }
                         else {
                             verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.push({
                                 id: msg.author.id,
                                 ping: false,
                                 pinedAt: Date.now(),
-                                channelId: channelId
+                                channelId: channelId,
+                                contentHidden: false,
+                                channelHidden: false,
+                                lastActivityAt: Date.now()
                             });
                         }
                         if (verifiedsData)
@@ -179,9 +187,17 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                             channelLog.send({ embeds: [VerifiedLog] });
                     }
                     else {
-                        const verifiedDb = verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.find(v => v.id == msg.author.id);
-                        if (verifiedDb) {
-                            if (!verifiedDb.ping && verifiedDb.pinedAt < Math.floor(Date.now() - (60 * 60000))) {
+                        const verifiedUser = verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.find(v => v.id == msg.author.id);
+                        if (verifiedUser) {
+                            verifiedUser.lastActivityAt = Date.now();
+                            if (verifiedsData) {
+                                if (verifiedUser.contentHidden)
+                                    verifiedUser.contentHidden = false;
+                                if (verifiedUser.channelHidden)
+                                    verifiedUser.channelHidden = false;
+                                yield (0, functions_1.updateVerifiedsData)(client, verifiedsData);
+                            }
+                            if (!verifiedUser.ping && verifiedUser.pinedAt < Math.floor(Date.now() - (60 * 60000))) {
                                 msg.reply({ allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**` });
                             }
                         }

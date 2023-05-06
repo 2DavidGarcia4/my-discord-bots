@@ -1,7 +1,7 @@
 export type ModDb = {
   id: string
   warns: number
-  message: string,
+  message: string
   messages: {
     id: string
     content: string
@@ -10,8 +10,11 @@ export type ModDb = {
 }
 
 export interface VerifiedsData {
-  id: string,
-  ping: boolean,
-  pinedAt: number,
+  id: string
+  ping: boolean
+  pinedAt: number
   channelId: string
+  contentHidden: boolean
+  channelHidden: boolean
+  lastActivityAt: number
 }
