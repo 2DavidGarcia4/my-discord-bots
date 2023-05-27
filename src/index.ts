@@ -1,2 +1,2 @@
 require('./pcem/index')
-require('./Pepe frog/index')
+require('./Pepe-frog/index')
