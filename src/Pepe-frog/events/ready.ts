@@ -1,5 +1,5 @@
 import { ActivitiesOptions, ActivityType, AttachmentBuilder, ChannelType, Client, EmbedBuilder } from "discord.js";
-import { getVerifiedsData, inspectVerifieds, setGuildStatus, updateVerifiedsData } from "../utils/functions";
+import { autoChangeNicknames, getVerifiedsData, inspectVerifieds, setGuildStatus, updateVerifiedsData } from "../utils/functions";
 import { frogDb } from "../db";
 import { commands } from "./interactionCreate";
 import { defaultReady, presences } from "../../shared/functions";
@@ -102,7 +102,8 @@ export const readyEvent = async (client: Client) => {
   }
   sendStats()
 
-  
+  if(server?.members) autoChangeNicknames(server.members.cache.map(m=> m))
+
   inspectVerifieds(client)
   setInterval(()=> {
     presences(dayStates, nightStates, client)
@@ -113,5 +114,6 @@ export const readyEvent = async (client: Client) => {
   setGuildStatus(client)
   setInterval(()=> {
     setGuildStatus(client)
+    if(server?.members) autoChangeNicknames(server.members.cache.map(m=> m))
   }, 6*60*60000)
 }

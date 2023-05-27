@@ -1,4 +1,4 @@
-import { ChannelType, Client, EmbedBuilder, Guild } from "discord.js"
+import { ChannelType, Client, EmbedBuilder, Guild, GuildMember } from "discord.js"
 import { frogDb } from "../db"
 import { VerifiedsData } from "../types"
 import { botDB } from "../../pcem/db"
@@ -116,4 +116,21 @@ export const getVerifiedsInfo = async (client: Client, language: 'es' | 'en') =>
     const rules = (await rulesChannel.messages.fetch(language == 'en' ? '1101591835576639549' : '1101591652440735894')).content
     return rules
   }
+}
+
+export function autoChangeNicknames(members: GuildMember[]) {
+  const includes = ['!', '¡', '?', '¿']
+  
+  members.forEach(m=> {
+    if(m.nickname && includes.some(s=> m.nickname?.startsWith(s))){
+      m.edit({nick: m.nickname.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
+        // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
+      })
+    
+    } else if(includes.some(s=> m.user.username.startsWith(s))){
+      m.edit({nick: m.user.username.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
+        // console.log(`Updated nickname from ${m.user.username} to ${mr.nickname}`)
+      })
+    }
+  })
 }
