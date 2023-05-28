@@ -55,44 +55,58 @@ export const updateVerifiedsData = async (client: Client, newData: VerifiedsData
 
 export const inspectVerifieds = async (client: Client) => {
   const verifiedsData = await getVerifiedsData(client)
+  const server = client.guilds.cache.get(frogDb.serverId)
   const channelLog = client.channels.cache.get('1100110861244301382')
   
   if(verifiedsData){
     for(let v of verifiedsData) {
       const channel = client.channels.cache.get(v.channelId)
+      const verified = server?.members.cache.get(v.id)
       const day = 24*60*60000
+
+      if(verified){
+        if(channel?.type == ChannelType.GuildText) {
+          if((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(frogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
+            v.contentHidden = true
       
-      if(channel?.type == ChannelType.GuildText) {
-        if((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(frogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
-          v.contentHidden = true
-    
-          
-          const VerifiedLog = new EmbedBuilder()
-          .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
-          .setColor('Blue')
-          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
-        })
-    
-        if((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(frogDb.serverId, {ViewChannel: false}).then(ed=> {
-          v.channelHidden = true
-          
-          const VerifiedLog = new EmbedBuilder()
-          .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
-          .setColor('Orange')
-          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
-        })
-      
-        if(!v.ping) {
-          if(Math.floor(v.pinedAt + (frogDb.verifiedsCooldown)) <= Date.now()){
-            if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
-            v.ping = true
-      
+            
             const VerifiedLog = new EmbedBuilder()
-            .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
-            .setColor('Green')
+            .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
+            .setColor('Blue')
             if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
-          }
-        } 
+          })
+      
+          if((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(frogDb.serverId, {ViewChannel: false}).then(ed=> {
+            v.channelHidden = true
+            
+            const VerifiedLog = new EmbedBuilder()
+            .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
+            .setColor('Orange')
+            if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+          })
+        
+          if(!v.ping) {
+            if(Math.floor(v.pinedAt + (frogDb.verifiedsCooldown)) <= Date.now()){
+              if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
+              v.ping = true
+        
+              const VerifiedLog = new EmbedBuilder()
+              .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
+              .setColor('Green')
+              if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+            }
+          } 
+        }
+
+      }else{
+        if(channel?.type == ChannelType.GuildText) await channel.permissionOverwrites.edit(frogDb.serverId, {ViewChannel: false}).then(()=> {
+          verifiedsData.splice(verifiedsData.findIndex(f=> f.id == v.id), 1)
+          
+          const VerifiedLog = new EmbedBuilder()
+          .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
+          .setColor('Red')
+          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+        })
       }
     }
     
