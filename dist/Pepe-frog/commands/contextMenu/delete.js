@@ -21,10 +21,11 @@ exports.deleteCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
     .setType(3).toJSON();
 const deleteCM = (int) => __awaiter(void 0, void 0, void 0, function* () {
-    const { locale, targetMessage } = int, isEnglish = locale == 'en-US' ? true : false;
+    var _a;
+    const { guild, locale, targetMessage } = int, isEnglish = locale == 'en-US' ? true : false;
     const DeleteEb = new discord_js_1.EmbedBuilder()
         .setTitle(isEnglish ? 'Message deleted successfully' : 'Mensaje eliminado correctamente')
-        .setColor('Random');
+        .setColor(((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
     __1.exemptMessagesIds.push(targetMessage.id);
     targetMessage.delete().then(() => {
         int.reply({ ephemeral: true, embeds: [DeleteEb] });

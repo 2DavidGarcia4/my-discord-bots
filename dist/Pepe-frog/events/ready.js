@@ -109,6 +109,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             statsChannel.edit({ topic: nowTime.toString() });
     });
     sendStats();
+    if (server === null || server === void 0 ? void 0 : server.members)
+        (0, functions_1.autoChangeNicknames)(server.members.cache.map(m => m));
     (0, functions_1.inspectVerifieds)(client);
     setInterval(() => {
         (0, functions_2.presences)(dayStates, nightStates, client);
@@ -118,6 +120,8 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     (0, functions_1.setGuildStatus)(client);
     setInterval(() => {
         (0, functions_1.setGuildStatus)(client);
+        if (server === null || server === void 0 ? void 0 : server.members)
+            (0, functions_1.autoChangeNicknames)(server.members.cache.map(m => m));
     }, 6 * 60 * 60000);
 });
 exports.readyEvent = readyEvent;

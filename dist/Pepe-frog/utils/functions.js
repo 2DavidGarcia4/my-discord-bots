@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getVerifiedsInfo = exports.getRules = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+exports.autoChangeNicknames = exports.getVerifiedsInfo = exports.getRules = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const getCategoryChannels = (id, server) => {
@@ -62,42 +62,57 @@ const updateVerifiedsData = (client, newData) => __awaiter(void 0, void 0, void 
 exports.updateVerifiedsData = updateVerifiedsData;
 const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function* () {
     const verifiedsData = yield (0, exports.getVerifiedsData)(client);
+    const server = client.guilds.cache.get(db_1.frogDb.serverId);
     const channelLog = client.channels.cache.get('1100110861244301382');
     if (verifiedsData) {
         for (let v of verifiedsData) {
             const channel = client.channels.cache.get(v.channelId);
+            const verified = server === null || server === void 0 ? void 0 : server.members.cache.get(v.id);
             const day = 24 * 60 * 60000;
-            if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
-                if ((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 30)))
-                    yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ReadMessageHistory: false }).then(ed => {
-                        v.contentHidden = true;
-                        const VerifiedLog = new discord_js_1.EmbedBuilder()
-                            .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
-                            .setColor('Blue');
-                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
-                    });
-                if ((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 40)))
-                    yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ViewChannel: false }).then(ed => {
-                        v.channelHidden = true;
-                        const VerifiedLog = new discord_js_1.EmbedBuilder()
-                            .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
-                            .setColor('Orange');
-                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
-                    });
-                if (!v.ping) {
-                    if (Math.floor(v.pinedAt + (db_1.frogDb.verifiedsCooldown)) <= Date.now()) {
-                        if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
-                            channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
-                        v.ping = true;
-                        const VerifiedLog = new discord_js_1.EmbedBuilder()
-                            .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
-                            .setColor('Green');
-                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+            if (verified) {
+                if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
+                    if ((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 30)))
+                        yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ReadMessageHistory: false }).then(ed => {
+                            v.contentHidden = true;
+                            const VerifiedLog = new discord_js_1.EmbedBuilder()
+                                .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
+                                .setColor('Blue');
+                            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                        });
+                    if ((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 40)))
+                        yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ViewChannel: false }).then(ed => {
+                            v.channelHidden = true;
+                            const VerifiedLog = new discord_js_1.EmbedBuilder()
+                                .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
+                                .setColor('Orange');
+                            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                        });
+                    if (!v.ping) {
+                        if (Math.floor(v.pinedAt + (db_1.frogDb.verifiedsCooldown)) <= Date.now()) {
+                            if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
+                                channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
+                            v.ping = true;
+                            const VerifiedLog = new discord_js_1.EmbedBuilder()
+                                .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
+                                .setColor('Green');
+                            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                        }
                     }
                 }
+            }
+            else {
+                if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
+                    yield channel.permissionOverwrites.edit(db_1.frogDb.serverId, { ViewChannel: false }).then(() => {
+                        verifiedsData.splice(verifiedsData.findIndex(f => f.id == v.id), 1);
+                        const VerifiedLog = new discord_js_1.EmbedBuilder()
+                            .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
+                            .setColor('Red');
+                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                    });
             }
         }
         yield (0, exports.updateVerifiedsData)(client, verifiedsData);
@@ -122,3 +137,19 @@ const getVerifiedsInfo = (client, language) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.getVerifiedsInfo = getVerifiedsInfo;
+function autoChangeNicknames(members) {
+    const includes = ['!', '¡', '?', '¿'];
+    members.forEach(m => {
+        if (m.nickname && includes.some(s => { var _a; return (_a = m.nickname) === null || _a === void 0 ? void 0 : _a.startsWith(s); })) {
+            m.edit({ nick: m.nickname.replace(/[!¡¿?]/, '').trim() }).then(mr => {
+                // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
+            });
+        }
+        else if (includes.some(s => m.user.username.startsWith(s))) {
+            m.edit({ nick: m.user.username.replace(/[!¡¿?]/, '').trim() }).then(mr => {
+                // console.log(`Updated nickname from ${m.user.username} to ${mr.nickname}`)
+            });
+        }
+    });
+}
+exports.autoChangeNicknames = autoChangeNicknames;

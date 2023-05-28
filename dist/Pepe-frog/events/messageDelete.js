@@ -16,14 +16,17 @@ const __1 = require("..");
 const messageDeleteEvent = (msgd, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
     const { serverId, prefix, owners } = db_1.frogDb;
+    const channelId = '1053389522253127720';
     if (msgd.guildId != serverId || ((_a = msgd.author) === null || _a === void 0 ? void 0 : _a.bot))
         return;
     if (__1.exemptMessagesIds.some(s => s == msgd.id)) {
         __1.exemptMessagesIds.splice(__1.exemptMessagesIds.findIndex(f => f == msgd.id), 1);
         return;
     }
+    if (msgd.channelId == channelId)
+        return;
     if (msgd.content && !(msgd.content.startsWith(prefix) && owners.some(s => { var _a; return s == ((_a = msgd.author) === null || _a === void 0 ? void 0 : _a.id); }))) {
-        const channelLog = client.channels.cache.get('1053389522253127720');
+        const channelLog = client.channels.cache.get(channelId);
         const DeleteMessageEb = new discord_js_1.EmbedBuilder()
             .setAuthor({ name: ((_b = msgd.member) === null || _b === void 0 ? void 0 : _b.nickname) || ((_c = msgd.author) === null || _c === void 0 ? void 0 : _c.username) || 'undefined', iconURL: (_d = msgd.author) === null || _d === void 0 ? void 0 : _d.displayAvatarURL() })
             .setTitle('🗑️ Deleted message')
