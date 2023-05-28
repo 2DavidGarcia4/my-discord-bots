@@ -136,11 +136,12 @@ export function autoChangeNicknames(members: GuildMember[]) {
   const includes = ['!', '¡', '?', '¿']
   
   members.forEach(m=> {
-    if(m.nickname && includes.some(s=> m.nickname?.startsWith(s))){
-      m.edit({nick: m.nickname.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
-        // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
-      })
-    
+    if(m.nickname){
+      if(includes.some(s=> m.nickname?.startsWith(s))){
+        m.edit({nick: m.nickname.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
+          // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
+        })
+      }
     } else if(includes.some(s=> m.user.username.startsWith(s))){
       m.edit({nick: m.user.username.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
         // console.log(`Updated nickname from ${m.user.username} to ${mr.nickname}`)

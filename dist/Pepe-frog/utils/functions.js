@@ -140,10 +140,12 @@ exports.getVerifiedsInfo = getVerifiedsInfo;
 function autoChangeNicknames(members) {
     const includes = ['!', '¡', '?', '¿'];
     members.forEach(m => {
-        if (m.nickname && includes.some(s => { var _a; return (_a = m.nickname) === null || _a === void 0 ? void 0 : _a.startsWith(s); })) {
-            m.edit({ nick: m.nickname.replace(/[!¡¿?]/, '').trim() }).then(mr => {
-                // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
-            });
+        if (m.nickname) {
+            if (includes.some(s => { var _a; return (_a = m.nickname) === null || _a === void 0 ? void 0 : _a.startsWith(s); })) {
+                m.edit({ nick: m.nickname.replace(/[!¡¿?]/, '').trim() }).then(mr => {
+                    // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
+                });
+            }
         }
         else if (includes.some(s => m.user.username.startsWith(s))) {
             m.edit({ nick: m.user.username.replace(/[!¡¿?]/, '').trim() }).then(mr => {
