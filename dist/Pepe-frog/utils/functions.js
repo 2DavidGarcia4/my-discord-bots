@@ -137,21 +137,31 @@ const getVerifiedsInfo = (client, language) => __awaiter(void 0, void 0, void 0,
     }
 });
 exports.getVerifiedsInfo = getVerifiedsInfo;
-function autoChangeNicknames(members) {
+function autoChangeNicknames(members, client) {
     const includes = ['!', '¡', '?', '¿'];
+    let updatedMembers = 0;
     members.forEach(m => {
         if (m.nickname) {
             if (includes.some(s => { var _a; return (_a = m.nickname) === null || _a === void 0 ? void 0 : _a.startsWith(s); })) {
                 m.edit({ nick: m.nickname.replace(/[!¡¿?]/, '').trim() }).then(mr => {
-                    // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
+                    updatedMembers++;
                 });
             }
         }
         else if (includes.some(s => m.user.username.startsWith(s))) {
             m.edit({ nick: m.user.username.replace(/[!¡¿?]/, '').trim() }).then(mr => {
-                // console.log(`Updated nickname from ${m.user.username} to ${mr.nickname}`)
+                updatedMembers++;
             });
         }
     });
+    if (updatedMembers) {
+        const UpdatedMembersEb = new discord_js_1.EmbedBuilder()
+            .setTitle('Update members nicknames')
+            .setDescription(`**${updatedMembers}**`)
+            .setColor('Blue');
+        const channelLog = client.channels.cache.get('1053389522253127720');
+        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+            channelLog.send({ embeds: [UpdatedMembersEb] });
+    }
 }
 exports.autoChangeNicknames = autoChangeNicknames;

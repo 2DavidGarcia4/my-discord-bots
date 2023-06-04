@@ -102,7 +102,7 @@ export const readyEvent = async (client: Client) => {
   }
   sendStats()
 
-  if(server?.members) autoChangeNicknames(server.members.cache.map(m=> m))
+  if(server?.members) autoChangeNicknames(server.members.cache.map(m=> m), client)
 
   inspectVerifieds(client)
   setInterval(()=> {
@@ -114,6 +114,6 @@ export const readyEvent = async (client: Client) => {
   setGuildStatus(client)
   setInterval(()=> {
     setGuildStatus(client)
-    if(server?.members) autoChangeNicknames(server.members.cache.map(m=> m))
+    if(server?.members) autoChangeNicknames(server.members.cache.map(m=> m), client)
   }, 6*60*60000)
 }

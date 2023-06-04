@@ -190,7 +190,7 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
                         if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
                             channelLog.send({ embeds: [VerifiedLog] });
                     }
-                    else {
+                    else if (msg.content.length > 3 || msg.attachments.size) {
                         const verifiedUser = verifiedsData === null || verifiedsData === void 0 ? void 0 : verifiedsData.find(v => v.id == msg.author.id);
                         if (verifiedUser) {
                             verifiedUser.lastActivityAt = Date.now();

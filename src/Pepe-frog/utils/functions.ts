@@ -132,20 +132,31 @@ export const getVerifiedsInfo = async (client: Client, language: 'es' | 'en') =>
   }
 }
 
-export function autoChangeNicknames(members: GuildMember[]) {
+export function autoChangeNicknames(members: GuildMember[], client: Client) {
   const includes = ['!', '¡', '?', '¿']
+  let updatedMembers = 0
   
   members.forEach(m=> {
     if(m.nickname){
       if(includes.some(s=> m.nickname?.startsWith(s))){
         m.edit({nick: m.nickname.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
-          // console.log(`Updated nickname from ${m.nickname} to ${mr.nickname}`)
+          updatedMembers++
         })
       }
     } else if(includes.some(s=> m.user.username.startsWith(s))){
       m.edit({nick: m.user.username.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
-        // console.log(`Updated nickname from ${m.user.username} to ${mr.nickname}`)
+        updatedMembers++
       })
     }
   })
+
+  if(updatedMembers){
+    const UpdatedMembersEb = new EmbedBuilder()
+    .setTitle('Update members nicknames')
+    .setDescription(`**${updatedMembers}**`)
+    .setColor('Blue')
+
+    const channelLog = client.channels.cache.get('1053389522253127720')
+    if(channelLog?.isTextBased()) channelLog.send({embeds: [UpdatedMembersEb]})
+  }
 }

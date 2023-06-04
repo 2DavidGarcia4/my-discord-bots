@@ -187,7 +187,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             .setColor('Yellow')
             if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
 
-          }else {
+          }else if(msg.content.length > 3 || msg.attachments.size) {
 
             const verifiedUser = verifiedsData?.find(v=> v.id == msg.author.id)
             if(verifiedUser){
