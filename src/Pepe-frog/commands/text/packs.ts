@@ -1,23 +1,23 @@
 import { Client, Message, ButtonBuilder, ButtonStyle } from "discord.js";
 import { defaultInfoMessageBody, getInfoMessage } from "../../utils/functions";
 
-export const girlsCommand = async (msg: Message<boolean>, client: Client) => {
+export const packsCommand = async (msg: Message<boolean>, client: Client) => {
   const description = await getInfoMessage({
     client,
-    channelId: '1053399734582263938',
+    channelId: '1120917353862017134',
     language: 'es'
   })+''
 
   defaultInfoMessageBody(msg, {
-    title: `<a:animate_info:1058179015938158592> Información`,
+    title: `📁 Acceso packs`,
     description,
-    name: 'verifieds',
+    name: 'packs',
     extraButtons: [
       new ButtonBuilder()
-      .setCustomId('verifieds-btn')
-      .setLabel('Verificadas')
-      .setEmoji('✅')
-      .setStyle(ButtonStyle.Success)
+      .setCustomId('packs-btn')
+      .setLabel('Vista previa de canales')
+      .setEmoji('👁️')
+      .setStyle(ButtonStyle.Secondary)
     ]
   })
 }

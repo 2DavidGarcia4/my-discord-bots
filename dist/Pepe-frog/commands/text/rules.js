@@ -12,8 +12,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.rulesCommand = void 0;
 const functions_1 = require("../../utils/functions");
 const rulesCommand = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const { getMessage } = (0, functions_1.getInfoMessages)(client);
-    const description = (yield getMessage('1090736733047492638', 'es')) + '';
+    const description = (yield (0, functions_1.getInfoMessage)({
+        client,
+        channelId: '1090736733047492638',
+        language: 'es'
+    })) + '';
     (0, functions_1.defaultInfoMessageBody)(msg, {
         title: '📖 Reglas',
         description,

@@ -6,7 +6,8 @@ import { moveScb, moveSlashCommand } from "../commands/slash/move";
 import { sendCmcb, sendCM } from "../commands/contextMenu/send";
 import { deleteReactionsCM, deleteReactionsCmcb } from "../commands/contextMenu/deleteReactions";
 import { deleteCM, deleteCmcb } from "../commands/contextMenu/delete";
-import { getInfoMessages } from "../utils/functions";
+import { buttonInfoInteractions } from "../db";
+import { handlePreviewChannels } from "../utils/functions";
 
 export const commands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 ;[sendCmcb, deleteReactionsCmcb, deleteCmcb, moveScb].forEach(cmd=> commands.set(cmd.name, cmd))
@@ -30,17 +31,12 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
   }
   
   if(int.isButton()){
-    const { customId, guild, locale } = int, inEnglish = locale == 'en-US'
-    const { getMessage } = getInfoMessages(client)
+    const { customId, guild, locale, user } = int, inEnglish = locale == 'en-US'
+    const author = int.guild?.members.cache.get(user.id)
 
-    if(customId == 'en-rules-btn') {
-      const description = await getMessage('1090736733047492638', 'en')+''
+    const translatedInformationMessageData = buttonInfoInteractions.find(f=> f.id == customId)
+    if(translatedInformationMessageData) await translatedInformationMessageData.run(int, client)
 
-      const RulesEb = new EmbedBuilder({description})
-      .setTitle('📖 Rules')
-      .setColor(int.message.member?.displayHexColor || 'White')
-      int.reply({ephemeral: true, embeds: [RulesEb]})
-    }
 
     if(customId == 'en-roles-btn'){
       const RolesEb = new EmbedBuilder()
@@ -78,24 +74,6 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
       int.reply({ephemeral: true, embeds: [RolesEb], components: [RolesMenu]})
     }
 
-    if(customId == 'en-verifieds-btn'){
-      const description = await getMessage('1053399734582263938', 'en')+''
-
-      const GirlsEb = new EmbedBuilder({description})
-      .setTitle(`<a:animate_info:1058179015938158592> Information`)
-      .setColor(guild?.members.me?.displayHexColor || 'White')
-
-      const VerifiedsBtn = new ActionRowBuilder<ButtonBuilder>()
-      .addComponents(
-        new ButtonBuilder()
-        .setCustomId('verifieds-btn')
-        .setLabel('Verifieds')
-        .setEmoji('✅')
-        .setStyle(ButtonStyle.Success)
-      )
-
-      int.reply({ephemeral: true, embeds: [GirlsEb], components: [VerifiedsBtn]})
-    }
 
     if(customId == 'verifieds-btn'){
       const VerifiedsEb = new EmbedBuilder()
@@ -105,6 +83,22 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
 
       int.reply({ephemeral: true, embeds: [VerifiedsEb]})
     }
+
+    const previwChannels = [
+      {
+        id: 'vip-btn',
+        accessRoles: ['1054484428547686521', '1067223243183902730'],
+        previewRol: '1054109326014418964',
+        run: handlePreviewChannels
+      },
+      {
+        id: 'packs-btn',
+        accessRoles: ['1054484428547686521', '1121140017058812084'],
+        previewRol: '1101370257802801234',
+        run: handlePreviewChannels
+      }
+    ].find(f=> f.id == customId)
+    previwChannels?.run(int)
 
     if(customId == 'en-info-btn'){
       const InfoEb = new EmbedBuilder()

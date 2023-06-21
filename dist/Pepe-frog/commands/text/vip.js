@@ -9,26 +9,26 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.girlsCommand = void 0;
+exports.vipCommand = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../utils/functions");
-const girlsCommand = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
+const vipCommand = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
     const description = (yield (0, functions_1.getInfoMessage)({
         client,
-        channelId: '1053399734582263938',
+        channelId: '1114225130395140136',
         language: 'es'
     })) + '';
     (0, functions_1.defaultInfoMessageBody)(msg, {
-        title: `<a:animate_info:1058179015938158592> Información`,
+        title: `⭐ Acceso VIP`,
         description,
-        name: 'verifieds',
+        name: 'vip',
         extraButtons: [
             new discord_js_1.ButtonBuilder()
-                .setCustomId('verifieds-btn')
-                .setLabel('Verificadas')
-                .setEmoji('✅')
-                .setStyle(discord_js_1.ButtonStyle.Success)
+                .setCustomId('vip-btn')
+                .setLabel('Vista previa de canales')
+                .setEmoji('👁️')
+                .setStyle(discord_js_1.ButtonStyle.Secondary)
         ]
     });
 });
-exports.girlsCommand = girlsCommand;
+exports.vipCommand = vipCommand;

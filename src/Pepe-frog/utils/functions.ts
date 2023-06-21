@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message } from "discord.js"
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message } from "discord.js"
 import { frogDb } from "../db"
 import { VerifiedsData } from "../types"
 import { botDB } from "../../pcem/db"
@@ -121,26 +121,18 @@ const messagesIndexByLanguages = {
   en: 0
 }
 
-export function getInfoMessages(client: Client) {
-  // const channel = client.channels.cache.get(channelId)
-  // let infoMessages: Message<true>[] | undefined
-  // if(channel?.type == ChannelType.GuildText) {
-  //   infoMessages = (await channel.messages.fetch({limit: 6})).map(m=> m)
-  // }
-  
-  const getMessage = async (channelId: string, language: Languages) => {
-    const channel = client.channels.cache.get(channelId)
+export async function getInfoMessage({client, channelId, language}: {
+  client: Client
+  channelId: string,
+  language: Languages
+}) {  
+  const channel = client.channels.cache.get(channelId)
 
-    if(channel?.type == ChannelType.GuildText) {
-      const infoMessages = (await channel.messages.fetch({limit: 6})).map(m=> m)
-      let index = messagesIndexByLanguages[language]
+  if(channel?.type == ChannelType.GuildText) {
+    const infoMessages = (await channel.messages.fetch({limit: 6})).map(m=> m)
+    let index = messagesIndexByLanguages[language]
 
-      return infoMessages?.find((_, i)=> i == index)?.content
-    }
-  }
-
-  return { 
-    getMessage
+    return infoMessages?.find((_, i)=> i == index)?.content
   }
 }
 
@@ -207,4 +199,50 @@ export function autoChangeNicknames(members: GuildMember[], client: Client) {
     const channelLog = client.channels.cache.get('1053389522253127720')
     if(channelLog?.isTextBased()) channelLog.send({embeds: [UpdatedMembersEb]})
   }
+}
+
+export function handlePreviewChannels(this: {
+  accessRoles: string[]
+  previewRol: string
+}, int: ButtonInteraction<CacheType>) {
+  const inEnglish = int.locale == 'en-US'
+  const author = int.guild?.members.cache.get(int.user.id)
+
+  const VIPPreviewEb = new EmbedBuilder()
+  .setTitle('👁️ '+(inEnglish ? 'Channels preview' : 'Vista previa de canales'))
+  
+  if(this.accessRoles.some(s=> author?.roles.cache.has(s))){
+    VIPPreviewEb
+    .setDescription(inEnglish ?
+      `You already have access to all channels in this category, you have upgraded the server or you have paid for access.` :
+      `Ya tienes acceso a todos los canales de esta categoría, has mejorado el servidor o has pagado por el acceso.`  
+    )
+    .setColor('Blurple')
+
+  }else if(author?.roles.cache.has(this.previewRol)) {
+    VIPPreviewEb
+    .setDescription(inEnglish ?
+      `You already have channel preview enabled for this category.` :
+      `Ya tienes habilitada la vista previa de canales de este acategoría.`  
+    )
+    .setColor('Blurple')
+
+  }else{
+    author?.roles.add(this.previewRol).then(()=> setTimeout(()=> {
+      author.roles.remove(this.previewRol)
+    }, 10*60000))
+
+    VIPPreviewEb
+    .setDescription(inEnglish ?
+      `You have been enabled to preview channels for this category, you can only see the channels, not the content.` :
+      `Se the ha habilitado la vista previa de canales para esta categoría, solo puedes ver los canales no el contenido.`  
+    )
+    .setFooter({text: inEnglish ? 
+      'The channel preview is disabled in 10 minutes' : 
+      'La vista previa de canales se te deshabilita en 10 minutos'
+    })
+    .setColor('Yellow')
+  }
+
+  int.reply({ephemeral: true, embeds: [VIPPreviewEb]})
 }

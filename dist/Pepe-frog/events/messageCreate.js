@@ -19,6 +19,8 @@ const rules_1 = require("../commands/text/rules");
 const girls_1 = require("../commands/text/girls");
 const info_1 = require("../commands/text/info");
 const functions_1 = require("../utils/functions");
+const vip_1 = require("../commands/text/vip");
+const packs_1 = require("../commands/text/packs");
 const sanctions = [
     {
         time: 4 * 60 * 60 * 1000,
@@ -288,6 +290,10 @@ const messageCreateEvent = (msg, client) => __awaiter(void 0, void 0, void 0, fu
             (0, girls_1.girlsCommand)(msg, client);
         if (command == 'info')
             (0, info_1.infoCommand)(msg);
+        if (command == 'vip')
+            (0, vip_1.vipCommand)(msg, client);
+        if (command == 'packs')
+            (0, packs_1.packsCommand)(msg, client);
     }
 });
 exports.messageCreateEvent = messageCreateEvent;

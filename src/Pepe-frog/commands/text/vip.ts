@@ -1,23 +1,23 @@
 import { Client, Message, ButtonBuilder, ButtonStyle } from "discord.js";
 import { defaultInfoMessageBody, getInfoMessage } from "../../utils/functions";
 
-export const girlsCommand = async (msg: Message<boolean>, client: Client) => {
+export const vipCommand = async (msg: Message<boolean>, client: Client) => {
   const description = await getInfoMessage({
     client,
-    channelId: '1053399734582263938',
+    channelId: '1114225130395140136',
     language: 'es'
   })+''
 
   defaultInfoMessageBody(msg, {
-    title: `<a:animate_info:1058179015938158592> Información`,
+    title: `⭐ Acceso VIP`,
     description,
-    name: 'verifieds',
+    name: 'vip',
     extraButtons: [
       new ButtonBuilder()
-      .setCustomId('verifieds-btn')
-      .setLabel('Verificadas')
-      .setEmoji('✅')
-      .setStyle(ButtonStyle.Success)
+      .setCustomId('vip-btn')
+      .setLabel('Vista previa de canales')
+      .setEmoji('👁️')
+      .setStyle(ButtonStyle.Secondary)
     ]
   })
 }

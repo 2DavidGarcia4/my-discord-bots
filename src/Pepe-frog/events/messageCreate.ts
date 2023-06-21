@@ -8,6 +8,8 @@ import { rulesCommand } from "../commands/text/rules";
 import { girlsCommand } from "../commands/text/girls";
 import { infoCommand } from "../commands/text/info";
 import { getVerifiedsData, updateVerifiedsData } from "../utils/functions";
+import { vipCommand } from "../commands/text/vip";
+import { packsCommand } from "../commands/text/packs";
 
 const sanctions = [
   {
@@ -297,5 +299,9 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
     if(command == 'girls') girlsCommand(msg, client)
 
     if(command == 'info') infoCommand(msg)
+
+    if(command == 'vip') vipCommand(msg, client)
+
+    if(command == 'packs') packsCommand(msg, client)
   }
 }

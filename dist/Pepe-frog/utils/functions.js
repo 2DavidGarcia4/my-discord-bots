@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessages = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+exports.handlePreviewChannels = exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessage = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const getCategoryChannels = (id, server) => {
@@ -123,14 +123,9 @@ const messagesIndexByLanguages = {
     es: 1,
     en: 0
 };
-function getInfoMessages(client) {
-    // const channel = client.channels.cache.get(channelId)
-    // let infoMessages: Message<true>[] | undefined
-    // if(channel?.type == ChannelType.GuildText) {
-    //   infoMessages = (await channel.messages.fetch({limit: 6})).map(m=> m)
-    // }
-    const getMessage = (channelId, language) => __awaiter(this, void 0, void 0, function* () {
-        var _a;
+function getInfoMessage({ client, channelId, language }) {
+    var _a;
+    return __awaiter(this, void 0, void 0, function* () {
         const channel = client.channels.cache.get(channelId);
         if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
             const infoMessages = (yield channel.messages.fetch({ limit: 6 })).map(m => m);
@@ -138,11 +133,8 @@ function getInfoMessages(client) {
             return (_a = infoMessages === null || infoMessages === void 0 ? void 0 : infoMessages.find((_, i) => i == index)) === null || _a === void 0 ? void 0 : _a.content;
         }
     });
-    return {
-        getMessage
-    };
 }
-exports.getInfoMessages = getInfoMessages;
+exports.getInfoMessage = getInfoMessage;
 function defaultInfoMessageBody(msg, { title, description, name, extraButtons }) {
     var _a, _b;
     const RulesEb = new discord_js_1.EmbedBuilder()
@@ -196,3 +188,40 @@ function autoChangeNicknames(members, client) {
     }
 }
 exports.autoChangeNicknames = autoChangeNicknames;
+function handlePreviewChannels(int) {
+    var _a;
+    const inEnglish = int.locale == 'en-US';
+    const author = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(int.user.id);
+    const VIPPreviewEb = new discord_js_1.EmbedBuilder()
+        .setTitle('👁️ ' + (inEnglish ? 'Channels preview' : 'Vista previa de canales'));
+    if (this.accessRoles.some(s => author === null || author === void 0 ? void 0 : author.roles.cache.has(s))) {
+        VIPPreviewEb
+            .setDescription(inEnglish ?
+            `You already have access to all channels in this category, you have upgraded the server or you have paid for access.` :
+            `Ya tienes acceso a todos los canales de esta categoría, has mejorado el servidor o has pagado por el acceso.`)
+            .setColor('Blurple');
+    }
+    else if (author === null || author === void 0 ? void 0 : author.roles.cache.has(this.previewRol)) {
+        VIPPreviewEb
+            .setDescription(inEnglish ?
+            `You already have channel preview enabled for this category.` :
+            `Ya tienes habilitada la vista previa de canales de este acategoría.`)
+            .setColor('Blurple');
+    }
+    else {
+        author === null || author === void 0 ? void 0 : author.roles.add(this.previewRol).then(() => setTimeout(() => {
+            author.roles.remove(this.previewRol);
+        }, 10 * 60000));
+        VIPPreviewEb
+            .setDescription(inEnglish ?
+            `You have been enabled to preview channels for this category, you can only see the channels, not the content.` :
+            `Se the ha habilitado la vista previa de canales para esta categoría, solo puedes ver los canales no el contenido.`)
+            .setFooter({ text: inEnglish ?
+                'The channel preview is disabled in 10 minutes' :
+                'La vista previa de canales se te deshabilita en 10 minutos'
+        })
+            .setColor('Yellow');
+    }
+    int.reply({ ephemeral: true, embeds: [VIPPreviewEb] });
+}
+exports.handlePreviewChannels = handlePreviewChannels;

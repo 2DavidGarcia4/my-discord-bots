@@ -16,11 +16,12 @@ const move_1 = require("../commands/slash/move");
 const send_1 = require("../commands/contextMenu/send");
 const deleteReactions_1 = require("../commands/contextMenu/deleteReactions");
 const delete_1 = require("../commands/contextMenu/delete");
+const db_1 = require("../db");
 const functions_2 = require("../utils/functions");
 exports.commands = new discord_js_1.Collection();
 [send_1.sendCmcb, deleteReactions_1.deleteReactionsCmcb, delete_1.deleteCmcb, move_1.moveScb].forEach(cmd => exports.commands.set(cmd.name, cmd));
 const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r;
+    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     if (int.isChatInputCommand()) {
         const { commandName } = int;
         if (commandName == 'move')
@@ -38,15 +39,11 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
         }
     }
     if (int.isButton()) {
-        const { customId, guild, locale } = int, inEnglish = locale == 'en-US';
-        const { getMessage } = (0, functions_2.getInfoMessages)(client);
-        if (customId == 'en-rules-btn') {
-            const description = (yield getMessage('1090736733047492638', 'en')) + '';
-            const RulesEb = new discord_js_1.EmbedBuilder({ description })
-                .setTitle('📖 Rules')
-                .setColor(((_a = int.message.member) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
-            int.reply({ ephemeral: true, embeds: [RulesEb] });
-        }
+        const { customId, guild, locale, user } = int, inEnglish = locale == 'en-US';
+        const author = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(user.id);
+        const translatedInformationMessageData = db_1.buttonInfoInteractions.find(f => f.id == customId);
+        if (translatedInformationMessageData)
+            yield translatedInformationMessageData.run(int, client);
         if (customId == 'en-roles-btn') {
             const RolesEb = new discord_js_1.EmbedBuilder()
                 .setTitle('🎭 Roles')
@@ -78,19 +75,6 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
             ]));
             int.reply({ ephemeral: true, embeds: [RolesEb], components: [RolesMenu] });
         }
-        if (customId == 'en-verifieds-btn') {
-            const description = (yield getMessage('1053399734582263938', 'en')) + '';
-            const GirlsEb = new discord_js_1.EmbedBuilder({ description })
-                .setTitle(`<a:animate_info:1058179015938158592> Information`)
-                .setColor(((_d = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White');
-            const VerifiedsBtn = new discord_js_1.ActionRowBuilder()
-                .addComponents(new discord_js_1.ButtonBuilder()
-                .setCustomId('verifieds-btn')
-                .setLabel('Verifieds')
-                .setEmoji('✅')
-                .setStyle(discord_js_1.ButtonStyle.Success));
-            int.reply({ ephemeral: true, embeds: [GirlsEb], components: [VerifiedsBtn] });
-        }
         if (customId == 'verifieds-btn') {
             const VerifiedsEb = new discord_js_1.EmbedBuilder()
                 .setTitle('✅ ' + (inEnglish ? 'Verified women' : 'Mujeres verificadas'))
@@ -98,11 +82,26 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                 .setColor('LuminousVividPink');
             int.reply({ ephemeral: true, embeds: [VerifiedsEb] });
         }
+        const previwChannels = [
+            {
+                id: 'vip-btn',
+                accessRoles: ['1054484428547686521', '1067223243183902730'],
+                previewRol: '1054109326014418964',
+                run: functions_2.handlePreviewChannels
+            },
+            {
+                id: 'packs-btn',
+                accessRoles: ['1054484428547686521', '1121140017058812084'],
+                previewRol: '1101370257802801234',
+                run: functions_2.handlePreviewChannels
+            }
+        ].find(f => f.id == customId);
+        previwChannels === null || previwChannels === void 0 ? void 0 : previwChannels.run(int);
         if (customId == 'en-info-btn') {
             const InfoEb = new discord_js_1.EmbedBuilder()
                 .setTitle('<a:animate_info:1058179015938158592> Information')
                 .setDescription('Here you can get information about almost everything on the server, just select an option in the menu below and you will get information about that option.\n\n*In case you have read and still have doubts, you can consult <@853063286320922634> with any questions.*')
-                .setColor(((_e = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _e === void 0 ? void 0 : _e.displayHexColor) || 'White');
+                .setColor(((_d = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White');
             const InfoMenu = new discord_js_1.ActionRowBuilder()
                 .addComponents(new discord_js_1.StringSelectMenuBuilder()
                 .setCustomId('info-menu')
@@ -137,7 +136,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
         if (customId == 'roles-menu') {
             const option = values[0];
             if (option == 'notifications') {
-                const members = (_f = int.guild) === null || _f === void 0 ? void 0 : _f.members.cache;
+                const members = (_e = int.guild) === null || _e === void 0 ? void 0 : _e.members.cache;
                 const announcements = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1053391025906921472')).size;
                 const surveys = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1053410859700994128')).size;
                 const contents = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1053411182935023657')).size;
@@ -147,7 +146,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                     .setDescription(inEnglish ?
                     `> **<@&1053391025906921472>:**\n> This role will notify you when there is a new announcement.\n> **${announcements === null || announcements === void 0 ? void 0 : announcements.toLocaleString()}** members have the role.\n\n> **<@&1053410859700994128>:**\n> This role will notify you when there is a new survey.\n> **${surveys === null || surveys === void 0 ? void 0 : surveys.toLocaleString()}** members have the role.\n\n> **<@&1053411182935023657>:**\n> This role will notify you when there is new content.\n> **${contents === null || contents === void 0 ? void 0 : contents.toLocaleString()}** members have the role.\n\n> **<@&1083060304054849676>:**\n> This role will notify you when a verified woman talks on your channel.\n> **${verifieds === null || verifieds === void 0 ? void 0 : verifieds.toLocaleString()}** members have the role.` :
                     `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements === null || announcements === void 0 ? void 0 : announcements.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys === null || surveys === void 0 ? void 0 : surveys.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents === null || contents === void 0 ? void 0 : contents.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1083060304054849676>:**\n> Este rol te notificará cuando una mujer verificada hable en su canal.\n> **${verifieds === null || verifieds === void 0 ? void 0 : verifieds.toLocaleString()}** miembros tienen el rol.`)
-                    .setColor(((_h = (_g = int.guild) === null || _g === void 0 ? void 0 : _g.members.me) === null || _h === void 0 ? void 0 : _h.displayHexColor) || 'White');
+                    .setColor(((_g = (_f = int.guild) === null || _f === void 0 ? void 0 : _f.members.me) === null || _g === void 0 ? void 0 : _g.displayHexColor) || 'White');
                 const NotificationsMenu = new discord_js_1.ActionRowBuilder()
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
                     .setCustomId('notifications-menu')
@@ -201,7 +200,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                     value: rolesIds.slice(18, 27).join('\n'),
                     inline: true
                 })
-                    .setColor(((_k = (_j = int.guild) === null || _j === void 0 ? void 0 : _j.members.me) === null || _k === void 0 ? void 0 : _k.displayHexColor) || 'White');
+                    .setColor(((_j = (_h = int.guild) === null || _h === void 0 ? void 0 : _h.members.me) === null || _j === void 0 ? void 0 : _j.displayHexColor) || 'White');
                 const ColorsMenu = new discord_js_1.ActionRowBuilder()
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
                     .setCustomId('colors-menu')
@@ -336,7 +335,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                 int.reply({ ephemeral: true, embeds: [ColorsEb], components: [ColorsMenu] });
             }
             if (option == 'genders') {
-                const members = (_l = int.guild) === null || _l === void 0 ? void 0 : _l.members.cache;
+                const members = (_k = int.guild) === null || _k === void 0 ? void 0 : _k.members.cache;
                 const women = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1058546950414278756')).size;
                 const mens = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1058546982014160947')).size;
                 const oter = members === null || members === void 0 ? void 0 : members.filter(f => f.roles.cache.has('1058547126252093542')).size;
@@ -345,7 +344,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                     .setDescription(inEnglish ?
                     `> **<@&1058546950414278756>:**\n> This role identifies you as a woman.\n> **${women === null || women === void 0 ? void 0 : women.toLocaleString()}** members have the role.\n\n> **<@&1058546982014160947>:**\n> This role identifies you as a man.\n> **${mens === null || mens === void 0 ? void 0 : mens.toLocaleString()}** members have the role.\n\n> **<@&1058547126252093542>:**\n> Choose this role if there is no role that identifies you.\n> **${oter === null || oter === void 0 ? void 0 : oter.toLocaleString()}** members have the role.` :
                     `> **<@&1058546950414278756>:**\n> Este rol te identifica como mujer.\n> **${women === null || women === void 0 ? void 0 : women.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1058546982014160947>:**\n> Este rol te identifica como hombre.\n> **${mens === null || mens === void 0 ? void 0 : mens.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1058547126252093542>:**\n> Elige este rol si no hay ningun rol que te identifique.\n> **${oter === null || oter === void 0 ? void 0 : oter.toLocaleString()}** miembros tienen el rol.`)
-                    .setColor(((_o = (_m = int.guild) === null || _m === void 0 ? void 0 : _m.members.me) === null || _o === void 0 ? void 0 : _o.displayHexColor) || 'White');
+                    .setColor(((_m = (_l = int.guild) === null || _l === void 0 ? void 0 : _l.members.me) === null || _m === void 0 ? void 0 : _m.displayHexColor) || 'White');
                 const NotificationsMenu = new discord_js_1.ActionRowBuilder()
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
                     .setCustomId('genders-menu')
@@ -460,7 +459,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
                     .setDescription(inEnglish ?
                     `Server focused on female sexual content, created on <t:${createdAt}> by ${client.user} a bot that is managed by <@853063286320922634>, here you will find various channels with content of this type, you can also contribute content on the corresponding channels.\n\n*Thank you for being here!*` :
                     `Servidor enfocado en el contenido sexual femenino, creado el <t:${createdAt}> por ${client.user} un bot que es administrado por <@853063286320922634>, aquí encontraras diversos canales con contenido de ese tipo además podrás aportar contenido en los canales correspondientes.\n\n*¡Gracias por estar aquí!*`)
-                    .setColor(((_p = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _p === void 0 ? void 0 : _p.displayHexColor) || 'White');
+                    .setColor(((_o = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _o === void 0 ? void 0 : _o.displayHexColor) || 'White');
                 int.reply({ ephemeral: true, embeds: [ServerEb] });
             }
             if (value == 'channels') {
@@ -469,7 +468,7 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
             if (value == 'roles') { }
             if (value == 'about-me') {
                 const AboutMeEb = new discord_js_1.EmbedBuilder()
-                    .setTitle('🤖 ' + (inEnglish ? `Hello i am ${(_q = client.user) === null || _q === void 0 ? void 0 : _q.username}` : `Hola soy ${(_r = client.user) === null || _r === void 0 ? void 0 : _r.username}`))
+                    .setTitle('🤖 ' + (inEnglish ? `Hello i am ${(_p = client.user) === null || _p === void 0 ? void 0 : _p.username}` : `Hola soy ${(_q = client.user) === null || _q === void 0 ? void 0 : _q.username}`))
                     .setDescription(inEnglish ?
                     `The creator and owner of the server and I am a **bot** managed by my creator <@853063286320922634> who also manages the server.\n\n*I am not programmed to answer private messages, I just help automate some tasks within the server*` :
                     `El creador y dueño del servidor y soy un **bot** administrado por mi creador <@853063286320922634> quien también administra el servidor.\n\n*No estoy programado para contestar mensajes privados, solo ayudo a automatizar algunas tareas dentro del servidor*`)
