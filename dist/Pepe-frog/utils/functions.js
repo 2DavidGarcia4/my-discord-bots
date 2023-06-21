@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.autoChangeNicknames = exports.getVerifiedsInfo = exports.getRules = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessages = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const getCategoryChannels = (id, server) => {
@@ -119,24 +119,55 @@ const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function*
     }
 });
 exports.inspectVerifieds = inspectVerifieds;
-const rulesChannelId = '1090736733047492638';
-const getRules = (client, language) => __awaiter(void 0, void 0, void 0, function* () {
-    const rulesChannel = client.channels.cache.get(rulesChannelId);
-    if (rulesChannel === null || rulesChannel === void 0 ? void 0 : rulesChannel.isTextBased()) {
-        const rules = (yield rulesChannel.messages.fetch(language == 'en' ? '1090751484754415726' : '1090737102045597788')).content;
-        return rules;
+const messagesIndexByLanguages = {
+    es: 1,
+    en: 0
+};
+function getInfoMessages(client) {
+    // const channel = client.channels.cache.get(channelId)
+    // let infoMessages: Message<true>[] | undefined
+    // if(channel?.type == ChannelType.GuildText) {
+    //   infoMessages = (await channel.messages.fetch({limit: 6})).map(m=> m)
+    // }
+    const getMessage = (channelId, language) => __awaiter(this, void 0, void 0, function* () {
+        var _a;
+        const channel = client.channels.cache.get(channelId);
+        if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
+            const infoMessages = (yield channel.messages.fetch({ limit: 6 })).map(m => m);
+            let index = messagesIndexByLanguages[language];
+            return (_a = infoMessages === null || infoMessages === void 0 ? void 0 : infoMessages.find((_, i) => i == index)) === null || _a === void 0 ? void 0 : _a.content;
+        }
+    });
+    return {
+        getMessage
+    };
+}
+exports.getInfoMessages = getInfoMessages;
+function defaultInfoMessageBody(msg, { title, description, name, extraButtons }) {
+    var _a, _b;
+    const RulesEb = new discord_js_1.EmbedBuilder()
+        .setTitle(title)
+        .setDescription(description)
+        .setFooter({ text: "you don't speak Spanish?, Click blue button below" })
+        .setColor(((_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White');
+    const RulesArb = new discord_js_1.ActionRowBuilder();
+    if (extraButtons) {
+        RulesArb.addComponents(new discord_js_1.ButtonBuilder()
+            .setCustomId(`en-${name}-btn`)
+            .setEmoji('👅')
+            .setLabel('English')
+            .setStyle(discord_js_1.ButtonStyle.Primary), ...extraButtons);
     }
-});
-exports.getRules = getRules;
-const varifiedChannelId = '1053399734582263938';
-const getVerifiedsInfo = (client, language) => __awaiter(void 0, void 0, void 0, function* () {
-    const rulesChannel = client.channels.cache.get(varifiedChannelId);
-    if (rulesChannel === null || rulesChannel === void 0 ? void 0 : rulesChannel.isTextBased()) {
-        const rules = (yield rulesChannel.messages.fetch(language == 'en' ? '1101591835576639549' : '1101591652440735894')).content;
-        return rules;
+    else {
+        RulesArb.addComponents(new discord_js_1.ButtonBuilder()
+            .setCustomId(`en-${name}-btn`)
+            .setEmoji('👅')
+            .setLabel('English')
+            .setStyle(discord_js_1.ButtonStyle.Primary));
     }
-});
-exports.getVerifiedsInfo = getVerifiedsInfo;
+    msg.channel.send({ embeds: [RulesEb], components: [RulesArb] });
+}
+exports.defaultInfoMessageBody = defaultInfoMessageBody;
 function autoChangeNicknames(members, client) {
     const includes = ['!', '¡', '?', '¿'];
     let updatedMembers = 0;

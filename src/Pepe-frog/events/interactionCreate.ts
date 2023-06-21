@@ -6,7 +6,7 @@ import { moveScb, moveSlashCommand } from "../commands/slash/move";
 import { sendCmcb, sendCM } from "../commands/contextMenu/send";
 import { deleteReactionsCM, deleteReactionsCmcb } from "../commands/contextMenu/deleteReactions";
 import { deleteCM, deleteCmcb } from "../commands/contextMenu/delete";
-import { getRules, getVerifiedsInfo } from "../utils/functions";
+import { getInfoMessages } from "../utils/functions";
 
 export const commands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
 ;[sendCmcb, deleteReactionsCmcb, deleteCmcb, moveScb].forEach(cmd=> commands.set(cmd.name, cmd))
@@ -31,13 +31,13 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
   
   if(int.isButton()){
     const { customId, guild, locale } = int, inEnglish = locale == 'en-US'
+    const { getMessage } = getInfoMessages(client)
 
     if(customId == 'en-rules-btn') {
-      const rules = await getRules(client, 'en')
+      const description = await getMessage('1090736733047492638', 'en')+''
 
-      const RulesEb = new EmbedBuilder()
+      const RulesEb = new EmbedBuilder({description})
       .setTitle('📖 Rules')
-      .setDescription(`${rules}`)
       .setColor(int.message.member?.displayHexColor || 'White')
       int.reply({ephemeral: true, embeds: [RulesEb]})
     }
@@ -78,12 +78,11 @@ export const interactionCreateEvent = async (int: Interaction<CacheType>, client
       int.reply({ephemeral: true, embeds: [RolesEb], components: [RolesMenu]})
     }
 
-    if(customId == 'en-girls-btn'){
-      const verifiedInfo = await getVerifiedsInfo(client, 'en')
+    if(customId == 'en-verifieds-btn'){
+      const description = await getMessage('1053399734582263938', 'en')+''
 
-      const GirlsEb = new EmbedBuilder()
+      const GirlsEb = new EmbedBuilder({description})
       .setTitle(`<a:animate_info:1058179015938158592> Information`)
-      .setDescription(`${verifiedInfo}`)
       .setColor(guild?.members.me?.displayHexColor || 'White')
 
       const VerifiedsBtn = new ActionRowBuilder<ButtonBuilder>()

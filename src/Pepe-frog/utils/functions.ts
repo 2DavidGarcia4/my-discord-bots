@@ -1,4 +1,4 @@
-import { ChannelType, Client, EmbedBuilder, Guild, GuildMember } from "discord.js"
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message } from "discord.js"
 import { frogDb } from "../db"
 import { VerifiedsData } from "../types"
 import { botDB } from "../../pcem/db"
@@ -114,22 +114,70 @@ export const inspectVerifieds = async (client: Client) => {
   }
 }
 
-const rulesChannelId = '1090736733047492638'
-export const getRules = async (client: Client, language: 'es' | 'en') => {
-  const rulesChannel = client.channels.cache.get(rulesChannelId)
-  if(rulesChannel?.isTextBased()) {
-    const rules = (await rulesChannel.messages.fetch(language == 'en' ? '1090751484754415726' : '1090737102045597788')).content
-    return rules
+type Languages = 'es' | 'en'
+
+const messagesIndexByLanguages = {
+  es: 1,
+  en: 0
+}
+
+export function getInfoMessages(client: Client) {
+  // const channel = client.channels.cache.get(channelId)
+  // let infoMessages: Message<true>[] | undefined
+  // if(channel?.type == ChannelType.GuildText) {
+  //   infoMessages = (await channel.messages.fetch({limit: 6})).map(m=> m)
+  // }
+  
+  const getMessage = async (channelId: string, language: Languages) => {
+    const channel = client.channels.cache.get(channelId)
+
+    if(channel?.type == ChannelType.GuildText) {
+      const infoMessages = (await channel.messages.fetch({limit: 6})).map(m=> m)
+      let index = messagesIndexByLanguages[language]
+
+      return infoMessages?.find((_, i)=> i == index)?.content
+    }
+  }
+
+  return { 
+    getMessage
   }
 }
 
-const varifiedChannelId = '1053399734582263938'
-export const getVerifiedsInfo = async (client: Client, language: 'es' | 'en') => {
-  const rulesChannel = client.channels.cache.get(varifiedChannelId)
-  if(rulesChannel?.isTextBased()) {
-    const rules = (await rulesChannel.messages.fetch(language == 'en' ? '1101591835576639549' : '1101591652440735894')).content
-    return rules
+export function defaultInfoMessageBody(msg: Message<boolean>, {title, description, name, extraButtons}: {
+  title: string
+  description: string
+  name: string,
+  extraButtons?: ButtonBuilder[]
+}) {
+  const RulesEb = new EmbedBuilder()
+  .setTitle(title)
+  .setDescription(description)
+  .setFooter({text: "you don't speak Spanish?, Click blue button below"})
+  .setColor(msg.guild?.members.me?.displayHexColor || 'White')
+
+  const RulesArb = new ActionRowBuilder<ButtonBuilder>()
+  if(extraButtons){
+    RulesArb.addComponents(
+      new ButtonBuilder()
+      .setCustomId(`en-${name}-btn`)
+      .setEmoji('👅')
+      .setLabel('English')
+      .setStyle(ButtonStyle.Primary),
+      ...extraButtons
+    )
+
+  }else{
+    RulesArb.addComponents(
+      new ButtonBuilder()
+      .setCustomId(`en-${name}-btn`)
+      .setEmoji('👅')
+      .setLabel('English')
+      .setStyle(ButtonStyle.Primary),
+    )
   }
+
+  msg.channel.send({embeds: [RulesEb], components: [RulesArb]})
 }
 
 export function autoChangeNicknames(members: GuildMember[], client: Client) {

@@ -39,11 +39,11 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
     }
     if (int.isButton()) {
         const { customId, guild, locale } = int, inEnglish = locale == 'en-US';
+        const { getMessage } = (0, functions_2.getInfoMessages)(client);
         if (customId == 'en-rules-btn') {
-            const rules = yield (0, functions_2.getRules)(client, 'en');
-            const RulesEb = new discord_js_1.EmbedBuilder()
+            const description = (yield getMessage('1090736733047492638', 'en')) + '';
+            const RulesEb = new discord_js_1.EmbedBuilder({ description })
                 .setTitle('📖 Rules')
-                .setDescription(`${rules}`)
                 .setColor(((_a = int.message.member) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
             int.reply({ ephemeral: true, embeds: [RulesEb] });
         }
@@ -78,11 +78,10 @@ const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0
             ]));
             int.reply({ ephemeral: true, embeds: [RolesEb], components: [RolesMenu] });
         }
-        if (customId == 'en-girls-btn') {
-            const verifiedInfo = yield (0, functions_2.getVerifiedsInfo)(client, 'en');
-            const GirlsEb = new discord_js_1.EmbedBuilder()
+        if (customId == 'en-verifieds-btn') {
+            const description = (yield getMessage('1053399734582263938', 'en')) + '';
+            const GirlsEb = new discord_js_1.EmbedBuilder({ description })
                 .setTitle(`<a:animate_info:1058179015938158592> Information`)
-                .setDescription(`${verifiedInfo}`)
                 .setColor(((_d = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White');
             const VerifiedsBtn = new discord_js_1.ActionRowBuilder()
                 .addComponents(new discord_js_1.ButtonBuilder()

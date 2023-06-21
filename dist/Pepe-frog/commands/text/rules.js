@@ -10,22 +10,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.rulesCommand = void 0;
-const discord_js_1 = require("discord.js");
 const functions_1 = require("../../utils/functions");
 const rulesCommand = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    const rules = yield (0, functions_1.getRules)(client, 'es');
-    const RulesEb = new discord_js_1.EmbedBuilder()
-        .setTitle('📖 Reglas')
-        .setDescription(rules || '')
-        .setFooter({ text: "you don't speak Spanish?, Click blue button below" })
-        .setColor(((_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White');
-    const RulesArb = new discord_js_1.ActionRowBuilder()
-        .addComponents(new discord_js_1.ButtonBuilder()
-        .setCustomId('en-rules-btn')
-        .setEmoji('👅')
-        .setLabel('English')
-        .setStyle(discord_js_1.ButtonStyle.Primary));
-    msg.channel.send({ embeds: [RulesEb], components: [RulesArb] });
+    const { getMessage } = (0, functions_1.getInfoMessages)(client);
+    const description = (yield getMessage('1090736733047492638', 'es')) + '';
+    (0, functions_1.defaultInfoMessageBody)(msg, {
+        title: '📖 Reglas',
+        description,
+        name: 'rules'
+    });
 });
 exports.rulesCommand = rulesCommand;

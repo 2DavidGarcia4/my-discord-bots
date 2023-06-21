@@ -13,23 +13,19 @@ exports.girlsCommand = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../utils/functions");
 const girlsCommand = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b;
-    const verifiedInfo = yield (0, functions_1.getVerifiedsInfo)(client, 'es');
-    const GirlsEb = new discord_js_1.EmbedBuilder()
-        .setTitle(`<a:animate_info:1058179015938158592> Información`)
-        .setDescription(`${verifiedInfo}`)
-        .setFooter({ text: "speak English?, Click blue button below" })
-        .setColor(((_b = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White');
-    const GirlsBtns = new discord_js_1.ActionRowBuilder()
-        .addComponents(new discord_js_1.ButtonBuilder()
-        .setCustomId('en-girls-btn')
-        .setLabel('English')
-        .setEmoji('👅')
-        .setStyle(discord_js_1.ButtonStyle.Primary), new discord_js_1.ButtonBuilder()
-        .setCustomId('verifieds-btn')
-        .setLabel('Verificadas')
-        .setEmoji('✅')
-        .setStyle(discord_js_1.ButtonStyle.Success));
-    msg.channel.send({ embeds: [GirlsEb], components: [GirlsBtns] });
+    const { getMessage } = (0, functions_1.getInfoMessages)(client);
+    const description = (yield getMessage('1053399734582263938', 'es')) + '';
+    (0, functions_1.defaultInfoMessageBody)(msg, {
+        title: `<a:animate_info:1058179015938158592> Información`,
+        description,
+        name: 'verifieds',
+        extraButtons: [
+            new discord_js_1.ButtonBuilder()
+                .setCustomId('verifieds-btn')
+                .setLabel('Verificadas')
+                .setEmoji('✅')
+                .setStyle(discord_js_1.ButtonStyle.Success)
+        ]
+    });
 });
 exports.girlsCommand = girlsCommand;
