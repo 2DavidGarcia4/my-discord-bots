@@ -6,7 +6,7 @@ import { handlePreviewChannels } from "../utils/functions";
 import { SlashCommands } from "../commands";
 import { ContextMenuCommands } from "../commands";
 
-export const interactionCreateEvent = async (int: Interaction<CacheType>, client: Client) => {
+export async function interactionCreateEvent(int: Interaction<CacheType>, client: Client) {
   
   if(int.isChatInputCommand()){
     const { commandName } = int

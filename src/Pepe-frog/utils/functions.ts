@@ -1,6 +1,8 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message } from "discord.js"
+import { ActionRowBuilder, ActivityType, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message } from "discord.js"
+import type { ActivitiesOptions } from "discord.js"
 import { FrogDb } from "../db"
 import { VerifiedsData } from "../types"
+import { isDevelopment } from "../../config"
 
 const getCategoryChannels = (id: string, server: Guild | undefined) => {
   return server?.channels.cache.filter(f=> f.parentId == id).size.toLocaleString()
@@ -244,4 +246,72 @@ export function handlePreviewChannels(this: {
   }
 
   int.reply({ephemeral: true, embeds: [VIPPreviewEb]})
+}
+
+export function presences(client: Client) {
+  const NOW_TIME = new Date()
+  const hourDiference = isDevelopment ? 0 : 6
+
+  let hour = NOW_TIME.getHours()-hourDiference
+  if(hour < 0) hour = 24-(-hour)
+    
+  if(hour == 0 || hour < 6){
+    client.user?.setPresence({ status: 'invisible' })
+
+  }else{
+    const server = client.guilds.cache.get(FrogDb.serverId)
+
+    const dayStates: ActivitiesOptions[] = [
+      {
+        name: 'moans',
+        type: ActivityType.Listening
+      },
+      {
+        name: 'orgasms',
+        type: ActivityType.Watching
+      },
+      {
+        name: 'with the girls',
+        type: ActivityType.Playing
+      },
+      {
+        name: server?.memberCount.toLocaleString()+' members.',
+        type: ActivityType.Watching
+      },
+      {
+        name: 'vaginas',
+        type: ActivityType.Watching
+      },
+      {
+        name: 'boobs',
+        type: ActivityType.Watching
+      },
+      {
+        name: 'ass',
+        type: ActivityType.Watching
+      },
+    ]
+  
+    const nightStates: ActivitiesOptions[] = [
+      {
+        name: `naked women.`,
+        type: ActivityType.Watching
+      },
+      {
+        name: `moans.`,
+        type: ActivityType.Listening
+      },
+      {
+        name: 'the beauty of women',
+        type: ActivityType.Watching
+      }
+    ]
+  
+    if (hour >= 16 && hour < 24) {
+      client.user?.setPresence({ status: 'idle', activities: [nightStates[Math.floor(Math.random() * nightStates.length)]] })
+    } else {
+      client.user?.setPresence({ status: 'online', activities: [dayStates[Math.floor(Math.random() * dayStates.length)]] })
+    }
+  }
+
 }

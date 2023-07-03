@@ -1,13 +1,13 @@
-import { type ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder } from "discord.js";
-import { autoChangeNicknames, inspectVerifieds, setGuildStatus, getVerifiedsData, updateVerifiedsData } from "../utils/functions";
+import { ChannelType, Client, EmbedBuilder } from "discord.js";
+import { autoChangeNicknames, inspectVerifieds, setGuildStatus, presences, getVerifiedsData, updateVerifiedsData } from "../utils/functions";
 import { FrogDb } from "../db";
 import { CommandBodys } from "../commands";
-import { defaultReady, presences } from "../../shared/functions";
+import { defaultReady } from "../../shared/functions";
 
 // import { registerFont, createCanvas, loadImage } from "canvas";
 // registerFont("tipo.otf", {family: 'MADE TOMMY'})
 
-export const readyEvent = async (client: Client) => {
+export async function readyEvent(client: Client) {
   const { serverId, principalServerId } = FrogDb
   defaultReady(client, '1053425705385467904', 'DarkGold')
   
@@ -25,53 +25,7 @@ export const readyEvent = async (client: Client) => {
     })
   })
 
-  const dayStates: ActivitiesOptions[] = [
-    {
-      name: "moans",
-      type: ActivityType.Listening
-    },
-    {
-      name: "orgasms",
-      type: ActivityType.Watching
-    },
-    {
-      name: "with the girls",
-      type: ActivityType.Playing
-    },
-    {
-      name: server?.memberCount.toLocaleString()+" members.",
-      type: ActivityType.Watching
-    },
-    {
-      name: "vaginas",
-      type: ActivityType.Watching
-    },
-    {
-      name: "boobs",
-      type: ActivityType.Watching
-    },
-    {
-      name: "ass",
-      type: ActivityType.Watching
-    },
-  ]
-
-  const nightStates: ActivitiesOptions[] = [
-    {
-      name: `naked women.`,
-      type: ActivityType.Watching
-    },
-    {
-      name: `moans.`,
-      type: ActivityType.Listening
-    },
-    {
-      name: 'the beauty of women',
-      type: ActivityType.Watching
-    }
-  ]
-
-  presences(dayStates, nightStates, client)
+  presences(client)
 
   const statsChannel = server?.channels.cache.get('1053389468993851472')
   const sendStats = async () => {
@@ -106,7 +60,7 @@ export const readyEvent = async (client: Client) => {
 
   inspectVerifieds(client)
   setInterval(()=> {
-    presences(dayStates, nightStates, client)
+    presences(client)
     sendStats()
     inspectVerifieds(client)
   }, 60*60000)
