@@ -2,7 +2,10 @@ import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheT
 import { isDevelopment } from "../config";
 import { getInfoMessage } from "./utils/functions";
 
-export const frogDb = {
+export const FrogDb = {
+  me: {
+    id: '942860991698436156'
+  },
   prefix: isDevelopment ? 'f!' : 's!',
   serverId: '1053382837857943662',
   principalServerId: '1028793496674500659',
@@ -11,10 +14,29 @@ export const frogDb = {
   leaves: 0,
   roles: {
     verified: '1057720387464593478',
-    verifiedSpeech: '1083060304054849676'
+    verifiedSpeech: '1083060304054849676',
+    spamer: '1053430826823594106',
+    content: '1053411182935023657'
   },
   owners: ['853063286320922634', '551146834941313026', '717420870267830382', '853000435098320907']
 }
+
+export const SANCTIONS = [
+  {
+    time: 2*60*60*1000,
+    warns: 2 
+  },
+  {
+    time: 4*60*60*1000,
+    warns: 3 
+  },
+  {
+    time: 8*60*60*1000,
+    warns: 4 
+  },
+] as const
+
+export const FILE_EXTENSIONS: readonly string[] = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3']
 
 interface ButtonInfoInteraction {
   id: string,
