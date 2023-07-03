@@ -1,5 +1,5 @@
 import { ChannelType, Client, EmbedBuilder } from "discord.js";
-import { autoChangeNicknames, inspectVerifieds, setGuildStatus, presences, getVerifiedsData, updateVerifiedsData } from "../utils/functions";
+import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences, getVerifiedsData, updateVerifiedsData } from "../utils/functions";
 import { FrogDb } from "../db";
 import { CommandBodys } from "../commands";
 import { defaultReady } from "../../shared/functions";
@@ -25,7 +25,7 @@ export async function readyEvent(client: Client) {
     })
   })
 
-  presences(client)
+  handlePresences(client)
 
   const statsChannel = server?.channels.cache.get('1053389468993851472')
   const sendStats = async () => {
@@ -60,7 +60,7 @@ export async function readyEvent(client: Client) {
 
   inspectVerifieds(client)
   setInterval(()=> {
-    presences(client)
+    handlePresences(client)
     sendStats()
     inspectVerifieds(client)
   }, 60*60000)

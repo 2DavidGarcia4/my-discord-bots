@@ -9,9 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handlePreviewChannels = exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessage = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+exports.handlePresences = exports.handlePreviewChannels = exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessage = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
+const config_1 = require("../../config");
 const getCategoryChannels = (id, server) => {
     return server === null || server === void 0 ? void 0 : server.channels.cache.filter(f => f.parentId == id).size.toLocaleString();
 };
@@ -225,3 +226,68 @@ function handlePreviewChannels(int) {
     int.reply({ ephemeral: true, embeds: [VIPPreviewEb] });
 }
 exports.handlePreviewChannels = handlePreviewChannels;
+function handlePresences(client) {
+    var _a, _b, _c;
+    const NOW_TIME = new Date();
+    const hourDiference = config_1.isDevelopment ? 0 : 6;
+    let hour = NOW_TIME.getHours() - hourDiference;
+    if (hour < 0)
+        hour = 24 - (-hour);
+    if (hour == 0 || hour < 6) {
+        (_a = client.user) === null || _a === void 0 ? void 0 : _a.setPresence({ status: 'invisible' });
+    }
+    else {
+        const server = client.guilds.cache.get(db_1.FrogDb.serverId);
+        const dayStates = [
+            {
+                name: 'moans',
+                type: discord_js_1.ActivityType.Listening
+            },
+            {
+                name: 'orgasms',
+                type: discord_js_1.ActivityType.Watching
+            },
+            {
+                name: 'with the girls',
+                type: discord_js_1.ActivityType.Playing
+            },
+            {
+                name: (server === null || server === void 0 ? void 0 : server.memberCount.toLocaleString()) + ' members.',
+                type: discord_js_1.ActivityType.Watching
+            },
+            {
+                name: 'vaginas',
+                type: discord_js_1.ActivityType.Watching
+            },
+            {
+                name: 'boobs',
+                type: discord_js_1.ActivityType.Watching
+            },
+            {
+                name: 'ass',
+                type: discord_js_1.ActivityType.Watching
+            },
+        ];
+        const nightStates = [
+            {
+                name: `naked women.`,
+                type: discord_js_1.ActivityType.Watching
+            },
+            {
+                name: `moans.`,
+                type: discord_js_1.ActivityType.Listening
+            },
+            {
+                name: 'the beauty of women',
+                type: discord_js_1.ActivityType.Watching
+            }
+        ];
+        if (hour >= 16 && hour < 24) {
+            (_b = client.user) === null || _b === void 0 ? void 0 : _b.setPresence({ status: 'idle', activities: [nightStates[Math.floor(Math.random() * nightStates.length)]] });
+        }
+        else {
+            (_c = client.user) === null || _c === void 0 ? void 0 : _c.setPresence({ status: 'online', activities: [dayStates[Math.floor(Math.random() * dayStates.length)]] });
+        }
+    }
+}
+exports.handlePresences = handlePresences;

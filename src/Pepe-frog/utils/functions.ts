@@ -248,7 +248,7 @@ export function handlePreviewChannels(this: {
   int.reply({ephemeral: true, embeds: [VIPPreviewEb]})
 }
 
-export function presences(client: Client) {
+export function handlePresences(client: Client) {
   const NOW_TIME = new Date()
   const hourDiference = isDevelopment ? 0 : 6
 
