@@ -1,9 +1,9 @@
 import { ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js";
-import { frogDb } from "../db";
+import { FrogDb } from "../db";
 import { exemptMessagesIds } from "..";
 
 export const messageDeleteEvent = async (msgd: Message<boolean> | PartialMessage, client: Client) => {
-  const { serverId, prefix, owners } = frogDb
+  const { serverId, prefix, owners } = FrogDb
   const channelId = '1053389522253127720'
   if(msgd.guildId != serverId || msgd.author?.bot) return
   if(exemptMessagesIds.some(s=> s == msgd.id)){

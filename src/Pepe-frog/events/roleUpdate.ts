@@ -1,8 +1,8 @@
 import { Role, Client } from "discord.js";
-import { frogDb } from "../db";
+import { FrogDb } from "../db";
 
 export const roleUpdateEvent = async (oldRole: Role, newRole: Role, client: Client) => {
-  const { serverId, principalServerId } = frogDb
+  const { serverId, principalServerId } = FrogDb
   if(oldRole.guild.id != serverId) return
 
   const principalServer = client.guilds.cache.get(principalServerId)

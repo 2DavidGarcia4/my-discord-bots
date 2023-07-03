@@ -1,9 +1,9 @@
 import { Client, DMChannel, NonThreadGuildBasedChannel } from "discord.js";
-import { frogDb } from "../db";
+import { FrogDb } from "../db";
 import { getVerifiedsData, updateVerifiedsData } from "../utils/functions";
 
 export const channelDeleteEvent = async (channel: DMChannel | NonThreadGuildBasedChannel, client: Client) => {
-  const { serverId, principalServerId } = frogDb
+  const { serverId, principalServerId } = FrogDb
   if(channel.isDMBased() || channel.guildId != serverId) return
 
   const principalServer = client.guilds.cache.get(principalServerId)

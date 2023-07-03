@@ -1,8 +1,8 @@
 import { MessageReaction, PartialMessageReaction, PartialUser, User } from "discord.js";
-import { frogDb } from "../db";
+import { FrogDb } from "../db";
 
 export const reactionAddEvent = async (reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) => {
-  const { serverId } = frogDb
+  const { serverId } = FrogDb
   const likeId = '1059641676798377995', dislikeId = '1059641726387626015'
   if(reaction.message.guildId != serverId || user.bot) return
 

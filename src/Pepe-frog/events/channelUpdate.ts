@@ -1,8 +1,8 @@
 import { ChannelType, Client, DMChannel, NonThreadGuildBasedChannel } from "discord.js";
-import { frogDb } from "../db";
+import { FrogDb } from "../db";
 
 export const channelUpdateEvetn = async (oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel, clien: Client) => {
-  const { serverId, principalServerId } = frogDb
+  const { serverId, principalServerId } = FrogDb
   if(oldChannel.isDMBased() || newChannel.isDMBased() || oldChannel.guildId != serverId) return
 
   const principalServer = clien.guilds.cache.get(principalServerId)

@@ -1,6 +1,6 @@
-import { ActivitiesOptions, ActivityType, AttachmentBuilder, ChannelType, Client, EmbedBuilder } from "discord.js";
+import { type ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder } from "discord.js";
 import { autoChangeNicknames, getVerifiedsData, inspectVerifieds, setGuildStatus, updateVerifiedsData } from "../utils/functions";
-import { frogDb } from "../db";
+import { FrogDb } from "../db";
 import { commands } from "./interactionCreate";
 import { defaultReady, presences } from "../../shared/functions";
 
@@ -8,7 +8,7 @@ import { defaultReady, presences } from "../../shared/functions";
 // registerFont("tipo.otf", {family: 'MADE TOMMY'})
 
 export const readyEvent = async (client: Client) => {
-  const { serverId, principalServerId } = frogDb
+  const { serverId, principalServerId } = FrogDb
   defaultReady(client, '1053425705385467904', 'DarkGold')
   
   const principalServer = client.guilds.cache.get(principalServerId)
@@ -81,7 +81,7 @@ export const readyEvent = async (client: Client) => {
     if(topic){
       const oldTime = parseInt(topic) + 24*60*60*1000
       if((oldTime-(60*60*1000)) < nowTime){
-        const { joins, leaves } = frogDb, members = joins-leaves
+        const { joins, leaves } = FrogDb, members = joins-leaves
         const porcentMembers = Math.floor(members*100/joins)
         let barr = ''
         for(let i=1; i<=20; i++){
@@ -89,7 +89,7 @@ export const readyEvent = async (client: Client) => {
           else barr+=' '
         }
 
-        frogDb.joins = 0, frogDb.leaves = 0
+        FrogDb.joins = 0, FrogDb.leaves = 0
         statsChannel.edit({topic: nowTime.toString()})
 
         const StatsEb = new EmbedBuilder()

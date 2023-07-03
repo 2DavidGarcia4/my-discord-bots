@@ -1,12 +1,12 @@
 import { Client, EmbedBuilder, GuildMember } from "discord.js";
-import { frogDb } from "../db";
+import { FrogDb } from "../db";
 import { isDevelopment } from "../../config";
 
 export const memberAddEvent = async (member: GuildMember, client: Client) => {
-  const { serverId } = frogDb
+  const { serverId } = FrogDb
   if(member.guild.id != serverId) return
   
-  frogDb.joins++
+  FrogDb.joins++
 
   const MemberAddEb = new EmbedBuilder()
   .setThumbnail(member.displayAvatarURL({extension: 'png'}))
