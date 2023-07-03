@@ -1,7 +1,7 @@
 import { CacheType, ChannelType, ChatInputCommandInteraction, Client, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { sendMessageSlash, setSlashError } from "../../../shared/functions";
 
-export const moveScb = new SlashCommandBuilder()
+const MoveScb = new SlashCommandBuilder()
 .setName('move')
 .setNameLocalizations({
   'es-ES': 'mover',
@@ -49,7 +49,7 @@ export const moveScb = new SlashCommandBuilder()
   )
 ).toJSON()
 
-export const moveSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {
+async function moveSlashCommand(int: ChatInputCommandInteraction<CacheType>, client: Client) {
   const { options } = int, subCommand = options.getSubcommand(true)
 
   if(subCommand == 'file'){
@@ -71,4 +71,9 @@ export const moveSlashCommand = async (int: ChatInputCommandInteraction<CacheTyp
       })
     }
   }
+}
+
+export default {
+  Command: MoveScb,
+  run: moveSlashCommand
 }

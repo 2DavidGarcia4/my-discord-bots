@@ -1,6 +1,6 @@
-import { ContextMenuCommandBuilder, CacheType, PermissionFlagsBits, MessageContextMenuCommandInteraction, EmbedBuilder } from "discord.js";
+import { ContextMenuCommandBuilder, type CacheType, PermissionFlagsBits, type MessageContextMenuCommandInteraction, EmbedBuilder } from "discord.js";
 
-export const deleteReactionsCmcb = new ContextMenuCommandBuilder()
+export const DeleteReactionsCmcb = new ContextMenuCommandBuilder()
 .setName('Delete reactions')
 .setNameLocalizations({
   'es-ES': 'Eliminar reacciones',
@@ -9,7 +9,7 @@ export const deleteReactionsCmcb = new ContextMenuCommandBuilder()
 .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 .setType(3).toJSON()
 
-export const deleteReactionsCM = async (int: MessageContextMenuCommandInteraction<CacheType>) => {
+async function deleteReactionsCM(int: MessageContextMenuCommandInteraction<CacheType>) {
   const { locale } = int, isEnglish = locale == 'en-US' ? true : false
 
   const DeleteReactionsEb = new EmbedBuilder()
@@ -22,4 +22,9 @@ export const deleteReactionsCM = async (int: MessageContextMenuCommandInteractio
   }).catch(()=> {
     int.reply({ephemeral: true, content: 'An error has occurred'})
   })
+}
+
+export default {
+  Command: DeleteReactionsCmcb,
+  run: deleteReactionsCM
 }

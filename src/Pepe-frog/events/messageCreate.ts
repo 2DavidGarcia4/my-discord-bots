@@ -51,12 +51,12 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         if(msg.member?.roles.cache.has(verified)){
 
           const verifiedsData = await getVerifiedsData(client)
+          const now = Date.now()
           if(msg.mentions.everyone){
             const channelLog = client.channels.cache.get('1100110861244301382')
             
             channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
             const verifiedUser = verifiedsData?.find(f=> f.id == msg.author.id)
-            const now = Date.now()
 
             if(verifiedUser){
               verifiedUser.ping = false
@@ -89,7 +89,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
             const VerifiedLog = new EmbedBuilder()
             .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
-            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor((Date.now()+verifiedsCooldown) / 1000)}:R>`)
+            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor((now+verifiedsCooldown) / 1000)}:R>`)
             .setColor('Yellow')
             if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
 
@@ -97,8 +97,8 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
 
             const verifiedUser = verifiedsData?.find(v=> v.id == msg.author.id)
             if(verifiedUser){
-              verifiedUser.lastActivityAt = Date.now()
-              verifiedUser.lastMentionAt = Date.now()
+              verifiedUser.lastActivityAt = now
+              verifiedUser.lastMentionAt = now
 
               if(verifiedsData) {
                 if(verifiedUser.contentHidden) {
@@ -113,12 +113,25 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
                 await updateVerifiedsData(client, verifiedsData)
               }
 
-              if(!verifiedUser.ping && verifiedUser.pinedAt < Math.floor(Date.now() - (60*60000))){
+              if(!verifiedUser.ping && verifiedUser.pinedAt < Math.floor(now - (60*60000)) && verifiedUser.lastMentionAt < now - (20*60000)){
                 msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
               }
 
             }else{
               msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
+              
+              if(!msg.member.permissions.has('Administrator')){
+                verifiedsData?.push({
+                  id: msg.author.id,
+                  ping: false,
+                  pinedAt: 0,
+                  channelId: channelId,
+                  contentHidden: false,
+                  channelHidden: false,
+                  lastMentionAt: now,
+                  lastActivityAt: now
+                })
+              }
             }
           }
         }

@@ -15,7 +15,7 @@ const db_1 = require("../db");
 const __1 = require("..");
 const messageDeleteEvent = (msgd, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e;
-    const { serverId, prefix, owners } = db_1.frogDb;
+    const { serverId, prefix, owners } = db_1.FrogDb;
     const channelId = '1053389522253127720';
     if (msgd.guildId != serverId || ((_a = msgd.author) === null || _a === void 0 ? void 0 : _a.bot))
         return;

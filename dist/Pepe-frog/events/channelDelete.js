@@ -14,7 +14,7 @@ const db_1 = require("../db");
 const functions_1 = require("../utils/functions");
 const channelDeleteEvent = (channel, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { serverId, principalServerId } = db_1.frogDb;
+    const { serverId, principalServerId } = db_1.FrogDb;
     if (channel.isDMBased() || channel.guildId != serverId)
         return;
     const principalServer = client.guilds.cache.get(principalServerId);

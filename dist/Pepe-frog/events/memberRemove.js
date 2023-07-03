@@ -13,10 +13,10 @@ exports.memberRemoveEvent = void 0;
 const db_1 = require("../db");
 const __1 = require("..");
 const memberRemoveEvent = (member, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const { serverId } = db_1.frogDb;
+    const { serverId } = db_1.FrogDb;
     if (member.guild.id != serverId)
         return;
-    db_1.frogDb.leaves++;
+    db_1.FrogDb.leaves++;
     if (__1.modDb.some(s => s.id == member.id))
         __1.modDb.splice(__1.modDb.findIndex(f => f.id == member.id), 1);
 });

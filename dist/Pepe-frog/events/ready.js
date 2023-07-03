@@ -13,12 +13,12 @@ exports.readyEvent = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../utils/functions");
 const db_1 = require("../db");
-const interactionCreate_1 = require("./interactionCreate");
+const commands_1 = require("../commands");
 const functions_2 = require("../../shared/functions");
 // import { registerFont, createCanvas, loadImage } from "canvas";
 // registerFont("tipo.otf", {family: 'MADE TOMMY'})
 const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
-    const { serverId, principalServerId } = db_1.frogDb;
+    const { serverId, principalServerId } = db_1.FrogDb;
     (0, functions_2.defaultReady)(client, '1053425705385467904', 'DarkGold');
     const principalServer = client.guilds.cache.get(principalServerId);
     const server = client.guilds.cache.get(serverId);
@@ -26,10 +26,10 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     if ((suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.type) == discord_js_1.ChannelType.GuildText)
         suggestionsChannel.messages.fetch({ limit: 100 });
     [principalServer, server].forEach((sv) => __awaiter(void 0, void 0, void 0, function* () {
-        interactionCreate_1.commands.forEach((cmd) => __awaiter(void 0, void 0, void 0, function* () {
+        commands_1.CommandBodys.forEach((cmd) => __awaiter(void 0, void 0, void 0, function* () {
             var _a;
             if (!((_a = (yield (sv === null || sv === void 0 ? void 0 : sv.commands.fetch()))) === null || _a === void 0 ? void 0 : _a.some(s => s.name == cmd.name))) {
-                sv === null || sv === void 0 ? void 0 : sv.commands.create(cmd).then(c => console.log(`Se creo el comando ${c.name}`));
+                sv === null || sv === void 0 ? void 0 : sv.commands.create(cmd).then(c => console.log(`➕ Se creo el comando ${c.name} en el servidor ${sv.name}`));
             }
         }));
     }));
@@ -87,7 +87,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
         if (topic) {
             const oldTime = parseInt(topic) + 24 * 60 * 60 * 1000;
             if ((oldTime - (60 * 60 * 1000)) < nowTime) {
-                const { joins, leaves } = db_1.frogDb, members = joins - leaves;
+                const { joins, leaves } = db_1.FrogDb, members = joins - leaves;
                 const porcentMembers = Math.floor(members * 100 / joins);
                 let barr = '';
                 for (let i = 1; i <= 20; i++) {
@@ -96,7 +96,7 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
                     else
                         barr += ' ';
                 }
-                db_1.frogDb.joins = 0, db_1.frogDb.leaves = 0;
+                db_1.FrogDb.joins = 0, db_1.FrogDb.leaves = 0;
                 statsChannel.edit({ topic: nowTime.toString() });
                 const StatsEb = new discord_js_1.EmbedBuilder()
                     .setTitle('Estadisticas diarias del servidor')

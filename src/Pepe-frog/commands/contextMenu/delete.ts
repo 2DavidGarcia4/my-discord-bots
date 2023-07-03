@@ -1,7 +1,7 @@
 import { ContextMenuCommandBuilder, CacheType, PermissionFlagsBits, MessageContextMenuCommandInteraction, EmbedBuilder } from "discord.js";
 import { exemptMessagesIds } from "../..";
 
-export const deleteCmcb = new ContextMenuCommandBuilder()
+export const DeleteCmcb = new ContextMenuCommandBuilder()
 .setName('Delete')
 .setNameLocalizations({
   'es-ES': 'Eliminar',
@@ -10,7 +10,7 @@ export const deleteCmcb = new ContextMenuCommandBuilder()
 .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 .setType(3).toJSON()
 
-export const deleteCM = async (int: MessageContextMenuCommandInteraction<CacheType>) => {
+async function deleteCM(int: MessageContextMenuCommandInteraction<CacheType>) {
   const { guild, locale, targetMessage } = int, isEnglish = locale == 'en-US' ? true : false
 
   const DeleteEb = new EmbedBuilder()
@@ -25,4 +25,9 @@ export const deleteCM = async (int: MessageContextMenuCommandInteraction<CacheTy
   }).catch(()=> {
     int.reply({ephemeral: true, content: 'An error has occurred'})
   })
+}
+
+export default {
+  Command: DeleteCmcb,
+  run: deleteCM
 }

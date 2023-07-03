@@ -1,8 +1,8 @@
-import { CacheType, ContextMenuCommandBuilder, MessageContextMenuCommandInteraction, Client, PermissionFlagsBits, ChannelType, EmbedBuilder } from "discord.js";
-import { frogDb } from "../../db";
+import { CacheType, ContextMenuCommandBuilder, type MessageContextMenuCommandInteraction, Client, PermissionFlagsBits, ChannelType, EmbedBuilder } from "discord.js";
+import { FrogDb } from "../../db";
 import { sendMessageSlash, setSlashError } from '../../../shared/functions'
 
-export const sendCmcb = new ContextMenuCommandBuilder()
+const SendCmcb = new ContextMenuCommandBuilder()
 .setName('Send')
 .setNameLocalizations({
   'en-US': 'Send',
@@ -11,8 +11,8 @@ export const sendCmcb = new ContextMenuCommandBuilder()
 .setDefaultMemberPermissions(PermissionFlagsBits.Administrator)
 .setType(3).toJSON()
 
-export const sendCM = async (int: MessageContextMenuCommandInteraction<CacheType>, client: Client) => {
-  const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == frogDb.serverId ? frogDb.principalServerId : frogDb.serverId
+async function sendCM(int: MessageContextMenuCommandInteraction<CacheType>, client: Client) {
+  const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == FrogDb.serverId ? FrogDb.principalServerId : FrogDb.serverId
   const server = client.guilds.cache.get(serverId)
 
   if(!int.targetMessage.attachments.size) return setSlashError(int, isEnglish ? 'This message no content images or files.' : 'Este mensaje no contiene imágenes ni archivos.')
@@ -34,4 +34,9 @@ export const sendCM = async (int: MessageContextMenuCommandInteraction<CacheType
   if(channel.type == ChannelType.GuildText) channel.send({files: int.targetMessage.attachments.map(m=> m)}).then(async sent=> {    
     sendMessageSlash(int, {embeds: [SendEb]})
   })
+}
+
+export default {
+  Command: SendCmcb,
+  run: sendCM
 }

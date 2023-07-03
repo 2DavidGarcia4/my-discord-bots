@@ -13,7 +13,7 @@ exports.channelUpdateEvetn = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const channelUpdateEvetn = (oldChannel, newChannel, clien) => __awaiter(void 0, void 0, void 0, function* () {
-    const { serverId, principalServerId } = db_1.frogDb;
+    const { serverId, principalServerId } = db_1.FrogDb;
     if (oldChannel.isDMBased() || newChannel.isDMBased() || oldChannel.guildId != serverId)
         return;
     const principalServer = clien.guilds.cache.get(principalServerId);

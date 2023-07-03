@@ -1,7 +1,7 @@
 import { type ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder } from "discord.js";
-import { autoChangeNicknames, getVerifiedsData, inspectVerifieds, setGuildStatus, updateVerifiedsData } from "../utils/functions";
+import { autoChangeNicknames, inspectVerifieds, setGuildStatus, getVerifiedsData, updateVerifiedsData } from "../utils/functions";
 import { FrogDb } from "../db";
-import { commands } from "./interactionCreate";
+import { CommandBodys } from "../commands";
 import { defaultReady, presences } from "../../shared/functions";
 
 // import { registerFont, createCanvas, loadImage } from "canvas";
@@ -18,9 +18,9 @@ export const readyEvent = async (client: Client) => {
   if(suggestionsChannel?.type == ChannelType.GuildText) suggestionsChannel.messages.fetch({limit: 100})
 
   ;[principalServer, server].forEach(async sv=> {
-    commands.forEach(async cmd=> {
+    CommandBodys.forEach(async cmd=> {
       if(!(await sv?.commands.fetch())?.some(s=> s.name == cmd.name)){
-        sv?.commands.create(cmd).then(c=> console.log(`Se creo el comando ${c.name}`))
+        sv?.commands.create(cmd).then(c=> console.log(`➕ Se creo el comando ${c.name} en el servidor ${sv.name}`))
       }
     })
   })

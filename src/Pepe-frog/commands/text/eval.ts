@@ -2,13 +2,13 @@ import { Client, EmbedBuilder, Message } from "discord.js"
 import { inspect } from 'util'
 import { modDb } from "../.."
 import { sendMessageText, setError } from "../../../shared/functions"
-import { frogDb } from "../../db"
+import { FrogDb } from "../../db"
 import { setGuildStatus } from "../../utils/functions"
 // import { modDb } from "../../events/messageCreate"
 
 export const evalCommand = (msg: Message, client: Client, args: string) => {
   try {
-    const db = frogDb, setStatus = setGuildStatus, modDB = modDb
+    const db = FrogDb, setStatus = setGuildStatus, modDB = modDb
     msg.channel.sendTyping()
     const code = eval(args), texto = inspect(code)
     const evalEb = new EmbedBuilder()

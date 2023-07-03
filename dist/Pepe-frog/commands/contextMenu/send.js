@@ -9,11 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.sendCM = exports.sendCmcb = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../../db");
 const functions_1 = require("../../../shared/functions");
-exports.sendCmcb = new discord_js_1.ContextMenuCommandBuilder()
+const SendCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setName('Send')
     .setNameLocalizations({
     'en-US': 'Send',
@@ -21,29 +20,34 @@ exports.sendCmcb = new discord_js_1.ContextMenuCommandBuilder()
 })
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
     .setType(3).toJSON();
-const sendCM = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
+function sendCM(int, client) {
     var _a;
-    const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == db_1.frogDb.serverId ? db_1.frogDb.principalServerId : db_1.frogDb.serverId;
-    const server = client.guilds.cache.get(serverId);
-    if (!int.targetMessage.attachments.size)
-        return (0, functions_1.setSlashError)(int, isEnglish ? 'This message no content images or files.' : 'Este mensaje no contiene imágenes ni archivos.');
-    const channel = server === null || server === void 0 ? void 0 : server.channels.cache.find(f => {
-        var _a;
-        if (((_a = int.channel) === null || _a === void 0 ? void 0 : _a.type) == discord_js_1.ChannelType.GuildText) {
-            return f.name == int.channel.name;
-        }
-        return false;
+    return __awaiter(this, void 0, void 0, function* () {
+        const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == db_1.FrogDb.serverId ? db_1.FrogDb.principalServerId : db_1.FrogDb.serverId;
+        const server = client.guilds.cache.get(serverId);
+        if (!int.targetMessage.attachments.size)
+            return (0, functions_1.setSlashError)(int, isEnglish ? 'This message no content images or files.' : 'Este mensaje no contiene imágenes ni archivos.');
+        const channel = server === null || server === void 0 ? void 0 : server.channels.cache.find(f => {
+            var _a;
+            if (((_a = int.channel) === null || _a === void 0 ? void 0 : _a.type) == discord_js_1.ChannelType.GuildText) {
+                return f.name == int.channel.name;
+            }
+            return false;
+        });
+        if (!channel)
+            return (0, functions_1.setSlashError)(int, isEnglish ? "I couldn't find a channel similar to this on the other server." : 'No he podido encontrar un canal similar a éste en el otro servidor');
+        const SendEb = new discord_js_1.EmbedBuilder()
+            .setTitle(isEnglish ? 'Command execution has been successful' : 'La ejecución del comando ha sido exitosa')
+            .setDescription(isEnglish ? `The files have been sent to the channel ${channel}` : `Los archivos se ha enviado al canal **${channel}**.`)
+            .setColor(((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
+        yield int.deferReply({ ephemeral: true });
+        if (channel.type == discord_js_1.ChannelType.GuildText)
+            channel.send({ files: int.targetMessage.attachments.map(m => m) }).then((sent) => __awaiter(this, void 0, void 0, function* () {
+                (0, functions_1.sendMessageSlash)(int, { embeds: [SendEb] });
+            }));
     });
-    if (!channel)
-        return (0, functions_1.setSlashError)(int, isEnglish ? "I couldn't find a channel similar to this on the other server." : 'No he podido encontrar un canal similar a éste en el otro servidor');
-    const SendEb = new discord_js_1.EmbedBuilder()
-        .setTitle(isEnglish ? 'Command execution has been successful' : 'La ejecución del comando ha sido exitosa')
-        .setDescription(isEnglish ? `The files have been sent to the channel ${channel}` : `Los archivos se ha enviado al canal **${channel}**.`)
-        .setColor(((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
-    yield int.deferReply({ ephemeral: true });
-    if (channel.type == discord_js_1.ChannelType.GuildText)
-        channel.send({ files: int.targetMessage.attachments.map(m => m) }).then((sent) => __awaiter(void 0, void 0, void 0, function* () {
-            (0, functions_1.sendMessageSlash)(int, { embeds: [SendEb] });
-        }));
-});
-exports.sendCM = sendCM;
+}
+exports.default = {
+    Command: SendCmcb,
+    run: sendCM
+};

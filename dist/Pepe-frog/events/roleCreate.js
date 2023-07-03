@@ -12,7 +12,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.roleCreateEvent = void 0;
 const db_1 = require("../db");
 const roleCreateEvent = (role, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const { serverId, principalServerId } = db_1.frogDb;
+    const { serverId, principalServerId } = db_1.FrogDb;
     if (role.guild.id != serverId)
         return;
     const principalServer = client.guilds.cache.get(principalServerId);

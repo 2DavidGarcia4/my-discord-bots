@@ -15,10 +15,10 @@ const db_1 = require("../db");
 const config_1 = require("../../config");
 const memberAddEvent = (member, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { serverId } = db_1.frogDb;
+    const { serverId } = db_1.FrogDb;
     if (member.guild.id != serverId)
         return;
-    db_1.frogDb.joins++;
+    db_1.FrogDb.joins++;
     const MemberAddEb = new discord_js_1.EmbedBuilder()
         .setThumbnail(member.displayAvatarURL({ extension: 'png' }))
         .setTitle(`👋 Hello, welcome ${member.user.username}`)

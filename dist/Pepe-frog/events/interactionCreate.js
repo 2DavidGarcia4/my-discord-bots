@@ -9,33 +9,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.interactionCreateEvent = exports.commands = void 0;
+exports.interactionCreateEvent = void 0;
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../shared/functions");
-const move_1 = require("../commands/slash/move");
-const send_1 = require("../commands/contextMenu/send");
-const deleteReactions_1 = require("../commands/contextMenu/deleteReactions");
-const delete_1 = require("../commands/contextMenu/delete");
 const db_1 = require("../db");
 const functions_2 = require("../utils/functions");
-exports.commands = new discord_js_1.Collection();
-[send_1.sendCmcb, deleteReactions_1.deleteReactionsCmcb, delete_1.deleteCmcb, move_1.moveScb].forEach(cmd => exports.commands.set(cmd.name, cmd));
+const commands_1 = require("../commands");
+const commands_2 = require("../commands");
 const interactionCreateEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     if (int.isChatInputCommand()) {
         const { commandName } = int;
-        if (commandName == 'move')
-            (0, move_1.moveSlashCommand)(int, client);
+        const slashCommand = commands_1.SlashCommands.find(f => f.Command.name == commandName);
+        if (slashCommand)
+            slashCommand.run(int, client);
+        // if(commandName == 'move') moveSlashCommand(int, client)
     }
     if (int.isContextMenuCommand()) {
         const { commandType, commandName, user } = int;
         if (commandType == discord_js_1.ApplicationCommandType.Message) {
-            if (commandName == 'Send')
-                (0, send_1.sendCM)(int, client);
-            if (commandName == 'Delete reactions')
-                (0, deleteReactions_1.deleteReactionsCM)(int);
-            if (commandName == 'Delete')
-                (0, delete_1.deleteCM)(int);
+            const cmCommand = commands_2.ContextMenuCommands.find(f => f.Command.name == commandName);
+            if (cmCommand)
+                cmCommand.run(int, client);
+            // if(commandName == 'Send') sendCM(int, client)
+            // if(commandName == 'Delete reactions') deleteReactionsCM(int)
+            // if(commandName == 'Delete') deleteCM(int)
         }
     }
     if (int.isButton()) {

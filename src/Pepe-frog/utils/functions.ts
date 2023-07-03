@@ -1,14 +1,13 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message } from "discord.js"
-import { frogDb } from "../db"
+import { FrogDb } from "../db"
 import { VerifiedsData } from "../types"
-import { botDB } from "../../pcem/db"
 
 const getCategoryChannels = (id: string, server: Guild | undefined) => {
   return server?.channels.cache.filter(f=> f.parentId == id).size.toLocaleString()
 }
 
 export const setGuildStatus = (client: Client) => {
-  const snackServer = client.guilds.cache.get(frogDb.serverId)
+  const snackServer = client.guilds.cache.get(FrogDb.serverId)
   const online = snackServer?.members.cache.filter(f=> f.presence?.status == 'dnd' || f.presence?.status == 'idle' || f.presence?.status == 'online' || f.presence?.status == 'invisible').size
   const allMembers = snackServer?.memberCount, nsfwChannels = getCategoryChannels('1053401638494289931', snackServer)
   const vipChannels = getCategoryChannels('1054485238413266965', snackServer)
@@ -55,7 +54,7 @@ export const updateVerifiedsData = async (client: Client, newData: VerifiedsData
 
 export const inspectVerifieds = async (client: Client) => {
   const verifiedsData = await getVerifiedsData(client)
-  const server = client.guilds.cache.get(frogDb.serverId)
+  const server = client.guilds.cache.get(FrogDb.serverId)
   const channelLog = client.channels.cache.get('1100110861244301382')
   
   if(verifiedsData){
@@ -66,7 +65,7 @@ export const inspectVerifieds = async (client: Client) => {
 
       if(verified){
         if(channel?.type == ChannelType.GuildText) {
-          if((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(frogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
+          if((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
             v.contentHidden = true
       
             
@@ -76,7 +75,7 @@ export const inspectVerifieds = async (client: Client) => {
             if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
           })
       
-          if((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(frogDb.serverId, {ViewChannel: false}).then(ed=> {
+          if((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(ed=> {
             v.channelHidden = true
             
             const VerifiedLog = new EmbedBuilder()
@@ -86,7 +85,7 @@ export const inspectVerifieds = async (client: Client) => {
           })
         
           if(!v.ping) {
-            if(Math.floor(v.pinedAt + (frogDb.verifiedsCooldown)) <= Date.now()){
+            if(Math.floor(v.pinedAt + (FrogDb.verifiedsCooldown)) <= Date.now()){
               if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
               v.ping = true
         
@@ -99,7 +98,7 @@ export const inspectVerifieds = async (client: Client) => {
         }
 
       }else{
-        if(channel?.type == ChannelType.GuildText) await channel.permissionOverwrites.edit(frogDb.serverId, {ViewChannel: false}).then(()=> {
+        if(channel?.type == ChannelType.GuildText) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(()=> {
           verifiedsData.splice(verifiedsData.findIndex(f=> f.id == v.id), 1)
           
           const VerifiedLog = new EmbedBuilder()

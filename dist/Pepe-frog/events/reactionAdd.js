@@ -13,7 +13,7 @@ exports.reactionAddEvent = void 0;
 const db_1 = require("../db");
 const reactionAddEvent = (reaction, user) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b;
-    const { serverId } = db_1.frogDb;
+    const { serverId } = db_1.FrogDb;
     const likeId = '1059641676798377995', dislikeId = '1059641726387626015';
     if (reaction.message.guildId != serverId || user.bot)
         return;

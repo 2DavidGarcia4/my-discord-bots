@@ -13,7 +13,7 @@ exports.roleUpdateEvent = void 0;
 const db_1 = require("../db");
 const roleUpdateEvent = (oldRole, newRole, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { serverId, principalServerId } = db_1.frogDb;
+    const { serverId, principalServerId } = db_1.FrogDb;
     if (oldRole.guild.id != serverId)
         return;
     const principalServer = client.guilds.cache.get(principalServerId);

@@ -14,7 +14,7 @@ const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const messageUpdateEvent = (oldMsg, newMsg, client) => __awaiter(void 0, void 0, void 0, function* () {
     var _a, _b, _c, _d, _e, _f, _g;
-    const { serverId } = db_1.frogDb;
+    const { serverId } = db_1.FrogDb;
     if (oldMsg.guildId != serverId || ((_a = oldMsg.author) === null || _a === void 0 ? void 0 : _a.bot))
         return;
     if (oldMsg.content && oldMsg.content != newMsg.content) {

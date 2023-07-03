@@ -1,32 +1,32 @@
 import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, CacheType, Client, Collection, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
 import { selectMultipleRoles, selectRole } from "../../shared/functions";
 
-import { moveScb, moveSlashCommand } from "../commands/slash/move";
-
-import { sendCmcb, sendCM } from "../commands/contextMenu/send";
-import { deleteReactionsCM, deleteReactionsCmcb } from "../commands/contextMenu/deleteReactions";
-import { deleteCM, deleteCmcb } from "../commands/contextMenu/delete";
 import { buttonInfoInteractions } from "../db";
 import { handlePreviewChannels } from "../utils/functions";
-
-export const commands = new Collection<string, RESTPostAPIApplicationCommandsJSONBody>()
-;[sendCmcb, deleteReactionsCmcb, deleteCmcb, moveScb].forEach(cmd=> commands.set(cmd.name, cmd))
+import { SlashCommands } from "../commands";
+import { ContextMenuCommands } from "../commands";
 
 export const interactionCreateEvent = async (int: Interaction<CacheType>, client: Client) => {
   
   if(int.isChatInputCommand()){
     const { commandName } = int
     
-    if(commandName == 'move') moveSlashCommand(int, client)
+    const slashCommand = SlashCommands.find(f=> f.Command.name == commandName)
+    if(slashCommand) slashCommand.run(int, client)
+    // if(commandName == 'move') moveSlashCommand(int, client)
   }
 
   if(int.isContextMenuCommand()){
     const { commandType, commandName, user } = int
+
     
     if(commandType == ApplicationCommandType.Message){
-      if(commandName == 'Send') sendCM(int, client)
-      if(commandName == 'Delete reactions') deleteReactionsCM(int)
-      if(commandName == 'Delete') deleteCM(int)
+      const cmCommand = ContextMenuCommands.find(f=> f.Command.name == commandName)
+      if(cmCommand) cmCommand.run(int, client)
+
+      // if(commandName == 'Send') sendCM(int, client)
+      // if(commandName == 'Delete reactions') deleteReactionsCM(int)
+      // if(commandName == 'Delete') deleteCM(int)
     }
   }
   

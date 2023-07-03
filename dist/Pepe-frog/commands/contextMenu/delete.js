@@ -9,10 +9,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCM = exports.deleteCmcb = void 0;
+exports.DeleteCmcb = void 0;
 const discord_js_1 = require("discord.js");
 const __1 = require("../..");
-exports.deleteCmcb = new discord_js_1.ContextMenuCommandBuilder()
+exports.DeleteCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setName('Delete')
     .setNameLocalizations({
     'es-ES': 'Eliminar',
@@ -20,17 +20,22 @@ exports.deleteCmcb = new discord_js_1.ContextMenuCommandBuilder()
 })
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
     .setType(3).toJSON();
-const deleteCM = (int) => __awaiter(void 0, void 0, void 0, function* () {
+function deleteCM(int) {
     var _a;
-    const { guild, locale, targetMessage } = int, isEnglish = locale == 'en-US' ? true : false;
-    const DeleteEb = new discord_js_1.EmbedBuilder()
-        .setTitle(isEnglish ? 'Message deleted successfully' : 'Mensaje eliminado correctamente')
-        .setColor(((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
-    __1.exemptMessagesIds.push(targetMessage.id);
-    targetMessage.delete().then(() => {
-        int.reply({ ephemeral: true, embeds: [DeleteEb] });
-    }).catch(() => {
-        int.reply({ ephemeral: true, content: 'An error has occurred' });
+    return __awaiter(this, void 0, void 0, function* () {
+        const { guild, locale, targetMessage } = int, isEnglish = locale == 'en-US' ? true : false;
+        const DeleteEb = new discord_js_1.EmbedBuilder()
+            .setTitle(isEnglish ? 'Message deleted successfully' : 'Mensaje eliminado correctamente')
+            .setColor(((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
+        __1.exemptMessagesIds.push(targetMessage.id);
+        targetMessage.delete().then(() => {
+            int.reply({ ephemeral: true, embeds: [DeleteEb] });
+        }).catch(() => {
+            int.reply({ ephemeral: true, content: 'An error has occurred' });
+        });
     });
-});
-exports.deleteCM = deleteCM;
+}
+exports.default = {
+    Command: exports.DeleteCmcb,
+    run: deleteCM
+};

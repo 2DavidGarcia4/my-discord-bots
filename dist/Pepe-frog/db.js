@@ -9,11 +9,14 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buttonInfoInteractions = exports.frogDb = void 0;
+exports.buttonInfoInteractions = exports.FILE_EXTENSIONS = exports.SANCTIONS = exports.FrogDb = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../config");
 const functions_1 = require("./utils/functions");
-exports.frogDb = {
+exports.FrogDb = {
+    me: {
+        id: '942860991698436156'
+    },
     prefix: config_1.isDevelopment ? 'f!' : 's!',
     serverId: '1053382837857943662',
     principalServerId: '1028793496674500659',
@@ -22,10 +25,27 @@ exports.frogDb = {
     leaves: 0,
     roles: {
         verified: '1057720387464593478',
-        verifiedSpeech: '1083060304054849676'
+        verifiedSpeech: '1083060304054849676',
+        spamer: '1053430826823594106',
+        content: '1053411182935023657'
     },
     owners: ['853063286320922634', '551146834941313026', '717420870267830382', '853000435098320907']
 };
+exports.SANCTIONS = [
+    {
+        time: 2 * 60 * 60 * 1000,
+        warns: 2
+    },
+    {
+        time: 4 * 60 * 60 * 1000,
+        warns: 3
+    },
+    {
+        time: 8 * 60 * 60 * 1000,
+        warns: 4
+    },
+];
+exports.FILE_EXTENSIONS = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3'];
 function run(int, client) {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
