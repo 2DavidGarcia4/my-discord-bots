@@ -12,10 +12,11 @@ export interface ModDb {
 export interface VerifiedsData {
   id: string
   ping: boolean
-  pinedAt: number
+  pinedAt?: number
   channelId: string
-  lastMentionAt: number
+  verifiedAt: number
+  lastMentionAt?: number
   contentHidden: boolean
   channelHidden: boolean
-  lastActivityAt: number
+  lastActivityAt?: number
 }
