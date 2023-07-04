@@ -31,6 +31,8 @@ function messageCreateEvent(msg) {
         (0, components_1.Announcements)(msg, __1.Frog);
         (0, components_1.Moderation)(msg);
         (0, components_1.Reactions)(msg);
+        if (msg.author.bot)
+            return;
         if (guildId == principalServerId) {
             if (channel.type != discord_js_1.ChannelType.GuildText)
                 return;

@@ -24,6 +24,8 @@ export async function messageCreateEvent(msg: Message<boolean>) {
   Moderation(msg)
   Reactions(msg)
 
+  if(msg.author.bot) return
+
   if(guildId == principalServerId){
     if(channel.type != ChannelType.GuildText) return
     const { parentId } = channel
