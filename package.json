@@ -1,12 +1,9 @@
 {
   "name": "pcem",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "description": "PCEM bot, bot para mi servidor PCEM.",
   "main": "src/index.ts",
   "type": "commonjs",
-  "engines": {
-    "node": "17.x"
-  },
   "scripts": {
     "start": "node dist/.",
     "dev": "ts-node-dev --respawn src/."

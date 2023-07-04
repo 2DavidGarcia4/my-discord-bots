@@ -44,34 +44,33 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             console.log(`Roles principales agregados a ${ps + 1} miembros.`);
     });
     //? load raffles model
-    let dataSor = yield models_1.rafflesModel.findById(db_1.botDB.serverId), msgsSorteos = 0;
-    if (dataSor && dataSor.raffles.length) {
-        for (let s of dataSor.raffles) {
-            let canal = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get(s.channelId);
-            if (canal && (canal.type == discord_js_1.ChannelType.GuildText || canal.type == discord_js_1.ChannelType.GuildAnnouncement))
-                yield canal.messages.fetch(s.id).then(ts => {
-                    msgsSorteos++;
-                }).catch(err => {
-                    console.log("mensaje de sorteo no encontrado.", err);
-                });
-        }
-        console.log(msgsSorteos == 0 ? "No hay sorteos que cargar." : `Se han cargado ${msgsSorteos} sorteos.`);
-    }
+    // let dataSor = await rafflesModel.findById(botDB.serverId), msgsSorteos = 0
+    // if (dataSor && dataSor.raffles.length) {
+    //   for (let s of dataSor.raffles) {
+    //     let canal = servidor?.channels.cache.get(s.channelId)
+    //     if (canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)) await canal.messages.fetch(s.id).then(ts => {
+    //       msgsSorteos++
+    //     }).catch(err => {
+    //       console.log("mensaje de sorteo no encontrado.", err)
+    //     })
+    //   }
+    //   console.log(msgsSorteos == 0 ? "No hay sorteos que cargar." : `Se han cargado ${msgsSorteos} sorteos.`)
+    // }
     //? Load surveys model
-    let dataEnc = yield models_1.surveysModel.findById(db_1.botDB.serverId), msgsEncuestas = 0;
-    if (dataEnc && dataEnc.surveys.length) {
-        for (let e of dataEnc.surveys) {
-            let canal = servidor === null || servidor === void 0 ? void 0 : servidor.channels.cache.get(e.channelId);
-            if (canal && (canal.type == discord_js_1.ChannelType.GuildText || canal.type == discord_js_1.ChannelType.GuildAnnouncement)) {
-                yield canal.messages.fetch(e.id).then(ts => {
-                    msgsEncuestas++;
-                }).catch(err => {
-                    console.log("mensaje de encuesta no encontrado.", err);
-                });
-            }
-        }
-        console.log(msgsEncuestas == 0 ? "No hay encuestas que cargar." : `Se han cargado ${msgsEncuestas} encuestas.`);
-    }
+    // let dataEnc = await surveysModel.findById(botDB.serverId), msgsEncuestas = 0
+    // if (dataEnc && dataEnc.surveys.length) {
+    //   for (let e of dataEnc.surveys) {
+    //     let canal = servidor?.channels.cache.get(e.channelId)
+    //     if (canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)) {
+    //       await canal.messages.fetch(e.id).then(ts => {
+    //         msgsEncuestas++
+    //       }).catch(err => {
+    //         console.log("mensaje de encuesta no encontrado.", err)
+    //       })
+    //     }
+    //   }
+    //   console.log(msgsEncuestas == 0 ? "No hay encuestas que cargar." : `Se han cargado ${msgsEncuestas} encuestas.`)
+    // }
     function presencias() {
         var _a, _b, _c;
         const estadosDia = [
@@ -206,7 +205,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             });
         }
     }
-    vips();
     function sorteos() {
         var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
@@ -250,7 +248,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             }
         });
     }
-    sorteos();
     function encuestas() {
         return __awaiter(this, void 0, void 0, function* () {
             let dataEnc = yield models_1.surveysModel.findById(db_1.botDB.serverId), arrayEn = dataEnc === null || dataEnc === void 0 ? void 0 : dataEnc.surveys;
@@ -292,7 +289,6 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
             }
         });
     }
-    encuestas();
     function mensajesTemporales() {
         const canales = ["826205120173310032", "823639152922460170", "828300239488024587"];
         canales.forEach(m => {
@@ -305,13 +301,10 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     // mensajesTemporales()
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         presencias();
-        sorteos();
-        encuestas();
     }), 60 * 60000);
     setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
         estadisticas();
         carcel();
-        vips();
     }), 30 * 60000);
     // console.log(svInteractionCommands.map(m=> m))
     // console.log(interactionCommands.map(m=> ({name: m.struct.name, pr: m.struct.default_member_permissions})))
@@ -333,12 +326,12 @@ const readyEvent = (client) => __awaiter(void 0, void 0, void 0, function* () {
     }));
     // console.log((await servidor?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
     // console.log((await client.application?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
-    // const command = svInteractionCommands.get('clasificaciones')
-    // ;(await servidor?.commands.fetch('964578653369409556', {force: true}))?.edit({options: command1?.options}).then(c=> console.log('Comando actualizado'))
-    // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
+    // const command = svInteractionCommands.get('crear')?.struct.options as ApplicationCommandOptionData[] | undefined
+    // ;(await servidor?.commands.fetch('971218630631129168', {force: true}))?.edit({options: command}).then(c=> console.log('Comando actualizado'))
+    // ;(await servidor?.commands.fetch('974763995837894687', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
     //! Public
     // const command = interactionCommands.get('set')
     // ;(await client.application?.commands.fetch('1076941760753840200', {force: true}))?.edit({options: command?.struct.options, defaultMemberPermissions: PermissionFlagsBits.ManageGuild}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
-    // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
+    // ;(await client.application?.commands.fetch('1076941760753840200', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 });
 exports.readyEvent = readyEvent;
