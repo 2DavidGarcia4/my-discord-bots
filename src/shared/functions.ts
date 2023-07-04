@@ -24,13 +24,13 @@ export const defaultReady = (client: Client, channelId: string, rcolor: ColorRes
 export const sendMessageText = (msg: Message, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
   setTimeout(()=> {
     msg.reply(optionsMessage)
-  }, 4000)
+  }, 2000)
 }
 
 export const sendMessageSlash = (int: ChatInputCommandInteraction<CacheType> | UserContextMenuCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, optionsMessage: string | MessagePayload | MessageReplyOptions) => {
   setTimeout(async () => {
     await int.editReply(optionsMessage)
-  }, 3000)
+  }, 2000)
 }
 
 export const createEmbedMessage = (title: string, description: string, color: ColorResolvable) => {
@@ -66,7 +66,7 @@ export const setSlashError = async (int: ChatInputCommandInteraction<CacheType> 
   }, 3000)
 }
 
-export const setSlashErrors = (int: ChatInputCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, descriptionsAndConditions: ((string | boolean)[])[]) => {
+export const setSlashErrors = (int: ChatInputCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, descriptionsAndConditions: [boolean, string][]) => {
   let res = false
   for(const dac of descriptionsAndConditions){
     if(dac[0]){
