@@ -1,8 +1,8 @@
-import { ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js";
+import { ChannelType, EmbedBuilder, Message, type PartialMessage } from "discord.js";
+import { Frog as client, exemptMessagesIds } from "..";
 import { FrogDb } from "../db";
-import { exemptMessagesIds } from "..";
 
-export const messageDeleteEvent = async (msgd: Message<boolean> | PartialMessage, client: Client) => {
+export async function messageDeleteEvent(msgd: Message<boolean> | PartialMessage) {
   const { serverId, prefix, owners } = FrogDb
   const channelId = '1053389522253127720'
   if(msgd.guildId != serverId || msgd.author?.bot) return
@@ -25,6 +25,6 @@ export const messageDeleteEvent = async (msgd: Message<boolean> | PartialMessage
     )
     .setColor('DarkOrange')
     .setTimestamp()
-    if(channelLog?.type == ChannelType.GuildText) return channelLog.send({embeds: [DeleteMessageEb]})
+    if(channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [DeleteMessageEb]})
   }
 }

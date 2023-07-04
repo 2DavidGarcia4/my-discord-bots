@@ -1,12 +1,13 @@
-import { ActionRowBuilder, ApplicationCommandType, ButtonBuilder, ButtonStyle, CacheType, Client, Collection, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
-import { selectMultipleRoles, selectRole } from "../../shared/functions";
+import { ActionRowBuilder, ApplicationCommandType, type CacheType, EmbedBuilder, type Interaction, StringSelectMenuBuilder } from "discord.js";
+import { Frog as client } from "..";
 
 import { buttonInfoInteractions } from "../db";
+import { selectMultipleRoles, selectRole } from "../../shared/functions";
 import { handlePreviewChannels } from "../utils/functions";
 import { SlashCommands } from "../commands";
 import { ContextMenuCommands } from "../commands";
 
-export async function interactionCreateEvent(int: Interaction<CacheType>, client: Client) {
+export async function interactionCreateEvent(int: Interaction<CacheType>) {
   
   if(int.isChatInputCommand()){
     const { commandName } = int

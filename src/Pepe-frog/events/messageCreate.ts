@@ -1,4 +1,5 @@
-import { ChannelType, Client, EmbedBuilder, Message } from "discord.js";
+import { ChannelType, EmbedBuilder, Message } from "discord.js";
+import { Frog as client } from "..";
 import { FrogDb } from "../db";
 
 import { evalCommand } from "../commands/text/eval";
@@ -11,12 +12,11 @@ import { packsCommand } from "../commands/text/packs";
 import { getVerifiedsData, updateVerifiedsData } from "../utils/functions";
 import { Announcements, Moderation, Reactions } from "../components";
 
-export const messageCreateEvent = async (msg: Message<boolean>, client: Client) => {
+export async function messageCreateEvent(msg: Message<boolean>) {
   const { channel, channelId, guildId } = msg
   const { prefix, serverId, principalServerId, owners, verifiedsCooldown, roles: { 
     verified, 
     verifiedSpeech,
-    spamer
   } } = FrogDb
 
   //* Components

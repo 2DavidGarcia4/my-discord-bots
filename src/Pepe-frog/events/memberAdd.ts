@@ -1,8 +1,8 @@
-import { Client, EmbedBuilder, GuildMember } from "discord.js";
+import { EmbedBuilder, GuildMember } from "discord.js";
 import { FrogDb } from "../db";
 import { isDevelopment } from "../../config";
 
-export const memberAddEvent = async (member: GuildMember, client: Client) => {
+export async function memberAddEvent(member: GuildMember) {
   const { serverId } = FrogDb
   if(member.guild.id != serverId) return
   

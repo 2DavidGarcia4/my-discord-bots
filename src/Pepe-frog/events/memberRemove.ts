@@ -1,8 +1,8 @@
-import { Client, GuildMember, PartialGuildMember } from "discord.js";
-import { FrogDb } from "../db";
+import { GuildMember, PartialGuildMember } from "discord.js";
 import { modDb } from "..";
+import { FrogDb } from "../db";
 
-export const memberRemoveEvent = async (member: GuildMember | PartialGuildMember, client: Client) => {
+export async function memberRemoveEvent(member: GuildMember | PartialGuildMember) {
   const { serverId } = FrogDb
   if(member.guild.id != serverId) return
 

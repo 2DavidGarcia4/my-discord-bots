@@ -1,7 +1,8 @@
-import { ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js";
+import { ChannelType, EmbedBuilder, Message, type PartialMessage } from "discord.js";
+import { Frog as client } from "..";
 import { FrogDb } from "../db";
 
-export const messageUpdateEvent = async (oldMsg: Message<boolean> | PartialMessage, newMsg: Message<boolean> | PartialMessage, client: Client) => {
+export async function messageUpdateEvent(oldMsg: Message<boolean> | PartialMessage, newMsg: Message<boolean> | PartialMessage) {
   const { serverId } = FrogDb
   if(oldMsg.guildId != serverId || oldMsg.author?.bot) return
 

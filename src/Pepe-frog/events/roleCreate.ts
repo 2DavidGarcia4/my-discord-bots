@@ -1,7 +1,8 @@
-import { Client, Role } from "discord.js";
+import { Role } from "discord.js";
+import { Frog as client } from "..";
 import { FrogDb } from "../db";
 
-export const roleCreateEvent = async (role: Role, client: Client) => {
+export async function roleCreateEvent(role: Role) {
   const { serverId, principalServerId } = FrogDb
   if(role.guild.id != serverId) return
 

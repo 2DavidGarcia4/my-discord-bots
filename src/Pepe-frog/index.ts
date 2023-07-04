@@ -17,71 +17,46 @@ import { memberRemoveEvent } from "./events/memberRemove";
 import { messageUpdateEvent } from "./events/messageUpdate";
 import { messageDeleteEvent } from "./events/messageDelete";
 import { reactionAddEvent } from "./events/reactionAdd";
+import { memberUpdateEvent } from "./events/memberUpdate";
 
 
 export const modDb: ModDb[] = []
 export const exemptMessagesIds: string[] = []
 
-const Frog = new Client({intents: 131071})
+export const Frog = new Client({intents: 131071})
 
-Frog.on('ready', async () => {
-  readyEvent(Frog)
-})
+Frog.on('ready', readyEvent)
 
-Frog.on('messageCreate', (message) => {
-  messageCreateEvent(message, Frog)
-})
+Frog.on('messageCreate', messageCreateEvent)
 
-Frog.on('messageUpdate', (oldMessage, newMessage) => {
-  messageUpdateEvent(oldMessage, newMessage, Frog)
-})
+Frog.on('messageUpdate', messageUpdateEvent)
 
-Frog.on('messageDelete', (message) => {
-  messageDeleteEvent(message, Frog)
-})
+Frog.on('messageDelete', messageDeleteEvent)
 
-Frog.on('messageReactionAdd', (reaction, user) => {
-  reactionAddEvent(reaction, user)
-})
+Frog.on('messageReactionAdd', reactionAddEvent)
 
-Frog.on('interactionCreate', (interaction) => {
-  interactionCreateEvent(interaction, Frog)
-})
+Frog.on('interactionCreate', interactionCreateEvent)
 
-Frog.on('roleCreate', (role) => {
-  roleCreateEvent(role, Frog)
-})
+Frog.on('roleCreate', roleCreateEvent)
 
-Frog.on('roleUpdate', (oldRole, newRole) => {
-  roleUpdateEvent(oldRole, newRole, Frog)
-})
+Frog.on('roleUpdate', roleUpdateEvent)
 
-Frog.on('roleDelete', (role) => {
-  roleDeleteEvent(role, Frog)
-})
+Frog.on('roleDelete', roleDeleteEvent)
 
-Frog.on('channelCreate', (channel) => {
-  channelCreateEvent(channel, Frog)
-})
+Frog.on('guildMemberUpdate', memberUpdateEvent)
 
-Frog.on('channelUpdate', (oldChannel, newChannel) => {
-  channelUpdateEvetn(oldChannel, newChannel, Frog)
-})
+Frog.on('channelCreate', channelCreateEvent)
 
-Frog.on('channelDelete', (channel) => {
-  channelDeleteEvent(channel, Frog)
-})
+Frog.on('channelUpdate', channelUpdateEvetn)
+
+Frog.on('channelDelete', channelDeleteEvent)
 
 Frog.on('channelPinsUpdate', (channel) => {
   console.log('holaa')
 })
 
-Frog.on('guildMemberAdd', (member) => {
-  memberAddEvent(member, Frog)
-})
+Frog.on('guildMemberAdd', memberAddEvent)
 
-Frog.on('guildMemberRemove', (member) => {
-  memberRemoveEvent(member, Frog)
-})
+Frog.on('guildMemberRemove', memberRemoveEvent)
 
 Frog.login(pepeFrog)

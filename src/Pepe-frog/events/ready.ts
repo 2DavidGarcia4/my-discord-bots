@@ -1,4 +1,5 @@
-import { ChannelType, Client, EmbedBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder } from "discord.js";
+import { Frog as client } from "..";
 import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences, getVerifiedsData, updateVerifiedsData } from "../utils/functions";
 import { FrogDb } from "../db";
 import { CommandBodys } from "../commands";
@@ -7,7 +8,7 @@ import { defaultReady } from "../../shared/functions";
 // import { registerFont, createCanvas, loadImage } from "canvas";
 // registerFont("tipo.otf", {family: 'MADE TOMMY'})
 
-export async function readyEvent(client: Client) {
+export async function readyEvent() {
   const { serverId, principalServerId } = FrogDb
   defaultReady(client, '1053425705385467904', 'DarkGold')
   
