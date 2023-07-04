@@ -10,13 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.channelCreateEvent = void 0;
+const __1 = require("..");
 const db_1 = require("../db");
-const channelCreateEvent = (channel, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const { serverId, principalServerId } = db_1.FrogDb;
-    if (channel.guildId != serverId)
-        return;
-    const principalServer = client.guilds.cache.get(principalServerId);
-    const prinCategory = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => { var _a; return f.name == ((_a = channel.parent) === null || _a === void 0 ? void 0 : _a.name); });
-    principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.create({ name: channel.name, parent: prinCategory === null || prinCategory === void 0 ? void 0 : prinCategory.id, position: channel.position, type: channel.type });
-});
+function channelCreateEvent(channel) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { serverId, principalServerId } = db_1.FrogDb;
+        if (channel.guildId != serverId)
+            return;
+        const principalServer = __1.Frog.guilds.cache.get(principalServerId);
+        const prinCategory = principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.cache.find(f => { var _a; return f.name == ((_a = channel.parent) === null || _a === void 0 ? void 0 : _a.name); });
+        principalServer === null || principalServer === void 0 ? void 0 : principalServer.channels.create({ name: channel.name, parent: prinCategory === null || prinCategory === void 0 ? void 0 : prinCategory.id, position: channel.position, type: channel.type });
+    });
+}
 exports.channelCreateEvent = channelCreateEvent;

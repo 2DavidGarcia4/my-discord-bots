@@ -10,13 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.roleUpdateEvent = void 0;
+const __1 = require("..");
 const db_1 = require("../db");
-const roleUpdateEvent = (oldRole, newRole, client) => __awaiter(void 0, void 0, void 0, function* () {
+function roleUpdateEvent(oldRole, newRole) {
     var _a;
-    const { serverId, principalServerId } = db_1.FrogDb;
-    if (oldRole.guild.id != serverId)
-        return;
-    const principalServer = client.guilds.cache.get(principalServerId);
-    (_a = principalServer === null || principalServer === void 0 ? void 0 : principalServer.roles.cache.find(f => f.name == oldRole.name)) === null || _a === void 0 ? void 0 : _a.edit({ name: newRole.name, color: newRole.color, permissions: newRole.permissions, hoist: newRole.hoist, mentionable: newRole.mentionable });
-});
+    return __awaiter(this, void 0, void 0, function* () {
+        const { serverId, principalServerId } = db_1.FrogDb;
+        if (oldRole.guild.id != serverId)
+            return;
+        const principalServer = __1.Frog.guilds.cache.get(principalServerId);
+        (_a = principalServer === null || principalServer === void 0 ? void 0 : principalServer.roles.cache.find(f => f.name == oldRole.name)) === null || _a === void 0 ? void 0 : _a.edit({ name: newRole.name, color: newRole.color, permissions: newRole.permissions, hoist: newRole.hoist, mentionable: newRole.mentionable });
+    });
+}
 exports.roleUpdateEvent = roleUpdateEvent;

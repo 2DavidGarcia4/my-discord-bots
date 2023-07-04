@@ -10,12 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.roleCreateEvent = void 0;
+const __1 = require("..");
 const db_1 = require("../db");
-const roleCreateEvent = (role, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const { serverId, principalServerId } = db_1.FrogDb;
-    if (role.guild.id != serverId)
-        return;
-    const principalServer = client.guilds.cache.get(principalServerId);
-    principalServer === null || principalServer === void 0 ? void 0 : principalServer.roles.create({ name: role.name, permissions: role.permissions });
-});
+function roleCreateEvent(role) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { serverId, principalServerId } = db_1.FrogDb;
+        if (role.guild.id != serverId)
+            return;
+        const principalServer = __1.Frog.guilds.cache.get(principalServerId);
+        principalServer === null || principalServer === void 0 ? void 0 : principalServer.roles.create({ name: role.name, permissions: role.permissions });
+    });
+}
 exports.roleCreateEvent = roleCreateEvent;

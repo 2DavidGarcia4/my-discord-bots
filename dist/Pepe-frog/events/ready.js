@@ -11,18 +11,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.readyEvent = void 0;
 const discord_js_1 = require("discord.js");
+const __1 = require("..");
 const functions_1 = require("../utils/functions");
 const db_1 = require("../db");
 const commands_1 = require("../commands");
 const functions_2 = require("../../shared/functions");
 // import { registerFont, createCanvas, loadImage } from "canvas";
 // registerFont("tipo.otf", {family: 'MADE TOMMY'})
-function readyEvent(client) {
+function readyEvent() {
     return __awaiter(this, void 0, void 0, function* () {
         const { serverId, principalServerId } = db_1.FrogDb;
-        (0, functions_2.defaultReady)(client, '1053425705385467904', 'DarkGold');
-        const principalServer = client.guilds.cache.get(principalServerId);
-        const server = client.guilds.cache.get(serverId);
+        (0, functions_2.defaultReady)(__1.Frog, '1053425705385467904', 'DarkGold');
+        const principalServer = __1.Frog.guilds.cache.get(principalServerId);
+        const server = __1.Frog.guilds.cache.get(serverId);
         const suggestionsChannel = server === null || server === void 0 ? void 0 : server.channels.cache.get('1053401642915082392');
         if ((suggestionsChannel === null || suggestionsChannel === void 0 ? void 0 : suggestionsChannel.type) == discord_js_1.ChannelType.GuildText)
             suggestionsChannel.messages.fetch({ limit: 100 });
@@ -34,7 +35,7 @@ function readyEvent(client) {
                 }
             }));
         }));
-        (0, functions_1.handlePresences)(client);
+        (0, functions_1.handlePresences)(__1.Frog);
         const statsChannel = server === null || server === void 0 ? void 0 : server.channels.cache.get('1053389468993851472');
         const sendStats = () => __awaiter(this, void 0, void 0, function* () {
             var _b;
@@ -67,18 +68,18 @@ function readyEvent(client) {
         });
         sendStats();
         if (server === null || server === void 0 ? void 0 : server.members)
-            (0, functions_1.autoChangeNicknames)(server.members.cache.map(m => m), client);
-        (0, functions_1.inspectVerifieds)(client);
+            (0, functions_1.autoChangeNicknames)(server.members.cache.map(m => m), __1.Frog);
+        (0, functions_1.inspectVerifieds)(__1.Frog);
         setInterval(() => {
-            (0, functions_1.handlePresences)(client);
+            (0, functions_1.handlePresences)(__1.Frog);
             sendStats();
-            (0, functions_1.inspectVerifieds)(client);
+            (0, functions_1.inspectVerifieds)(__1.Frog);
         }, 60 * 60000);
-        (0, functions_1.setGuildStatus)(client);
+        (0, functions_1.setGuildStatus)(__1.Frog);
         setInterval(() => {
-            (0, functions_1.setGuildStatus)(client);
+            (0, functions_1.setGuildStatus)(__1.Frog);
             if (server === null || server === void 0 ? void 0 : server.members)
-                (0, functions_1.autoChangeNicknames)(server.members.cache.map(m => m), client);
+                (0, functions_1.autoChangeNicknames)(server.members.cache.map(m => m), __1.Frog);
         }, 6 * 60 * 60000);
     });
 }

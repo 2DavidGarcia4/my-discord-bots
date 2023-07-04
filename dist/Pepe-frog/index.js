@@ -1,15 +1,6 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.exemptMessagesIds = exports.modDb = void 0;
+exports.Frog = exports.exemptMessagesIds = exports.modDb = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../config");
 //! Events
@@ -27,52 +18,26 @@ const memberRemove_1 = require("./events/memberRemove");
 const messageUpdate_1 = require("./events/messageUpdate");
 const messageDelete_1 = require("./events/messageDelete");
 const reactionAdd_1 = require("./events/reactionAdd");
+const memberUpdate_1 = require("./events/memberUpdate");
 exports.modDb = [];
 exports.exemptMessagesIds = [];
-const Frog = new discord_js_1.Client({ intents: 131071 });
-Frog.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
-    (0, ready_1.readyEvent)(Frog);
-}));
-Frog.on('messageCreate', (message) => {
-    (0, messageCreate_1.messageCreateEvent)(message, Frog);
-});
-Frog.on('messageUpdate', (oldMessage, newMessage) => {
-    (0, messageUpdate_1.messageUpdateEvent)(oldMessage, newMessage, Frog);
-});
-Frog.on('messageDelete', (message) => {
-    (0, messageDelete_1.messageDeleteEvent)(message, Frog);
-});
-Frog.on('messageReactionAdd', (reaction, user) => {
-    (0, reactionAdd_1.reactionAddEvent)(reaction, user);
-});
-Frog.on('interactionCreate', (interaction) => {
-    (0, interactionCreate_1.interactionCreateEvent)(interaction, Frog);
-});
-Frog.on('roleCreate', (role) => {
-    (0, roleCreate_1.roleCreateEvent)(role, Frog);
-});
-Frog.on('roleUpdate', (oldRole, newRole) => {
-    (0, roleUpdate_1.roleUpdateEvent)(oldRole, newRole, Frog);
-});
-Frog.on('roleDelete', (role) => {
-    (0, roleDelete_1.roleDeleteEvent)(role, Frog);
-});
-Frog.on('channelCreate', (channel) => {
-    (0, channelCreate_1.channelCreateEvent)(channel, Frog);
-});
-Frog.on('channelUpdate', (oldChannel, newChannel) => {
-    (0, channelUpdate_1.channelUpdateEvetn)(oldChannel, newChannel, Frog);
-});
-Frog.on('channelDelete', (channel) => {
-    (0, channelDelete_1.channelDeleteEvent)(channel, Frog);
-});
-Frog.on('channelPinsUpdate', (channel) => {
+exports.Frog = new discord_js_1.Client({ intents: 131071 });
+exports.Frog.on('ready', ready_1.readyEvent);
+exports.Frog.on('messageCreate', messageCreate_1.messageCreateEvent);
+exports.Frog.on('messageUpdate', messageUpdate_1.messageUpdateEvent);
+exports.Frog.on('messageDelete', messageDelete_1.messageDeleteEvent);
+exports.Frog.on('messageReactionAdd', reactionAdd_1.reactionAddEvent);
+exports.Frog.on('interactionCreate', interactionCreate_1.interactionCreateEvent);
+exports.Frog.on('roleCreate', roleCreate_1.roleCreateEvent);
+exports.Frog.on('roleUpdate', roleUpdate_1.roleUpdateEvent);
+exports.Frog.on('roleDelete', roleDelete_1.roleDeleteEvent);
+exports.Frog.on('guildMemberUpdate', memberUpdate_1.memberUpdateEvent);
+exports.Frog.on('channelCreate', channelCreate_1.channelCreateEvent);
+exports.Frog.on('channelUpdate', channelUpdate_1.channelUpdateEvetn);
+exports.Frog.on('channelDelete', channelDelete_1.channelDeleteEvent);
+exports.Frog.on('channelPinsUpdate', (channel) => {
     console.log('holaa');
 });
-Frog.on('guildMemberAdd', (member) => {
-    (0, memberAdd_1.memberAddEvent)(member, Frog);
-});
-Frog.on('guildMemberRemove', (member) => {
-    (0, memberRemove_1.memberRemoveEvent)(member, Frog);
-});
-Frog.login(config_1.pepeFrog);
+exports.Frog.on('guildMemberAdd', memberAdd_1.memberAddEvent);
+exports.Frog.on('guildMemberRemove', memberRemove_1.memberRemoveEvent);
+exports.Frog.login(config_1.pepeFrog);

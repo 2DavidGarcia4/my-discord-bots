@@ -16,6 +16,8 @@ const __1 = require("..");
 function Moderation(msg) {
     var _a, _b, _c, _d, _e;
     const { guildId } = msg;
+    if (msg.author.bot)
+        return;
     if (guildId != db_1.FrogDb.serverId)
         return;
     const verifiedsCahnnels = (_a = msg.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.filter(f => f.parentId == '1053401639454773338');

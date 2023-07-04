@@ -11,19 +11,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reactionAddEvent = void 0;
 const db_1 = require("../db");
-const reactionAddEvent = (reaction, user) => __awaiter(void 0, void 0, void 0, function* () {
+function reactionAddEvent(reaction, user) {
     var _a, _b;
-    const { serverId } = db_1.FrogDb;
-    const likeId = '1059641676798377995', dislikeId = '1059641726387626015';
-    if (reaction.message.guildId != serverId || user.bot)
-        return;
-    if (reaction.message.channelId == '1053401642915082392' && [likeId, dislikeId].some(s => s == reaction.emoji.id)) {
-        if (((_a = reaction.message.author) === null || _a === void 0 ? void 0 : _a.id) == user.id)
-            return reaction.users.remove(user.id);
-        const counterReaction = reaction.emoji.id == likeId ? dislikeId : likeId;
-        if (reaction.message.reactions.cache.has(counterReaction)) {
-            (_b = reaction.message.reactions.cache.get(counterReaction)) === null || _b === void 0 ? void 0 : _b.users.remove(user.id);
+    return __awaiter(this, void 0, void 0, function* () {
+        const { serverId } = db_1.FrogDb;
+        const likeId = '1059641676798377995', dislikeId = '1059641726387626015';
+        if (reaction.message.guildId != serverId || user.bot)
+            return;
+        if (reaction.message.channelId == '1053401642915082392' && [likeId, dislikeId].some(s => s == reaction.emoji.id)) {
+            if (((_a = reaction.message.author) === null || _a === void 0 ? void 0 : _a.id) == user.id) {
+                reaction.users.remove(user.id);
+                return;
+            }
+            const counterReaction = reaction.emoji.id == likeId ? dislikeId : likeId;
+            if (reaction.message.reactions.cache.has(counterReaction)) {
+                (_b = reaction.message.reactions.cache.get(counterReaction)) === null || _b === void 0 ? void 0 : _b.users.remove(user.id);
+            }
         }
-    }
-});
+    });
+}
 exports.reactionAddEvent = reactionAddEvent;

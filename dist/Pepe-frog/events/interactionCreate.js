@@ -11,19 +11,20 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interactionCreateEvent = void 0;
 const discord_js_1 = require("discord.js");
-const functions_1 = require("../../shared/functions");
+const __1 = require("..");
 const db_1 = require("../db");
+const functions_1 = require("../../shared/functions");
 const functions_2 = require("../utils/functions");
 const commands_1 = require("../commands");
 const commands_2 = require("../commands");
-function interactionCreateEvent(int, client) {
+function interactionCreateEvent(int) {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
     return __awaiter(this, void 0, void 0, function* () {
         if (int.isChatInputCommand()) {
             const { commandName } = int;
             const slashCommand = commands_1.SlashCommands.find(f => f.Command.name == commandName);
             if (slashCommand)
-                slashCommand.run(int, client);
+                slashCommand.run(int, __1.Frog);
             // if(commandName == 'move') moveSlashCommand(int, client)
         }
         if (int.isContextMenuCommand()) {
@@ -31,7 +32,7 @@ function interactionCreateEvent(int, client) {
             if (commandType == discord_js_1.ApplicationCommandType.Message) {
                 const cmCommand = commands_2.ContextMenuCommands.find(f => f.Command.name == commandName);
                 if (cmCommand)
-                    cmCommand.run(int, client);
+                    cmCommand.run(int, __1.Frog);
                 // if(commandName == 'Send') sendCM(int, client)
                 // if(commandName == 'Delete reactions') deleteReactionsCM(int)
                 // if(commandName == 'Delete') deleteCM(int)
@@ -42,7 +43,7 @@ function interactionCreateEvent(int, client) {
             const author = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(user.id);
             const translatedInformationMessageData = db_1.buttonInfoInteractions.find(f => f.id == customId);
             if (translatedInformationMessageData)
-                yield translatedInformationMessageData.run(int, client);
+                yield translatedInformationMessageData.run(int, __1.Frog);
             if (customId == 'en-roles-btn') {
                 const RolesEb = new discord_js_1.EmbedBuilder()
                     .setTitle('🎭 Roles')
@@ -456,8 +457,8 @@ function interactionCreateEvent(int, client) {
                     const ServerEb = new discord_js_1.EmbedBuilder()
                         .setTitle('<a:discord:1058552953755160627> ' + (inEnglish ? 'Server information' : 'Información del servidor'))
                         .setDescription(inEnglish ?
-                        `Server focused on female sexual content, created on <t:${createdAt}> by ${client.user} a bot that is managed by <@853063286320922634>, here you will find various channels with content of this type, you can also contribute content on the corresponding channels.\n\n*Thank you for being here!*` :
-                        `Servidor enfocado en el contenido sexual femenino, creado el <t:${createdAt}> por ${client.user} un bot que es administrado por <@853063286320922634>, aquí encontraras diversos canales con contenido de ese tipo además podrás aportar contenido en los canales correspondientes.\n\n*¡Gracias por estar aquí!*`)
+                        `Server focused on female sexual content, created on <t:${createdAt}> by ${__1.Frog.user} a bot that is managed by <@853063286320922634>, here you will find various channels with content of this type, you can also contribute content on the corresponding channels.\n\n*Thank you for being here!*` :
+                        `Servidor enfocado en el contenido sexual femenino, creado el <t:${createdAt}> por ${__1.Frog.user} un bot que es administrado por <@853063286320922634>, aquí encontraras diversos canales con contenido de ese tipo además podrás aportar contenido en los canales correspondientes.\n\n*¡Gracias por estar aquí!*`)
                         .setColor(((_o = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _o === void 0 ? void 0 : _o.displayHexColor) || 'White');
                     int.reply({ ephemeral: true, embeds: [ServerEb] });
                 }
@@ -467,7 +468,7 @@ function interactionCreateEvent(int, client) {
                 if (value == 'roles') { }
                 if (value == 'about-me') {
                     const AboutMeEb = new discord_js_1.EmbedBuilder()
-                        .setTitle('🤖 ' + (inEnglish ? `Hello i am ${(_p = client.user) === null || _p === void 0 ? void 0 : _p.username}` : `Hola soy ${(_q = client.user) === null || _q === void 0 ? void 0 : _q.username}`))
+                        .setTitle('🤖 ' + (inEnglish ? `Hello i am ${(_p = __1.Frog.user) === null || _p === void 0 ? void 0 : _p.username}` : `Hola soy ${(_q = __1.Frog.user) === null || _q === void 0 ? void 0 : _q.username}`))
                         .setDescription(inEnglish ?
                         `The creator and owner of the server and I am a **bot** managed by my creator <@853063286320922634> who also manages the server.\n\n*I am not programmed to answer private messages, I just help automate some tasks within the server*` :
                         `El creador y dueño del servidor y soy un **bot** administrado por mi creador <@853063286320922634> quien también administra el servidor.\n\n*No estoy programado para contestar mensajes privados, solo ayudo a automatizar algunas tareas dentro del servidor*`)

@@ -10,14 +10,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.memberRemoveEvent = void 0;
-const db_1 = require("../db");
 const __1 = require("..");
-const memberRemoveEvent = (member, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const { serverId } = db_1.FrogDb;
-    if (member.guild.id != serverId)
-        return;
-    db_1.FrogDb.leaves++;
-    if (__1.modDb.some(s => s.id == member.id))
-        __1.modDb.splice(__1.modDb.findIndex(f => f.id == member.id), 1);
-});
+const db_1 = require("../db");
+function memberRemoveEvent(member) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { serverId } = db_1.FrogDb;
+        if (member.guild.id != serverId)
+            return;
+        db_1.FrogDb.leaves++;
+        if (__1.modDb.some(s => s.id == member.id))
+            __1.modDb.splice(__1.modDb.findIndex(f => f.id == member.id), 1);
+    });
+}
 exports.memberRemoveEvent = memberRemoveEvent;

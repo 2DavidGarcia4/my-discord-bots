@@ -33,13 +33,13 @@ exports.defaultReady = defaultReady;
 const sendMessageText = (msg, optionsMessage) => {
     setTimeout(() => {
         msg.reply(optionsMessage);
-    }, 4000);
+    }, 2000);
 };
 exports.sendMessageText = sendMessageText;
 const sendMessageSlash = (int, optionsMessage) => {
     setTimeout(() => __awaiter(void 0, void 0, void 0, function* () {
         yield int.editReply(optionsMessage);
-    }), 3000);
+    }), 2000);
 };
 exports.sendMessageSlash = sendMessageSlash;
 const createEmbedMessage = (title, description, color) => {

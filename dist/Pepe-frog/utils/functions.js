@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handlePresences = exports.handlePreviewChannels = exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessage = exports.inspectVerifieds = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
+exports.transformTime = exports.handlePresences = exports.handlePreviewChannels = exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessage = exports.inspectVerifieds = exports.createVerified = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const config_1 = require("../../config");
@@ -42,83 +42,105 @@ const setGuildStatus = (client) => {
 exports.setGuildStatus = setGuildStatus;
 //? Verifieds data
 const verifiedsChanneId = '1083064332260212768', verifiedsMessageId = '1083069070896812154';
-const getVerifiedsData = (client) => __awaiter(void 0, void 0, void 0, function* () {
-    const channelDb = client.channels.cache.get(verifiedsChanneId);
-    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
-        const message = (yield channelDb.messages.fetch(verifiedsMessageId)).content;
-        const data = JSON.parse(message);
-        return data;
-    }
-});
+function getVerifiedsData(client) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const channelDb = client.channels.cache.get(verifiedsChanneId);
+        if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+            const message = (yield channelDb.messages.fetch(verifiedsMessageId)).content;
+            const data = JSON.parse(message);
+            return data;
+        }
+    });
+}
 exports.getVerifiedsData = getVerifiedsData;
-const updateVerifiedsData = (client, newData) => __awaiter(void 0, void 0, void 0, function* () {
-    const channelDb = client.channels.cache.get(verifiedsChanneId);
-    if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
-        const newDataStr = JSON.stringify(newData);
-        const message = yield channelDb.messages.fetch(verifiedsMessageId);
-        if (newDataStr != message.content)
-            message.edit({ content: JSON.stringify(newData) });
-    }
-});
+function updateVerifiedsData(client, newData) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const channelDb = client.channels.cache.get(verifiedsChanneId);
+        if (channelDb === null || channelDb === void 0 ? void 0 : channelDb.isTextBased()) {
+            const newDataStr = JSON.stringify(newData);
+            const message = yield channelDb.messages.fetch(verifiedsMessageId);
+            if (newDataStr != message.content)
+                message.edit({ content: JSON.stringify(newData) });
+        }
+    });
+}
 exports.updateVerifiedsData = updateVerifiedsData;
-const inspectVerifieds = (client) => __awaiter(void 0, void 0, void 0, function* () {
-    const verifiedsData = yield (0, exports.getVerifiedsData)(client);
-    const server = client.guilds.cache.get(db_1.FrogDb.serverId);
-    const channelLog = client.channels.cache.get('1100110861244301382');
-    if (verifiedsData) {
-        for (let v of verifiedsData) {
-            const channel = client.channels.cache.get(v.channelId);
-            const verified = server === null || server === void 0 ? void 0 : server.members.cache.get(v.id);
-            const day = 24 * 60 * 60000;
-            if (verified) {
-                if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
-                    if ((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 30)))
-                        yield channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ReadMessageHistory: false }).then(ed => {
-                            v.contentHidden = true;
-                            const VerifiedLog = new discord_js_1.EmbedBuilder()
-                                .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
-                                .setColor('Blue');
-                            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
-                        });
-                    if ((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day * 40)))
-                        yield channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ViewChannel: false }).then(ed => {
-                            v.channelHidden = true;
-                            const VerifiedLog = new discord_js_1.EmbedBuilder()
-                                .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
-                                .setColor('Orange');
-                            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
-                        });
-                    if (!v.ping) {
-                        if (Math.floor(v.pinedAt + (db_1.FrogDb.verifiedsCooldown)) <= Date.now()) {
-                            if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
-                                channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
-                            v.ping = true;
-                            const VerifiedLog = new discord_js_1.EmbedBuilder()
-                                .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
-                                .setColor('Green');
-                            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+function createVerified(client, newVerified) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const verifiedsData = yield getVerifiedsData(client);
+        if (verifiedsData) {
+            verifiedsData.push({
+                id: newVerified.id,
+                ping: true,
+                channelId: newVerified.channelId || '',
+                verifiedAt: Date.now(),
+                channelHidden: false,
+                contentHidden: false,
+            });
+        }
+    });
+}
+exports.createVerified = createVerified;
+function inspectVerifieds(client) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const verifiedsData = yield getVerifiedsData(client);
+        const server = client.guilds.cache.get(db_1.FrogDb.serverId);
+        const channelLog = client.channels.cache.get('1100110861244301382');
+        if (verifiedsData) {
+            for (let v of verifiedsData) {
+                const channel = client.channels.cache.get(v.channelId);
+                const verified = server === null || server === void 0 ? void 0 : server.members.cache.get(v.id);
+                const day = 24 * 60 * 60000;
+                if (verified) {
+                    if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
+                        if ((!v.contentHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day * 30)))
+                            yield channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ReadMessageHistory: false }).then(ed => {
+                                v.contentHidden = true;
+                                const VerifiedLog = new discord_js_1.EmbedBuilder()
+                                    .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
+                                    .setColor('Blue');
+                                if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                                    channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                            });
+                        if ((!v.channelHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day * 40)))
+                            yield channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ViewChannel: false }).then(ed => {
+                                v.channelHidden = true;
+                                const VerifiedLog = new discord_js_1.EmbedBuilder()
+                                    .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
+                                    .setColor('Orange');
+                                if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                                    channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                            });
+                        if (!v.ping) {
+                            if (v.pinedAt && Math.floor(v.pinedAt + (db_1.FrogDb.verifiedsCooldown)) <= Date.now()) {
+                                if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
+                                    channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
+                                v.ping = true;
+                                const VerifiedLog = new discord_js_1.EmbedBuilder()
+                                    .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
+                                    .setColor('Green');
+                                if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                                    channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                            }
                         }
                     }
                 }
+                else {
+                    if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
+                        yield channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ViewChannel: false }).then(() => {
+                            verifiedsData.splice(verifiedsData.findIndex(f => f.id == v.id), 1);
+                            const VerifiedLog = new discord_js_1.EmbedBuilder()
+                                .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
+                                .setColor('Red');
+                            if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+                                channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
+                        });
+                }
             }
-            else {
-                if ((channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText)
-                    yield channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ViewChannel: false }).then(() => {
-                        verifiedsData.splice(verifiedsData.findIndex(f => f.id == v.id), 1);
-                        const VerifiedLog = new discord_js_1.EmbedBuilder()
-                            .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
-                            .setColor('Red');
-                        if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
-                            channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
-                    });
-            }
+            yield updateVerifiedsData(client, verifiedsData);
         }
-        yield (0, exports.updateVerifiedsData)(client, verifiedsData);
-    }
-});
+    });
+}
 exports.inspectVerifieds = inspectVerifieds;
 const messagesIndexByLanguages = {
     es: 1,
@@ -190,9 +212,9 @@ function autoChangeNicknames(members, client) {
 }
 exports.autoChangeNicknames = autoChangeNicknames;
 function handlePreviewChannels(int) {
-    var _a;
-    const inEnglish = int.locale == 'en-US';
-    const author = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.members.cache.get(int.user.id);
+    const { guild, user, locale } = int;
+    const inEnglish = locale == 'en-US';
+    const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
     const VIPPreviewEb = new discord_js_1.EmbedBuilder()
         .setTitle('👁️ ' + (inEnglish ? 'Channels preview' : 'Vista previa de canales'));
     if (this.accessRoles.some(s => author === null || author === void 0 ? void 0 : author.roles.cache.has(s))) {
@@ -211,7 +233,8 @@ function handlePreviewChannels(int) {
     }
     else {
         author === null || author === void 0 ? void 0 : author.roles.add(this.previewRol).then(() => setTimeout(() => {
-            author.roles.remove(this.previewRol);
+            if (guild === null || guild === void 0 ? void 0 : guild.members.cache.has(author.id))
+                author.roles.remove(this.previewRol);
         }, 10 * 60000));
         VIPPreviewEb
             .setDescription(inEnglish ?
@@ -291,3 +314,7 @@ function handlePresences(client) {
     }
 }
 exports.handlePresences = handlePresences;
+function transformTime(time) {
+    return Math.floor(time / 1000);
+}
+exports.transformTime = transformTime;

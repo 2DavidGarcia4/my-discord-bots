@@ -9,17 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.roleDeleteEvent = void 0;
+exports.memberUpdateEvent = void 0;
 const __1 = require("..");
 const db_1 = require("../db");
-function roleDeleteEvent(role) {
-    var _a;
+const functions_1 = require("../utils/functions");
+function memberUpdateEvent(oldMember, newMember) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { serverId, principalServerId } = db_1.FrogDb;
-        if (role.guild.id != serverId)
+        if (oldMember.guild.id != db_1.FrogDb.serverId)
             return;
-        const principalServer = __1.Frog.guilds.cache.get(principalServerId);
-        (_a = principalServer === null || principalServer === void 0 ? void 0 : principalServer.roles.cache.find(f => f.name == role.name)) === null || _a === void 0 ? void 0 : _a.delete();
+        if (oldMember.permissions.has('ManageGuild'))
+            return;
+        const oldRoles = oldMember.roles.cache;
+        const newRoles = newMember.roles.cache;
+        if (newRoles.has(db_1.FrogDb.roles.verified) && !oldRoles.has(db_1.FrogDb.roles.verified)) {
+            console.log('Rol agregado');
+            (0, functions_1.createVerified)(__1.Frog, { id: oldMember.id });
+        }
+        else if (oldRoles.has(db_1.FrogDb.roles.verified) && !newRoles.has(db_1.FrogDb.roles.verified)) {
+            console.log('Rol eliminado');
+        }
     });
 }
-exports.roleDeleteEvent = roleDeleteEvent;
+exports.memberUpdateEvent = memberUpdateEvent;
