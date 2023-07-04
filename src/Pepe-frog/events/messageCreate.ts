@@ -49,9 +49,9 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
         
         //? Verifieds system
         if(msg.member?.roles.cache.has(verified)){
-
           const verifiedsData = await getVerifiedsData(client)
           const now = Date.now()
+
           if(msg.mentions.everyone){
             const channelLog = client.channels.cache.get('1100110861244301382')
             
@@ -63,6 +63,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
               verifiedUser.pinedAt = now
               verifiedUser.lastActivityAt = now
               verifiedUser.lastMentionAt = now
+              if(!verifiedUser.channelId) verifiedUser.channelId = channelId
 
               if(verifiedUser.contentHidden) {
                 verifiedUser.contentHidden = false 
@@ -79,6 +80,7 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
                 ping: false,
                 pinedAt: now,
                 channelId: channelId,
+                verifiedAt: now,
                 contentHidden: false,
                 channelHidden: false,
                 lastMentionAt: now,
@@ -98,24 +100,24 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
             const verifiedUser = verifiedsData?.find(v=> v.id == msg.author.id)
             if(verifiedUser){
               verifiedUser.lastActivityAt = now
-              verifiedUser.lastMentionAt = now
+              if(!verifiedUser.channelId) verifiedUser.channelId = channelId
 
-              if(verifiedsData) {
-                if(verifiedUser.contentHidden) {
-                  verifiedUser.contentHidden = false
-                  channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
-                }
-                if(verifiedUser.channelHidden) {
-                  verifiedUser.channelHidden = false
-                  channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
-                }
-
-                await updateVerifiedsData(client, verifiedsData)
+              if(verifiedUser.contentHidden) {
+                verifiedUser.contentHidden = false
+                channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
               }
-
-              if(!verifiedUser.ping && verifiedUser.pinedAt < Math.floor(now - (60*60000)) && verifiedUser.lastMentionAt < now - (20*60000)){
+              if(verifiedUser.channelHidden) {
+                verifiedUser.channelHidden = false
+                channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
+              }
+              
+              if(!verifiedUser.ping && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60*60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8*60000)){
                 msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
+                verifiedUser.lastMentionAt = now
               }
+
+
+              if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
 
             }else{
               msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
@@ -124,8 +126,8 @@ export const messageCreateEvent = async (msg: Message<boolean>, client: Client) 
                 verifiedsData?.push({
                   id: msg.author.id,
                   ping: false,
-                  pinedAt: 0,
                   channelId: channelId,
+                  verifiedAt: now,
                   contentHidden: false,
                   channelHidden: false,
                   lastMentionAt: now,
