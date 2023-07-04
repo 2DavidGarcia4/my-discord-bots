@@ -1,4 +1,4 @@
-import { ActionRowBuilder, ApplicationCommandType, CacheType, ChannelType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
+import { ActionRowBuilder, ApplicationCommandType, CacheType, Client, Collection, ColorResolvable, EmbedBuilder, Interaction, RESTPostAPIApplicationCommandsJSONBody, StringSelectMenuBuilder } from "discord.js";
 import { botDB } from "../db";
 import { readdirSync } from 'fs'
 import { selectMultipleRoles, selectRole } from "../../shared/functions";

@@ -13,67 +13,67 @@ export const crearScb = new SlashCommandBuilder()
   .setDescription(`🤝 !Crea una alianza¡.`)
   .addBooleanOption(ping=> ping.setName("notificación").setDescription(`🔔 Notifica a los miembros que tienen el rol de alianza.`).setRequired(true))
   .addUserOption(us=> us.setName("aliado").setDescription("🧑 Proporciona el aliado (el miembro con el que has creado la alianza).").setRequired(false))
-)
-
-.addSubcommand(encuesta => 
-  encuesta.setName(`encuesta`)
-  .setDescription(`📊 Crea una encuesta.`)
-  .addStringOption(titulo=> 
-    titulo.setName(`titulo`)
-    .setDescription(`🔖 El titulo del embed de la encuesta.`)
-    .setRequired(true)
-  )
-  .addStringOption(tiempo=> 
-    tiempo.setName(`tiempo`)
-    .setDescription(`⏱️ El tiempo que durara la encuesta.`)
-    .setRequired(true)
-  )
-  .addStringOption(descripcion=> 
-    descripcion.setName(`descripción`)
-    .setDescription(`📄 Descripción del embed de la encuesta.`)
-    .setRequired(false)
-  )
-  .addChannelOption(canal=> 
-    canal.setName(`canal`)
-    .setDescription(`📚 Canal en el cual se enviara la encuesta.`)
-    .setRequired(false)
-  )
-  .addStringOption(opcion1=> opcion1.setName(`opción1`).setDescription(`1️⃣ Agrega la opción 1.`).setRequired(false))
-  .addStringOption(opcion2=> opcion2.setName(`opción2`).setDescription(`2️⃣ Agrega la opción 2.`).setRequired(false))
-  .addStringOption(opcion3=> opcion3.setName(`opción3`).setDescription(`3️⃣ Agrega la opción 3.`).setRequired(false))
-  .addStringOption(opcion4=> opcion4.setName(`opción4`).setDescription(`4️⃣ Agrega la opción 4.`).setRequired(false))
-  .addStringOption(opcion5=> opcion5.setName(`opción5`).setDescription(`5️⃣ Agrega la opción 5.`).setRequired(false))
-  .addStringOption(opcion6=> opcion6.setName(`opción6`).setDescription(`6️⃣ Agrega la opción 6.`).setRequired(false))
-)
-
-.addSubcommand(sorteo => 
-  sorteo.setName(`sorteo`)
-  .setDescription(`🎉 Crea un sorteo.`)
-  .addStringOption(titulo=> titulo.setName(`titulo`)
-    .setDescription(`🔖 El titulo del embed del sorteo.`)
-    .setRequired(true)
-  )
-  .addStringOption(tiempo=> 
-    tiempo.setName(`tiempo`)
-    .setDescription(`⏱️ El tiempo que durara el sorteo activo.`)
-    .setRequired(true)
-  )
-  .addIntegerOption(ganadores=> 
-    ganadores.setName(`ganadores`)
-    .setDescription(`👥 Cantidad de ganadores del sorteo.`)
-    .setRequired(true)
-  )
-  .addStringOption(descripcion=> 
-    descripcion.setName(`descripción`)
-    .setDescription(`📄 Descripción del embed del sorteo.`)
-    .setRequired(false)
-  )
-  .addChannelOption(canal=> 
-    canal.setName(`canal`)
-    .setDescription(`📚 Canal en el cual se enviara el sorteo.`)
-    .setRequired(false)
-  )
 ).toJSON()
+
+// .addSubcommand(encuesta => 
+//   encuesta.setName(`encuesta`)
+//   .setDescription(`📊 Crea una encuesta.`)
+//   .addStringOption(titulo=> 
+//     titulo.setName(`titulo`)
+//     .setDescription(`🔖 El titulo del embed de la encuesta.`)
+//     .setRequired(true)
+//   )
+//   .addStringOption(tiempo=> 
+//     tiempo.setName(`tiempo`)
+//     .setDescription(`⏱️ El tiempo que durara la encuesta.`)
+//     .setRequired(true)
+//   )
+//   .addStringOption(descripcion=> 
+//     descripcion.setName(`descripción`)
+//     .setDescription(`📄 Descripción del embed de la encuesta.`)
+//     .setRequired(false)
+//   )
+//   .addChannelOption(canal=> 
+//     canal.setName(`canal`)
+//     .setDescription(`📚 Canal en el cual se enviara la encuesta.`)
+//     .setRequired(false)
+//   )
+//   .addStringOption(opcion1=> opcion1.setName(`opción1`).setDescription(`1️⃣ Agrega la opción 1.`).setRequired(false))
+//   .addStringOption(opcion2=> opcion2.setName(`opción2`).setDescription(`2️⃣ Agrega la opción 2.`).setRequired(false))
+//   .addStringOption(opcion3=> opcion3.setName(`opción3`).setDescription(`3️⃣ Agrega la opción 3.`).setRequired(false))
+//   .addStringOption(opcion4=> opcion4.setName(`opción4`).setDescription(`4️⃣ Agrega la opción 4.`).setRequired(false))
+//   .addStringOption(opcion5=> opcion5.setName(`opción5`).setDescription(`5️⃣ Agrega la opción 5.`).setRequired(false))
+//   .addStringOption(opcion6=> opcion6.setName(`opción6`).setDescription(`6️⃣ Agrega la opción 6.`).setRequired(false))
+// )
+
+// .addSubcommand(sorteo => 
+//   sorteo.setName(`sorteo`)
+//   .setDescription(`🎉 Crea un sorteo.`)
+//   .addStringOption(titulo=> titulo.setName(`titulo`)
+//     .setDescription(`🔖 El titulo del embed del sorteo.`)
+//     .setRequired(true)
+//   )
+//   .addStringOption(tiempo=> 
+//     tiempo.setName(`tiempo`)
+//     .setDescription(`⏱️ El tiempo que durara el sorteo activo.`)
+//     .setRequired(true)
+//   )
+//   .addIntegerOption(ganadores=> 
+//     ganadores.setName(`ganadores`)
+//     .setDescription(`👥 Cantidad de ganadores del sorteo.`)
+//     .setRequired(true)
+//   )
+//   .addStringOption(descripcion=> 
+//     descripcion.setName(`descripción`)
+//     .setDescription(`📄 Descripción del embed del sorteo.`)
+//     .setRequired(false)
+//   )
+//   .addChannelOption(canal=> 
+//     canal.setName(`canal`)
+//     .setDescription(`📚 Canal en el cual se enviara el sorteo.`)
+//     .setRequired(false)
+//   )
+// ).toJSON()
 
 
 export const crearSlashCommand = async (int: ChatInputCommandInteraction<CacheType>, client: Client) => {

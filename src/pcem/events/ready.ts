@@ -1,5 +1,5 @@
 import ms from "ms"
-import { ActivitiesOptions, ActivityType, ChannelType, Client, EmbedBuilder, PermissionFlagsBits } from "discord.js"
+import { ActivitiesOptions, ActivityType, ApplicationCommandOptionData, ChannelType, Client, EmbedBuilder } from "discord.js"
 import { rafflesModel, surveysModel, carcelModel } from "../models"
 import { botDB } from "../db"
 import { svInteractionCommands, interactionCommands } from "./interaction"
@@ -33,34 +33,34 @@ export const readyEvent = async (client: Client) => {
   })
 
   //? load raffles model
-  let dataSor = await rafflesModel.findById(botDB.serverId), msgsSorteos = 0
-  if (dataSor && dataSor.raffles.length) {
-    for (let s of dataSor.raffles) {
-      let canal = servidor?.channels.cache.get(s.channelId)
-      if (canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)) await canal.messages.fetch(s.id).then(ts => {
-        msgsSorteos++
-      }).catch(err => {
-        console.log("mensaje de sorteo no encontrado.", err)
-      })
-    }
-    console.log(msgsSorteos == 0 ? "No hay sorteos que cargar." : `Se han cargado ${msgsSorteos} sorteos.`)
-  }
+  // let dataSor = await rafflesModel.findById(botDB.serverId), msgsSorteos = 0
+  // if (dataSor && dataSor.raffles.length) {
+  //   for (let s of dataSor.raffles) {
+  //     let canal = servidor?.channels.cache.get(s.channelId)
+  //     if (canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)) await canal.messages.fetch(s.id).then(ts => {
+  //       msgsSorteos++
+  //     }).catch(err => {
+  //       console.log("mensaje de sorteo no encontrado.", err)
+  //     })
+  //   }
+  //   console.log(msgsSorteos == 0 ? "No hay sorteos que cargar." : `Se han cargado ${msgsSorteos} sorteos.`)
+  // }
 
   //? Load surveys model
-  let dataEnc = await surveysModel.findById(botDB.serverId), msgsEncuestas = 0
-  if (dataEnc && dataEnc.surveys.length) {
-    for (let e of dataEnc.surveys) {
-      let canal = servidor?.channels.cache.get(e.channelId)
-      if (canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)) {
-        await canal.messages.fetch(e.id).then(ts => {
-          msgsEncuestas++
-        }).catch(err => {
-          console.log("mensaje de encuesta no encontrado.", err)
-        })
-      }
-    }
-    console.log(msgsEncuestas == 0 ? "No hay encuestas que cargar." : `Se han cargado ${msgsEncuestas} encuestas.`)
-  }
+  // let dataEnc = await surveysModel.findById(botDB.serverId), msgsEncuestas = 0
+  // if (dataEnc && dataEnc.surveys.length) {
+  //   for (let e of dataEnc.surveys) {
+  //     let canal = servidor?.channels.cache.get(e.channelId)
+  //     if (canal && (canal.type == ChannelType.GuildText || canal.type == ChannelType.GuildAnnouncement)) {
+  //       await canal.messages.fetch(e.id).then(ts => {
+  //         msgsEncuestas++
+  //       }).catch(err => {
+  //         console.log("mensaje de encuesta no encontrado.", err)
+  //       })
+  //     }
+  //   }
+  //   console.log(msgsEncuestas == 0 ? "No hay encuestas que cargar." : `Se han cargado ${msgsEncuestas} encuestas.`)
+  // }
 
   function presencias() {
     const estadosDia: ActivitiesOptions[] = [
@@ -199,7 +199,6 @@ export const readyEvent = async (client: Client) => {
       })
     }
   }
-  vips()
 
   async function sorteos() {
     const dataSor = await rafflesModel.findById(botDB.serverId), arraySo = dataSor?.raffles
@@ -241,7 +240,6 @@ export const readyEvent = async (client: Client) => {
       }
     }
   }
-  sorteos()
 
   async function encuestas() {
     let dataEnc = await surveysModel.findById(botDB.serverId), arrayEn = dataEnc?.surveys
@@ -284,7 +282,6 @@ export const readyEvent = async (client: Client) => {
       }
     }
   }
-  encuestas()
 
   function mensajesTemporales() {
     const canales = ["826205120173310032", "823639152922460170", "828300239488024587"]
@@ -300,14 +297,11 @@ export const readyEvent = async (client: Client) => {
 
   setInterval(async () => {
     presencias()
-    sorteos()
-    encuestas()
   }, 60 * 60000)
 
   setInterval(async () => {
     estadisticas()
     carcel()
-    vips()
   }, 30 * 60000)
 
 
@@ -333,14 +327,14 @@ export const readyEvent = async (client: Client) => {
   // console.log((await servidor?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
   // console.log((await client.application?.commands.fetch())?.map(m=> ({id: m.id, name: m.name})))
 
-  // const command = svInteractionCommands.get('clasificaciones')
+  // const command = svInteractionCommands.get('crear')?.struct.options as ApplicationCommandOptionData[] | undefined
 
-  // ;(await servidor?.commands.fetch('964578653369409556', {force: true}))?.edit({options: command1?.options}).then(c=> console.log('Comando actualizado'))
-  // ;(await servidor?.commands.fetch('961759189917646948', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
+  // ;(await servidor?.commands.fetch('971218630631129168', {force: true}))?.edit({options: command}).then(c=> console.log('Comando actualizado'))
+  // ;(await servidor?.commands.fetch('974763995837894687', {force: true}))?.delete().then(c=> console.log(`Comando ${c.name} eliminado`))
   
   //! Public
   // const command = interactionCommands.get('set')
   
   // ;(await client.application?.commands.fetch('1076941760753840200', {force: true}))?.edit({options: command?.struct.options, defaultMemberPermissions: PermissionFlagsBits.ManageGuild}).then(c=> console.log(`Comando publico ${c.name} actualizado`))
-  // ;(await client.application?.commands.fetch('1075843451582697513', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
+  // ;(await client.application?.commands.fetch('1076941760753840200', {force: true}))?.delete().then(c=> console.log(`Comando publico ${c.name} eliminado`))
 }
