@@ -5,6 +5,7 @@ import { modDb } from ".."
 export function Moderation(msg: Message<boolean>) {
   const { guildId } = msg
   
+  if(msg.author.bot) return
   if(guildId != FrogDb.serverId) return
 
   const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == '1053401639454773338')
