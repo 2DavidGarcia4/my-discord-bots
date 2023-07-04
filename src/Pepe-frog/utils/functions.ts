@@ -36,7 +36,7 @@ export const setGuildStatus = (client: Client) => {
 
 //? Verifieds data
 const verifiedsChanneId = '1083064332260212768', verifiedsMessageId = '1083069070896812154'
-export const getVerifiedsData = async (client: Client): Promise<VerifiedsData[] | undefined> => {
+export async function getVerifiedsData(client: Client): Promise<VerifiedsData[] | undefined> {
   const channelDb = client.channels.cache.get(verifiedsChanneId)
   if(channelDb?.isTextBased()) {
     const message = (await channelDb.messages.fetch(verifiedsMessageId)).content
@@ -45,7 +45,7 @@ export const getVerifiedsData = async (client: Client): Promise<VerifiedsData[] 
   }
 }
 
-export const updateVerifiedsData = async (client: Client, newData: VerifiedsData[]) => {
+export async function updateVerifiedsData(client: Client, newData: VerifiedsData[]) {
   const channelDb = client.channels.cache.get(verifiedsChanneId)
   if(channelDb?.isTextBased()) {
     const newDataStr = JSON.stringify(newData)
@@ -54,7 +54,24 @@ export const updateVerifiedsData = async (client: Client, newData: VerifiedsData
   }
 }
 
-export const inspectVerifieds = async (client: Client) => {
+export async function createVerified(client: Client, newVerified: Pick<VerifiedsData, 'id'> & {
+  channelId?: string
+}) {
+  const verifiedsData = await getVerifiedsData(client)
+
+  if(verifiedsData){
+    verifiedsData.push({
+      id: newVerified.id,
+      ping: true,
+      channelId: newVerified.channelId || '',
+      verifiedAt: Date.now(),
+      channelHidden: false,
+      contentHidden: false,
+    })
+  }
+}
+
+export async function inspectVerifieds(client: Client) {
   const verifiedsData = await getVerifiedsData(client)
   const server = client.guilds.cache.get(FrogDb.serverId)
   const channelLog = client.channels.cache.get('1100110861244301382')
@@ -67,7 +84,7 @@ export const inspectVerifieds = async (client: Client) => {
 
       if(verified){
         if(channel?.type == ChannelType.GuildText) {
-          if((!v.contentHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
+          if((!v.contentHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
             v.contentHidden = true
       
             
@@ -77,7 +94,7 @@ export const inspectVerifieds = async (client: Client) => {
             if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
           })
       
-          if((!v.channelHidden) && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(ed=> {
+          if((!v.channelHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(ed=> {
             v.channelHidden = true
             
             const VerifiedLog = new EmbedBuilder()
@@ -87,7 +104,7 @@ export const inspectVerifieds = async (client: Client) => {
           })
         
           if(!v.ping) {
-            if(Math.floor(v.pinedAt + (FrogDb.verifiedsCooldown)) <= Date.now()){
+            if(v.pinedAt && Math.floor(v.pinedAt + (FrogDb.verifiedsCooldown)) <= Date.now()){
               if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
               v.ping = true
         
@@ -206,8 +223,9 @@ export function handlePreviewChannels(this: {
   accessRoles: string[]
   previewRol: string
 }, int: ButtonInteraction<CacheType>) {
-  const inEnglish = int.locale == 'en-US'
-  const author = int.guild?.members.cache.get(int.user.id)
+  const { guild, user, locale } = int
+  const inEnglish = locale == 'en-US'
+  const author = guild?.members.cache.get(user.id)
 
   const VIPPreviewEb = new EmbedBuilder()
   .setTitle('👁️ '+(inEnglish ? 'Channels preview' : 'Vista previa de canales'))
@@ -230,7 +248,7 @@ export function handlePreviewChannels(this: {
 
   }else{
     author?.roles.add(this.previewRol).then(()=> setTimeout(()=> {
-      author.roles.remove(this.previewRol)
+      if(guild?.members.cache.has(author.id)) author.roles.remove(this.previewRol)
     }, 10*60000))
 
     VIPPreviewEb
@@ -314,4 +332,8 @@ export function handlePresences(client: Client) {
     }
   }
 
+}
+
+export function transformTime(time: number) {
+  return Math.floor(time / 1000)
 }
