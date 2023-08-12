@@ -1,13 +1,18 @@
-import { ChannelType, EmbedBuilder, Message, type PartialMessage } from "discord.js";
-import { Frog as client } from "..";
-import { FrogDb } from "../db";
+import { ChannelType, EmbedBuilder, Message, type PartialMessage } from 'discord.js'
+import { FrogDb } from '../db'
+import { getSnackData } from '../lib/notion'
+import { PepeFrogClient } from '../client'
 
-export async function messageUpdateEvent(oldMsg: Message<boolean> | PartialMessage, newMsg: Message<boolean> | PartialMessage) {
+export const name = 'messageUpdate'
+
+export async function execute(oldMsg: Message<boolean> | PartialMessage, newMsg: Message<boolean> | PartialMessage, client: PepeFrogClient) {
   const { serverId } = FrogDb
   if(oldMsg.guildId != serverId || oldMsg.author?.bot) return
 
+  const SnackData = await getSnackData()
+  if(oldMsg.channelId == SnackData.channels.logs) return
   if(oldMsg.content && oldMsg.content != newMsg.content){
-    const channelLog = client.channels.cache.get('1053389522253127720')
+    const channelLog = client.channels.cache.get(SnackData.channels.logs)
 
     const MessageUpdateEb = new EmbedBuilder()
     .setAuthor({name: oldMsg.member?.nickname || oldMsg.author?.username || 'undefined', iconURL: oldMsg.author?.displayAvatarURL()})

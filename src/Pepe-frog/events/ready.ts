@@ -1,24 +1,28 @@
 import { ChannelType, EmbedBuilder } from "discord.js";
-import { Frog as client } from "..";
-import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences, getVerifiedsData, updateVerifiedsData } from "../utils/functions";
+import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences, getVerifiedsData, updateVerifiedsData } from "../lib/services";
 import { FrogDb } from "../db";
 import { CommandBodys } from "../commands";
 import { defaultReady } from "../../shared/functions";
+import { getSnackData } from "../lib/notion";
+import { PepeFrogClient } from "../client";
 
-// import { registerFont, createCanvas, loadImage } from "canvas";
-// registerFont("tipo.otf", {family: 'MADE TOMMY'})
+export const once = true
+export const name = 'ready'
 
-export async function readyEvent() {
-  const { serverId, principalServerId } = FrogDb
-  defaultReady(client, '1053425705385467904', 'DarkGold')
+export async function execute(client: PepeFrogClient) {
+  const { serverId, backupServerId } = FrogDb
+  const SnackData = await getSnackData()
+  console.log(SnackData)
+  defaultReady(client, SnackData.channels.ready, 'DarkGold')
+
   
-  const principalServer = client.guilds.cache.get(principalServerId)
+  const backupServer = client.guilds.cache.get(backupServerId)
   const server = client.guilds.cache.get(serverId)
 
-  const suggestionsChannel = server?.channels.cache.get('1053401642915082392')
+  const suggestionsChannel = server?.channels.cache.get(SnackData.channels.suggestions)
   if(suggestionsChannel?.type == ChannelType.GuildText) suggestionsChannel.messages.fetch({limit: 100})
 
-  ;[principalServer, server].forEach(async sv=> {
+  ;[backupServer, server].forEach(async sv=> {
     CommandBodys.forEach(async cmd=> {
       if(!(await sv?.commands.fetch())?.some(s=> s.name == cmd.name)){
         sv?.commands.create(cmd).then(c=> console.log(`➕ Se creo el comando ${c.name} en el servidor ${sv.name}`))
@@ -28,7 +32,7 @@ export async function readyEvent() {
 
   handlePresences(client)
 
-  const statsChannel = server?.channels.cache.get('1053389468993851472')
+  const statsChannel = server?.channels.cache.get(SnackData.channels.stats)
   const sendStats = async () => {
     if(statsChannel?.type != ChannelType.GuildText) return
     const { topic } = statsChannel, nowTime = Date.now()

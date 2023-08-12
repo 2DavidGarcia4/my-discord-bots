@@ -1,23 +1,23 @@
-import { ChannelType, EmbedBuilder, Message } from "discord.js";
-import { Frog as client } from "..";
-import { FrogDb } from "../db";
+import { ChannelType, EmbedBuilder, Message } from 'discord.js'
+import { FrogDb } from '../db'
 
-import { evalCommand } from "../commands/text/eval";
-import { rolesCommand } from "../commands/text/roles";
-import { rulesCommand } from "../commands/text/rules";
-import { girlsCommand } from "../commands/text/girls";
-import { infoCommand } from "../commands/text/info";
-import { vipCommand } from "../commands/text/vip";
-import { packsCommand } from "../commands/text/packs";
-import { getVerifiedsData, updateVerifiedsData } from "../utils/functions";
-import { Announcements, Moderation, Reactions } from "../components";
+// import { evalCommand } from '../commands/text/eval'
+// import { rolesCommand } from '../commands/text/roles'
+// import { rulesCommand } from '../commands/text/rules'
+// import { girlsCommand } from '../commands/text/girls'
+// import { infoCommand } from '../commands/text/info'
+// import { vipCommand } from '../commands/text/vip'
+// import { packsCommand } from '../commands/text/packs'
+import { getVerifiedsData, updateVerifiedsData } from '../lib/services'
+import { Announcements, Moderation, Reactions } from '../components'
+import { getSnackData } from '../lib/notion'
+import { PepeFrogClient } from '../client'
 
-export async function messageCreateEvent(msg: Message<boolean>) {
+export const name = 'messageCreate'
+
+export async function execute(msg: Message<boolean>, client: PepeFrogClient) {
   const { channel, channelId, guildId } = msg
-  const { prefix, serverId, principalServerId, owners, verifiedsCooldown, roles: { 
-    verified, 
-    verifiedSpeech,
-  } } = FrogDb
+  const { prefix, serverId, backupServerId, owners, verifiedsCooldown} = FrogDb
 
   //* Components
   Announcements(msg, client)
@@ -26,7 +26,7 @@ export async function messageCreateEvent(msg: Message<boolean>) {
 
   if(msg.author.bot) return
 
-  if(guildId == principalServerId){
+  if(guildId == backupServerId){
     if(channel.type != ChannelType.GuildText) return
     const { parentId } = channel
     if(['1028793497295261828', '1054489737097908364', '1061436780500496394', '1112154577811275776'].some(s=> s==parentId)){
@@ -35,6 +35,7 @@ export async function messageCreateEvent(msg: Message<boolean>) {
     }
   }
 
+  const SnackeData = await getSnackData()
   
   if(guildId == serverId){
     if(!msg.channel.isTextBased()) return
@@ -43,14 +44,14 @@ export async function messageCreateEvent(msg: Message<boolean>) {
     if(channel.type == ChannelType.GuildText){
       //! Backup files
       if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
-        const principalServer = client.guilds.cache.get(principalServerId), channelName = channel.name, backupChannel = principalServer?.channels.cache.find(f=>  f.name == channelName) 
+        const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f=>  f.name == channelName) 
         if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
       }
 
       if(channel.parentId == '1053401639454773338' && channel.nsfw){
         
         //? Verifieds system
-        if(msg.member?.roles.cache.has(verified)){
+        if(msg.member?.roles.cache.has(SnackeData.roles.verified)){
           const verifiedsData = await getVerifiedsData(client)
           const now = Date.now()
 
@@ -114,7 +115,7 @@ export async function messageCreateEvent(msg: Message<boolean>) {
               }
               
               if(!verifiedUser.ping && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60*60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8*60000)){
-                msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
+                msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})
                 verifiedUser.lastMentionAt = now
               }
 
@@ -122,7 +123,7 @@ export async function messageCreateEvent(msg: Message<boolean>) {
               if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
 
             }else{
-              msg.reply({allowedMentions: { repliedUser: false, roles: [verifiedSpeech] }, content: `**<@&${verifiedSpeech}>**`})
+              msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})
               
               if(!msg.member.permissions.has('Administrator')){
                 verifiedsData?.push({
@@ -146,20 +147,32 @@ export async function messageCreateEvent(msg: Message<boolean>) {
   if(msg.author.bot || !msg.content.toLowerCase().startsWith(prefix)) return
   const args = msg.content.slice(prefix.length).trim().split(/ +/g)
   const command = args.shift()?.toLowerCase()
+  const commandName = args.shift()?.toLowerCase()
 
-  if(owners.some(s=> s == msg.author.id)){
-    if(command == 'eval') evalCommand(msg, client, args.join(' '))
-
-    if(command == 'rules') rulesCommand(msg, client)
-
-    if(command == 'roles') rolesCommand(msg)
-
-    if(command == 'girls') girlsCommand(msg, client)
-
-    if(command == 'info') infoCommand(msg)
-
-    if(command == 'vip') vipCommand(msg, client)
-
-    if(command == 'packs') packsCommand(msg, client)
+  if(commandName){
+    const command = client.textCommands.get(commandName) || client.textCommands.find(f=> f.aliases.some(s=> s == commandName))
+    
+    if(command){
+      if(command.users){
+        if(command.users.some(s=> s == msg.author.id)) command.execute(msg, args, client)
+      
+      }else command.execute(msg, args, client)
+    }
   }
+
+  // if(owners.some(s=> s == msg.author.id)){
+  //   if(command == 'eval') evalCommand(msg, client, args.join(' '))
+
+  //   if(command == 'rules') rulesCommand(msg, client)
+
+  //   if(command == 'roles') rolesCommand(msg)
+
+  //   if(command == 'girls') girlsCommand(msg, client)
+
+  //   if(command == 'info') infoCommand(msg)
+
+  //   if(command == 'vip') vipCommand(msg, client)
+
+  //   if(command == 'packs') packsCommand(msg, client)
+  // }
 }

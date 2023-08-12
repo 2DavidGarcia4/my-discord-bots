@@ -1,7 +1,9 @@
-import { MessageReaction, type PartialMessageReaction, type PartialUser, User } from "discord.js";
-import { FrogDb } from "../db";
+import { MessageReaction, type PartialMessageReaction, type PartialUser, User } from 'discord.js'
+import { FrogDb } from '../db'
 
-export async function reactionAddEvent(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) {
+export const name = 'messageReactionAdd'
+
+export async function execute(reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser) {
   const { serverId } = FrogDb
   const likeId = '1059641676798377995', dislikeId = '1059641726387626015'
   if(reaction.message.guildId != serverId || user.bot) return

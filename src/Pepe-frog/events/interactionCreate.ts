@@ -1,13 +1,15 @@
-import { ActionRowBuilder, ApplicationCommandType, type CacheType, EmbedBuilder, type Interaction, StringSelectMenuBuilder } from "discord.js";
-import { Frog as client } from "..";
+import { ActionRowBuilder, ApplicationCommandType, type CacheType, EmbedBuilder, type Interaction, StringSelectMenuBuilder } from 'discord.js'
 
-import { buttonInfoInteractions } from "../db";
-import { selectMultipleRoles, selectRole } from "../../shared/functions";
-import { handlePreviewChannels } from "../utils/functions";
-import { SlashCommands } from "../commands";
-import { ContextMenuCommands } from "../commands";
+import { buttonInfoInteractions } from '../db'
+import { selectMultipleRoles, selectRole } from '../../shared/functions'
+import { handlePreviewChannels } from '../lib/services'
+import { SlashCommands } from '../commands'
+import { ContextMenuCommands } from '../commands'
+import { PepeFrogClient } from '../client'
 
-export async function interactionCreateEvent(int: Interaction<CacheType>) {
+export const name = 'interactionCreate'
+
+export async function execute(int: Interaction<CacheType>, client: PepeFrogClient) {
   
   if(int.isChatInputCommand()){
     const { commandName } = int
