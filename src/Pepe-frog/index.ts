@@ -1,62 +1,72 @@
-import { Client } from "discord.js";
+import { CacheType, ChatInputCommandInteraction, Client, Message, MessageContextMenuCommandInteraction, RESTPostAPIChatInputApplicationCommandsJSONBody, RESTPostAPIContextMenuApplicationCommandsJSONBody, UserContextMenuCommandInteraction } from "discord.js";
 import { pepeFrog } from "../config";
 import { ModDb } from "./types";
 
 //! Events
-import { readyEvent } from "./events/ready";
-import { interactionCreateEvent } from "./events/interactionCreate";
-import { messageCreateEvent } from "./events/messageCreate";
-import { roleCreateEvent } from "./events/roleCreate";
-import { roleUpdateEvent } from "./events/roleUpdate";
-import { roleDeleteEvent } from "./events/roleDelete";
-import { channelDeleteEvent } from "./events/channelDelete";
-import { channelCreateEvent } from "./events/channelCreate";
-import { channelUpdateEvetn } from "./events/channelUpdate";
-import { memberAddEvent } from "./events/memberAdd";
-import { memberRemoveEvent } from "./events/memberRemove";
-import { messageUpdateEvent } from "./events/messageUpdate";
-import { messageDeleteEvent } from "./events/messageDelete";
-import { reactionAddEvent } from "./events/reactionAdd";
-import { memberUpdateEvent } from "./events/memberUpdate";
+// import { readyEvent } from "./events/ready";
+// import { interactionCreateEvent } from "./events/interactionCreate";
+// import { messageCreateEvent } from "./events/messageCreate";
+// import { roleCreateEvent } from "./events/roleCreate";
+// import { roleUpdateEvent } from "./events/roleUpdate";
+// import { roleDeleteEvent } from "./events/roleDelete";
+// import { channelDeleteEvent } from "./events/channelDelete";
+// import { channelCreateEvent } from "./events/channelCreate";
+// import { channelUpdateEvetn } from "./events/channelUpdate";
+// import { memberAddEvent } from "./events/memberAdd";
+// import { memberRemoveEvent } from "./events/memberRemove";
+// import { messageUpdateEvent } from "./events/messageUpdate";
+// import { messageDeleteEvent } from "./events/messageDelete";
+// import { reactionAddEvent } from "./events/reactionAdd";
+// import { memberUpdateEvent } from "./events/memberUpdate";
+import { PepeFrogClient } from "./client";
 
 
 export const modDb: ModDb[] = []
 export const exemptMessagesIds: string[] = []
 
-export const Frog = new Client({intents: 131071})
+//? Slash commands
+export abstract class SlashCommand {
+  public readonly struct: RESTPostAPIChatInputApplicationCommandsJSONBody;
+  public readonly description?: string
 
-Frog.on('ready', readyEvent)
+  constructor (
+    struct: RESTPostAPIChatInputApplicationCommandsJSONBody,
+    description?: string 
+  ){
+    this.struct = struct
+    this.description = description
+  }
 
-Frog.on('messageCreate', messageCreateEvent)
+  public abstract execute(interaction: ChatInputCommandInteraction<CacheType>, client?: PepeFrogClient): Promise<any>
+}
 
-Frog.on('messageUpdate', messageUpdateEvent)
+//? Context commands
+export abstract class ContextCommand {
+  public readonly struct: RESTPostAPIContextMenuApplicationCommandsJSONBody;
 
-Frog.on('messageDelete', messageDeleteEvent)
+  constructor (
+    struct: RESTPostAPIContextMenuApplicationCommandsJSONBody
+  ){
+    this.struct = struct
+  }
 
-Frog.on('messageReactionAdd', reactionAddEvent)
+  public abstract execute(interaction: UserContextMenuCommandInteraction<CacheType> | MessageContextMenuCommandInteraction<CacheType>, client?: PepeFrogClient): Promise<any>
+}
 
-Frog.on('interactionCreate', interactionCreateEvent)
+//? Text commands
+export abstract class TextCommand {
+  public readonly name: string;
+  public readonly aliases?: string[];
+  public readonly users?: string[]
 
-Frog.on('roleCreate', roleCreateEvent)
+  constructor(options: {name: string, aliases: string[], users?: string[]}) {
+    this.name = options.name;
+    this.aliases = options.aliases;
+    this.users = options.users
+  }
 
-Frog.on('roleUpdate', roleUpdateEvent)
+  public abstract execute(message: Message<boolean>, args?: string[], client?: PepeFrogClient): Promise<any>
+}
 
-Frog.on('roleDelete', roleDeleteEvent)
-
-Frog.on('guildMemberUpdate', memberUpdateEvent)
-
-Frog.on('channelCreate', channelCreateEvent)
-
-Frog.on('channelUpdate', channelUpdateEvetn)
-
-Frog.on('channelDelete', channelDeleteEvent)
-
-Frog.on('channelPinsUpdate', (channel) => {
-  console.log('holaa')
-})
-
-Frog.on('guildMemberAdd', memberAddEvent)
-
-Frog.on('guildMemberRemove', memberRemoveEvent)
-
-Frog.login(pepeFrog)
+//? Start
+new PepeFrogClient().start(pepeFrog)
