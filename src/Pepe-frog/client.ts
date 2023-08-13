@@ -1,9 +1,7 @@
-import { Client, type ClientEvents, Collection } from 'discord.js'
+import { Client, Collection } from 'discord.js'
 import { FrogDb } from './db'
 import { readdirSync } from 'fs'
 import { ContextCommand, SlashCommand, TextCommand } from '.'
-
-export type EventName = keyof ClientEvents
 
 export class PepeFrogClient extends Client {
   public data = FrogDb  

@@ -210,7 +210,7 @@ export function autoChangeNicknames(members: GuildMember[], client: Client) {
     .setDescription(`**${updatedMembers}**`)
     .setColor('Blue')
 
-    const channelLog = client.channels.cache.get('1053389522253127720')
+    const channelLog = client.channels.cache.get('1139600309786775662')
     if(channelLog?.isTextBased()) channelLog.send({embeds: [UpdatedMembersEb]})
   }
 }
