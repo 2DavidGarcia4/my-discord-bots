@@ -4,4 +4,5 @@ config()
 export const tokenBot = process.env.TOKEN_BOT, 
   connectMongo = process.env.CONNECT_MONGO, 
   pepeFrog = process.env.PEPE_FROG, 
-  isDevelopment = process.env.DEVELOPMENT
+  isDevelopment = process.env.DEVELOPMENT,
+  notionToken = process.env.NOTION_TOKEN
