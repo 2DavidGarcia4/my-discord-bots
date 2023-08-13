@@ -1,5 +1,5 @@
-import { ActionRowBuilder, ActivityType, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message } from "discord.js"
-import type { ActivitiesOptions } from "discord.js"
+import { ActionRowBuilder, ActivityType, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message, WebhookClient } from "discord.js"
+import type { ActivitiesOptions, TextChannel } from "discord.js"
 import { FrogDb } from "../db"
 import { VerifiedsData } from "../types"
 import { isDevelopment } from "../../config"
@@ -11,27 +11,23 @@ const getCategoryChannels = (id: string, server: Guild | undefined) => {
 export const setGuildStatus = (client: Client) => {
   const snackServer = client.guilds.cache.get(FrogDb.serverId)
   const online = snackServer?.members.cache.filter(f=> f.presence?.status == 'dnd' || f.presence?.status == 'idle' || f.presence?.status == 'online' || f.presence?.status == 'invisible').size
-  const allMembers = snackServer?.memberCount, nsfwChannels = getCategoryChannels('1053401638494289931', snackServer)
-  const vipChannels = getCategoryChannels('1054485238413266965', snackServer)
-  const packChannels = getCategoryChannels('1061436779707773070', snackServer)
+  const allMembers = snackServer?.memberCount, nsfwChannels = getCategoryChannels('1139599817568432292', snackServer)
+  const vipChannels = getCategoryChannels('1139599819942400010', snackServer)
 
-  const onlineName = `🟢│en linea: ${online?.toLocaleString()}`, 
-    membersName = `👥│todos: ${allMembers?.toLocaleString()}`, 
+  const onlineName = `🟢│En linea: ${online?.toLocaleString()}`, 
+    membersName = `👥│Todos: ${allMembers?.toLocaleString()}`, 
     nsfwName = `🔞│NSFW canales: ${nsfwChannels}`,
-    vipName = `🌟│VIP canales: ${vipChannels}`,
-    packName = `📂│Packs canales: ${packChannels}`
+    vipName = `🌟│VIP canales: ${vipChannels}`
 
-  const onlineChanel = snackServer?.channels.cache.get('1053426402361352269')
-  const membersChanel = snackServer?.channels.cache.get('1053426454538493993')
-  const nsfwChanel = snackServer?.channels.cache.get('1053426479607849112')
-  const vipCahnnel = snackServer?.channels.cache.get('1072305855447441428')
-  const packChannel = snackServer?.channels.cache.get('1072325996314902660')
+  const onlineChanel = snackServer?.channels.cache.get('1140009074851852328')
+  const membersChanel = snackServer?.channels.cache.get('1140009240195518534')
+  const nsfwChanel = snackServer?.channels.cache.get('1140009285988913322')
+  const vipCahnnel = snackServer?.channels.cache.get('1139600255206293545')
    
   if(onlineChanel?.name != onlineName) onlineChanel?.edit({name: onlineName})
   if(membersChanel?.name != membersName) membersChanel?.edit({name: membersName})
   if(nsfwChanel?.name != nsfwName) nsfwChanel?.edit({name: nsfwName})
   if(vipCahnnel?.name != nsfwName) vipCahnnel?.edit({name: vipName})
-  if(packChannel?.name != nsfwName) packChannel?.edit({name: packName})
 }
 
 //? Verifieds data
@@ -336,4 +332,17 @@ export function handlePresences(client: Client) {
 
 export function transformTime(time: number) {
   return Math.floor(time / 1000)
+}
+
+export async function getWebhookClientByChannel(channel: TextChannel) {
+  const webhooks = await channel.fetchWebhooks() 
+  const firstWebhook = webhooks.first()
+
+  if(firstWebhook){
+    const { url } = firstWebhook
+    return new WebhookClient({url})
+  }else {
+    const { url } = await channel.createWebhook({name: 'snack'})
+    return new WebhookClient({url})
+  }
 }
