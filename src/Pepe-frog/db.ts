@@ -1,24 +1,26 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, Client, EmbedBuilder } from "discord.js";
 import { isDevelopment } from "../config";
-import { getInfoMessage } from "./utils/functions";
+import { getInfoMessage } from "./lib/services";
 
 export const FrogDb = {
-  me: {
-    id: '942860991698436156'
-  },
+  id: '1139577382068551721',  
+  serverIconUrl: '',
   prefix: isDevelopment ? 'f!' : 's!',
-  serverId: '1053382837857943662',
-  principalServerId: '1028793496674500659',
+  serverId: '1139574510790639618',
   joins: 0,
-  verifiedsCooldown: 10*24*60*60000,
   leaves: 0,
-  roles: {
-    verified: '1057720387464593478',
-    verifiedSpeech: '1083060304054849676',
-    spamer: '1053430826823594106',
-    content: '1053411182935023657'
-  },
-  owners: ['853063286320922634', '551146834941313026', '717420870267830382', '853000435098320907']
+  owners: ['853063286320922634', '551146834941313026', '717420870267830382', '853000435098320907'],
+  backupServerId: '1139614790780715108',
+  publishingServerId: '1139617789603221676',
+  verifiedsCooldown: 10*24*60*60000,
+  emojisIds: {
+    more: '1140123888307679262',
+    like: '1140139044928491612',
+    dislike: '1140138914569523250',
+    beatingHeart: '1140140170516111442',
+    hearts: '1140140262073565274',
+    veryHot: '1140140336484732928'
+  }
 }
 
 export const SANCTIONS = [
