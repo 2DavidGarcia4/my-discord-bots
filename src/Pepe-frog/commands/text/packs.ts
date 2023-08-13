@@ -1,23 +1,34 @@
-import { Client, Message, ButtonBuilder, ButtonStyle } from "discord.js";
-import { defaultInfoMessageBody, getInfoMessage } from "../../utils/functions";
+import { ButtonBuilder, ButtonStyle } from "discord.js";
+import { defaultInfoMessageBody, getInfoMessage } from "../../lib/services";
+import { TextCommand, type MessageProp } from "../..";
+import { PepeFrogClient } from "../../client";
 
-export const packsCommand = async (msg: Message<boolean>, client: Client) => {
-  const description = await getInfoMessage({
-    client,
-    channelId: '1120917353862017134',
-    language: 'es'
-  })+''
+export default class PacksCommand extends TextCommand {
+  constructor() {
+    super({name: 'packs'})
+  }
 
-  defaultInfoMessageBody(msg, {
-    title: `📁 Acceso packs`,
-    description,
-    name: 'packs',
-    extraButtons: [
-      new ButtonBuilder()
-      .setCustomId('packs-btn')
-      .setLabel('Vista previa de canales')
-      .setEmoji('👁️')
-      .setStyle(ButtonStyle.Secondary)
-    ]
-  })
-}
+  public async execute({message: msg, client}: {
+    message: MessageProp
+    client: PepeFrogClient
+  }) {
+    const description = await getInfoMessage({
+      client,
+      channelId: '1120917353862017134',
+      language: 'es'
+    })+''
+  
+    defaultInfoMessageBody(msg, {
+      title: `📁 Acceso packs`,
+      description,
+      name: 'packs',
+      extraButtons: [
+        new ButtonBuilder()
+        .setCustomId('packs-btn')
+        .setLabel('Vista previa de canales')
+        .setEmoji('👁️')
+        .setStyle(ButtonStyle.Secondary)
+      ]
+    })
+  }
+} 

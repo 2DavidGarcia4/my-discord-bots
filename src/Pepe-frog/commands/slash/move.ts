@@ -1,5 +1,7 @@
-import { CacheType, ChannelType, ChatInputCommandInteraction, Client, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
+import { ChannelType, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { sendMessageSlash, setSlashError } from "../../../shared/functions";
+import { SlashCommand, type SlashInteraction } from "../..";
+import { FrogDb } from "../../db";
 
 const MoveScb = new SlashCommandBuilder()
 .setName('move')
@@ -49,31 +51,32 @@ const MoveScb = new SlashCommandBuilder()
   )
 ).toJSON()
 
-async function moveSlashCommand(int: ChatInputCommandInteraction<CacheType>, client: Client) {
-  const { options } = int, subCommand = options.getSubcommand(true)
-
-  if(subCommand == 'file'){
-    const messageId = options.getString('id', true), channel = int.guild?.channels.cache.get(options.getChannel('channel', true).id)
-
-    if(isNaN(Number(messageId))) return setSlashError(int, 'La id del mensaje no es numérica.')
-    if(channel?.type == ChannelType.GuildText){
-      int.channel?.messages.fetch(messageId).then(async msg => {
-        if(!msg.attachments.size) return setSlashError(int, 'El mensaje no tiene archivos.')
-        
-        await int.deferReply({ephemeral: true})
-        channel.send({files: msg.attachments.map(m=> m)})
-
-        const MoveEb = new EmbedBuilder()
-        .setTitle('Files movidos')
-        .setDescription(`Los archivos de mensaje se han movido al canal ${channel}.`)
-        .setColor(int.guild?.members.me?.displayHexColor || 'White')
-        sendMessageSlash(int, {embeds: [MoveEb]})
-      })
+export default class MoveSlashCommand extends SlashCommand {
+  constructor() {
+    super(MoveScb, [FrogDb.serverId, FrogDb.backupServerId, FrogDb.publishingServerId])
+  }
+  
+  public async execute(int: SlashInteraction) {
+    const { options } = int, subCommand = options.getSubcommand(true)
+  
+    if(subCommand == 'file'){
+      const messageId = options.getString('id', true), channel = int.guild?.channels.cache.get(options.getChannel('channel', true).id)
+  
+      if(isNaN(Number(messageId))) return setSlashError(int, 'La id del mensaje no es numérica.')
+      if(channel?.type == ChannelType.GuildText){
+        int.channel?.messages.fetch(messageId).then(async msg => {
+          if(!msg.attachments.size) return setSlashError(int, 'El mensaje no tiene archivos.')
+          
+          await int.deferReply({ephemeral: true})
+          channel.send({files: msg.attachments.map(m=> m)})
+  
+          const MoveEb = new EmbedBuilder()
+          .setTitle('Files movidos')
+          .setDescription(`Los archivos de mensaje se han movido al canal ${channel}.`)
+          .setColor(int.guild?.members.me?.displayHexColor || 'White')
+          sendMessageSlash(int, {embeds: [MoveEb]})
+        })
+      }
     }
   }
-}
-
-export default {
-  Command: MoveScb,
-  run: moveSlashCommand
 }
