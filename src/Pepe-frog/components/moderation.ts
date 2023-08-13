@@ -1,14 +1,17 @@
 import { Message, EmbedBuilder } from "discord.js"
 import { FILE_EXTENSIONS, FrogDb, SANCTIONS } from "../db"
 import { modDb } from ".."
+import { getSnackData } from "../lib/notion"
 
-export function Moderation(msg: Message<boolean>) {
+export async function Moderation(msg: Message<boolean>) {
   const { guildId } = msg
   
   if(msg.author.bot) return
   if(guildId != FrogDb.serverId) return
 
-  const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == '1053401639454773338')
+  const { categories, roles } = await getSnackData()
+
+  const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == categories.verifieds)
 
   const handleModerateAction = (Embed: EmbedBuilder, timeoutReason: string) => {
     Embed.setColor('Red')
@@ -21,7 +24,7 @@ export function Moderation(msg: Message<boolean>) {
     if(member){
       member.warns++
       if(member.warns >= 3){
-        msg.member?.roles.add(FrogDb.roles.spamer)
+        msg.member?.roles.add(roles.spamer)
       }
 
       SANCTIONS.forEach(sanction=> {
@@ -114,7 +117,7 @@ export function Moderation(msg: Message<boolean>) {
       }
 
       if(member.warns == 3) {
-        msg.member?.roles.add(FrogDb.roles.spamer)
+        msg.member?.roles.add(roles.spamer)
       }
 
     }else{
