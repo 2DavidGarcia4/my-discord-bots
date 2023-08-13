@@ -1,8 +1,8 @@
-import { ChannelType, EmbedBuilder } from "discord.js";
-import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences, getVerifiedsData, updateVerifiedsData } from "../lib/services";
-import { defaultReady } from "../../shared/functions";
-import { getSnackData } from "../lib/notion";
-import { type EventName, PepeFrogClient } from "../client";
+import { ChannelType, EmbedBuilder } from 'discord.js'
+import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences } from '../lib/services'
+import { defaultReady } from '../../shared/functions'
+import { getSnackData } from '../lib/notion'
+import { type EventName, PepeFrogClient } from '../client'
 
 export const once = true
 export const name: EventName = 'ready'
@@ -15,7 +15,7 @@ export async function execute(client: PepeFrogClient) {
 
   const server = client.guilds.cache.get(serverId)
   const backupServer = client.guilds.cache.get(backupServerId)
-  const publishedServer = client.guilds.cache.get('1028793496674500659')
+  const publishedServer = client.guilds.cache.get(publishingServerId)
   const allServers = [server, backupServer, publishedServer]
   client.data.serverIconUrl = server?.iconURL() || ''
 
@@ -30,11 +30,6 @@ export async function execute(client: PepeFrogClient) {
         }
       }
     })
-  })
-
-  allServers.forEach(sv=> {
-    const comand = sv?.commands.cache.find(c=> c.name == 'verified')
-    comand?.delete().then(cm=> console.log(`Comando ${cm.name} eliminado`))
   })
 
   handlePresences(client)
