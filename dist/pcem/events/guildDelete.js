@@ -1,46 +1,37 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.guildDeleteEvent = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const utils_1 = require("../utils");
-const guildDeleteEvent = (guild, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const botData = yield (0, utils_1.getBotData)(client);
-    const usersData = yield (0, utils_1.getUsersData)(client);
+const guildDeleteEvent = async (guild, client) => {
+    const botData = await (0, utils_1.getBotData)(client);
+    const usersData = await (0, utils_1.getUsersData)(client);
     if (usersData) {
-        const user = usersData === null || usersData === void 0 ? void 0 : usersData.find(f => f.guilds.some(s => s == guild.id)), rol = '851577906828148766';
+        const user = usersData?.find(f => f.guilds.some(s => s == guild.id)), rol = '851577906828148766';
         const server = client.guilds.cache.get(db_1.botDB.serverId);
         if (user) {
             user.guilds.splice(user.guilds.indexOf(guild.id), 1);
-            const member = server === null || server === void 0 ? void 0 : server.members.cache.get(user.userId);
+            const member = server?.members.cache.get(user.userId);
             if (user.guilds.length == 0 && member) {
                 if (member.roles.cache.has(rol))
                     member.roles.remove(rol);
             }
         }
-        yield (0, utils_1.updateUsersData)(client, usersData);
+        await (0, utils_1.updateUsersData)(client, usersData);
     }
-    const owner = guild.members.cache.get(guild.ownerId), channelLog = client.channels.cache.get((botData === null || botData === void 0 ? void 0 : botData.logs.guildDelete) || '');
+    const owner = guild.members.cache.get(guild.ownerId), channelLog = client.channels.cache.get(botData?.logs.guildDelete || '');
     const guildRoles = guild.roles.cache.filter(f => !f.managed && f.id != guild.id).map(m => ({ posicion: m.position, nombre: m.name })).sort((a, b) => b.posicion - a.posicion).map(r => r.nombre).slice(0, 10).join(", ");
     const GuildDeleteEb = new discord_js_1.EmbedBuilder()
-        .setAuthor({ name: (owner === null || owner === void 0 ? void 0 : owner.user.tag) || '', iconURL: owner === null || owner === void 0 ? void 0 : owner.user.displayAvatarURL() })
+        .setAuthor({ name: owner?.user.tag || '', iconURL: owner?.user.displayAvatarURL() })
         .setThumbnail(guild.iconURL({ size: 2048 }))
         .setImage(guild.bannerURL({ size: 2048 }))
         .setTitle("➖ Kicked from a server")
         .setDescription(`${guild.name}\n${guild.description || '*No description*'}`)
-        .setFields({ name: `<:wer:920166217086537739> **Guild:**`, value: `🆔 ID: ${guild.id}\n📅 Created at <t:${Math.floor(guild.createdAt.valueOf() / 1000)}:F> *(<t:${Math.floor(guild.createdAt.valueOf() / 1000)}:R>)*`, inline: true }, { name: `👥 **Members:** ${guild.members.cache.size.toLocaleString()}`, value: `👤 Users: ${guild.members.cache.filter(fm => !fm.user.bot).size}\n🤖 Bots: ${guild.members.cache.filter(fb => fb.user.bot).size.toLocaleString()}`, inline: true }, { name: `🌈 **Roles:** ${guild.roles.cache.size}`, value: `${guildRoles || 'unkowow'}`, inline: true }, { name: `👑 **Owner:**`, value: `${owner === null || owner === void 0 ? void 0 : owner.user.tag}\n🆔 ${owner === null || owner === void 0 ? void 0 : owner.id}` })
+        .setFields({ name: `<:wer:920166217086537739> **Guild:**`, value: `🆔 ID: ${guild.id}\n📅 Created at <t:${Math.floor(guild.createdAt.valueOf() / 1000)}:F> *(<t:${Math.floor(guild.createdAt.valueOf() / 1000)}:R>)*`, inline: true }, { name: `👥 **Members:** ${guild.members.cache.size.toLocaleString()}`, value: `👤 Users: ${guild.members.cache.filter(fm => !fm.user.bot).size}\n🤖 Bots: ${guild.members.cache.filter(fb => fb.user.bot).size.toLocaleString()}`, inline: true }, { name: `🌈 **Roles:** ${guild.roles.cache.size}`, value: `${guildRoles || 'unkowow'}`, inline: true }, { name: `👑 **Owner:**`, value: `${owner?.user.tag}\n🆔 ${owner?.id}` })
         .setColor('Red')
         .setTimestamp();
-    if (channelLog === null || channelLog === void 0 ? void 0 : channelLog.isTextBased())
+    if (channelLog?.isTextBased())
         channelLog.send({ embeds: [GuildDeleteEb] });
-});
+};
 exports.guildDeleteEvent = guildDeleteEvent;

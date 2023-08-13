@@ -1,43 +1,32 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Frog = exports.exemptMessagesIds = exports.modDb = void 0;
-const discord_js_1 = require("discord.js");
+exports.TextCommand = exports.ContextCommand = exports.SlashCommand = exports.exemptMessagesIds = exports.modDb = void 0;
 const config_1 = require("../config");
-//! Events
-const ready_1 = require("./events/ready");
-const interactionCreate_1 = require("./events/interactionCreate");
-const messageCreate_1 = require("./events/messageCreate");
-const roleCreate_1 = require("./events/roleCreate");
-const roleUpdate_1 = require("./events/roleUpdate");
-const roleDelete_1 = require("./events/roleDelete");
-const channelDelete_1 = require("./events/channelDelete");
-const channelCreate_1 = require("./events/channelCreate");
-const channelUpdate_1 = require("./events/channelUpdate");
-const memberAdd_1 = require("./events/memberAdd");
-const memberRemove_1 = require("./events/memberRemove");
-const messageUpdate_1 = require("./events/messageUpdate");
-const messageDelete_1 = require("./events/messageDelete");
-const reactionAdd_1 = require("./events/reactionAdd");
-const memberUpdate_1 = require("./events/memberUpdate");
+const client_1 = require("./client");
 exports.modDb = [];
 exports.exemptMessagesIds = [];
-exports.Frog = new discord_js_1.Client({ intents: 131071 });
-exports.Frog.on('ready', ready_1.readyEvent);
-exports.Frog.on('messageCreate', messageCreate_1.messageCreateEvent);
-exports.Frog.on('messageUpdate', messageUpdate_1.messageUpdateEvent);
-exports.Frog.on('messageDelete', messageDelete_1.messageDeleteEvent);
-exports.Frog.on('messageReactionAdd', reactionAdd_1.reactionAddEvent);
-exports.Frog.on('interactionCreate', interactionCreate_1.interactionCreateEvent);
-exports.Frog.on('roleCreate', roleCreate_1.roleCreateEvent);
-exports.Frog.on('roleUpdate', roleUpdate_1.roleUpdateEvent);
-exports.Frog.on('roleDelete', roleDelete_1.roleDeleteEvent);
-exports.Frog.on('guildMemberUpdate', memberUpdate_1.memberUpdateEvent);
-exports.Frog.on('channelCreate', channelCreate_1.channelCreateEvent);
-exports.Frog.on('channelUpdate', channelUpdate_1.channelUpdateEvetn);
-exports.Frog.on('channelDelete', channelDelete_1.channelDeleteEvent);
-exports.Frog.on('channelPinsUpdate', (channel) => {
-    console.log('holaa');
-});
-exports.Frog.on('guildMemberAdd', memberAdd_1.memberAddEvent);
-exports.Frog.on('guildMemberRemove', memberRemove_1.memberRemoveEvent);
-exports.Frog.login(config_1.pepeFrog);
+class SlashCommand {
+    constructor(struct, guildsIds, description) {
+        this.struct = struct;
+        this.guildsIds = guildsIds;
+        this.description = description;
+    }
+}
+exports.SlashCommand = SlashCommand;
+class ContextCommand {
+    constructor(struct, guildsIds) {
+        this.struct = struct;
+        this.guildsIds = guildsIds;
+    }
+}
+exports.ContextCommand = ContextCommand;
+class TextCommand {
+    constructor(options) {
+        this.name = options.name;
+        this.aliases = options.aliases;
+        this.users = options.users;
+    }
+}
+exports.TextCommand = TextCommand;
+//? Start
+new client_1.PepeFrogClient().start(config_1.pepeFrog);

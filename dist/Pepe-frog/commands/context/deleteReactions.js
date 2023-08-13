@@ -1,16 +1,9 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteReactionsCmcb = void 0;
 const discord_js_1 = require("discord.js");
+const __1 = require("../..");
+const db_1 = require("../../db");
 exports.DeleteReactionsCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setName('Delete reactions')
     .setNameLocalizations({
@@ -19,9 +12,14 @@ exports.DeleteReactionsCmcb = new discord_js_1.ContextMenuCommandBuilder()
 })
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.Administrator)
     .setType(3).toJSON();
-function deleteReactionsCM(int) {
-    return __awaiter(this, void 0, void 0, function* () {
+class DeleteReactionsContexCommand extends __1.ContextCommand {
+    constructor() {
+        super(exports.DeleteReactionsCmcb, [db_1.FrogDb.serverId]);
+    }
+    async execute(int) {
         const { locale } = int, isEnglish = locale == 'en-US' ? true : false;
+        if (!int.isMessageContextMenuCommand())
+            return;
         const DeleteReactionsEb = new discord_js_1.EmbedBuilder()
             .setTitle(isEnglish ? 'Deleted reactions from this message' : 'Reacciones eliminadas de este mensaje')
             .setColor('Random');
@@ -30,9 +28,6 @@ function deleteReactionsCM(int) {
         }).catch(() => {
             int.reply({ ephemeral: true, content: 'An error has occurred' });
         });
-    });
+    }
 }
-exports.default = {
-    Command: exports.DeleteReactionsCmcb,
-    run: deleteReactionsCM
-};
+exports.default = DeleteReactionsContexCommand;

@@ -22,15 +22,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.interactionEvent = exports.interactionCommands = exports.svInteractionCommands = void 0;
 const discord_js_1 = require("discord.js");
@@ -39,33 +30,32 @@ const fs_1 = require("fs");
 const functions_1 = require("../../shared/functions");
 const isDist = __dirname.includes('src') ? 'src' : 'dist';
 exports.svInteractionCommands = new discord_js_1.Collection();
-(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/server/slash/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
-    const command = yield Promise.resolve(`${`../commands/server/slash/${file}`}`).then(s => __importStar(require(s)));
+(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/server/slash/`).forEach(async (file) => {
+    const command = await Promise.resolve(`${`../commands/server/slash/${file}`}`).then(s => __importStar(require(s)));
     const struct = command[Object.keys(command)[0]];
     const cmdFunction = command[Object.keys(command)[1]];
     exports.svInteractionCommands.set(struct.name, { struct, run: cmdFunction });
-}));
+});
 exports.interactionCommands = new discord_js_1.Collection();
-(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/slash/`).forEach((folder) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/slash/${folder}/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
+(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/slash/`).forEach(async (folder) => {
+    (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/slash/${folder}/`).forEach(async (file) => {
         // console.log(file)
-        const command = yield Promise.resolve(`${`../commands/slash/${folder}/${file}`}`).then(s => __importStar(require(s)));
+        const command = await Promise.resolve(`${`../commands/slash/${folder}/${file}`}`).then(s => __importStar(require(s)));
         const struct = command[Object.keys(command)[0]];
         const cmdFunction = command[Object.keys(command)[1]];
         exports.interactionCommands.set(struct.name, { struct, run: cmdFunction });
-    }));
-}));
-(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/`).forEach((folder) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/${folder}/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
-        const command = yield Promise.resolve(`${`../commands/context/${folder}/${file}`}`).then(s => __importStar(require(s)));
+    });
+});
+(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/`).forEach(async (folder) => {
+    (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/context/${folder}/`).forEach(async (file) => {
+        const command = await Promise.resolve(`${`../commands/context/${folder}/${file}`}`).then(s => __importStar(require(s)));
         const struct = command[Object.keys(command)[0]];
         const cmdFunction = command[Object.keys(command)[1]];
         exports.interactionCommands.set(struct.name, { struct, run: cmdFunction });
-    }));
-}));
+    });
+});
 const baseRoles_1 = require("../commands/server/context/baseRoles");
-const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
+const interactionEvent = async (int, client) => {
     const { emoji, owners, serverId } = db_1.botDB;
     if (int.isChatInputCommand()) {
         const { commandName, guildId } = int;
@@ -100,7 +90,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
     if (int.isStringSelectMenu()) {
         const { customId, values, guild, user } = int;
         if (customId == 'select-type-role') {
-            const guildColor = ((_a = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White';
+            const guildColor = guild?.members.me?.displayHexColor || 'White';
             if (values[0] == 'colors') {
                 const colorsEb = new discord_js_1.EmbedBuilder()
                     .setTitle("🌈 Roles de colores")
@@ -358,7 +348,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
             }
         }
         if (customId == 'gender-roles') {
-            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+            const author = guild?.members.cache.get(user.id);
             const dictionary = [
                 {
                     value: 'mujer',
@@ -375,7 +365,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 (0, functions_1.selectRole)(int, values[0], dictionary, author);
         }
         if (customId == 'age-roles') {
-            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+            const author = guild?.members.cache.get(user.id);
             const dictionary = [
                 {
                     value: '-18',
@@ -392,7 +382,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 (0, functions_1.selectRole)(int, values[0], dictionary, author);
         }
         if (customId == "video-games-roles") {
-            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+            const author = guild?.members.cache.get(user.id);
             const dictionary = [
                 {
                     value: 'fornite',
@@ -429,7 +419,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 (0, functions_1.selectMultipleRoles)(int, values, dictionary, author);
         }
         if (customId == "colors-roles") {
-            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+            const author = guild?.members.cache.get(user.id);
             const dictionary = [
                 {
                     value: 'negro',
@@ -506,7 +496,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 (0, functions_1.selectRole)(int, values[0], dictionary, author);
         }
         if (customId == "notifications-roles") {
-            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+            const author = guild?.members.cache.get(user.id);
             const dictionary = [
                 {
                     value: 'anuncio',
@@ -553,15 +543,15 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 (0, functions_1.selectMultipleRoles)(int, values, dictionary, author);
         }
         if (customId == "información") {
-            const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
+            const author = guild?.members.cache.get(user.id);
             const colaboradores = [];
             let infos = [
                 {
                     valor: `servidor`,
-                    color: ((_b = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _b === void 0 ? void 0 : _b.displayHexColor) || 'White',
-                    miniatura: (guild === null || guild === void 0 ? void 0 : guild.iconURL({ size: 1024 })) || '',
-                    titulo: `${guild === null || guild === void 0 ? void 0 : guild.name}`,
-                    descripcion: `Es un servidor enfocado en la promoción, creado el <t:${Math.floor(((guild === null || guild === void 0 ? void 0 : guild.createdAt.valueOf()) || 0) / 1000)}:F> aquí puedes promocionarte, dar a conocer tu contenido, trabajo, redes sociales a mas personas, además de eso puedes charlar con los demás miembros del servidor, hacer amigos, entretenerte con los diversos bots de entretenimiento que tenemos, entre otras cosas.\n\n**¡Disfruta del servidor!**\n*Gracias por estar aquí*`
+                    color: guild?.members.me?.displayHexColor || 'White',
+                    miniatura: guild?.iconURL({ size: 1024 }) || '',
+                    titulo: `${guild?.name}`,
+                    descripcion: `Es un servidor enfocado en la promoción, creado el <t:${Math.floor((guild?.createdAt.valueOf() || 0) / 1000)}:F> aquí puedes promocionarte, dar a conocer tu contenido, trabajo, redes sociales a mas personas, además de eso puedes charlar con los demás miembros del servidor, hacer amigos, entretenerte con los diversos bots de entretenimiento que tenemos, entre otras cosas.\n\n**¡Disfruta del servidor!**\n*Gracias por estar aquí*`
                 },
                 {
                     valor: `categoría-importante`,
@@ -575,7 +565,7 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                     color: `#6B6B6B`,
                     miniatura: `https://cdn.discordapp.com/attachments/901313790765854720/971924981506248734/colaborador.png`,
                     titulo: `💎 Colaboradores`,
-                    descripcion: `Categoría **<#913490278529261619>**:  en esta categoría encontrarás canales para los colaboradores del servidor, cada colaborador tendrá su canal en el cual podrá modificar el nombre y descripción de su canal cuantas veces quiera, publicar su contenido utilizando @everyone o @here una vez por día.\n\n${colaboradores.length == 0 ? "" : "**Canales de los colaboradores actuales:**\n> " + (colaboradores === null || colaboradores === void 0 ? void 0 : colaboradores.join("\n> .\n> "))}\n> **¿Quieres ser colaborador?** selecciona la opción **:trophy: Roles exclusivos** en este menú para obtener información sobre ello.`
+                    descripcion: `Categoría **<#913490278529261619>**:  en esta categoría encontrarás canales para los colaboradores del servidor, cada colaborador tendrá su canal en el cual podrá modificar el nombre y descripción de su canal cuantas veces quiera, publicar su contenido utilizando @everyone o @here una vez por día.\n\n${colaboradores.length == 0 ? "" : "**Canales de los colaboradores actuales:**\n> " + colaboradores?.join("\n> .\n> ")}\n> **¿Quieres ser colaborador?** selecciona la opción **:trophy: Roles exclusivos** en este menú para obtener información sobre ello.`
                 },
                 {
                     valor: `categoría-promociones-vip`,
@@ -698,10 +688,10 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
                 },
                 {
                     valor: `bot-servidor`,
-                    color: ((_c = guild === null || guild === void 0 ? void 0 : guild.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White',
-                    miniatura: ((_d = client.user) === null || _d === void 0 ? void 0 : _d.displayAvatarURL({ size: 1024 })) || '',
+                    color: guild?.members.me?.displayHexColor || 'White',
+                    miniatura: client.user?.displayAvatarURL({ size: 1024 }) || '',
                     titulo: `🤖 Bot del servidor`,
-                    descripcion: `Hola, soy **<@${(_e = client.user) === null || _e === void 0 ? void 0 : _e.id}>** el bot oficial del servidor, creado por <@717420870267830382>, el <t:${Math.floor((((_f = client.user) === null || _f === void 0 ? void 0 : _f.createdAt.valueOf()) || 0) / 1000)}:F> con la finalidad de hacer el trabajo pesado o difícil de los moderadores y administradores, remplazar a otros bots, hacer acciones complejas que otros bots no pondrían.\n*El objetivo de mi creador es seguir mejorándome hasta remplazar la máxima cantidad de bots que pueda.*`
+                    descripcion: `Hola, soy **<@${client.user?.id}>** el bot oficial del servidor, creado por <@717420870267830382>, el <t:${Math.floor((client.user?.createdAt.valueOf() || 0) / 1000)}:F> con la finalidad de hacer el trabajo pesado o difícil de los moderadores y administradores, remplazar a otros bots, hacer acciones complejas que otros bots no pondrían.\n*El objetivo de mi creador es seguir mejorándome hasta remplazar la máxima cantidad de bots que pueda.*`
                 },
             ];
             infos.forEach((info) => {
@@ -737,5 +727,5 @@ const interactionEvent = (int, client) => __awaiter(void 0, void 0, void 0, func
             });
         }
     }
-});
+};
 exports.interactionEvent = interactionEvent;

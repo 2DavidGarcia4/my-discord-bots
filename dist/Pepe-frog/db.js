@@ -1,35 +1,28 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.buttonInfoInteractions = exports.FILE_EXTENSIONS = exports.SANCTIONS = exports.FrogDb = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../config");
-const functions_1 = require("./utils/functions");
+const services_1 = require("./lib/services");
 exports.FrogDb = {
-    me: {
-        id: '942860991698436156'
-    },
+    id: '1139577382068551721',
+    serverIconUrl: '',
     prefix: config_1.isDevelopment ? 'f!' : 's!',
-    serverId: '1053382837857943662',
-    principalServerId: '1028793496674500659',
+    serverId: '1139574510790639618',
     joins: 0,
-    verifiedsCooldown: 10 * 24 * 60 * 60000,
     leaves: 0,
-    roles: {
-        verified: '1057720387464593478',
-        verifiedSpeech: '1083060304054849676',
-        spamer: '1053430826823594106',
-        content: '1053411182935023657'
-    },
-    owners: ['853063286320922634', '551146834941313026', '717420870267830382', '853000435098320907']
+    owners: ['853063286320922634', '551146834941313026', '717420870267830382', '853000435098320907'],
+    backupServerId: '1139614790780715108',
+    publishingServerId: '1139617789603221676',
+    verifiedsCooldown: 10 * 24 * 60 * 60000,
+    emojisIds: {
+        more: '1140123888307679262',
+        like: '1140139044928491612',
+        dislike: '1140138914569523250',
+        beatingHeart: '1140140170516111442',
+        hearts: '1140140262073565274',
+        veryHot: '1140140336484732928'
+    }
 };
 exports.SANCTIONS = [
     {
@@ -46,23 +39,20 @@ exports.SANCTIONS = [
     },
 ];
 exports.FILE_EXTENSIONS = ['png', 'jpg', 'gif', 'jpeg', 'mov', 'mp4', 'mp3'];
-function run(int, client) {
-    var _a;
-    return __awaiter(this, void 0, void 0, function* () {
-        const description = (yield (0, functions_1.getInfoMessage)({
-            client,
-            channelId: this.channelId,
-            language: 'en'
-        })) + '';
-        const RulesEb = new discord_js_1.EmbedBuilder({ title: this.title, description })
-            .setColor(((_a = int.message.member) === null || _a === void 0 ? void 0 : _a.displayHexColor) || 'White');
-        let buttons;
-        if (this.buttons) {
-            buttons = new discord_js_1.ActionRowBuilder()
-                .addComponents(...this.buttons);
-        }
-        int.reply({ ephemeral: true, embeds: [RulesEb], components: buttons ? [buttons] : [] });
-    });
+async function run(int, client) {
+    const description = await (0, services_1.getInfoMessage)({
+        client,
+        channelId: this.channelId,
+        language: 'en'
+    }) + '';
+    const RulesEb = new discord_js_1.EmbedBuilder({ title: this.title, description })
+        .setColor(int.message.member?.displayHexColor || 'White');
+    let buttons;
+    if (this.buttons) {
+        buttons = new discord_js_1.ActionRowBuilder()
+            .addComponents(...this.buttons);
+    }
+    int.reply({ ephemeral: true, embeds: [RulesEb], components: buttons ? [buttons] : [] });
 }
 exports.buttonInfoInteractions = [
     {

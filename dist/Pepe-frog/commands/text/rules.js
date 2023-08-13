@@ -1,26 +1,22 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.rulesCommand = void 0;
-const functions_1 = require("../../utils/functions");
-const rulesCommand = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const description = (yield (0, functions_1.getInfoMessage)({
-        client,
-        channelId: '1090736733047492638',
-        language: 'es'
-    })) + '';
-    (0, functions_1.defaultInfoMessageBody)(msg, {
-        title: '📖 Reglas',
-        description,
-        name: 'rules'
-    });
-});
-exports.rulesCommand = rulesCommand;
+const services_1 = require("../../lib/services");
+const __1 = require("../..");
+class RulesCommand extends __1.TextCommand {
+    constructor() {
+        super({ name: 'rules' });
+    }
+    async execute({ message: msg, client }) {
+        const description = await (0, services_1.getInfoMessage)({
+            client,
+            channelId: '1090736733047492638',
+            language: 'es'
+        }) + '';
+        (0, services_1.defaultInfoMessageBody)(msg, {
+            title: '📖 Reglas',
+            description,
+            name: 'rules'
+        });
+    }
+}
+exports.default = RulesCommand;

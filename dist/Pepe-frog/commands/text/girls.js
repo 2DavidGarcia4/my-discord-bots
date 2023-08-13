@@ -1,34 +1,32 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.girlsCommand = void 0;
 const discord_js_1 = require("discord.js");
-const functions_1 = require("../../utils/functions");
-const girlsCommand = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    const description = (yield (0, functions_1.getInfoMessage)({
-        client,
-        channelId: '1053399734582263938',
-        language: 'es'
-    })) + '';
-    (0, functions_1.defaultInfoMessageBody)(msg, {
-        title: `<a:animate_info:1058179015938158592> Información`,
-        description,
-        name: 'verifieds',
-        extraButtons: [
-            new discord_js_1.ButtonBuilder()
-                .setCustomId('verifieds-btn')
-                .setLabel('Verificadas')
-                .setEmoji('✅')
-                .setStyle(discord_js_1.ButtonStyle.Success)
-        ]
-    });
-});
-exports.girlsCommand = girlsCommand;
+const services_1 = require("../../lib/services");
+const __1 = require("../..");
+class GirlsCommand extends __1.TextCommand {
+    constructor() {
+        super({
+            name: 'girls'
+        });
+    }
+    async execute({ message: msg, client }) {
+        const description = await (0, services_1.getInfoMessage)({
+            client,
+            channelId: '1053399734582263938',
+            language: 'es'
+        }) + '';
+        (0, services_1.defaultInfoMessageBody)(msg, {
+            title: `<a:animate_info:1058179015938158592> Información`,
+            description,
+            name: 'verifieds',
+            extraButtons: [
+                new discord_js_1.ButtonBuilder()
+                    .setCustomId('verifieds-btn')
+                    .setLabel('Verificadas')
+                    .setEmoji('✅')
+                    .setStyle(discord_js_1.ButtonStyle.Success)
+            ]
+        });
+    }
+}
+exports.default = GirlsCommand;

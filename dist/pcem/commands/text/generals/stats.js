@@ -17,11 +17,11 @@ const statsCommand = (msg, client) => {
     let ping = client.ws.ping <= 60 ? "<:30ms:917227036890791936>" : client.ws.ping > 60 && client.ws.ping < 120 ? "<:60ms:917227058399162429>" : client.ws.ping > 120 ? "<:150ms:917227075243503626>" : "*error*";
     msg.channel.sendTyping();
     const StatsEb = new discord_js_1.EmbedBuilder()
-        .setAuthor({ name: (member === null || member === void 0 ? void 0 : member.nickname) || author.username, iconURL: member === null || member === void 0 ? void 0 : member.displayAvatarURL() })
+        .setAuthor({ name: member?.nickname || author.username, iconURL: member?.displayAvatarURL() })
         .setTitle("<:grafica:958856872981585981> Estadísticas")
         .setFields({ name: "<:wer:920166217086537739> **Servidores:**", value: `${client.guilds.cache.size.toLocaleString()}`, inline: true }, { name: "📑 **Comandos:**", value: `${message_1.textCommands.size}`, inline: true }, { name: "<:cronometro:948693729588441149> **Uptime:**", value: `${(0, ms_1.default)(client.uptime || 0)}`, inline: true }, { name: `${ping} **Ping:**`, value: `${client.ws.ping} ms`, inline: true }, { name: "🔢 **Usos de comandos:**", value: `${db_1.botDB.usedCommands.toLocaleString()}`, inline: true }, { name: `😀 **Emojis:** ${client.emojis.cache.size.toLocaleString()}`, value: `${client.emojis.cache.filter(fn => !fn.animated).size.toLocaleString()} normales\n${client.emojis.cache.filter(fa => fa.animated).size.toLocaleString()} animados`, inline: true }, { name: `👥 **Usuarios: ${client.users.cache.size.toLocaleString()}**`, value: `👤 ${client.users.cache.filter(fu => !fu.bot).size.toLocaleString()} miembros\n🤖 ${client.users.cache.filter(fb => fb.bot).size.toLocaleString()} bots`, inline: true }, { name: ` **Canales: ${(textCh + voiseCH + cateCh).toLocaleString()}**`, value: `<:canaldetexto:904812801925738557> ${textCh.toLocaleString()} texto\n <:canaldevoz:904812835295596544> ${voiseCH.toLocaleString()} voz\n<:carpeta:920494540111093780> ${cateCh.toLocaleString()} categorías`, inline: true })
         .setColor((0, utils_1.getEmbedColor)(msg.guild))
-        .setFooter({ text: (guild === null || guild === void 0 ? void 0 : guild.name) || '', iconURL: (guild === null || guild === void 0 ? void 0 : guild.iconURL()) || undefined })
+        .setFooter({ text: guild?.name || '', iconURL: guild?.iconURL() || undefined })
         .setTimestamp();
     (0, functions_1.sendMessageText)(msg, { embeds: [StatsEb] });
 };

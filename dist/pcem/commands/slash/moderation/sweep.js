@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -38,10 +29,10 @@ exports.limpiarScb = new discord_js_1.SlashCommandBuilder()
     .setRequired(false))
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.ManageMessages)
     .toJSON();
-const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
+const limpiarSlashCommand = async (int, client) => {
     const { user, channel, guild, options, locale } = int, { emoji, color } = db_1.botDB, isEnglish = locale == 'en-US';
-    const author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-    const amount = options.getString('amount', true), member = options.getUser('member'), id = options.getString("id") || (member === null || member === void 0 ? void 0 : member.id);
+    const author = guild?.members.cache.get(user.id);
+    const amount = options.getString('amount', true), member = options.getUser('member'), id = options.getString("id") || member?.id;
     if ((0, functions_1.setSlashErrors)(int, [
         [
             Boolean(isNaN(Number(amount)) && (!['todos', 'all'].some(s => s == amount))),
@@ -62,18 +53,17 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
     ]))
         return;
     const amountMessages = Number(amount);
-    if (amountMessages && (channel === null || channel === void 0 ? void 0 : channel.type) == discord_js_1.ChannelType.GuildText) {
-        let leakedMessages = (yield channel.messages.fetch({ limit: (amountMessages > 100 ? 100 : amountMessages) })).filter(f => (id ? id == f.author.id : true) && (Date.now() - f.createdTimestamp) < (0, ms_1.default)("14d")).map(m => m);
+    if (amountMessages && channel?.type == discord_js_1.ChannelType.GuildText) {
+        let leakedMessages = (await channel.messages.fetch({ limit: (amountMessages > 100 ? 100 : amountMessages) })).filter(f => (id ? id == f.author.id : true) && (Date.now() - f.createdTimestamp) < (0, ms_1.default)("14d")).map(m => m);
         console.log(leakedMessages.length);
         const SweeepEb = new discord_js_1.EmbedBuilder()
             .setTitle(`${emoji.loop} Eliminando mensajes`)
             .setColor('Blue');
         int.reply({ ephemeral: true, embeds: [SweeepEb] }).then(() => {
-            var _a, _b;
-            SweeepEb.setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || int.user.username, iconURL: int.user.displayAvatarURL() })
+            SweeepEb.setAuthor({ name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL() })
                 .setTitle(`🗑️ Mensajes eliminados`)
                 .setColor('Blurple')
-                .setFooter({ text: ((_a = int.guild) === null || _a === void 0 ? void 0 : _a.name) || 'undefined', iconURL: ((_b = int.guild) === null || _b === void 0 ? void 0 : _b.iconURL()) || undefined })
+                .setFooter({ text: int.guild?.name || 'undefined', iconURL: int.guild?.iconURL() || undefined })
                 .setTimestamp();
             if (leakedMessages.length == amountMessages) {
                 SweeepEb.setDescription(`Se han eliminado **${leakedMessages.length}** mensajes en este canal.`);
@@ -81,76 +71,73 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
             else {
                 SweeepEb.setDescription(`Solo he podido eliminar **${leakedMessages.length}** mensajes de los **${amount}** que me pediste en este canal.`);
             }
-            channel.bulkDelete(leakedMessages).then(() => __awaiter(void 0, void 0, void 0, function* () {
-                yield int.editReply({ embeds: [SweeepEb] });
-            }));
+            channel.bulkDelete(leakedMessages).then(async () => {
+                await int.editReply({ embeds: [SweeepEb] });
+            });
         });
     }
     if (false) {
         console.log('id');
-        yield client.users.fetch(id || '', { force: true }).then((usuario) => __awaiter(void 0, void 0, void 0, function* () {
+        await client.users.fetch(id || '', { force: true }).then(async (usuario) => {
             let bueltas = 0, mensajes = 0, parado = false;
-            function clearMessages() {
-                var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k;
-                return __awaiter(this, void 0, void 0, function* () {
-                    if (((_a = int.channel) === null || _a === void 0 ? void 0 : _a.type) != discord_js_1.ChannelType.GuildText)
-                        return;
-                    bueltas++;
-                    let filtro = (_c = (yield ((_b = int.channel) === null || _b === void 0 ? void 0 : _b.messages.fetch({ limit: 100 })))) === null || _c === void 0 ? void 0 : _c.filter(f => f.author.id == id && Date.now() - f.createdTimestamp < (0, ms_1.default)("14d")).map(m => m);
-                    // console.log(filtro.length)
-                    const embError1 = new discord_js_1.EmbedBuilder()
-                        .setTitle(`${emoji.negative} Error`)
-                        .setDescription(`No hay mensajes del ${((_d = int.guild) === null || _d === void 0 ? void 0 : _d.members.cache.has(id || '')) ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal para eliminar, no hay ningún mensaje de ese autor en los **100** últimos mensajes o los mensajes que hay de ese autor superan los 14 días y no puedo eliminar mensajes con ese tiempo.`)
-                        .setColor(color.negative);
-                    if (bueltas == 1 && filtro.length == 0) {
+            async function clearMessages() {
+                if (int.channel?.type != discord_js_1.ChannelType.GuildText)
+                    return;
+                bueltas++;
+                let filtro = (await int.channel?.messages.fetch({ limit: 100 }))?.filter(f => f.author.id == id && Date.now() - f.createdTimestamp < (0, ms_1.default)("14d")).map(m => m);
+                // console.log(filtro.length)
+                const embError1 = new discord_js_1.EmbedBuilder()
+                    .setTitle(`${emoji.negative} Error`)
+                    .setDescription(`No hay mensajes del ${int.guild?.members.cache.has(id || '') ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal para eliminar, no hay ningún mensaje de ese autor en los **100** últimos mensajes o los mensajes que hay de ese autor superan los 14 días y no puedo eliminar mensajes con ese tiempo.`)
+                    .setColor(color.negative);
+                if (bueltas == 1 && filtro.length == 0) {
+                    parado = true;
+                    int.reply({ ephemeral: true, embeds: [embError1] });
+                }
+                else if (typeof amount == 'number') {
+                    if (amount < 100 && Math.floor(amount / 100) - bueltas < 0) {
+                        filtro = filtro.splice(0, Math.floor(amount % 100));
+                    }
+                    mensajes += filtro.length;
+                    let embElimiando = new discord_js_1.EmbedBuilder()
+                        .setTitle(`${emoji.loop} Eliminando mensajes`)
+                        .setColor('Blue');
+                    if (bueltas == 1) {
+                        int.reply({ ephemeral: true, embeds: [embElimiando] });
+                    }
+                    int.channel.bulkDelete(filtro);
+                    if (mensajes == amount || (bueltas > 1 && filtro.length == 0)) {
                         parado = true;
-                        int.reply({ ephemeral: true, embeds: [embError1] });
+                        let embLimpiar = new discord_js_1.EmbedBuilder()
+                            .setAuthor({ name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL() })
+                            .setTitle(`🗑️ Mensajes eliminados`)
+                            .setColor(int.guild?.members.me?.displayHexColor || 'White')
+                            .setFooter({ text: int.guild?.name || 'undefined', iconURL: int.guild?.iconURL() || undefined })
+                            .setTimestamp();
+                        if (mensajes == amount) {
+                            embLimpiar
+                                .setDescription(`Se han eliminado **${mensajes}** mensajes del ${int.guild?.members.cache.has(id || '') ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal.`);
+                        }
+                        else {
+                            embLimpiar
+                                .setDescription(`Solo he podido eliminar **${mensajes}** mensajes del ${int.guild?.members.cache.has(id || '') ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal.`);
+                        }
+                        setTimeout(() => {
+                            int.reply({ ephemeral: true, embeds: [embLimpiar] });
+                        }, mensajes * 100);
                     }
-                    else if (typeof amount == 'number') {
-                        if (amount < 100 && Math.floor(amount / 100) - bueltas < 0) {
-                            filtro = filtro.splice(0, Math.floor(amount % 100));
-                        }
-                        mensajes += filtro.length;
-                        let embElimiando = new discord_js_1.EmbedBuilder()
-                            .setTitle(`${emoji.loop} Eliminando mensajes`)
-                            .setColor('Blue');
-                        if (bueltas == 1) {
-                            int.reply({ ephemeral: true, embeds: [embElimiando] });
-                        }
-                        int.channel.bulkDelete(filtro);
-                        if (mensajes == amount || (bueltas > 1 && filtro.length == 0)) {
-                            parado = true;
-                            let embLimpiar = new discord_js_1.EmbedBuilder()
-                                .setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || int.user.username, iconURL: int.user.displayAvatarURL() })
-                                .setTitle(`🗑️ Mensajes eliminados`)
-                                .setColor(((_f = (_e = int.guild) === null || _e === void 0 ? void 0 : _e.members.me) === null || _f === void 0 ? void 0 : _f.displayHexColor) || 'White')
-                                .setFooter({ text: ((_g = int.guild) === null || _g === void 0 ? void 0 : _g.name) || 'undefined', iconURL: ((_h = int.guild) === null || _h === void 0 ? void 0 : _h.iconURL()) || undefined })
-                                .setTimestamp();
-                            if (mensajes == amount) {
-                                embLimpiar
-                                    .setDescription(`Se han eliminado **${mensajes}** mensajes del ${((_j = int.guild) === null || _j === void 0 ? void 0 : _j.members.cache.has(id || '')) ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal.`);
-                            }
-                            else {
-                                embLimpiar
-                                    .setDescription(`Solo he podido eliminar **${mensajes}** mensajes del ${((_k = int.guild) === null || _k === void 0 ? void 0 : _k.members.cache.has(id || '')) ? `miembro <@${id}>` : `usuario <@${id}>`} en este canal.`);
-                            }
-                            setTimeout(() => {
-                                int.reply({ ephemeral: true, embeds: [embLimpiar] });
-                            }, mensajes * 100);
-                        }
-                    }
-                });
+                }
             }
             clearMessages();
-            let intervalo = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+            let intervalo = setInterval(async () => {
                 if (parado) {
                     clearInterval(intervalo);
                 }
                 else {
                     clearMessages();
                 }
-            }), 2000);
-        })).catch(c => {
+            }, 2000);
+        }).catch(c => {
             const embErrorNoEncontrado = new discord_js_1.EmbedBuilder()
                 .setTitle(`${emoji.negative} Error`)
                 .setDescription(`No pude encontrar al usuario, ID del autor invalida.`)
@@ -161,68 +148,65 @@ const limpiarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, f
     else if (false) {
         console.log('else id');
         let bueltas = 0, mensajes = 0, parado = false;
-        function clearMessages() {
-            var _a, _b, _c, _d, _e, _f;
-            return __awaiter(this, void 0, void 0, function* () {
-                console.log('función');
-                if (((_a = int.channel) === null || _a === void 0 ? void 0 : _a.type) != discord_js_1.ChannelType.GuildText)
-                    return;
-                bueltas++;
-                // ;(await int.channel.messages.fetch({limit: 10})).forEach(msg=> console.log(msg.createdAt, msg.createdTimestamp))
-                let filtro = (yield ((_b = int.channel) === null || _b === void 0 ? void 0 : _b.messages.fetch({ limit: 100 }))).filter(f => Date.now() - f.createdTimestamp < (0, ms_1.default)("14d")).map(m => m);
-                console.log(filtro.length);
-                if (bueltas == 1 && filtro.length == 0) {
-                    console.log('Error');
+        async function clearMessages() {
+            console.log('función');
+            if (int.channel?.type != discord_js_1.ChannelType.GuildText)
+                return;
+            bueltas++;
+            // ;(await int.channel.messages.fetch({limit: 10})).forEach(msg=> console.log(msg.createdAt, msg.createdTimestamp))
+            let filtro = (await int.channel?.messages.fetch({ limit: 100 })).filter(f => Date.now() - f.createdTimestamp < (0, ms_1.default)("14d")).map(m => m);
+            console.log(filtro.length);
+            if (bueltas == 1 && filtro.length == 0) {
+                console.log('Error');
+                parado = true;
+                (0, functions_1.setSlashError)(int, `No hay mensajes en este canal para eliminar o los mensajes que hay superan los **14** días y no puedo eliminar mensajes con ese tiempo.`);
+            }
+            else {
+                console.log('numero');
+                const amountN = Number(amount);
+                console.log({ op: Math.floor(amountN / 100) - bueltas });
+                if (amountN < 100 && Math.floor(amountN / 100) - bueltas < 0) {
+                    filtro = filtro.splice(0, Math.floor(amountN % 100));
+                }
+                mensajes += filtro.length;
+                let embElimiando = new discord_js_1.EmbedBuilder()
+                    .setTitle(`${emoji.loop} Eliminando mensajes`)
+                    .setColor('Blue');
+                if (bueltas == 1) {
+                    int.reply({ ephemeral: true, embeds: [embElimiando] });
+                }
+                await int.channel.bulkDelete(filtro);
+                if (mensajes == amountN || (bueltas > 1 && filtro.length == 0)) {
                     parado = true;
-                    (0, functions_1.setSlashError)(int, `No hay mensajes en este canal para eliminar o los mensajes que hay superan los **14** días y no puedo eliminar mensajes con ese tiempo.`);
+                    let embLimpiar = new discord_js_1.EmbedBuilder()
+                        .setAuthor({ name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL() })
+                        .setTitle(`🗑️ Mensajes eliminados`)
+                        .setColor(int.guild?.members.me?.displayHexColor || 'White')
+                        .setFooter({ text: int.guild?.name || 'undefined', iconURL: int.guild?.iconURL() || undefined })
+                        .setTimestamp();
+                    if (mensajes == amountN) {
+                        embLimpiar
+                            .setDescription(`Se han eliminado **${mensajes}** mensajes en este canal.`);
+                    }
+                    else {
+                        embLimpiar
+                            .setDescription(`Solo he podido eliminar **${mensajes}** mensajes de los **${amount}** que me pediste en este canal.`);
+                    }
+                    setTimeout(() => {
+                        int.reply({ embeds: [embLimpiar] });
+                    }, mensajes * 100);
                 }
-                else {
-                    console.log('numero');
-                    const amountN = Number(amount);
-                    console.log({ op: Math.floor(amountN / 100) - bueltas });
-                    if (amountN < 100 && Math.floor(amountN / 100) - bueltas < 0) {
-                        filtro = filtro.splice(0, Math.floor(amountN % 100));
-                    }
-                    mensajes += filtro.length;
-                    let embElimiando = new discord_js_1.EmbedBuilder()
-                        .setTitle(`${emoji.loop} Eliminando mensajes`)
-                        .setColor('Blue');
-                    if (bueltas == 1) {
-                        int.reply({ ephemeral: true, embeds: [embElimiando] });
-                    }
-                    yield int.channel.bulkDelete(filtro);
-                    if (mensajes == amountN || (bueltas > 1 && filtro.length == 0)) {
-                        parado = true;
-                        let embLimpiar = new discord_js_1.EmbedBuilder()
-                            .setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || int.user.username, iconURL: int.user.displayAvatarURL() })
-                            .setTitle(`🗑️ Mensajes eliminados`)
-                            .setColor(((_d = (_c = int.guild) === null || _c === void 0 ? void 0 : _c.members.me) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White')
-                            .setFooter({ text: ((_e = int.guild) === null || _e === void 0 ? void 0 : _e.name) || 'undefined', iconURL: ((_f = int.guild) === null || _f === void 0 ? void 0 : _f.iconURL()) || undefined })
-                            .setTimestamp();
-                        if (mensajes == amountN) {
-                            embLimpiar
-                                .setDescription(`Se han eliminado **${mensajes}** mensajes en este canal.`);
-                        }
-                        else {
-                            embLimpiar
-                                .setDescription(`Solo he podido eliminar **${mensajes}** mensajes de los **${amount}** que me pediste en este canal.`);
-                        }
-                        setTimeout(() => {
-                            int.reply({ embeds: [embLimpiar] });
-                        }, mensajes * 100);
-                    }
-                }
-            });
+            }
         }
         clearMessages();
-        let intervalo = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
+        let intervalo = setInterval(async () => {
             if (parado) {
                 clearInterval(intervalo);
             }
             else {
                 clearMessages();
             }
-        }), 2000);
+        }, 2000);
     }
-});
+};
 exports.limpiarSlashCommand = limpiarSlashCommand;

@@ -7,15 +7,14 @@ const db_1 = require("../../../db");
 const utils_1 = require("../../../utils");
 exports.name = "help";
 const helpCommand = (msg, client) => {
-    var _a, _b;
     const { member, guild, guildId, author } = msg;
     const { botInvite, serverInvite } = db_1.botDB;
     const prefix = (0, utils_1.getGuildPrefix)(guild);
     msg.channel.sendTyping();
     const HelpEb = new discord_js_1.EmbedBuilder()
-        .setAuthor({ name: `Hola ${(member === null || member === void 0 ? void 0 : member.nickname) || (author === null || author === void 0 ? void 0 : author.username)}`, iconURL: member === null || member === void 0 ? void 0 : member.displayAvatarURL() })
-        .setTitle(`Soy **${(_a = client.user) === null || _a === void 0 ? void 0 : _a.username}** Bot multi funcional`)
-        .setThumbnail(((_b = client.user) === null || _b === void 0 ? void 0 : _b.displayAvatarURL()) || null)
+        .setAuthor({ name: `Hola ${member?.nickname || author?.username}`, iconURL: member?.displayAvatarURL() })
+        .setTitle(`Soy **${client.user?.username}** Bot multi funcional`)
+        .setThumbnail(client.user?.displayAvatarURL() || null)
         .setColor((0, utils_1.getEmbedColor)(guild))
         .setTimestamp();
     const HelpButtons = new discord_js_1.ActionRowBuilder()

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.addDataMarcar = exports.addUserIdCoolSug = exports.coolSugerencias = exports.sistemMarcar = exports.cooldowns = exports.exemptMessagesIds = exports.autoModeration = exports.svStatistics = void 0;
 const discord_js_1 = require("discord.js");
@@ -41,12 +32,12 @@ const addUserIdCoolSug = (id) => {
 exports.addUserIdCoolSug = addUserIdCoolSug;
 const addDataMarcar = (data) => exports.sistemMarcar.push(data);
 exports.addDataMarcar = addDataMarcar;
-Bot.on('ready', () => __awaiter(void 0, void 0, void 0, function* () {
+Bot.on('ready', async () => {
     (0, ready_1.readyEvent)(Bot);
-}));
-Bot.on('messageCreate', (message) => __awaiter(void 0, void 0, void 0, function* () {
+});
+Bot.on('messageCreate', async (message) => {
     (0, message_1.messageEvent)(message, Bot);
-}));
+});
 Bot.on('messageDelete', (message) => {
     (0, messageDelete_1.messageDeleteEvent)(message, Bot);
 });
@@ -90,26 +81,26 @@ Bot.on('messageReactionRemove', (reaction, user) => {
     (0, reactionRemove_1.reactionRemoveEvent)(reaction, user, Bot);
 });
 //! Errors events
-Bot.on("shardError", (err) => __awaiter(void 0, void 0, void 0, function* () {
-    const dataBot = yield (0, utils_1.getBotData)(Bot), channelLog = Bot.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.errors) || '');
+Bot.on("shardError", async (err) => {
+    const dataBot = await (0, utils_1.getBotData)(Bot), channelLog = Bot.channels.cache.get(dataBot?.logs.errors || '');
     console.log(err);
     const embErr = new discord_js_1.EmbedBuilder()
         .setTitle(`${db_1.botDB.emoji.negative} Ocurrió un error`)
         .setDescription(`\`\`\`js\n${err.name}\n\n${err.message}\n\n${err.stack}\`\`\``)
         .setColor(db_1.botDB.color.negative)
         .setTimestamp();
-    if ((!config_1.isDevelopment) && (channelLog === null || channelLog === void 0 ? void 0 : channelLog.type) == discord_js_1.ChannelType.GuildText)
+    if ((!config_1.isDevelopment) && channelLog?.type == discord_js_1.ChannelType.GuildText)
         channelLog.send({ embeds: [embErr] });
-}));
-process.on("unhandledRejection", (err) => __awaiter(void 0, void 0, void 0, function* () {
-    const dataBot = yield (0, utils_1.getBotData)(Bot), channelLog = Bot.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.errors) || '');
+});
+process.on("unhandledRejection", async (err) => {
+    const dataBot = await (0, utils_1.getBotData)(Bot), channelLog = Bot.channels.cache.get(dataBot?.logs.errors || '');
     console.log(err);
     const embErr = new discord_js_1.EmbedBuilder()
         .setTitle(`${db_1.botDB.emoji.negative} Ocurrió un error`)
         .setDescription(`\`\`\`js\n${err}\`\`\``)
         .setColor(db_1.botDB.color.negative)
         .setTimestamp();
-    if ((!config_1.isDevelopment) && (channelLog === null || channelLog === void 0 ? void 0 : channelLog.type) == discord_js_1.ChannelType.GuildText)
+    if ((!config_1.isDevelopment) && channelLog?.type == discord_js_1.ChannelType.GuildText)
         channelLog.send({ embeds: [embErr] });
-}));
+});
 Bot.login(config_1.tokenBot);

@@ -5,13 +5,12 @@ const discord_js_1 = require("discord.js");
 const db_1 = require("../../../db");
 exports.name = "information";
 const informationCommand = (msg) => {
-    var _a, _b, _c;
-    if (!((_a = msg.member) === null || _a === void 0 ? void 0 : _a.permissions.has('Administrator')))
+    if (!msg.member?.permissions.has('Administrator'))
         return;
     const embInformacion = new discord_js_1.EmbedBuilder({
         title: `${db_1.botDB.emoji.information} Información`,
         description: 'En el menú desplegable de abajo encontraras varias opciones, elije una para obtener información sobre ella.'
-    }).setColor(((_c = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White');
+    }).setColor(msg.guild?.members.me?.displayHexColor || 'White');
     const menu = new discord_js_1.ActionRowBuilder()
         .addComponents(new discord_js_1.StringSelectMenuBuilder()
         .setCustomId("información")

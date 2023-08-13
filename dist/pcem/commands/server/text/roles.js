@@ -6,13 +6,12 @@ const db_1 = require("../../../db");
 const __1 = require("../../..");
 exports.name = "roles";
 const rolesCommand = (msg) => {
-    var _a, _b, _c;
-    if (!((_a = msg.member) === null || _a === void 0 ? void 0 : _a.permissions.has('Administrator')))
+    if (!msg.member?.permissions.has('Administrator'))
         return;
     const rolesSelectorEb = new discord_js_1.EmbedBuilder()
         .setTitle(`🏅 Roles`)
         .setDescription(`*👀 En tu perfil dentro del servidor veras un apartado de roles en el encontraras todos los roles que tienes.*\n\n${db_1.botDB.emoji.information} En el menú de abajo encontraras barios tipos de roles ya sean roles de **colores** aquellos que solo te modifican el color de tu nombre dentro del servidor, roles de **notificaciones** aquellos que se utilizan para notificar a usuarios sobre algo como un nuevo anuncio o sorteo, roles **personales** aquellos que solo aportan mas información de ti en tu perfil como roles de genero o edad.\n\n*👉 Al seleccionar una opción del menú de abajo se desplegara un nuevo mensaje como este con mas información para cada tipo de rol y podrás elegir uno o varios roles.*`)
-        .setColor(((_c = (_b = msg.guild) === null || _b === void 0 ? void 0 : _b.members.me) === null || _c === void 0 ? void 0 : _c.displayHexColor) || 'White');
+        .setColor(msg.guild?.members.me?.displayHexColor || 'White');
     const rolesSelectorMenu = new discord_js_1.ActionRowBuilder()
         .addComponents(new discord_js_1.StringSelectMenuBuilder()
         .setCustomId('select-type-role')

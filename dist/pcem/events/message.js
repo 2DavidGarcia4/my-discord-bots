@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,23 +12,22 @@ const __1 = require("..");
 const utils_1 = require("../utils");
 const isDist = __dirname.includes('src') ? 'src' : 'dist';
 const svTextCommands = new discord_js_1.Collection();
-(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/server/text/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
+(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/server/text/`).forEach(async (file) => {
     const command = require(`../commands/server/text/${file}`);
     const cmdFunction = command[Object.keys(command)[1]];
     const alias = command[Object.keys(command)[2]] || [];
     svTextCommands.set(command.name, { run: cmdFunction, alias });
-}));
+});
 exports.textCommands = new discord_js_1.Collection();
-(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/text/`).forEach((folder) => __awaiter(void 0, void 0, void 0, function* () {
-    (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/text/${folder}/`).forEach((file) => __awaiter(void 0, void 0, void 0, function* () {
+(0, fs_1.readdirSync)(`./${isDist}/pcem/commands/text/`).forEach(async (folder) => {
+    (0, fs_1.readdirSync)(`./${isDist}/pcem/commands/text/${folder}/`).forEach(async (file) => {
         const command = require(`../commands/text/${folder}/${file}`);
         const cmdFunction = command[Object.keys(command)[1]];
         const alias = command[Object.keys(command)[2]] || [];
         exports.textCommands.set(command.name, { run: cmdFunction, alias });
-    }));
-}));
-const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o;
+    });
+});
+const messageEvent = async (msg, client) => {
     const { member, guild, guildId } = msg, { prefix, emoji, color, serverId } = db_1.botDB;
     if (msg.guildId == db_1.botDB.serverId) {
         __1.svStatistics.messages++;
@@ -45,7 +35,7 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
             return;
         //TODO: Roles de timpo
         if (member) {
-            const tiempo = Math.floor(Date.now() - Number((_a = member.joinedAt) === null || _a === void 0 ? void 0 : _a.valueOf()));
+            const tiempo = Math.floor(Date.now() - Number(member.joinedAt?.valueOf()));
             const tiempos = [
                 { condicion: tiempo >= (0, ms_1.default)("30d") && tiempo < (0, ms_1.default)("60d"), rol: "975068365032947792" },
                 { condicion: tiempo >= (0, ms_1.default)("60d") && tiempo < (0, ms_1.default)("90d"), rol: "975068396406329434" },
@@ -64,15 +54,15 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
             ];
             const option = tiempos.find(f => f.condicion);
             if (option)
-                member.roles.add(option === null || option === void 0 ? void 0 : option.rol);
+                member.roles.add(option?.rol);
             tiempos.forEach(time => {
-                if (member.roles.cache.has(time.rol) && time.rol != (option === null || option === void 0 ? void 0 : option.rol)) {
+                if (member.roles.cache.has(time.rol) && time.rol != option?.rol) {
                     member.roles.remove(time.rol);
                 }
             });
         }
         //TODO: Sistema VIP
-        if (msg.channelId == '826193847943037018' && msg.channel.type == discord_js_1.ChannelType.GuildText && msg.mentions.everyone && ((_b = msg.member) === null || _b === void 0 ? void 0 : _b.roles.cache.has('826197551904325712')) && !((_c = msg.member) === null || _c === void 0 ? void 0 : _c.permissions.has('Administrator'))) {
+        if (msg.channelId == '826193847943037018' && msg.channel.type == discord_js_1.ChannelType.GuildText && msg.mentions.everyone && msg.member?.roles.cache.has('826197551904325712') && !msg.member?.permissions.has('Administrator')) {
             msg.channel.permissionOverwrites.edit(msg.author.id, { 'MentionEveryone': false, });
         }
         //TODO: Auto emojis memes
@@ -89,7 +79,7 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
             //? Boost/mejoras
             const newBoostEb = new discord_js_1.EmbedBuilder()
                 .setTitle(`${db_1.botDB.emoji.animateBoost} Nueva mejora`)
-                .setColor(((_d = msg.member) === null || _d === void 0 ? void 0 : _d.displayHexColor) || 'White');
+                .setColor(msg.member?.displayHexColor || 'White');
             if (msg.type == discord_js_1.MessageType.GuildBoost) {
                 msg.channel.sendTyping();
                 newBoostEb
@@ -149,25 +139,25 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         //* Auto moderación -----------------------------
         const discordDomains = ["discord.gg/", "discord.com/invite/"];
         const urlIncludes = ['https://', 'http://', '.com', 'discord.'];
-        if (!((_e = msg.member) === null || _e === void 0 ? void 0 : _e.roles.cache.has('887444598715219999')) && !((_f = msg.member) === null || _f === void 0 ? void 0 : _f.permissions.has('Administrator')) && urlIncludes.some(s => msg.content.includes(s))) {
-            const dataBot = yield (0, utils_1.getBotData)(client);
+        if (!msg.member?.roles.cache.has('887444598715219999') && !msg.member?.permissions.has('Administrator') && urlIncludes.some(s => msg.content.includes(s))) {
+            const dataBot = await (0, utils_1.getBotData)(client);
             if (!dataBot)
                 return;
-            const canalesPerIDs = (_g = msg.guild) === null || _g === void 0 ? void 0 : _g.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
+            const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id);
             const otrosIDCha = dataBot.autoModeration.ignoreChannels;
-            canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.push(...otrosIDCha);
-            if (!(canalesPerIDs === null || canalesPerIDs === void 0 ? void 0 : canalesPerIDs.some(s => s == msg.channelId))) {
+            canalesPerIDs?.push(...otrosIDCha);
+            if (!canalesPerIDs?.some(s => s == msg.channelId)) {
                 let urls = msg.content.split(/ +/g).map(m => m.split('\n')).flat().filter(f => urlIncludes.some(s => f.includes(s)));
                 const UrlWarningEb = new discord_js_1.EmbedBuilder()
                     .setAuthor({ name: msg.author.tag, iconURL: msg.author.displayAvatarURL() })
                     .setTitle(`🔗 Auto moderación de enlaces`)
                     .setDescription(`En este canal no están permitidos los enlaces, hay otros canales que si los permiten pero no todo tipo de enlaces.\n\n*Lee la descripción de cada canal, normalmente contiene información de que esta permitido en el canal o puedes preguntarle a un administrador o moderador*`)
                     .setColor(color.negative)
-                    .setFooter({ text: ((_h = msg.guild) === null || _h === void 0 ? void 0 : _h.name) || 'undefined', iconURL: ((_j = msg.guild) === null || _j === void 0 ? void 0 : _j.iconURL()) || undefined });
+                    .setFooter({ text: msg.guild?.name || 'undefined', iconURL: msg.guild?.iconURL() || undefined });
                 if (urls.every(e => discordDomains.some(s => e.includes(s)))) {
                     for (let url of urls) {
-                        let invitation = yield client.fetchInvite(url);
-                        if (!(((_k = invitation.guild) === null || _k === void 0 ? void 0 : _k.id) == msg.guildId)) {
+                        let invitation = await client.fetchInvite(url);
+                        if (!(invitation.guild?.id == msg.guildId)) {
                             msg.reply({ embeds: [UrlWarningEb], content: `<@${msg.author.id}>` }).then(te => {
                                 __1.exemptMessagesIds.push(te.id);
                                 setTimeout(() => msg.delete().catch(), 300);
@@ -209,13 +199,13 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         }
     }
     //TODO: Mensaje por mención
-    if (msg.content.match(`^<@!?${(_l = client.user) === null || _l === void 0 ? void 0 : _l.id}>( |)$`)) {
-        (_m = exports.textCommands.get('help')) === null || _m === void 0 ? void 0 : _m.run(msg, client, []);
+    if (msg.content.match(`^<@!?${client.user?.id}>( |)$`)) {
+        exports.textCommands.get('help')?.run(msg, client, []);
     }
     if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
         return;
     const args = msg.content.slice(prefix.length).trim().split(/ +/g);
-    const commandName = (_o = args.shift()) === null || _o === void 0 ? void 0 : _o.toLowerCase();
+    const commandName = args.shift()?.toLowerCase();
     if (commandName) {
         if (msg.guildId == serverId) {
             const svCommand = svTextCommands.get(commandName) || svTextCommands.find(f => f.alias.some(s => s == commandName));
@@ -230,5 +220,5 @@ const messageEvent = (msg, client) => __awaiter(void 0, void 0, void 0, function
         if (command)
             return command.run(msg, client, args);
     }
-});
+};
 exports.messageEvent = messageEvent;

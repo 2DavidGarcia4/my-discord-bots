@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -37,12 +28,11 @@ exports.encarcelarScb = new discord_js_1.SlashCommandBuilder()
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.ModerateMembers)
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.KickMembers)
     .setDefaultMemberPermissions(discord_js_1.PermissionFlagsBits.BanMembers).toJSON();
-const encarcelarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0, function* () {
-    var _a, _b, _c, _d, _e, _f;
-    const { options, guild, user } = int, { serverId, } = db_1.botDB, author = guild === null || guild === void 0 ? void 0 : guild.members.cache.get(user.id);
-    const dataBot = yield (0, utils_1.getBotData)(client), channelLogs = (_a = int.guild) === null || _a === void 0 ? void 0 : _a.channels.cache.get((dataBot === null || dataBot === void 0 ? void 0 : dataBot.logs.moderation) || '');
-    const dataCrc = yield models_1.carcelModel.findById(serverId), pricioners = dataCrc === null || dataCrc === void 0 ? void 0 : dataCrc.prisoners;
-    const tiempo = int.options.getString("tiempo", true), razon = int.options.getString("razón", true), preMember = options.getUser("miembro"), id = int.options.getString("id"), member = preMember ? guild === null || guild === void 0 ? void 0 : guild.members.cache.get(preMember.id || '') : guild === null || guild === void 0 ? void 0 : guild.members.cache.get(id || '');
+const encarcelarSlashCommand = async (int, client) => {
+    const { options, guild, user } = int, { serverId, } = db_1.botDB, author = guild?.members.cache.get(user.id);
+    const dataBot = await (0, utils_1.getBotData)(client), channelLogs = int.guild?.channels.cache.get(dataBot?.logs.moderation || '');
+    const dataCrc = await models_1.carcelModel.findById(serverId), pricioners = dataCrc?.prisoners;
+    const tiempo = int.options.getString("tiempo", true), razon = int.options.getString("razón", true), preMember = options.getUser("miembro"), id = int.options.getString("id"), member = preMember ? guild?.members.cache.get(preMember.id || '') : guild?.members.cache.get(id || '');
     if ((0, functions_1.setSlashErrors)(int, [
         [
             Boolean(id && isNaN(Number(id))),
@@ -69,7 +59,7 @@ const encarcelarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0
             `La razón por la que el miembro ira a la cárcel excede el máximo de caracteres los cueles son **600** caracteres, proporciona una razón mas corta.`
         ],
         [
-            Boolean(pricioners === null || pricioners === void 0 ? void 0 : pricioners.some(s => s.id == (member === null || member === void 0 ? void 0 : member.id))),
+            Boolean(pricioners?.some(s => s.id == member?.id)),
             `El miembro *(${member})* ya se encuentra en la cárcel.`
         ],
         [
@@ -77,63 +67,63 @@ const encarcelarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0
             `La cantidad de tiempo que has proporcionado *(${tiempo})* supera los **4** días, 4 días es el máximo que un miembro puede estar en la cárcel.`
         ],
         [
-            Boolean((member === null || member === void 0 ? void 0 : member.id) == ((_b = client.user) === null || _b === void 0 ? void 0 : _b.id)),
+            Boolean(member?.id == client.user?.id),
             `El miembro que has proporcionado *(${member})* soy yo, yo no me puedo enviar a la cárcel.`
         ],
         [
-            Boolean(member === null || member === void 0 ? void 0 : member.user.bot),
+            Boolean(member?.user.bot),
             `El miembro que has proporcionado *(${member})* es un bot, no puedo enviar a un bot a la cárcel.`
         ]
     ]))
         return;
     const durante = (0, ms_1.default)(tiempo) >= 86400000 ? `**${Math.floor((0, ms_1.default)(tiempo) / 86400000)}** días` : (0, ms_1.default)(tiempo) >= 3600000 ? `**${Math.floor((0, ms_1.default)(tiempo) / 3600000)}** horas` : (0, ms_1.default)(tiempo) >= 60000 ? `**${Math.floor((0, ms_1.default)(tiempo) / 60000)}** minutos` : `**${Math.floor((0, ms_1.default)(tiempo) / 1000)}** segundos`;
     const carcelEb = new discord_js_1.EmbedBuilder()
-        .setAuthor({ name: (author === null || author === void 0 ? void 0 : author.nickname) || int.user.username, iconURL: int.user.displayAvatarURL() })
-        .setThumbnail((member === null || member === void 0 ? void 0 : member.displayAvatarURL({ size: 1024 })) || null)
+        .setAuthor({ name: author?.nickname || int.user.username, iconURL: int.user.displayAvatarURL() })
+        .setThumbnail(member?.displayAvatarURL({ size: 1024 }) || null)
         .setTitle("⛓️ Miembro enviado a la cárcel")
-        .setDescription(`👤 **Miembro:** ${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}\n\n⏱ **Durante:** ${durante}\n\n📑 **Razón:** ${razon}`)
+        .setDescription(`👤 **Miembro:** ${member}\n**ID:** ${member?.id}\n\n⏱ **Durante:** ${durante}\n\n📑 **Razón:** ${razon}`)
         .setColor("#ECDE03")
         .setTimestamp();
     const carcelMdEb = new discord_js_1.EmbedBuilder()
-        .setAuthor({ name: (member === null || member === void 0 ? void 0 : member.user.tag) || 'undefined', iconURL: member === null || member === void 0 ? void 0 : member.displayAvatarURL() })
+        .setAuthor({ name: member?.user.tag || 'undefined', iconURL: member?.displayAvatarURL() })
         .setTitle("⛓️ Has sido enviado a la cárcel")
         .setDescription(`⏱ **Durante:** ${durante}\n\n📑 **Razon:** ${razon}\n\n👮 **Moderador:** ${int.user.tag}`)
         .setColor("#ECDE03")
-        .setFooter({ text: `Incumpliste alguna regla de ${(_c = int.guild) === null || _c === void 0 ? void 0 : _c.name}`, iconURL: ((_d = int.guild) === null || _d === void 0 ? void 0 : _d.iconURL()) || undefined })
+        .setFooter({ text: `Incumpliste alguna regla de ${int.guild?.name}`, iconURL: int.guild?.iconURL() || undefined })
         .setTimestamp();
     const logEb = new discord_js_1.EmbedBuilder()
         .setAuthor({ name: `Ejecutado por ${int.user.tag}`, iconURL: int.user.displayAvatarURL() })
         .setTitle("📝 Registro del comando /encarcelar")
-        .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "👤 **Miembro enviado a la cárcel:**", value: `${member}\n**ID:** ${member === null || member === void 0 ? void 0 : member.id}` }, { name: "⏱ **Durante:**", value: `${durante}` }, { name: "📑 **Razón:**", value: `${razon}` })
+        .addFields({ name: "📌 **Utilizado en:**", value: `${int.channel}\n**ID:** ${int.channelId}` }, { name: "👮 **Moderador:**", value: `${int.user}\n**ID:** ${int.user.id}` }, { name: "👤 **Miembro enviado a la cárcel:**", value: `${member}\n**ID:** ${member?.id}` }, { name: "⏱ **Durante:**", value: `${durante}` }, { name: "📑 **Razón:**", value: `${razon}` })
         .setColor("#ECDE03")
-        .setFooter({ text: (member === null || member === void 0 ? void 0 : member.user.tag) || 'undefined', iconURL: member === null || member === void 0 ? void 0 : member.displayAvatarURL() })
+        .setFooter({ text: member?.user.tag || 'undefined', iconURL: member?.displayAvatarURL() })
         .setTimestamp();
-    if (int.user.id == ((_e = int.guild) === null || _e === void 0 ? void 0 : _e.ownerId)) {
-        if ((member === null || member === void 0 ? void 0 : member.id) == int.user.id)
+    if (int.user.id == int.guild?.ownerId) {
+        if (member?.id == int.user.id)
             return (0, functions_1.setSlashError)(int, `El miembro que has proporcionado *(${member})* eres tu mi creador y dueño de este servidor.`);
-        yield int.deferReply();
+        await int.deferReply();
     }
     else {
         if ((0, functions_1.setSlashErrors)(int, [
             [
-                Boolean((member === null || member === void 0 ? void 0 : member.id) == ((_f = int.guild) === null || _f === void 0 ? void 0 : _f.ownerId)),
+                Boolean(member?.id == int.guild?.ownerId),
                 `El miembro que has proporcionado *(${member})* es el dueño del servidor, ¿como se te ocurre intentar tal cosa?.`
             ],
             [
-                Boolean((member === null || member === void 0 ? void 0 : member.id) == int.user.id),
+                Boolean(member?.id == int.user.id),
                 `El miembro que has proporcionado *(${member})* eres tu, no te puedo enviar a la cárcel.`
             ],
             [
-                Boolean(((author === null || author === void 0 ? void 0 : author.roles.highest) ? ((member === null || member === void 0 ? void 0 : member.roles.highest.comparePositionTo(author.roles.highest)) || 0) : 0) >= 0),
+                Boolean((author?.roles.highest ? (member?.roles.highest.comparePositionTo(author.roles.highest) || 0) : 0) >= 0),
                 `El rol mas alto del miembro que has proporcionado *(${member})* esta en una posición mayor o igual a la posición de tu rol mas alto, no puedes enviar al miembro a la cárcel.`
             ]
         ]))
             return;
-        yield int.deferReply();
+        await int.deferReply();
     }
-    member === null || member === void 0 ? void 0 : member.roles.add("830260549098405935").then((c) => __awaiter(void 0, void 0, void 0, function* () {
+    member?.roles.add("830260549098405935").then(async (c) => {
         let text = 'null';
-        member === null || member === void 0 ? void 0 : member.send({ embeds: [carcelMdEb] }).then(() => {
+        member?.send({ embeds: [carcelMdEb] }).then(() => {
             text = member.nickname || member.user.username;
         }).catch(() => {
             text = `No he podido enviar el mensaje al miembro ${member.nickname || member.user.username}`;
@@ -142,10 +132,10 @@ const encarcelarSlashCommand = (int, client) => __awaiter(void 0, void 0, void 0
                 .setFooter({ text, iconURL: member.displayAvatarURL() });
             (0, functions_1.sendMessageSlash)(int, { embeds: [carcelEb] });
         });
-        pricioners === null || pricioners === void 0 ? void 0 : pricioners.push({ id: member.id, tag: member.user.tag, reazon: razon, sentence: tiempo, time: Date.now() });
-        yield models_1.carcelModel.findByIdAndUpdate(serverId, { prisioneros: pricioners });
-    }));
-    if ((channelLogs === null || channelLogs === void 0 ? void 0 : channelLogs.type) == discord_js_1.ChannelType.GuildText)
+        pricioners?.push({ id: member.id, tag: member.user.tag, reazon: razon, sentence: tiempo, time: Date.now() });
+        await models_1.carcelModel.findByIdAndUpdate(serverId, { prisioneros: pricioners });
+    });
+    if (channelLogs?.type == discord_js_1.ChannelType.GuildText)
         channelLogs.send({ embeds: [logEb] });
-});
+};
 exports.encarcelarSlashCommand = encarcelarSlashCommand;
