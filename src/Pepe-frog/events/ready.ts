@@ -2,7 +2,7 @@ import { ChannelType, EmbedBuilder } from 'discord.js'
 import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences } from '../lib/services'
 import { defaultReady } from '../../shared/functions'
 import { getSnackData } from '../lib/notion'
-import { type EventName, PepeFrogClient } from '../client'
+import { PepeFrogClient } from '../client'
 
 export const once = true
 export const name: EventName = 'ready'

@@ -1,6 +1,6 @@
 import { ChannelType, DMChannel, type NonThreadGuildBasedChannel } from 'discord.js'
 import { FrogDb } from '../db'
-import { type EventName, PepeFrogClient } from '../client'
+import { PepeFrogClient } from '../client'
 
 export const name: EventName = 'channelUpdate'
 

@@ -3,7 +3,7 @@ import { ActionRowBuilder, ApplicationCommandType, type CacheType, EmbedBuilder,
 import { buttonInfoInteractions } from '../db'
 import { selectMultipleRoles, selectRole } from '../../shared/functions'
 import { handlePreviewChannels } from '../lib/services'
-import { type EventName, PepeFrogClient } from '../client'
+import { PepeFrogClient } from '../client'
 
 export const name: EventName = 'interactionCreate'
 

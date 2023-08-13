@@ -2,7 +2,7 @@ import { ChannelType, EmbedBuilder, Message, type PartialMessage } from 'discord
 import { exemptMessagesIds } from '..'
 import { FrogDb } from '../db'
 import { getSnackData } from '../lib/notion'
-import { type EventName, PepeFrogClient } from '../client'
+import { PepeFrogClient } from '../client'
 
 export const name: EventName = 'messageDelete'
 

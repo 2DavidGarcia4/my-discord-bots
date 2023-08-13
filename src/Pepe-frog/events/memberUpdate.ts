@@ -2,7 +2,7 @@ import { GuildMember, type PartialGuildMember } from 'discord.js'
 import { FrogDb } from '../db'
 import { createVerified } from '../lib/services'
 import { getSnackData } from '../lib/notion'
-import { type EventName, PepeFrogClient } from '../client'
+import { PepeFrogClient } from '../client'
 
 export const name: EventName = 'guildMemberUpdate'
 

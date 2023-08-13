@@ -1,5 +1,5 @@
 import { GuildEmoji } from 'discord.js'
-import { type EventName, PepeFrogClient } from '../client'
+import { PepeFrogClient } from '../client'
 
 export const name: EventName = 'emojiDelete'
 
