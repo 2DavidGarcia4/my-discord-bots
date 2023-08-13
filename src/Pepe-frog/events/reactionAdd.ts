@@ -1,6 +1,5 @@
 import { MessageReaction, type PartialMessageReaction, type PartialUser, User } from 'discord.js'
 import { FrogDb } from '../db'
-import { type EventName } from '../client'
 import { getSnackData } from '../lib/notion'
 
 export const name: EventName = 'messageReactionAdd'
