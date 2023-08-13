@@ -1,33 +1,40 @@
 import { ChannelType, EmbedBuilder } from "discord.js";
 import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences, getVerifiedsData, updateVerifiedsData } from "../lib/services";
-import { FrogDb } from "../db";
-import { CommandBodys } from "../commands";
 import { defaultReady } from "../../shared/functions";
 import { getSnackData } from "../lib/notion";
-import { PepeFrogClient } from "../client";
+import { type EventName, PepeFrogClient } from "../client";
 
 export const once = true
-export const name = 'ready'
+export const name: EventName = 'ready'
 
 export async function execute(client: PepeFrogClient) {
-  const { serverId, backupServerId } = FrogDb
+  const { serverId, backupServerId, publishingServerId } = client.data
   const SnackData = await getSnackData()
   console.log(SnackData)
   defaultReady(client, SnackData.channels.ready, 'DarkGold')
 
-  
-  const backupServer = client.guilds.cache.get(backupServerId)
   const server = client.guilds.cache.get(serverId)
+  const backupServer = client.guilds.cache.get(backupServerId)
+  const publishedServer = client.guilds.cache.get('1028793496674500659')
+  const allServers = [server, backupServer, publishedServer]
+  client.data.serverIconUrl = server?.iconURL() || ''
 
   const suggestionsChannel = server?.channels.cache.get(SnackData.channels.suggestions)
   if(suggestionsChannel?.type == ChannelType.GuildText) suggestionsChannel.messages.fetch({limit: 100})
 
-  ;[backupServer, server].forEach(async sv=> {
-    CommandBodys.forEach(async cmd=> {
-      if(!(await sv?.commands.fetch())?.some(s=> s.name == cmd.name)){
-        sv?.commands.create(cmd).then(c=> console.log(`➕ Se creo el comando ${c.name} en el servidor ${sv.name}`))
+  allServers.forEach(async sv=> {
+    [...client.slashCommands.map(sc=> sc), ...client.contextCommands.map(cc=> cc)].forEach(async cmd=> {
+      if(cmd.guildsIds.some(id=> id == sv?.id)){
+        if(!(await sv?.commands.fetch())?.some(s=> s.name == cmd.struct.name)){
+          sv?.commands.create(cmd.struct).then(c=> console.log(`➕ Se creo el comando ${c.name} en el servidor ${sv.name}`))
+        }
       }
     })
+  })
+
+  allServers.forEach(sv=> {
+    const comand = sv?.commands.cache.find(c=> c.name == 'verified')
+    comand?.delete().then(cm=> console.log(`Comando ${cm.name} eliminado`))
   })
 
   handlePresences(client)
@@ -40,7 +47,7 @@ export async function execute(client: PepeFrogClient) {
     if(topic){
       const oldTime = parseInt(topic) + 24*60*60*1000
       if((oldTime-(60*60*1000)) < nowTime){
-        const { joins, leaves } = FrogDb, members = joins-leaves
+        const { joins, leaves } = client.data, members = joins-leaves
         const porcentMembers = Math.floor(members*100/joins)
         let barr = ''
         for(let i=1; i<=20; i++){
@@ -48,7 +55,7 @@ export async function execute(client: PepeFrogClient) {
           else barr+=' '
         }
 
-        FrogDb.joins = 0, FrogDb.leaves = 0
+        client.data.joins = 0, client.data.leaves = 0
         statsChannel.edit({topic: nowTime.toString()})
 
         const StatsEb = new EmbedBuilder()

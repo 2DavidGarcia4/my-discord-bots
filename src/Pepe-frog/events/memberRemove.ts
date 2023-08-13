@@ -1,8 +1,9 @@
 import { GuildMember, PartialGuildMember } from 'discord.js'
 import { modDb } from '..'
 import { FrogDb } from '../db'
+import { type EventName } from '../client'
 
-export const name = 'guildMemberRemove'
+export const name: EventName = 'guildMemberRemove'
 
 export async function execute(member: GuildMember | PartialGuildMember) {
   const { serverId } = FrogDb

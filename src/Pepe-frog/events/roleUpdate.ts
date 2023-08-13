@@ -1,8 +1,8 @@
 import { Role } from 'discord.js'
-import { PepeFrogClient } from '../client'
+import { type EventName, PepeFrogClient } from '../client'
 import { FrogDb } from '../db'
 
-export const name = 'roleUpdate'
+export const name: EventName = 'roleUpdate'
 
 export async function execute(oldRole: Role, newRole: Role, client: PepeFrogClient) {
   const { serverId, backupServerId } = FrogDb

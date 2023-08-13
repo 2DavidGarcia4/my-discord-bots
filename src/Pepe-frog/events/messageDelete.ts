@@ -2,9 +2,9 @@ import { ChannelType, EmbedBuilder, Message, type PartialMessage } from 'discord
 import { exemptMessagesIds } from '..'
 import { FrogDb } from '../db'
 import { getSnackData } from '../lib/notion'
-import { PepeFrogClient } from '../client'
+import { type EventName, PepeFrogClient } from '../client'
 
-export const name = 'messageDelete'
+export const name: EventName = 'messageDelete'
 
 export async function execute(msgd: Message<boolean> | PartialMessage, client: PepeFrogClient) {
   const { serverId, prefix, owners } = FrogDb

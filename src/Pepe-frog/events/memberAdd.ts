@@ -1,8 +1,9 @@
 import { EmbedBuilder, GuildMember } from 'discord.js'
 import { FrogDb } from '../db'
 import { isDevelopment } from '../../config'
+import { type EventName } from '../client'
 
-export const name = 'guildMemberAdd'
+export const name: EventName = 'guildMemberAdd'
 
 export async function execute(member: GuildMember) {
   const { serverId } = FrogDb

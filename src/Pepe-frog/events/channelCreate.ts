@@ -1,8 +1,8 @@
 import { type NonThreadGuildBasedChannel } from 'discord.js'
 import { FrogDb } from '../db'
-import { PepeFrogClient } from '../client'
+import { type EventName, PepeFrogClient } from '../client'
 
-export const name = 'channelCreate'
+export const name: EventName = 'channelCreate'
 
 export async function execute(channel: NonThreadGuildBasedChannel, client: PepeFrogClient) {
   const { serverId, backupServerId } = FrogDb

@@ -1,8 +1,8 @@
 import { ChannelType, DMChannel, type NonThreadGuildBasedChannel } from 'discord.js'
 import { FrogDb } from '../db'
-import { PepeFrogClient } from '../client'
+import { type EventName, PepeFrogClient } from '../client'
 
-export const name = 'channelUpdate'
+export const name: EventName = 'channelUpdate'
 
 export async function execute(oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel, client: PepeFrogClient) {
   const { serverId, backupServerId } = FrogDb
@@ -18,9 +18,13 @@ export async function execute(oldChannel: DMChannel | NonThreadGuildBasedChannel
       position: newChannel.position, 
       parent: prinCategory?.id, 
     })
-
+    
     if(newChannel.type == ChannelType.GuildText){
-      prinChannel.edit({nsfw: newChannel.nsfw, topic: newChannel.topic})
+      prinChannel.edit({
+        nsfw: newChannel.nsfw, 
+        topic: newChannel.topic,
+        rateLimitPerUser: newChannel.rateLimitPerUser
+      })
     }
   }
 }

@@ -1,19 +1,13 @@
 import { ChannelType, EmbedBuilder, Message } from 'discord.js'
 import { FrogDb } from '../db'
 
-// import { evalCommand } from '../commands/text/eval'
-// import { rolesCommand } from '../commands/text/roles'
-// import { rulesCommand } from '../commands/text/rules'
-// import { girlsCommand } from '../commands/text/girls'
-// import { infoCommand } from '../commands/text/info'
-// import { vipCommand } from '../commands/text/vip'
-// import { packsCommand } from '../commands/text/packs'
 import { getVerifiedsData, updateVerifiedsData } from '../lib/services'
 import { Announcements, Moderation, Reactions } from '../components'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../global'
 
-export const name = 'messageCreate'
+export const name: EventName = 'messageCreate'
 
 export async function execute(msg: Message<boolean>, client: PepeFrogClient) {
   const { channel, channelId, guildId } = msg
@@ -146,33 +140,16 @@ export async function execute(msg: Message<boolean>, client: PepeFrogClient) {
 
   if(msg.author.bot || !msg.content.toLowerCase().startsWith(prefix)) return
   const args = msg.content.slice(prefix.length).trim().split(/ +/g)
-  const command = args.shift()?.toLowerCase()
   const commandName = args.shift()?.toLowerCase()
 
   if(commandName){
-    const command = client.textCommands.get(commandName) || client.textCommands.find(f=> f.aliases.some(s=> s == commandName))
+    const command = client.textCommands.get(commandName) || client.textCommands.find(f=> f.aliases?.some(s=> s == commandName))
     
     if(command){
       if(command.users){
-        if(command.users.some(s=> s == msg.author.id)) command.execute(msg, args, client)
+        if(command.users.some(s=> s == msg.author.id)) command.execute({message: msg, args, client})
       
-      }else command.execute(msg, args, client)
+      }else command.execute({message: msg, args, client})
     }
   }
-
-  // if(owners.some(s=> s == msg.author.id)){
-  //   if(command == 'eval') evalCommand(msg, client, args.join(' '))
-
-  //   if(command == 'rules') rulesCommand(msg, client)
-
-  //   if(command == 'roles') rolesCommand(msg)
-
-  //   if(command == 'girls') girlsCommand(msg, client)
-
-  //   if(command == 'info') infoCommand(msg)
-
-  //   if(command == 'vip') vipCommand(msg, client)
-
-  //   if(command == 'packs') packsCommand(msg, client)
-  // }
 }

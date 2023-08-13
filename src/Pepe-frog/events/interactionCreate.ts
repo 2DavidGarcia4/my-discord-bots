@@ -3,34 +3,25 @@ import { ActionRowBuilder, ApplicationCommandType, type CacheType, EmbedBuilder,
 import { buttonInfoInteractions } from '../db'
 import { selectMultipleRoles, selectRole } from '../../shared/functions'
 import { handlePreviewChannels } from '../lib/services'
-import { SlashCommands } from '../commands'
-import { ContextMenuCommands } from '../commands'
-import { PepeFrogClient } from '../client'
+import { type EventName, PepeFrogClient } from '../client'
 
-export const name = 'interactionCreate'
+export const name: EventName = 'interactionCreate'
 
 export async function execute(int: Interaction<CacheType>, client: PepeFrogClient) {
   
   if(int.isChatInputCommand()){
     const { commandName } = int
     
-    const slashCommand = SlashCommands.find(f=> f.Command.name == commandName)
-    if(slashCommand) slashCommand.run(int, client)
-    // if(commandName == 'move') moveSlashCommand(int, client)
+    const slashCommand = client.slashCommands.find(f=> f.struct.name == commandName)
+    if(slashCommand) return slashCommand.execute(int, client)
   }
 
   if(int.isContextMenuCommand()){
     const { commandType, commandName, user } = int
 
+    const constexCommand = client.contextCommands.find(f=> f.struct.name == commandName)
+    if(constexCommand) return constexCommand.execute(int, client)
     
-    if(commandType == ApplicationCommandType.Message){
-      const cmCommand = ContextMenuCommands.find(f=> f.Command.name == commandName)
-      if(cmCommand) cmCommand.run(int, client)
-
-      // if(commandName == 'Send') sendCM(int, client)
-      // if(commandName == 'Delete reactions') deleteReactionsCM(int)
-      // if(commandName == 'Delete') deleteCM(int)
-    }
   }
   
   if(int.isButton()){
