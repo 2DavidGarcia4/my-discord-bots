@@ -46,29 +46,32 @@ class PublishFilesSlashCommand extends __1.SlashCommand {
         const PublishFilesEb = new discord_js_1.EmbedBuilder()
             .setTitle('Publishing files...')
             .setColor('Blue');
-        await int.reply({ ephemeral: true, embeds: [PublishFilesEb] });
-        for (let i = firstMessageIndex; i >= lastFileIndex; i--) {
-            const message = messages[i];
-            // console.log({i})
-            await PublishingWebhook.send({
+        await int.reply({ ephemeral: true, embeds: [PublishFilesEb] }).then(async (intR) => {
+            for (let i = firstMessageIndex; i >= lastFileIndex; i--) {
+                const message = messages[i];
+                // console.log({i})
+                await PublishingWebhook.send({
+                    avatarURL: serverIconUrl,
+                    username: snackServer?.name,
+                    files: message.attachments.map(at => at)
+                });
+                message.react('☑️');
+                const submitFiles = firstMessageIndex - i + 1;
+                PublishFilesEb.setDescription(`<a:loop:964162886865944617> ${submitFiles}/${files} files`);
+                await intR.edit({
+                    embeds: [PublishFilesEb]
+                });
+            }
+            PublishFilesEb
+                .setTitle('✅ Published files')
+                .setDescription(`**${files}** files have been posted to the channel ${snackChannel}.`)
+                .setColor('Green');
+            await intR.edit({ embeds: [PublishFilesEb] });
+            PublishingWebhook.send({
                 avatarURL: serverIconUrl,
                 username: snackServer?.name,
-                files: message.attachments.map(at => at)
+                content: `**¡Nuevo contenido!\nNew content!**\n<@&${roles.content}>`
             });
-            message.react('☑️');
-            const submitFiles = firstMessageIndex - i + 1;
-            PublishFilesEb.setDescription(`<a:loop:964162886865944617> ${submitFiles}/${files} files`);
-            await int.editReply({ embeds: [PublishFilesEb] });
-        }
-        PublishFilesEb
-            .setTitle('✅ Published files')
-            .setDescription(`**${files}** files have been posted to the channel ${snackChannel}.`)
-            .setColor('Green');
-        await int.editReply({ embeds: [PublishFilesEb] });
-        PublishingWebhook.send({
-            avatarURL: serverIconUrl,
-            username: snackServer?.name,
-            content: `**¡Nuevo contenido!\nNew content!**\n<@&${roles.content}>`
         });
     }
 }
