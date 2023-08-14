@@ -10,7 +10,7 @@ exports.name = 'ready';
 async function execute(client) {
     const { serverId, backupServerId, publishingServerId } = client.data;
     const SnackData = await (0, notion_1.getSnackData)();
-    console.log(SnackData);
+    // console.log(SnackData)
     (0, functions_1.defaultReady)(client, SnackData.channels.ready, 'DarkGold');
     const server = client.guilds.cache.get(serverId);
     const backupServer = client.guilds.cache.get(backupServerId);

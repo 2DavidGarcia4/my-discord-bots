@@ -52,13 +52,11 @@ export default class PublishFilesSlashCommand extends SlashCommand {
     const lastFileIndex = limit ? firstMessageIndex-limit+1 : 0
     const files = firstMessageIndex+1-lastFileIndex
 
-    await int.deferReply({ephemeral: true})
-
     const PublishFilesEb = new EmbedBuilder()
     .setTitle('Publishing files...')
     .setColor('Blue')
 
-    sendMessageSlash(int, {embeds: [PublishFilesEb]})
+    await int.reply({ephemeral: true, embeds: [PublishFilesEb]})
     
     for(let i=firstMessageIndex; i>=lastFileIndex; i--) {
       const message = messages[i]

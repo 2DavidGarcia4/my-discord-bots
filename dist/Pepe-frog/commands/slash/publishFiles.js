@@ -43,11 +43,10 @@ class PublishFilesSlashCommand extends __1.SlashCommand {
         const firstMessageIndex = messages.findIndex(f => f.id == firstMessageId);
         const lastFileIndex = limit ? firstMessageIndex - limit + 1 : 0;
         const files = firstMessageIndex + 1 - lastFileIndex;
-        await int.deferReply({ ephemeral: true });
         const PublishFilesEb = new discord_js_1.EmbedBuilder()
             .setTitle('Publishing files...')
             .setColor('Blue');
-        (0, functions_1.sendMessageSlash)(int, { embeds: [PublishFilesEb] });
+        await int.reply({ ephemeral: true, embeds: [PublishFilesEb] });
         for (let i = firstMessageIndex; i >= lastFileIndex; i--) {
             const message = messages[i];
             console.log({ i });
