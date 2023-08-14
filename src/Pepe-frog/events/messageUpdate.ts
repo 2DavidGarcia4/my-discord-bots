@@ -2,6 +2,7 @@ import { ChannelType, EmbedBuilder, Message, type PartialMessage } from 'discord
 import { FrogDb } from '../db'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'messageUpdate'
 

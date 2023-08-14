@@ -5,6 +5,7 @@ import { getVerifiedsData, updateVerifiedsData } from '../lib/services'
 import { Announcements, Moderation, Reactions } from '../components'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'messageCreate'
 

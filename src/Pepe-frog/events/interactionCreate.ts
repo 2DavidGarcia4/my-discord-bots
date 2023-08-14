@@ -4,6 +4,7 @@ import { buttonInfoInteractions } from '../db'
 import { selectMultipleRoles, selectRole } from '../../shared/functions'
 import { handlePreviewChannels } from '../lib/services'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'interactionCreate'
 

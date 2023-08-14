@@ -1,6 +1,7 @@
 import { GuildMember, PartialGuildMember } from 'discord.js'
 import { modDb } from '..'
 import { FrogDb } from '../db'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'guildMemberRemove'
 

@@ -3,6 +3,7 @@ import { FrogDb } from '../db'
 import { createVerified } from '../lib/services'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'guildMemberUpdate'
 

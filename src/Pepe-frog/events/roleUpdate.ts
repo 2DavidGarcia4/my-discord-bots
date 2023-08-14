@@ -1,6 +1,7 @@
 import { Role } from 'discord.js'
 import { PepeFrogClient } from '../client'
 import { FrogDb } from '../db'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'roleUpdate'
 

@@ -1,5 +1,6 @@
 import { GuildEmoji } from 'discord.js'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'emojiCreate'
 

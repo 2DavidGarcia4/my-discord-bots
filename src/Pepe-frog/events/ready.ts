@@ -3,6 +3,7 @@ import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences 
 import { defaultReady } from '../../shared/functions'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../../globals'
 
 export const once = true
 export const name: EventName = 'ready'
@@ -10,7 +11,7 @@ export const name: EventName = 'ready'
 export async function execute(client: PepeFrogClient) {
   const { serverId, backupServerId, publishingServerId } = client.data
   const SnackData = await getSnackData()
-  console.log(SnackData)
+  // console.log(SnackData)
   defaultReady(client, SnackData.channels.ready, 'DarkGold')
 
   const server = client.guilds.cache.get(serverId)

@@ -1,6 +1,7 @@
 import { EmbedBuilder, GuildMember } from 'discord.js'
 import { FrogDb } from '../db'
 import { isDevelopment } from '../../config'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'guildMemberAdd'
 

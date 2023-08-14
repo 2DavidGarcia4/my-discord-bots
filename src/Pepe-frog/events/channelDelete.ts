@@ -2,6 +2,7 @@ import { DMChannel, type NonThreadGuildBasedChannel } from 'discord.js'
 import { FrogDb } from '../db'
 import { getVerifiedsData, updateVerifiedsData } from '../lib/services'
 import { PepeFrogClient } from '../client'
+import { EventName } from '../../globals'
 
 export const name: EventName = 'channelDelete'
 
