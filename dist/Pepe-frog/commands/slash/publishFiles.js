@@ -49,7 +49,7 @@ class PublishFilesSlashCommand extends __1.SlashCommand {
         await int.reply({ ephemeral: true, embeds: [PublishFilesEb] });
         for (let i = firstMessageIndex; i >= lastFileIndex; i--) {
             const message = messages[i];
-            console.log({ i });
+            // console.log({i})
             await PublishingWebhook.send({
                 avatarURL: serverIconUrl,
                 username: snackServer?.name,

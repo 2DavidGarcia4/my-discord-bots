@@ -60,7 +60,7 @@ export default class PublishFilesSlashCommand extends SlashCommand {
     
     for(let i=firstMessageIndex; i>=lastFileIndex; i--) {
       const message = messages[i]
-      console.log({i})
+      // console.log({i})
 
       await PublishingWebhook.send({
         avatarURL: serverIconUrl,
