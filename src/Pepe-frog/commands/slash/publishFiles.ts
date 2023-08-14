@@ -87,7 +87,7 @@ export default class PublishFilesSlashCommand extends SlashCommand {
         content: `**¡Nuevo contenido!\nNew content!**\n<@&${roles.content}>`
       })
 
-    })
+    }).catch(e=> console.error(e))
     
   }
 }

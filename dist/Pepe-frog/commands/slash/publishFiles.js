@@ -72,7 +72,7 @@ class PublishFilesSlashCommand extends __1.SlashCommand {
                 username: snackServer?.name,
                 content: `**¡Nuevo contenido!\nNew content!**\n<@&${roles.content}>`
             });
-        });
+        }).catch(e => console.error(e));
     }
 }
 exports.default = PublishFilesSlashCommand;
