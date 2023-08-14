@@ -1,8 +1,13 @@
 export interface SnackData {
   roles: {
-    verified: string
+    man: string
+    oter: string
+    woman: string
+    withe: string
     spamer: string
+    survey: string
     content: string
+    verified: string
     announcement: string
     verifiedSpeech: string
   }

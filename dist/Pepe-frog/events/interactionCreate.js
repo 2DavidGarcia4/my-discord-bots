@@ -5,8 +5,10 @@ const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
 const functions_1 = require("../../shared/functions");
 const services_1 = require("../lib/services");
+const notion_1 = require("../lib/notion");
 exports.name = 'interactionCreate';
 async function execute(int, client) {
+    const { roles } = await (0, notion_1.getSnackData)();
     if (int.isChatInputCommand()) {
         const { commandName } = int;
         const slashCommand = client.slashCommands.find(f => f.struct.name == commandName);
@@ -59,21 +61,15 @@ async function execute(int, client) {
         if (customId == 'verifieds-btn') {
             const VerifiedsEb = new discord_js_1.EmbedBuilder()
                 .setTitle('✅ ' + (inEnglish ? 'Verified women' : 'Mujeres verificadas'))
-                .setDescription(`${guild?.members.cache.filter(f => f.roles.cache.has('1057720387464593478')).map(({ id }) => `**<@${id}>**`).join('\n')}`)
+                .setDescription(`${guild?.members.cache.filter(f => f.roles.cache.has(roles.verified)).map(({ id }) => `**<@${id}>**`).join('\n')}`)
                 .setColor('LuminousVividPink');
             int.reply({ ephemeral: true, embeds: [VerifiedsEb] });
         }
         const previwChannels = [
             {
                 id: 'vip-btn',
-                accessRoles: ['1054484428547686521', '1067223243183902730'],
-                previewRol: '1054109326014418964',
-                run: services_1.handlePreviewChannels
-            },
-            {
-                id: 'packs-btn',
-                accessRoles: ['1054484428547686521', '1121140017058812084'],
-                previewRol: '1101370257802801234',
+                accessRoles: ['1139581587848188064', '1139581616499470386'],
+                previewRol: '1139702331756261386',
                 run: services_1.handlePreviewChannels
             }
         ].find(f => f.id == customId);
@@ -118,15 +114,15 @@ async function execute(int, client) {
             const option = values[0];
             if (option == 'notifications') {
                 const members = int.guild?.members.cache;
-                const announcements = members?.filter(f => f.roles.cache.has('1053391025906921472')).size;
-                const surveys = members?.filter(f => f.roles.cache.has('1053410859700994128')).size;
-                const contents = members?.filter(f => f.roles.cache.has('1053411182935023657')).size;
-                const verifieds = members?.filter(f => f.roles.cache.has('1083060304054849676')).size;
+                const announcements = members?.filter(f => f.roles.cache.has(roles.announcement)).size;
+                const surveys = members?.filter(f => f.roles.cache.has(roles.survey)).size;
+                const contents = members?.filter(f => f.roles.cache.has(roles.content)).size;
+                const verifieds = members?.filter(f => f.roles.cache.has(roles.verifiedSpeech)).size;
                 const NotificationsEb = new discord_js_1.EmbedBuilder()
                     .setTitle('🔔 ' + (inEnglish ? 'Notification roles' : 'Roles de notificación'))
                     .setDescription(inEnglish ?
-                    `> **<@&1053391025906921472>:**\n> This role will notify you when there is a new announcement.\n> **${announcements?.toLocaleString()}** members have the role.\n\n> **<@&1053410859700994128>:**\n> This role will notify you when there is a new survey.\n> **${surveys?.toLocaleString()}** members have the role.\n\n> **<@&1053411182935023657>:**\n> This role will notify you when there is new content.\n> **${contents?.toLocaleString()}** members have the role.\n\n> **<@&1083060304054849676>:**\n> This role will notify you when a verified woman talks on your channel.\n> **${verifieds?.toLocaleString()}** members have the role.` :
-                    `> **<@&1053391025906921472>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053410859700994128>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1053411182935023657>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1083060304054849676>:**\n> Este rol te notificará cuando una mujer verificada hable en su canal.\n> **${verifieds?.toLocaleString()}** miembros tienen el rol.`)
+                    `> **<@&${roles.announcement}>:**\n> This role will notify you when there is a new announcement.\n> **${announcements?.toLocaleString()}** members have the role.\n\n> **<@&${roles.survey}>:**\n> This role will notify you when there is a new survey.\n> **${surveys?.toLocaleString()}** members have the role.\n\n> **<@&${roles.content}>:**\n> This role will notify you when there is new content.\n> **${contents?.toLocaleString()}** members have the role.\n\n> **<@&${roles.verifiedSpeech}>:**\n> This role will notify you when a verified woman talks on your channel.\n> **${verifieds?.toLocaleString()}** members have the role.` :
+                    `> **<@&${roles.announcement}>:**\n> Este rol te notificará cuando haya un nuevo anuncio.\n> **${announcements?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&${roles.survey}>:**\n> Este rol te notificará cuando haya una nueva encuesta.\n> **${surveys?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&${roles.content}>:**\n> Este rol te notificará cuando haya contenido nuevo.\n> **${contents?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&${roles.verifiedSpeech}>:**\n> Este rol te notificará cuando una mujer verificada hable en su canal.\n> **${verifieds?.toLocaleString()}** miembros tienen el rol.`)
                     .setColor(int.guild?.members.me?.displayHexColor || 'White');
                 const NotificationsMenu = new discord_js_1.ActionRowBuilder()
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
@@ -158,7 +154,7 @@ async function execute(int, client) {
                 int.reply({ ephemeral: true, embeds: [NotificationsEb], components: [NotificationsMenu] });
             }
             if (option == 'colors') {
-                const witheColor = guild?.roles.cache.get('1053418871547248671');
+                const witheColor = guild?.roles.cache.get(roles.withe);
                 const colorRoles = guild?.roles.cache.filter(f => f.position <= (witheColor?.position || 0) && f.position > (witheColor?.position ? witheColor.position - 25 : 0));
                 if (!colorRoles)
                     return;
@@ -198,74 +194,9 @@ async function execute(int, client) {
                         value: 'light grey'
                     },
                     {
-                        label: inEnglish ? 'Silver' : 'Plata',
-                        emoji: '🥈',
-                        value: 'silver'
-                    },
-                    {
                         label: inEnglish ? 'Beige' : 'Beige',
                         emoji: '🍞',
                         value: 'beige'
-                    },
-                    {
-                        label: inEnglish ? 'Pink' : 'Rosa',
-                        emoji: '🫦',
-                        value: 'pink'
-                    },
-                    {
-                        label: inEnglish ? 'Violet' : 'Violeta',
-                        emoji: '☂️',
-                        value: 'violet'
-                    },
-                    {
-                        label: inEnglish ? 'Magenta' : 'Magenta',
-                        emoji: '🌺',
-                        value: 'magenta'
-                    },
-                    {
-                        label: inEnglish ? 'Purple' : 'Morado',
-                        emoji: '🍆',
-                        value: 'purple'
-                    },
-                    {
-                        label: inEnglish ? 'Yellow' : 'Amarillo',
-                        emoji: '🍌',
-                        value: 'yellow'
-                    },
-                    {
-                        label: inEnglish ? 'Gold' : 'Oro',
-                        emoji: '🏆',
-                        value: 'gold'
-                    },
-                    {
-                        label: inEnglish ? 'Orange' : 'Naranja',
-                        emoji: '🧡',
-                        value: 'orange'
-                    },
-                    {
-                        label: inEnglish ? 'Bronze' : 'Bronce',
-                        emoji: '🥉',
-                        value: 'bronze'
-                    },
-                    {
-                        label: inEnglish ? 'Red' : 'Rojo',
-                        emoji: '❤️',
-                        value: 'red'
-                    },
-                    {
-                        label: inEnglish ? 'Green lime' : 'Verde lima',
-                        emoji: '🍃',
-                        value: 'green lime'
-                    },
-                    {
-                        label: inEnglish ? 'Green' : 'Verde',
-                        emoji: '🌳',
-                        value: 'green'
-                    },
-                    {
-                        label: inEnglish ? 'Olive green' : 'Verde oliva',
-                        emoji: '🫒',
-                        value: 'olive green'
                     },
                     {
                         label: inEnglish ? 'Light blue' : 'Azul celeste',
@@ -293,9 +224,74 @@ async function execute(int, client) {
                         value: 'navy blue'
                     },
                     {
+                        label: inEnglish ? 'Green lime' : 'Verde lima',
+                        emoji: '🍃',
+                        value: 'green lime'
+                    },
+                    {
+                        label: inEnglish ? 'Green' : 'Verde',
+                        emoji: '🌳',
+                        value: 'green'
+                    },
+                    {
+                        label: inEnglish ? 'Olive green' : 'Verde oliva',
+                        emoji: '🫒',
+                        value: 'olive green'
+                    },
+                    {
+                        label: inEnglish ? 'Yellow' : 'Amarillo',
+                        emoji: '🍌',
+                        value: 'yellow'
+                    },
+                    {
+                        label: inEnglish ? 'Gold' : 'Oro',
+                        emoji: '🏆',
+                        value: 'gold'
+                    },
+                    {
+                        label: inEnglish ? 'Orange' : 'Naranja',
+                        emoji: '🧡',
+                        value: 'orange'
+                    },
+                    {
+                        label: inEnglish ? 'Bronze' : 'Bronce',
+                        emoji: '🥉',
+                        value: 'bronze'
+                    },
+                    {
                         label: inEnglish ? 'Brown' : 'Marrón',
                         emoji: '🍩',
                         value: 'brown'
+                    },
+                    {
+                        label: inEnglish ? 'Red' : 'Rojo',
+                        emoji: '❤️',
+                        value: 'red'
+                    },
+                    {
+                        label: inEnglish ? 'Pink' : 'Rosa',
+                        emoji: '🫦',
+                        value: 'pink'
+                    },
+                    {
+                        label: inEnglish ? 'Violet' : 'Violeta',
+                        emoji: '☂️',
+                        value: 'violet'
+                    },
+                    {
+                        label: inEnglish ? 'Magenta' : 'Magenta',
+                        emoji: '🌺',
+                        value: 'magenta'
+                    },
+                    {
+                        label: inEnglish ? 'Purple' : 'Morado',
+                        emoji: '🍆',
+                        value: 'purple'
+                    },
+                    {
+                        label: inEnglish ? 'Silver' : 'Plata',
+                        emoji: '🥈',
+                        value: 'silver'
                     },
                     {
                         label: inEnglish ? 'Gray' : 'Gris',
@@ -317,14 +313,14 @@ async function execute(int, client) {
             }
             if (option == 'genders') {
                 const members = int.guild?.members.cache;
-                const women = members?.filter(f => f.roles.cache.has('1058546950414278756')).size;
-                const mens = members?.filter(f => f.roles.cache.has('1058546982014160947')).size;
-                const oter = members?.filter(f => f.roles.cache.has('1058547126252093542')).size;
+                const women = members?.filter(f => f.roles.cache.has(roles.woman)).size;
+                const mens = members?.filter(f => f.roles.cache.has(roles.man)).size;
+                const oter = members?.filter(f => f.roles.cache.has(roles.oter)).size;
                 const NotificationsEb = new discord_js_1.EmbedBuilder()
                     .setTitle('👥 ' + (inEnglish ? 'Gender roles' : 'Roles de género'))
                     .setDescription(inEnglish ?
-                    `> **<@&1058546950414278756>:**\n> This role identifies you as a woman.\n> **${women?.toLocaleString()}** members have the role.\n\n> **<@&1058546982014160947>:**\n> This role identifies you as a man.\n> **${mens?.toLocaleString()}** members have the role.\n\n> **<@&1058547126252093542>:**\n> Choose this role if there is no role that identifies you.\n> **${oter?.toLocaleString()}** members have the role.` :
-                    `> **<@&1058546950414278756>:**\n> Este rol te identifica como mujer.\n> **${women?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1058546982014160947>:**\n> Este rol te identifica como hombre.\n> **${mens?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&1058547126252093542>:**\n> Elige este rol si no hay ningun rol que te identifique.\n> **${oter?.toLocaleString()}** miembros tienen el rol.`)
+                    `> **<@&${roles.woman}>:**\n> This role identifies you as a woman.\n> **${women?.toLocaleString()}** members have the role.\n\n> **<@&${roles.man}>:**\n> This role identifies you as a man.\n> **${mens?.toLocaleString()}** members have the role.\n\n> **<@&${roles.oter}>:**\n> Choose this role if there is no role that identifies you.\n> **${oter?.toLocaleString()}** members have the role.` :
+                    `> **<@&${roles.woman}>:**\n> Este rol te identifica como mujer.\n> **${women?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&${roles.man}>:**\n> Este rol te identifica como hombre.\n> **${mens?.toLocaleString()}** miembros tienen el rol.\n\n> **<@&${roles.oter}>:**\n> Elige este rol si no hay ningun rol que te identifique.\n> **${oter?.toLocaleString()}** miembros tienen el rol.`)
                     .setColor(int.guild?.members.me?.displayHexColor || 'White');
                 const NotificationsMenu = new discord_js_1.ActionRowBuilder()
                     .addComponents(new discord_js_1.StringSelectMenuBuilder()
@@ -355,22 +351,22 @@ async function execute(int, client) {
             const dictionary = [
                 {
                     value: 'announcements',
-                    rol: '1053391025906921472',
+                    rol: roles.announcement,
                     status: ''
                 },
                 {
                     value: 'surveys',
-                    rol: '1053410859700994128',
+                    rol: roles.survey,
                     status: ''
                 },
                 {
                     value: 'content',
-                    rol: '1053411182935023657',
+                    rol: roles.content,
                     status: ''
                 },
                 {
                     value: 'verified-speak',
-                    rol: '1083060304054849676',
+                    rol: roles.verifiedSpeech,
                     status: ''
                 }
             ];
@@ -378,34 +374,38 @@ async function execute(int, client) {
                 (0, functions_1.selectMultipleRoles)(int, values, dictionary, author);
         }
         if (customId == 'colors-menu') {
+            const witheColor = guild?.roles.cache.get(roles.withe);
+            const colorRoles = guild?.roles.cache.filter(f => f.position <= (witheColor?.position || 0) && f.position > (witheColor?.position ? witheColor.position - 25 : 0)).map(c => c);
+            if (!colorRoles)
+                return;
             const author = guild?.members.cache.get(user.id);
             const dictionary = [
-                { value: 'white', rol: '1053418871547248671', status: '' },
-                { value: 'light grey', rol: '1101370592059457556', status: '' },
-                { value: 'silver', rol: '1101370938295066694', status: '' },
-                { value: 'beige', rol: '1101370930401386496', status: '' },
-                { value: 'pink', rol: '1053419401300430939', status: '' },
-                { value: 'violet', rol: '1053419392634994748', status: '' },
-                { value: 'magenta', rol: '1101370073526054972', status: '' },
-                { value: 'purple', rol: '1053419396179185685', status: '' },
-                { value: 'yellow', rol: '1053418924290621490', status: '' },
-                { value: 'gold', rol: '1101370934436311070', status: '' },
-                { value: 'orange', rol: '1053419365820801044', status: '' },
-                { value: 'bronze', rol: '1101370942220927017', status: '' },
-                { value: 'red', rol: '1053419388625231952', status: '' },
-                { value: 'green lime', rol: '1101370924307071049', status: '' },
-                { value: 'green', rol: '1053419357767745617', status: '' },
-                { value: 'olive green', rol: '1101370246859858031', status: '' },
-                { value: 'light blue', rol: '1101370919911440455', status: '' },
-                { value: 'turquoise', rol: '1101370605233786983', status: '' },
-                { value: 'cyan', rol: '1053419338029346817', status: '' },
-                { value: 'blue', rol: '1053419380026908801', status: '' },
-                { value: 'navy blue', rol: '1101370241528893470', status: '' },
-                { value: 'brown', rol: '1053419404924297277', status: '' },
-                { value: 'gray', rol: '1053418889649868800', status: '' },
-                { value: 'dark gray', rol: '1101370597520461894', status: '' },
-                { value: 'black', rol: '1053419409617735790', status: '' }
-            ];
+                { value: 'white' },
+                { value: 'light grey' },
+                { value: 'beige' },
+                { value: 'light blue' },
+                { value: 'turquoise' },
+                { value: 'cyan' },
+                { value: 'blue' },
+                { value: 'navy blue' },
+                { value: 'green lime' },
+                { value: 'green' },
+                { value: 'olive green' },
+                { value: 'yellow' },
+                { value: 'gold' },
+                { value: 'orange' },
+                { value: 'bronze' },
+                { value: 'brown' },
+                { value: 'red' },
+                { value: 'pink' },
+                { value: 'violet' },
+                { value: 'magenta' },
+                { value: 'purple' },
+                { value: 'silver' },
+                { value: 'gray' },
+                { value: 'dark gray' },
+                { value: 'black' }
+            ].map(({ value }, i) => ({ value, rol: colorRoles[i].id, status: '' }));
             if (author)
                 (0, functions_1.selectRole)(int, values[0], dictionary, author);
         }
@@ -414,17 +414,17 @@ async function execute(int, client) {
             const dictionary = [
                 {
                     value: 'woman',
-                    rol: '1058546950414278756',
+                    rol: roles.woman,
                     status: ''
                 },
                 {
                     value: 'man',
-                    rol: '1058546982014160947',
+                    rol: roles.man,
                     status: ''
                 },
                 {
                     value: 'oter',
-                    rol: '1058547126252093542',
+                    rol: roles.oter,
                     status: ''
                 }
             ];
