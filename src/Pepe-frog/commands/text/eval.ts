@@ -1,10 +1,9 @@
-import { EmbedBuilder } from "discord.js"
+import { EmbedBuilder } from 'discord.js'
 import { inspect } from 'util'
-import { type MessageProp, TextCommand, modDb } from "../.."
-import { sendMessageText, setError } from "../../../shared/functions"
-import { FrogDb } from "../../db"
-import { setGuildStatus } from "../../lib/services"
-import { PepeFrogClient } from "../../client"
+import { type MessageProp, TextCommand, modDb } from '../..'
+import { sendMessageText, setError } from '../../../shared/functions'
+import { FrogDb } from '../../db'
+import { setGuildStatus } from '../../lib/services'
 
 export default class EvalCommand extends TextCommand {
   constructor() {
