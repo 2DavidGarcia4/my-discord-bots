@@ -14,10 +14,11 @@ export async function execute(client: PepeFrogClient) {
   // console.log(SnackData)
   defaultReady(client, SnackData.channels.ready, 'DarkGold')
 
-  const server = client.guilds.cache.get(serverId)
-  const backupServer = client.guilds.cache.get(backupServerId)
-  const publishedServer = client.guilds.cache.get(publishingServerId)
-  const allServers = [server, backupServer, publishedServer]
+  const server = client.getGuildById(serverId)
+  const backupServer = client.getGuildById(backupServerId)
+  const publishedServer = client.getGuildById(publishingServerId)
+  const auntoContentServer = client.getGuildById('949861760096145438')
+  const allServers = [server, backupServer, publishedServer, auntoContentServer]
   client.data.serverIconUrl = server?.iconURL() || ''
 
   const suggestionsChannel = server?.channels.cache.get(SnackData.channels.suggestions)
