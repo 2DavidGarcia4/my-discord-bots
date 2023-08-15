@@ -1,6 +1,6 @@
 {
   "name": "pcem",
-  "version": "1.9.5",
+  "version": "1.9.6",
   "description": "PCEM bot, bot para mi servidor PCEM.",
   "main": "src/index.ts",
   "type": "commonjs",

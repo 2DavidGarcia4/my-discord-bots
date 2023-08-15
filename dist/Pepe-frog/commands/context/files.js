@@ -20,7 +20,7 @@ class FilesContextCommand extends __1.ContextCommand {
         const { guild, targetMessage } = int;
         if (!targetMessage.attachments.size)
             return (0, functions_1.setSlashError)(int, 'The message contains no files');
-        await int.deferReply();
+        await int.deferReply({ ephemeral: true });
         const FilesEb = new discord_js_1.EmbedBuilder()
             .setTitle('🗂️ Files')
             .setColor('Blue');

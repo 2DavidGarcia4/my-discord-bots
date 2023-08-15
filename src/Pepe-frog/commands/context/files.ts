@@ -21,7 +21,7 @@ export default class FilesContextCommand extends ContextCommand {
 
     if(!targetMessage.attachments.size) return setSlashError(int, 'The message contains no files')
     
-    await int.deferReply()
+    await int.deferReply({ephemeral: true})
 
     const FilesEb = new EmbedBuilder()
     .setTitle('🗂️ Files')

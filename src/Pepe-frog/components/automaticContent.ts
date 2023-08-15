@@ -32,7 +32,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Comm
       const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0'))+1
       channel.edit({topic: fileNumber+''})
     
-      channel.send({content: `**MB:** ${MBs}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
+      channel.send({content: `**MB:** ${MBs.toFixed(2)}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
 
     }else{
       channel.send({content: `**File:** ${contentUrl}`})
@@ -66,7 +66,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Comm
     const splitContent = content.split(/ +/g)
 
     const lastName = splitContent[3]
-    const categoryName = splitContent[2] + (lastName.toLowerCase().includes('content') ? '' : ' '+lastName)
+    const categoryName = splitContent[2] + (lastName.toLowerCase().includes('content') ? '' : '-'+lastName)
     const contentUrl = splitContent.find(f=> f.includes('http'))?.replace(')', '').split('(').pop()
   
     if(categoryName && contentUrl) handleSendContent(categories.onlyNudes, categoryName.toLowerCase(), contentUrl)
