@@ -1,5 +1,5 @@
 import { ChannelType, Client, type Message } from "discord.js"
-import { FrogDb } from "../db"
+import { FrogDb } from "../data"
 import { getSnackData } from "../lib/notion"
 
 export async function Announcements(msg: Message<boolean>, client: Client) {

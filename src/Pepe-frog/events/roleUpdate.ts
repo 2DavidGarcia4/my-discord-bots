@@ -1,12 +1,11 @@
 import { Role } from 'discord.js'
 import { PepeFrogClient } from '../client'
-import { FrogDb } from '../db'
 import { EventName } from '../../globals'
 
 export const name: EventName = 'roleUpdate'
 
 export async function execute(oldRole: Role, newRole: Role, client: PepeFrogClient) {
-  const { serverId, backupServerId } = FrogDb
+  const { serverId, backupServerId } = client.data
   if(oldRole.guild.id != serverId) return
 
   const principalServer = client.guilds.cache.get(backupServerId)

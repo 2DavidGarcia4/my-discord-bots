@@ -1,5 +1,4 @@
 import { ChannelType, EmbedBuilder, Message, type PartialMessage } from 'discord.js'
-import { FrogDb } from '../db'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
 import { EventName } from '../../globals'
@@ -7,7 +6,7 @@ import { EventName } from '../../globals'
 export const name: EventName = 'messageUpdate'
 
 export async function execute(oldMsg: Message<boolean> | PartialMessage, newMsg: Message<boolean> | PartialMessage, client: PepeFrogClient) {
-  const { serverId } = FrogDb
+  const { serverId } = client.data
   if(oldMsg.guildId != serverId || oldMsg.author?.bot) return
 
   const SnackData = await getSnackData()

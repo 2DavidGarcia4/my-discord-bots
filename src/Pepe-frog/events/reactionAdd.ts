@@ -1,5 +1,5 @@
 import { MessageReaction, type PartialMessageReaction, type PartialUser, User } from 'discord.js'
-import { FrogDb } from '../db'
+import { FrogDb } from '../data'
 import { getSnackData } from '../lib/notion'
 import { EventName } from '../../globals'
 

@@ -1,7 +1,7 @@
 import { ChannelType, EmbedBuilder, PermissionFlagsBits, SlashCommandBuilder } from "discord.js";
 import { sendMessageSlash, setSlashError } from "../../../shared/functions";
 import { SlashCommand, type SlashInteraction } from "../..";
-import { FrogDb } from "../../db";
+import { FrogDb } from "../../data";
 
 const MoveScb = new SlashCommandBuilder()
 .setName('move')

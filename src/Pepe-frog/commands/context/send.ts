@@ -1,5 +1,5 @@
 import { ContextMenuCommandBuilder, PermissionFlagsBits, ChannelType, EmbedBuilder } from "discord.js";
-import { FrogDb } from "../../db";
+import { FrogDb } from "../../data";
 import { sendMessageSlash, setSlashError } from '../../../shared/functions'
 import { type CommandClient, ContextCommand, type ContextInteraction } from "../..";
 

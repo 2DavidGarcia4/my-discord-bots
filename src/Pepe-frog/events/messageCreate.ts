@@ -1,6 +1,4 @@
 import { ChannelType, EmbedBuilder, Message } from 'discord.js'
-import { FrogDb } from '../db'
-
 import { getVerifiedsData, updateVerifiedsData } from '../lib/services'
 import { Announcements, Moderation, Reactions } from '../components'
 import { getSnackData } from '../lib/notion'
@@ -12,7 +10,7 @@ export const name: EventName = 'messageCreate'
 
 export async function execute(msg: Message<boolean>, client: PepeFrogClient) {
   const { channel, channelId, guildId } = msg
-  const { prefix, serverId, backupServerId, owners, verifiedsCooldown} = FrogDb
+  const { prefix, serverId, backupServerId, owners, verifiedsCooldown} = client.data
 
   //* Components
   Announcements(msg, client)

@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ActivityType, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message, WebhookClient } from "discord.js"
 import type { ActivitiesOptions, TextChannel } from "discord.js"
-import { FrogDb } from "../db"
+import { FrogDb } from "../data"
 import { VerifiedsData } from "../types"
 import { isDevelopment } from "../../config"
 

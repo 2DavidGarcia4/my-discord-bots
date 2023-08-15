@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ApplicationCommandType, type CacheType, EmbedBuilder, type Interaction, StringSelectMenuBuilder, roleMention } from 'discord.js'
 
-import { buttonInfoInteractions } from '../db'
+import { buttonInfoInteractions } from '../data'
 import { selectMultipleRoles, selectRole } from '../../shared/functions'
 import { handlePreviewChannels } from '../lib/services'
 import { PepeFrogClient } from '../client'

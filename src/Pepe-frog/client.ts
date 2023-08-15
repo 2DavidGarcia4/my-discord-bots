@@ -1,5 +1,5 @@
 import { Client, Collection } from 'discord.js'
-import { FrogDb } from './db'
+import { FrogDb } from './data'
 import { readdirSync } from 'fs'
 import { ContextCommand, SlashCommand, TextCommand } from '.'
 

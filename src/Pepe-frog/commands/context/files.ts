@@ -1,6 +1,6 @@
 import { APIEmbedField, ContextMenuCommandBuilder, EmbedBuilder, PermissionFlagsBits } from 'discord.js'
 import { type CommandClient, ContextCommand, type ContextInteraction } from '../..'
-import { FrogDb } from '../../db'
+import { FrogDb } from '../../data'
 import { sendMessageSlash, setSlashError } from '../../../shared/functions'
 
 const FilesCmcb = new ContextMenuCommandBuilder()
@@ -12,7 +12,7 @@ const FilesCmcb = new ContextMenuCommandBuilder()
 
 export default class FilesContextCommand extends ContextCommand {
   constructor() {
-    super(FilesCmcb, [FrogDb.serverId, FrogDb.backupServerId, FrogDb.publishingServerId])
+    super(FilesCmcb, [FrogDb.serverId, FrogDb.backupServerId, FrogDb.publishingServerId, '949861760096145438'])
   }
 
   public async execute(int: ContextInteraction, client: CommandClient) {

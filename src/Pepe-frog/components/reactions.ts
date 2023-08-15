@@ -1,5 +1,5 @@
 import { ChannelType, Message } from "discord.js";
-import { FrogDb } from "../db";
+import { FrogDb } from "../data";
 import { getSnackData } from "../lib/notion";
 
 export async function Reactions(msg: Message<boolean>) {

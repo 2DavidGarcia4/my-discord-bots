@@ -2,7 +2,7 @@ import { ChannelType, ContextMenuCommandBuilder, PermissionFlagsBits } from 'dis
 import { ContextCommand, ContextInteraction } from "../..";
 import { PepeFrogClient } from "../../client";
 import { setSlashError } from '../../../shared/functions';
-import { FrogDb } from '../../db';
+import { FrogDb } from '../../data';
 import { getWebhookClientByChannel } from '../../lib/services';
 
 const PublishFilesCmcb = new ContextMenuCommandBuilder()

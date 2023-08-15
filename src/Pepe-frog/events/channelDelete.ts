@@ -1,5 +1,4 @@
 import { DMChannel, type NonThreadGuildBasedChannel } from 'discord.js'
-import { FrogDb } from '../db'
 import { getVerifiedsData, updateVerifiedsData } from '../lib/services'
 import { PepeFrogClient } from '../client'
 import { EventName } from '../../globals'
@@ -7,7 +6,7 @@ import { EventName } from '../../globals'
 export const name: EventName = 'channelDelete'
 
 export async function execute(channel: DMChannel | NonThreadGuildBasedChannel, client: PepeFrogClient) {
-  const { serverId, backupServerId } = FrogDb
+  const { serverId, backupServerId } = client.data
   if(channel.isDMBased() || channel.guildId != serverId) return
 
   const principalServer = client.guilds.cache.get(backupServerId)

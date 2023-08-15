@@ -1,5 +1,5 @@
 import { Message, EmbedBuilder } from "discord.js"
-import { FILE_EXTENSIONS, FrogDb, SANCTIONS } from "../db"
+import { FILE_EXTENSIONS, FrogDb, SANCTIONS } from "../data"
 import { modDb } from ".."
 import { getSnackData } from "../lib/notion"
 

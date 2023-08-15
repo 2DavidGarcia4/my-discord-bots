@@ -1,6 +1,6 @@
 import { ChannelType, SlashCommandBuilder, EmbedBuilder } from 'discord.js'
 import { type CommandClient, SlashCommand, type SlashInteraction } from '../..'
-import { FrogDb } from '../../db'
+import { FrogDb } from '../../data'
 import { sendMessageSlash, setSlashError } from '../../../shared/functions'
 import { getWebhookClientByChannel } from '../../lib/services'
 import { getSnackData } from '../../lib/notion'

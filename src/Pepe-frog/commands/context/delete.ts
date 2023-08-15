@@ -1,6 +1,6 @@
 import { ContextMenuCommandBuilder, PermissionFlagsBits, EmbedBuilder } from "discord.js";
 import { ContextCommand, type ContextInteraction, exemptMessagesIds } from "../..";
-import { FrogDb } from "../../db";
+import { FrogDb } from "../../data";
 
 export const DeleteCmcb = new ContextMenuCommandBuilder()
 .setName('Delete')

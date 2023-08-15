@@ -1,12 +1,11 @@
 import { type NonThreadGuildBasedChannel } from 'discord.js'
-import { FrogDb } from '../db'
 import { PepeFrogClient } from '../client'
 import { EventName } from '../../globals'
 
 export const name: EventName = 'channelCreate'
 
 export async function execute(channel: NonThreadGuildBasedChannel, client: PepeFrogClient) {
-  const { serverId, backupServerId } = FrogDb
+  const { serverId, backupServerId } = client.data
   if(channel.guildId != serverId) return
 
   const principalServer = client.guilds.cache.get(backupServerId)

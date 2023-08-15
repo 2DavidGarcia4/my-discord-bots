@@ -2,7 +2,7 @@ import { EmbedBuilder } from 'discord.js'
 import { inspect } from 'util'
 import { type MessageProp, TextCommand, modDb } from '../..'
 import { sendMessageText, setError } from '../../../shared/functions'
-import { FrogDb } from '../../db'
+import { FrogDb } from '../../data'
 import { setGuildStatus } from '../../lib/services'
 
 export default class EvalCommand extends TextCommand {

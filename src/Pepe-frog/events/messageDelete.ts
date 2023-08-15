@@ -1,6 +1,5 @@
 import { ChannelType, EmbedBuilder, Message, type PartialMessage } from 'discord.js'
 import { exemptMessagesIds } from '..'
-import { FrogDb } from '../db'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
 import { EventName } from '../../globals'
@@ -8,7 +7,7 @@ import { EventName } from '../../globals'
 export const name: EventName = 'messageDelete'
 
 export async function execute(msgd: Message<boolean> | PartialMessage, client: PepeFrogClient) {
-  const { serverId, prefix, owners } = FrogDb
+  const { serverId, prefix, owners } = client.data
   
   if(msgd.guildId != serverId || msgd.author?.bot) return
   if(exemptMessagesIds.some(s=> s == msgd.id)){

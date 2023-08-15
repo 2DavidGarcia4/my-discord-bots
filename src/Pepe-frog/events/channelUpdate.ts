@@ -1,12 +1,11 @@
 import { ChannelType, DMChannel, type NonThreadGuildBasedChannel } from 'discord.js'
-import { FrogDb } from '../db'
 import { PepeFrogClient } from '../client'
 import { EventName } from '../../globals'
 
 export const name: EventName = 'channelUpdate'
 
 export async function execute(oldChannel: DMChannel | NonThreadGuildBasedChannel, newChannel: DMChannel | NonThreadGuildBasedChannel, client: PepeFrogClient) {
-  const { serverId, backupServerId } = FrogDb
+  const { serverId, backupServerId } = client.data
   if(oldChannel.isDMBased() || newChannel.isDMBased() || oldChannel.guildId != serverId) return
 
   const principalServer = client.guilds.cache.get(backupServerId)

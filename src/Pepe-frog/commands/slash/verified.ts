@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder } from "discord.js";
 import { getVerifiedsData, transformTime } from "../../lib/services";
 import { sendMessageSlash, setSlashError, setSlashErrors } from "../../../shared/functions";
-import { FrogDb } from "../../db";
+import { FrogDb } from "../../data";
 import { getSnackData } from "../../lib/notion";
 import { type CommandClient, SlashCommand, type SlashInteraction } from "../..";
 
