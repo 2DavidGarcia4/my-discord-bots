@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
-const db_1 = require("../db");
+const data_1 = require("../data");
 const notion_1 = require("../lib/notion");
 exports.name = 'messageReactionAdd';
 async function execute(reaction, user) {
-    const { serverId, emojisIds } = db_1.FrogDb;
+    const { serverId, emojisIds } = data_1.FrogDb;
     if (user.bot)
         return;
     if (reaction.message.guildId != serverId)

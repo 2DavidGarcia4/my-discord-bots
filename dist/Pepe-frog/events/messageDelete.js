@@ -3,11 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
 const discord_js_1 = require("discord.js");
 const __1 = require("..");
-const db_1 = require("../db");
 const notion_1 = require("../lib/notion");
 exports.name = 'messageDelete';
 async function execute(msgd, client) {
-    const { serverId, prefix, owners } = db_1.FrogDb;
+    const { serverId, prefix, owners } = client.data;
     if (msgd.guildId != serverId || msgd.author?.bot)
         return;
     if (__1.exemptMessagesIds.some(s => s == msgd.id)) {

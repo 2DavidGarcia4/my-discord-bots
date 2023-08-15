@@ -12,10 +12,11 @@ async function execute(client) {
     const SnackData = await (0, notion_1.getSnackData)();
     // console.log(SnackData)
     (0, functions_1.defaultReady)(client, SnackData.channels.ready, 'DarkGold');
-    const server = client.guilds.cache.get(serverId);
-    const backupServer = client.guilds.cache.get(backupServerId);
-    const publishedServer = client.guilds.cache.get(publishingServerId);
-    const allServers = [server, backupServer, publishedServer];
+    const server = client.getGuildById(serverId);
+    const backupServer = client.getGuildById(backupServerId);
+    const publishedServer = client.getGuildById(publishingServerId);
+    const auntoContentServer = client.getGuildById('949861760096145438');
+    const allServers = [server, backupServer, publishedServer, auntoContentServer];
     client.data.serverIconUrl = server?.iconURL() || '';
     const suggestionsChannel = server?.channels.cache.get(SnackData.channels.suggestions);
     if (suggestionsChannel?.type == discord_js_1.ChannelType.GuildText)

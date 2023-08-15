@@ -25,7 +25,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PepeFrogClient = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("./db");
+const data_1 = require("./data");
 const fs_1 = require("fs");
 class PepeFrogClient extends discord_js_1.Client {
     getGuildById(guildId) {
@@ -36,7 +36,7 @@ class PepeFrogClient extends discord_js_1.Client {
     }
     constructor() {
         super({ intents: 131071, });
-        this.data = db_1.FrogDb;
+        this.data = data_1.FrogDb;
         this.slashCommands = new discord_js_1.Collection();
         this.contextCommands = new discord_js_1.Collection();
         this.textCommands = new discord_js_1.Collection();

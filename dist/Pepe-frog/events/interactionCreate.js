@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
+const data_1 = require("../data");
 const functions_1 = require("../../shared/functions");
 const services_1 = require("../lib/services");
 const notion_1 = require("../lib/notion");
@@ -24,7 +24,7 @@ async function execute(int, client) {
     if (int.isButton()) {
         const { customId, guild, locale, user } = int, inEnglish = locale == 'en-US';
         const author = int.guild?.members.cache.get(user.id);
-        const translatedInformationMessageData = db_1.buttonInfoInteractions.find(f => f.id == customId);
+        const translatedInformationMessageData = data_1.buttonInfoInteractions.find(f => f.id == customId);
         if (translatedInformationMessageData)
             await translatedInformationMessageData.run(int, client);
         if (customId == 'en-roles-btn') {

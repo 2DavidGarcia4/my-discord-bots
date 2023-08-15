@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const services_1 = require("../../lib/services");
 const functions_1 = require("../../../shared/functions");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 const notion_1 = require("../../lib/notion");
 const __1 = require("../..");
 const VerifiedScb = new discord_js_1.SlashCommandBuilder()
@@ -18,7 +18,7 @@ const VerifiedScb = new discord_js_1.SlashCommandBuilder()
     .setRequired(false)).toJSON();
 class VerifiedSlashCommand extends __1.SlashCommand {
     constructor() {
-        super(VerifiedScb, [db_1.FrogDb.serverId]);
+        super(VerifiedScb, [data_1.FrogDb.serverId]);
     }
     async execute(int, client) {
         const { guild, user, options, locale } = int, isEnglish = locale == 'en-US';
@@ -108,7 +108,7 @@ class VerifiedSlashCommand extends __1.SlashCommand {
                     ...VerifiedEb.data.fields,
                     {
                         name: '📣 ' + (isEnglish ? `Ping available` : `Ping disponible`) + ': ' + (verifiedData.ping ? '✅' : '*❌*'),
-                        value: (isEnglish ? 'Available' : 'Disponible') + ` <t:${(0, services_1.transformTime)(Date.now() + db_1.FrogDb.verifiedsCooldown)}:R>`,
+                        value: (isEnglish ? 'Available' : 'Disponible') + ` <t:${(0, services_1.transformTime)(Date.now() + data_1.FrogDb.verifiedsCooldown)}:R>`,
                         inline: true
                     }
                 ];

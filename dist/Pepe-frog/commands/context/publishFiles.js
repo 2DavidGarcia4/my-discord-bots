@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const __1 = require("../..");
 const functions_1 = require("../../../shared/functions");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 const services_1 = require("../../lib/services");
 const PublishFilesCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setName('Publish files')
@@ -13,7 +13,7 @@ const PublishFilesCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .toJSON();
 class PublishFiles extends __1.ContextCommand {
     constructor() {
-        super(PublishFilesCmcb, [db_1.FrogDb.publishingServerId]);
+        super(PublishFilesCmcb, [data_1.FrogDb.publishingServerId]);
     }
     async execute(int, client) {
         const { guildId, locale } = int, isEnglish = locale == 'en-US';

@@ -1,10 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
-const db_1 = require("../db");
 exports.name = 'roleUpdate';
 async function execute(oldRole, newRole, client) {
-    const { serverId, backupServerId } = db_1.FrogDb;
+    const { serverId, backupServerId } = client.data;
     if (oldRole.guild.id != serverId)
         return;
     const principalServer = client.guilds.cache.get(backupServerId);

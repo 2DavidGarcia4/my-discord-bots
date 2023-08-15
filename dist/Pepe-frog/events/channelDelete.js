@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
-const db_1 = require("../db");
 const services_1 = require("../lib/services");
 exports.name = 'channelDelete';
 async function execute(channel, client) {
-    const { serverId, backupServerId } = db_1.FrogDb;
+    const { serverId, backupServerId } = client.data;
     if (channel.isDMBased() || channel.guildId != serverId)
         return;
     const principalServer = client.guilds.cache.get(backupServerId);

@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const __1 = require("../..");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 const functions_1 = require("../../../shared/functions");
 const FilesCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setName('Files')
@@ -12,7 +12,7 @@ const FilesCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .toJSON();
 class FilesContextCommand extends __1.ContextCommand {
     constructor() {
-        super(FilesCmcb, [db_1.FrogDb.serverId, db_1.FrogDb.backupServerId, db_1.FrogDb.publishingServerId]);
+        super(FilesCmcb, [data_1.FrogDb.serverId, data_1.FrogDb.backupServerId, data_1.FrogDb.publishingServerId, '949861760096145438']);
     }
     async execute(int, client) {
         if (!int.isMessageContextMenuCommand())

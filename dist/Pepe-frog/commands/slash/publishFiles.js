@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const __1 = require("../..");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 const functions_1 = require("../../../shared/functions");
 const services_1 = require("../../lib/services");
 const notion_1 = require("../../lib/notion");
@@ -26,7 +26,7 @@ const PublishFilesScb = new discord_js_1.SlashCommandBuilder()
     .toJSON();
 class PublishFilesSlashCommand extends __1.SlashCommand {
     constructor() {
-        super(PublishFilesScb, [db_1.FrogDb.publishingServerId]);
+        super(PublishFilesScb, [data_1.FrogDb.publishingServerId]);
     }
     async execute(int, client) {
         const { channel, options } = int;

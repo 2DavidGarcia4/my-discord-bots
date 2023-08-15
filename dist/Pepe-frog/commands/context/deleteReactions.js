@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteReactionsCmcb = void 0;
 const discord_js_1 = require("discord.js");
 const __1 = require("../..");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 exports.DeleteReactionsCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setName('Delete reactions')
     .setNameLocalizations({
@@ -14,7 +14,7 @@ exports.DeleteReactionsCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setType(3).toJSON();
 class DeleteReactionsContexCommand extends __1.ContextCommand {
     constructor() {
-        super(exports.DeleteReactionsCmcb, [db_1.FrogDb.serverId]);
+        super(exports.DeleteReactionsCmcb, [data_1.FrogDb.serverId]);
     }
     async execute(int) {
         const { locale } = int, isEnglish = locale == 'en-US' ? true : false;

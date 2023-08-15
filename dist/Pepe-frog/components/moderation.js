@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Moderation = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
+const data_1 = require("../data");
 const __1 = require("..");
 const notion_1 = require("../lib/notion");
 async function Moderation(msg) {
     const { guildId } = msg;
     if (msg.author.bot)
         return;
-    if (guildId != db_1.FrogDb.serverId)
+    if (guildId != data_1.FrogDb.serverId)
         return;
     const { categories, roles } = await (0, notion_1.getSnackData)();
     const verifiedsCahnnels = msg.guild?.channels.cache.filter(f => f.parentId == categories.verifieds);
@@ -25,7 +25,7 @@ async function Moderation(msg) {
             if (member.warns >= 3) {
                 msg.member?.roles.add(roles.spamer);
             }
-            db_1.SANCTIONS.forEach(sanction => {
+            data_1.SANCTIONS.forEach(sanction => {
                 if (sanction.warns == member.warns) {
                     msg.member?.timeout(sanction.time, timeoutReason.replace('{warns}', sanction.warns + ''));
                 }
@@ -40,7 +40,7 @@ async function Moderation(msg) {
     if (!verifiedsCahnnels?.some(s => s.id == msg.channelId) && !msg.member?.permissions.has('Administrator') && enlaceActivators.some(s => msg.content.includes(s))) {
         const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
         const filter = texts.filter(f => enlaceActivators.some(s => f.includes(s)));
-        if (filter.some(f => !db_1.FILE_EXTENSIONS.some(s => f.endsWith('.' + s)))) {
+        if (filter.some(f => !data_1.FILE_EXTENSIONS.some(s => f.endsWith('.' + s)))) {
             const AutoModEb = new discord_js_1.EmbedBuilder()
                 .setTitle('Auto moderation')
                 .setDescription('Only links to images, videos and gifs are allowed.');

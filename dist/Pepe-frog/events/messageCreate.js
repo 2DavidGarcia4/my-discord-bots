@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
 const services_1 = require("../lib/services");
 const components_1 = require("../components");
 const notion_1 = require("../lib/notion");
@@ -10,7 +9,7 @@ const automaticContent_1 = require("../components/automaticContent");
 exports.name = 'messageCreate';
 async function execute(msg, client) {
     const { channel, channelId, guildId } = msg;
-    const { prefix, serverId, backupServerId, owners, verifiedsCooldown } = db_1.FrogDb;
+    const { prefix, serverId, backupServerId, owners, verifiedsCooldown } = client.data;
     //* Components
     (0, components_1.Announcements)(msg, client);
     (0, components_1.Moderation)(msg);

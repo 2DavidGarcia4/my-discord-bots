@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
-const db_1 = require("../db");
 const services_1 = require("../lib/services");
 const notion_1 = require("../lib/notion");
 exports.name = 'guildMemberUpdate';
 async function execute(oldMember, newMember, client) {
-    if (oldMember.guild.id != db_1.FrogDb.serverId)
+    if (oldMember.guild.id != client.data.serverId)
         return;
     if (oldMember.permissions.has('ManageGuild'))
         return;

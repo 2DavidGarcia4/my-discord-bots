@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const functions_1 = require("../../../shared/functions");
 const __1 = require("../..");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 const MoveScb = new discord_js_1.SlashCommandBuilder()
     .setName('move')
     .setNameLocalizations({
@@ -47,7 +47,7 @@ const MoveScb = new discord_js_1.SlashCommandBuilder()
     .setRequired(true))).toJSON();
 class MoveSlashCommand extends __1.SlashCommand {
     constructor() {
-        super(MoveScb, [db_1.FrogDb.serverId, db_1.FrogDb.backupServerId, db_1.FrogDb.publishingServerId]);
+        super(MoveScb, [data_1.FrogDb.serverId, data_1.FrogDb.backupServerId, data_1.FrogDb.publishingServerId]);
     }
     async execute(int) {
         const { options } = int, subCommand = options.getSubcommand(true);

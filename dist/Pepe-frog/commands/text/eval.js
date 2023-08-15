@@ -4,7 +4,7 @@ const discord_js_1 = require("discord.js");
 const util_1 = require("util");
 const __1 = require("../..");
 const functions_1 = require("../../../shared/functions");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 const services_1 = require("../../lib/services");
 class EvalCommand extends __1.TextCommand {
     constructor() {
@@ -14,7 +14,7 @@ class EvalCommand extends __1.TextCommand {
     }
     async execute({ message: msg, args }) {
         try {
-            const db = db_1.FrogDb, setStatus = services_1.setGuildStatus, modDB = __1.modDb;
+            const db = data_1.FrogDb, setStatus = services_1.setGuildStatus, modDB = __1.modDb;
             msg.channel.sendTyping();
             const code = eval(args.join(' ')), texto = (0, util_1.inspect)(code);
             const evalEb = new discord_js_1.EmbedBuilder()

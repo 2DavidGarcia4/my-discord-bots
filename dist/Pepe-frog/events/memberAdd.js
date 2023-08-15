@@ -2,14 +2,14 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
+const data_1 = require("../data");
 const config_1 = require("../../config");
 exports.name = 'guildMemberAdd';
 async function execute(member) {
-    const { serverId } = db_1.FrogDb;
+    const { serverId } = data_1.FrogDb;
     if (member.guild.id != serverId)
         return;
-    db_1.FrogDb.joins++;
+    data_1.FrogDb.joins++;
     const MemberAddEb = new discord_js_1.EmbedBuilder()
         .setThumbnail(member.displayAvatarURL({ extension: 'png' }))
         .setTitle(`👋 Hello, welcome ${member.user.username}`)

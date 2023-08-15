@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 const functions_1 = require("../../../shared/functions");
 const __1 = require("../..");
 const SendCmcb = new discord_js_1.ContextMenuCommandBuilder()
@@ -14,10 +14,10 @@ const SendCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setType(3).toJSON();
 class SendContextCommand extends __1.ContextCommand {
     constructor() {
-        super(SendCmcb, [db_1.FrogDb.backupServerId]);
+        super(SendCmcb, [data_1.FrogDb.backupServerId]);
     }
     async execute(int, client) {
-        const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == db_1.FrogDb.serverId ? db_1.FrogDb.backupServerId : db_1.FrogDb.serverId;
+        const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == data_1.FrogDb.serverId ? data_1.FrogDb.backupServerId : data_1.FrogDb.serverId;
         const server = client.guilds.cache.get(serverId);
         if (!int.isMessageContextMenuCommand())
             return;

@@ -2,10 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
 exports.name = 'channelUpdate';
 async function execute(oldChannel, newChannel, client) {
-    const { serverId, backupServerId } = db_1.FrogDb;
+    const { serverId, backupServerId } = client.data;
     if (oldChannel.isDMBased() || newChannel.isDMBased() || oldChannel.guildId != serverId)
         return;
     const principalServer = client.guilds.cache.get(backupServerId);

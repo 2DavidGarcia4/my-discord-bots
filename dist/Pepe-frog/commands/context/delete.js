@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeleteCmcb = void 0;
 const discord_js_1 = require("discord.js");
 const __1 = require("../..");
-const db_1 = require("../../db");
+const data_1 = require("../../data");
 exports.DeleteCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setName('Delete')
     .setNameLocalizations({
@@ -14,7 +14,7 @@ exports.DeleteCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setType(3).toJSON();
 class DeleteContextCommand extends __1.ContextCommand {
     constructor() {
-        super(exports.DeleteCmcb, [db_1.FrogDb.serverId]);
+        super(exports.DeleteCmcb, [data_1.FrogDb.serverId]);
     }
     async execute(int) {
         if (!int.isMessageContextMenuCommand())

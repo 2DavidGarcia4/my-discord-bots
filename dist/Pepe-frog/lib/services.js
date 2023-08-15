@@ -2,13 +2,13 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getWebhookClientByChannel = exports.transformTime = exports.handlePresences = exports.handlePreviewChannels = exports.autoChangeNicknames = exports.defaultInfoMessageBody = exports.getInfoMessage = exports.inspectVerifieds = exports.createVerified = exports.updateVerifiedsData = exports.getVerifiedsData = exports.setGuildStatus = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
+const data_1 = require("../data");
 const config_1 = require("../../config");
 const getCategoryChannels = (id, server) => {
     return server?.channels.cache.filter(f => f.parentId == id).size.toLocaleString();
 };
 const setGuildStatus = (client) => {
-    const snackServer = client.guilds.cache.get(db_1.FrogDb.serverId);
+    const snackServer = client.guilds.cache.get(data_1.FrogDb.serverId);
     const online = snackServer?.members.cache.filter(f => f.presence?.status == 'dnd' || f.presence?.status == 'idle' || f.presence?.status == 'online' || f.presence?.status == 'invisible').size;
     const allMembers = snackServer?.memberCount, nsfwChannels = getCategoryChannels('1139599817568432292', snackServer);
     const vipChannels = getCategoryChannels('1139599819942400010', snackServer);
@@ -64,7 +64,7 @@ async function createVerified(client, newVerified) {
 exports.createVerified = createVerified;
 async function inspectVerifieds(client) {
     const verifiedsData = await getVerifiedsData(client);
-    const server = client.guilds.cache.get(db_1.FrogDb.serverId);
+    const server = client.guilds.cache.get(data_1.FrogDb.serverId);
     const channelLog = client.channels.cache.get('1100110861244301382');
     if (verifiedsData) {
         for (let v of verifiedsData) {
@@ -74,7 +74,7 @@ async function inspectVerifieds(client) {
             if (verified) {
                 if (channel?.type == discord_js_1.ChannelType.GuildText) {
                     if ((!v.contentHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day * 30)))
-                        await channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ReadMessageHistory: false }).then(ed => {
+                        await channel.permissionOverwrites.edit(data_1.FrogDb.serverId, { ReadMessageHistory: false }).then(ed => {
                             v.contentHidden = true;
                             const VerifiedLog = new discord_js_1.EmbedBuilder()
                                 .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
@@ -83,7 +83,7 @@ async function inspectVerifieds(client) {
                                 channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
                         });
                     if ((!v.channelHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day * 40)))
-                        await channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ViewChannel: false }).then(ed => {
+                        await channel.permissionOverwrites.edit(data_1.FrogDb.serverId, { ViewChannel: false }).then(ed => {
                             v.channelHidden = true;
                             const VerifiedLog = new discord_js_1.EmbedBuilder()
                                 .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
@@ -92,7 +92,7 @@ async function inspectVerifieds(client) {
                                 channelLog.send({ content: `<@${v.id}>`, embeds: [VerifiedLog] });
                         });
                     if (!v.ping) {
-                        if (v.pinedAt && Math.floor(v.pinedAt + (db_1.FrogDb.verifiedsCooldown)) <= Date.now()) {
+                        if (v.pinedAt && Math.floor(v.pinedAt + (data_1.FrogDb.verifiedsCooldown)) <= Date.now()) {
                             if (channel?.type == discord_js_1.ChannelType.GuildText)
                                 channel.permissionOverwrites.edit(v.id, { MentionEveryone: true });
                             v.ping = true;
@@ -107,7 +107,7 @@ async function inspectVerifieds(client) {
             }
             else {
                 if (channel?.type == discord_js_1.ChannelType.GuildText)
-                    await channel.permissionOverwrites.edit(db_1.FrogDb.serverId, { ViewChannel: false }).then(() => {
+                    await channel.permissionOverwrites.edit(data_1.FrogDb.serverId, { ViewChannel: false }).then(() => {
                         verifiedsData.splice(verifiedsData.findIndex(f => f.id == v.id), 1);
                         const VerifiedLog = new discord_js_1.EmbedBuilder()
                             .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
@@ -234,7 +234,7 @@ function handlePresences(client) {
         client.user?.setPresence({ status: 'invisible' });
     }
     else {
-        const server = client.guilds.cache.get(db_1.FrogDb.serverId);
+        const server = client.guilds.cache.get(data_1.FrogDb.serverId);
         const dayStates = [
             {
                 name: 'moans',

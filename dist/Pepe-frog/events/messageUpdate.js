@@ -2,11 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.execute = exports.name = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
 const notion_1 = require("../lib/notion");
 exports.name = 'messageUpdate';
 async function execute(oldMsg, newMsg, client) {
-    const { serverId } = db_1.FrogDb;
+    const { serverId } = client.data;
     if (oldMsg.guildId != serverId || oldMsg.author?.bot)
         return;
     const SnackData = await (0, notion_1.getSnackData)();
