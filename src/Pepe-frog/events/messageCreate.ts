@@ -6,6 +6,7 @@ import { Announcements, Moderation, Reactions } from '../components'
 import { getSnackData } from '../lib/notion'
 import { PepeFrogClient } from '../client'
 import { EventName } from '../../globals'
+import { ManageAutomaticContent } from '../components/automaticContent'
 
 export const name: EventName = 'messageCreate'
 
@@ -17,6 +18,7 @@ export async function execute(msg: Message<boolean>, client: PepeFrogClient) {
   Announcements(msg, client)
   Moderation(msg)
   Reactions(msg)
+  ManageAutomaticContent(msg, client)
 
   if(msg.author.bot) return
 

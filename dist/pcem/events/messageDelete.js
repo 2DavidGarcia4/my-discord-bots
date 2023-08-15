@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.messageDeleteEvent = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../db");
-const models_1 = require("../models");
+const models_1 = require("../../models");
 const __1 = require("..");
 const utils_1 = require("../utils");
 const messageDeleteEvent = async (msgd, client) => {

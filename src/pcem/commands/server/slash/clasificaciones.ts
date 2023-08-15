@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import { botDB } from "../../../db";
-import { alliancesModel } from "../../../models";
+import { alliancesModel } from "../../../../models";
 import { sendMessageSlash } from "../../../../shared/functions";
 
 export const clasificacionesScb = new SlashCommandBuilder()

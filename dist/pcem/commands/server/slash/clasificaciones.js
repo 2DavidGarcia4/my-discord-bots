@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.clasificacionesSlashCommand = exports.clasificacionesScb = void 0;
 const discord_js_1 = require("discord.js");
 const db_1 = require("../../../db");
-const models_1 = require("../../../models");
+const models_1 = require("../../../../models");
 const functions_1 = require("../../../../shared/functions");
 exports.clasificacionesScb = new discord_js_1.SlashCommandBuilder()
     .setName('clasificaciones')

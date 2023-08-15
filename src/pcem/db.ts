@@ -1,11 +1,5 @@
-import { connect } from "mongoose";
-import { connectMongo } from "../config";
-import { BotDB, GuildsData } from "./types"
+import { BotDB } from "./types"
 import { isDevelopment } from "../config";
-import { getBotData } from "./utils";
-
-connect(connectMongo || '').then(()=> console.log('Conectado corectamente a la base de datos'))
-.catch((err)=> console.error('Ocurrió un error al conectarse a la DB', err))
 
 export const botDB: BotDB = {
   prefix: isDevelopment ? '|' : 'q!',

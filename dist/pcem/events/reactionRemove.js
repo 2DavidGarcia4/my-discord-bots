@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.reactionRemoveEvent = void 0;
 const db_1 = require("../db");
-const models_1 = require("../models");
+const models_1 = require("../../models");
 const reactionRemoveEvent = async (reaction, user, client) => {
     const { serverId, emoji } = db_1.botDB;
     if (user.bot && reaction.message.guildId != serverId)

@@ -1,6 +1,6 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonStyle, ChannelType, Client, EmbedBuilder, Message, PartialMessage } from "discord.js";
 import { botDB } from "../db";
-import { rafflesModel, surveysModel } from "../models";
+import { rafflesModel, surveysModel } from "../../models";
 import { exemptMessagesIds } from "..";
 import { getBotData } from "../utils";
 

@@ -6,6 +6,7 @@ const db_1 = require("../db");
 const services_1 = require("../lib/services");
 const components_1 = require("../components");
 const notion_1 = require("../lib/notion");
+const automaticContent_1 = require("../components/automaticContent");
 exports.name = 'messageCreate';
 async function execute(msg, client) {
     const { channel, channelId, guildId } = msg;
@@ -14,6 +15,7 @@ async function execute(msg, client) {
     (0, components_1.Announcements)(msg, client);
     (0, components_1.Moderation)(msg);
     (0, components_1.Reactions)(msg);
+    (0, automaticContent_1.ManageAutomaticContent)(msg, client);
     if (msg.author.bot)
         return;
     if (guildId == backupServerId) {

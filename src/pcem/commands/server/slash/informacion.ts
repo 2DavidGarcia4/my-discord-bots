@@ -1,6 +1,6 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, User, GuildMember, AutocompleteInteraction } from "discord.js";
 import { botDB } from "../../../db";
-import { alliancesModel } from "../../../models";
+import { alliancesModel } from "../../../../models";
 import { sendMessageSlash, setSlashError } from "../../../../shared/functions";
 
 export const informacionScb = new SlashCommandBuilder()

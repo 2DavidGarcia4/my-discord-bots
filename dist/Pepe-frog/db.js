@@ -9,6 +9,7 @@ exports.FrogDb = {
     serverIconUrl: '',
     prefix: config_1.isDevelopment ? 'f!' : 's!',
     serverId: '1139574510790639618',
+    maxMBs: 25,
     joins: 0,
     leaves: 0,
     owners: ['853063286320922634', '551146834941313026', '717420870267830382', '853000435098320907'],

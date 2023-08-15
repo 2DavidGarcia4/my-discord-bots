@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, PermissionFlagsBits, ChannelType } from "discord.js";
 import ms from "ms";
 import { botDB } from "../../../db";
-import { carcelModel } from "../../../models";
+import { carcelModel } from "../../../../models";
 import { sendMessageSlash, setErrors, setSlashError, setSlashErrors } from "../../../../shared/functions";
 import { getBotData } from "../../../utils";
 

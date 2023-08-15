@@ -1,6 +1,6 @@
 import ms from "ms"
 import { ActivitiesOptions, ActivityType, ApplicationCommandOptionData, ChannelType, Client, EmbedBuilder } from "discord.js"
-import { rafflesModel, surveysModel, carcelModel } from "../models"
+import { rafflesModel, surveysModel, carcelModel } from "../../models"
 import { botDB } from "../db"
 import { svInteractionCommands, interactionCommands } from "./interaction"
 import { getBotData, getGuildsData } from "../utils"

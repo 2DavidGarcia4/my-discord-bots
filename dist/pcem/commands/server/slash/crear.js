@@ -7,7 +7,7 @@ exports.crearSlashCommand = exports.crearScb = void 0;
 const discord_js_1 = require("discord.js");
 const ms_1 = __importDefault(require("ms"));
 const db_1 = require("../../../db");
-const models_1 = require("../../../models");
+const models_1 = require("../../../../models");
 const functions_1 = require("../../../../shared/functions");
 const utils_1 = require("../../../utils");
 exports.crearScb = new discord_js_1.SlashCommandBuilder()

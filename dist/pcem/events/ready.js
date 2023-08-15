@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.readyEvent = void 0;
 const ms_1 = __importDefault(require("ms"));
 const discord_js_1 = require("discord.js");
-const models_1 = require("../models");
+const models_1 = require("../../models");
 const db_1 = require("../db");
 const interaction_1 = require("./interaction");
 const utils_1 = require("../utils");

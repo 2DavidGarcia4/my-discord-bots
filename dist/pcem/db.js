@@ -1,13 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.botDB = void 0;
-const mongoose_1 = require("mongoose");
 const config_1 = require("../config");
-const config_2 = require("../config");
-(0, mongoose_1.connect)(config_1.connectMongo || '').then(() => console.log('Conectado corectamente a la base de datos'))
-    .catch((err) => console.error('Ocurrió un error al conectarse a la DB', err));
 exports.botDB = {
-    prefix: config_2.isDevelopment ? '|' : 'q!',
+    prefix: config_1.isDevelopment ? '|' : 'q!',
     serverId: '773249398431809586',
     creatorId: '717420870267830382',
     serverInvite: 'https://discord.gg/xDG86jAXEZ',

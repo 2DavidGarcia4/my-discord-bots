@@ -1,2 +1,3 @@
-require('./pcem/index')
-require('./Pepe-frog/index')
+import './db'
+import './pcem/index'
+import './Pepe-frog/index'

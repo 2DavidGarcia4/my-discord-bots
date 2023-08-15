@@ -1,7 +1,7 @@
 import { SlashCommandBuilder, EmbedBuilder, ChatInputCommandInteraction, CacheType, Client, ChannelType } from "discord.js";
 import ms from "ms";
 import { botDB } from "../../../db";
-import { alliancesModel, rafflesModel, surveysModel } from "../../../models";
+import { alliancesModel, rafflesModel, surveysModel } from "../../../../models";
 import { setSlashError, setSlashErrors, createEmbedMessage } from "../../../../shared/functions";
 import { getBotData } from "../../../utils";
 

@@ -1,6 +1,6 @@
 import { Client, MessageReaction, PartialMessageReaction, PartialUser, User } from "discord.js";
 import { botDB } from "../db";
-import { rafflesModel, surveysModel } from "../models";
+import { rafflesModel, surveysModel } from "../../models";
 
 export const reactionRemoveEvent = async (reaction: MessageReaction | PartialMessageReaction, user: User | PartialUser, client: Client) => {
   const { serverId, emoji } = botDB
