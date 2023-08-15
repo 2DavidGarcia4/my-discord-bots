@@ -57,14 +57,14 @@ async function run(int, client) {
 exports.buttonInfoInteractions = [
     {
         id: 'en-rules-btn',
-        channelId: '1090736733047492638',
+        channelId: '1139620584750334052',
         title: '📖 Rules',
         run
     },
     {
         id: 'en-verifieds-btn',
-        channelId: '1053399734582263938',
-        title: `<a:animate_info:1058179015938158592> Information`,
+        channelId: '1139620168998326362',
+        title: `<a:info_animate:1052698007562375219> Information`,
         run,
         buttons: [
             new discord_js_1.ButtonBuilder()
@@ -76,7 +76,7 @@ exports.buttonInfoInteractions = [
     },
     {
         id: 'en-vip-btn',
-        channelId: '1114225130395140136',
+        channelId: '1139620277488189551',
         title: `⭐ VIP access`,
         run,
         buttons: [
@@ -86,18 +86,5 @@ exports.buttonInfoInteractions = [
                 .setEmoji('👁️')
                 .setStyle(discord_js_1.ButtonStyle.Secondary)
         ]
-    },
-    {
-        id: 'en-packs-btn',
-        channelId: '1120917353862017134',
-        title: `📁 Packs access`,
-        run,
-        buttons: [
-            new discord_js_1.ButtonBuilder()
-                .setCustomId('packs-btn')
-                .setLabel('Channels preview')
-                .setEmoji('👁️')
-                .setStyle(discord_js_1.ButtonStyle.Secondary)
-        ]
-    },
+    }
 ];

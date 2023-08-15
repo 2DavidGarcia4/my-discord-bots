@@ -375,7 +375,7 @@ async function execute(int, client) {
         }
         if (customId == 'colors-menu') {
             const witheColor = guild?.roles.cache.get(roles.withe);
-            const colorRoles = guild?.roles.cache.filter(f => f.position <= (witheColor?.position || 0) && f.position > (witheColor?.position ? witheColor.position - 25 : 0)).map(c => c);
+            const colorRoles = guild?.roles.cache.filter(f => f.position <= (witheColor?.position || 0) && f.position > (witheColor?.position ? witheColor.position - 25 : 0)).sort((a, b) => b.position - a.position).map(c => c);
             if (!colorRoles)
                 return;
             const author = guild?.members.cache.get(user.id);

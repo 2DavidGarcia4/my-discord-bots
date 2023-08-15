@@ -1,5 +1,5 @@
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } from "discord.js";
-import { type MessageProp, TextCommand } from "../..";
+import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle, StringSelectMenuBuilder } from 'discord.js'
+import { type MessageProp, TextCommand } from '../..'
 
 export default class RolesCommand extends TextCommand {
   constructor() {

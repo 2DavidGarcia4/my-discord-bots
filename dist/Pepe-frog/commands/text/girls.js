@@ -12,11 +12,11 @@ class GirlsCommand extends __1.TextCommand {
     async execute({ message: msg, client }) {
         const description = await (0, services_1.getInfoMessage)({
             client,
-            channelId: '1053399734582263938',
+            channelId: '1139620168998326362',
             language: 'es'
         }) + '';
         (0, services_1.defaultInfoMessageBody)(msg, {
-            title: `<a:animate_info:1058179015938158592> Información`,
+            title: `<a:info_animate:1052698007562375219> Información`,
             description,
             name: 'verifieds',
             extraButtons: [

@@ -10,7 +10,7 @@ class VipCommand extends __1.TextCommand {
     async execute({ message: msg, client }) {
         const description = await (0, services_1.getInfoMessage)({
             client,
-            channelId: '1114225130395140136',
+            channelId: '1139620277488189551',
             language: 'es'
         }) + '';
         (0, services_1.defaultInfoMessageBody)(msg, {

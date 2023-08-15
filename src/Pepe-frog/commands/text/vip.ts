@@ -14,7 +14,7 @@ export default class VipCommand extends TextCommand {
   }) {
     const description = await getInfoMessage({
       client,
-      channelId: '1114225130395140136',
+      channelId: '1139620277488189551',
       language: 'es'
     })+''
   

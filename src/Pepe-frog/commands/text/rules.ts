@@ -13,7 +13,7 @@ export default class RulesCommand extends TextCommand {
   }) {
     const description = await getInfoMessage({
       client,
-      channelId: '1090736733047492638',
+      channelId: '1139620584750334052',
       language: 'es'
     })+''
     

@@ -9,7 +9,7 @@ class RulesCommand extends __1.TextCommand {
     async execute({ message: msg, client }) {
         const description = await (0, services_1.getInfoMessage)({
             client,
-            channelId: '1090736733047492638',
+            channelId: '1139620584750334052',
             language: 'es'
         }) + '';
         (0, services_1.defaultInfoMessageBody)(msg, {
