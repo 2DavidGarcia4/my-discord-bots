@@ -21,13 +21,21 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Comm
       const response = await fetch(contentUrl)
       const imageBufer = await response.arrayBuffer()
 
-      const bufer = Buffer.from(imageBufer)
-      const MBs = (bufer.length/1048576).toFixed(2)
+      const buffer = Buffer.from(imageBufer)
+      const MBs = (buffer.length/1048576)
+      const reverseUrl = contentUrl.split('').reverse().join('')
+      const fileExtension = reverseUrl.slice(0, reverseUrl.indexOf('.'))
+      // console.log({MBs, fileExtension})
+
+      if(MBs > 25) return channel.send({content: `**File:** ${contentUrl}`})
+
+      const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0'))+1
+      channel.edit({topic: fileNumber+''})
     
-      channel.send({content: `**MB:** ${MBs}`, files: [bufer]})
+      channel.send({content: `**MB:** ${MBs}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
 
     }else{
-      channel.send({content: `**Video:** ${contentUrl}`})
+      channel.send({content: `**File:** ${contentUrl}`})
     }
   }
 
@@ -51,7 +59,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Comm
     const contentUrl = splitContent.find(f=> f.toLowerCase().includes('image:'))?.split(/ +/g).pop()
     // console.log({categoryName, contentUrl})
   
-    if(categoryName && contentUrl) handleSendContent(categories.martine, categoryName, contentUrl)
+    if(categoryName && contentUrl) handleSendContent(categories.martine, categoryName.toLowerCase(), contentUrl)
   }
 
   if(channels.onlyNudes == channelId){
@@ -61,6 +69,6 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Comm
     const categoryName = splitContent[2] + (lastName.toLowerCase().includes('content') ? '' : ' '+lastName)
     const contentUrl = splitContent.find(f=> f.includes('http'))?.replace(')', '').split('(').pop()
   
-    if(categoryName && contentUrl) handleSendContent(categories.onlyNudes, categoryName, contentUrl)
+    if(categoryName && contentUrl) handleSendContent(categories.onlyNudes, categoryName.toLowerCase(), contentUrl)
   }
 }
