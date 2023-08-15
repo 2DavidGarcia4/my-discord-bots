@@ -22,7 +22,7 @@ async function ManageAutomaticContent(msg, client) {
             const buffer = Buffer.from(imageBufer);
             const MBs = (buffer.length / 1048576);
             const reverseUrl = contentUrl.split('').reverse().join('');
-            const fileExtension = reverseUrl.slice(0, reverseUrl.indexOf('.'));
+            const fileExtension = reverseUrl.slice(0, reverseUrl.indexOf('.')).split('').reverse().join('');
             // console.log({MBs, fileExtension})
             if (MBs > 25)
                 return channel.send({ content: `**File:** ${contentUrl}` });
