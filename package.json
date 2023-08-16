@@ -1,7 +1,7 @@
 {
   "name": "pcem",
   "version": "1.9.6",
-  "description": "PCEM bot, bot para mi servidor PCEM.",
+  "description": "Mís bots de Discord",
   "main": "src/index.ts",
   "type": "commonjs",
   "scripts": {

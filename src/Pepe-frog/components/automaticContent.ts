@@ -8,6 +8,7 @@ const channels = {
 
 const categories = {
   martine: '949861762902138941',
+  martine2: '1141400243645190304',
   onlyNudes: '1141075333374804059'
 }
 const autoContentServerId = '949861760096145438'
@@ -32,37 +33,37 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Comm
       const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0'))+1
       channel.edit({topic: fileNumber+''})
     
-      channel.send({content: `**MB:** ${MBs.toFixed(2)}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
+      channel.send({content: `**MB:** ${MBs.toFixed(2)}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]}).catch(e=> console.error('Error in send file:', e))
 
     }else{
       channel.send({content: `**File:** ${contentUrl}`})
     }
   }
 
-  const handleSendContent = (categoryId: string, categoryName: string, contentUrl: string) => {
+  const handleSendContent = (categoryId: string, categoryName: string, contentUrl: string, lastCategoriId?: string) => {
     const autoContentServer = client.getGuildById(autoContentServerId)
-    const martineChannel = autoContentServer?.channels.cache.find(f=> f.parentId == categoryId && f.name == categoryName)
-    
+    const martineChannel = autoContentServer?.channels.cache.find(f=> (f.parentId == categoryId || f.parentId == lastCategoriId) && f.name == categoryName)
+    const firtCategoryChannels = autoContentServer?.channels.cache.filter(f=> f.parentId == categoryId).size
 
     if(martineChannel?.type == ChannelType.GuildText){
       getAndSendContent(contentUrl, martineChannel)
     }else{
-      autoContentServer?.channels.create({name: categoryName, parent: categoryId, nsfw: true}).then(newChannel=> {
+      autoContentServer?.channels.create({name: categoryName, parent: firtCategoryChannels == 50 ? lastCategoriId : categoryId, nsfw: true}).then(newChannel=> {
         getAndSendContent(contentUrl, newChannel)
       })
     }
   }
 
-  if(channels.martine == channelId){
+  if(channelId == channels.martine){
     const splitContent = content.replaceAll('`', '').split('\n')
     const categoryName = splitContent.find(f=> f.toLowerCase().includes('category:'))?.split(/ +/g).pop()
     const contentUrl = splitContent.find(f=> f.toLowerCase().includes('image:'))?.split(/ +/g).pop()
     // console.log({categoryName, contentUrl})
   
-    if(categoryName && contentUrl) handleSendContent(categories.martine, categoryName.toLowerCase(), contentUrl)
+    if(categoryName && contentUrl) handleSendContent(categories.martine, categoryName.toLowerCase(), contentUrl, categories.martine2)
   }
 
-  if(channels.onlyNudes == channelId){
+  if(channelId == channels.onlyNudes){
     const splitContent = content.split(/ +/g)
 
     const lastName = splitContent[3]
