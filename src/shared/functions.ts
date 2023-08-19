@@ -1,8 +1,7 @@
-import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from "discord.js";
-import ms from "ms";
-import { isDevelopment } from "../config";
-import { botDB } from "../pcem/db";
-import { DictionaryMenu, MembersPrl } from "../pcem/types";
+import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from 'discord.js'
+import { isDevelopment } from '../config'
+import { botDB } from '../first/db'
+import { DictionaryMenu } from '../first/types'
 
 const { color, emoji } = botDB
 
@@ -43,7 +42,7 @@ export const setError = (msg: Message, description: string) => {
     msg.reply({allowedMentions: {repliedUser: false}, embeds: [createEmbedMessage(`${emoji.negative} Error`, description, color.negative)]}).then(tnt => setTimeout(()=>{
       tnt.delete().catch(()=> '')
       msg.delete().catch(()=> '')
-    }, 20000));
+    }, 20000))
   }, 4000)
 }
 
