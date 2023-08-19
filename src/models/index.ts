@@ -1,98 +1,34 @@
-import { prop, getModelForClass, modelOptions, Severity } from "@typegoose/typegoose"
+import { prop, getModelForClass, modelOptions, Severity } from '@typegoose/typegoose'
 
-//? Sistema de alianzas
+//? Verifieds
 @modelOptions({options: {allowMixed: Severity.ALLOW}})
-class Alliances {
+class Verifieds {
   @prop({type: String, required: true})
-  public _id: string
+  public userId: string
 
-  @prop({type: Array,required: true})
-  public members: {
-    id: string
-    tag: string
-    amount: number
-  }[]
+  @prop({type: Boolean, required: true})
+  public ping: boolean
 
-  @prop({type: Array, required: true})
-  public servers: {
-    id: string
-    name: string
-    time: number
-    members: number | null
-    invitation: string
-  }[]
-}
-export const alliancesModel = getModelForClass(Alliances)
+  @prop({type: Number})
+  public pinedAt?: number
 
-//? Carcél 
-@modelOptions({options: {allowMixed: Severity.ALLOW}})
-class Carcel {
   @prop({type: String, required: true})
-  public _id: string
+  public channelId: string
 
-  @prop({type: Array, required: true})
-  public prisoners: {
-    id: string
-    tag: string
-    time: number
-    reazon: string
-    sentence: string
-  }[]
+  @prop({type: Number, required: true})
+  public verifiedAt: number
+
+  @prop({type: Number})
+  public lastMentionAt?: number
+
+  @prop({type: Boolean, required: true})
+  public contentHidden: boolean
+
+  @prop({type: Boolean, required: true})
+  public channelHidden: boolean
+
+  @prop({type: Number})
+  public lastActivityAt?: number
 }
-export const carcelModel = getModelForClass(Carcel)
 
-
-//? Raffles system
-@modelOptions({options: {allowMixed: Severity.ALLOW}})
-class Raffles {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public data: {
-    rolId: string
-    emojiId: string
-  }
-
-  @prop({type: Array, required: true})
-  public raffles: {
-    id: string
-    channelId: string
-    ends: number
-    winners: number
-    authorId: string
-    createdAt: number
-    active: boolean
-    participants: string[]
-  }[]
-}
-export const rafflesModel = getModelForClass(Raffles)
-
-//? Surveys system
-@modelOptions({options: {allowMixed: Severity.ALLOW}})
-class Surveys {
-  @prop({type: String, required: true})
-  public _id: string
-
-  @prop({type: Object, required: true})
-  public data: {
-    rolId: string
-    emojis: string[]
-  }
-
-  @prop({type: Array, required: true})
-  public surveys: {
-    id: string
-    channelId: string
-    authorId: string
-    ends: number
-    createdAt: number
-    active: boolean
-    options: {
-      emoji: string
-      option: string
-      votes: number
-    }[]
-  }[]
-}
-export const surveysModel = getModelForClass(Surveys)
+export const VerifiedsModel = getModelForClass(Verifieds)
