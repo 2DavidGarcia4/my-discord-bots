@@ -17,7 +17,7 @@ export default class DeleteContextCommand extends ContextCommand {
     super(DeleteCmcb, [FrogDb.serverId])
   }
 
-  public async execute(int: ContextInteraction, client: SecondClientData) {
+  async execute(int: ContextInteraction, client: SecondClientData) {
     if(!int.isMessageContextMenuCommand()) return
     const { guild, locale, targetMessage } = int, isEnglish = locale == 'en-US' ? true : false
   

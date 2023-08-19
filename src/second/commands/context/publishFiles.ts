@@ -17,7 +17,7 @@ export default class PublishFiles extends ContextCommand {
     super(PublishFilesCmcb, [FrogDb.publishingServerId])
   }
 
-  public async execute(int: ContextInteraction, client: SecondClientData) {
+  async execute(int: ContextInteraction, client: SecondClientData) {
     const { guildId, locale } = int, isEnglish = locale == 'en-US'
     const { serverId, publishingServerId, serverIconUrl } = client.data
     

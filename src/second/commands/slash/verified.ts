@@ -24,7 +24,7 @@ export default class VerifiedSlashCommand extends SlashCommand {
     super(VerifiedScb, [FrogDb.serverId])
   }
 
-  public async execute(int: SlashInteraction, client: SecondClientData) {
+  async execute(int: SlashInteraction, client: SecondClientData) {
     const { guild, user, options, locale } = int, isEnglish = locale == 'en-US'
     const author = guild?.members.cache.get(user.id)
     const { roles } = await getSnackData()

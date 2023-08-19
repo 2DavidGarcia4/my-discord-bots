@@ -16,7 +16,7 @@ export default class DeleteReactionsContexCommand extends ContextCommand {
     super(DeleteReactionsCmcb, [FrogDb.serverId])
   }
 
-  public async execute(int: ContextInteraction) {
+  async execute(int: ContextInteraction) {
     const { locale } = int, isEnglish = locale == 'en-US' ? true : false
 
     if(!int.isMessageContextMenuCommand()) return

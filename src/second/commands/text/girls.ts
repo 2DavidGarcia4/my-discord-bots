@@ -1,7 +1,7 @@
 import { ButtonBuilder, ButtonStyle } from 'discord.js'
 import { defaultInfoMessageBody, getInfoMessage } from '../../lib/services'
-import { type MessageProp, TextCommand } from '../..'
 import { type SecondClientData } from '../..'
+import { type MessageProp, TextCommand } from '../../..'
 
 export default class GirlsCommand extends TextCommand {
   constructor() {

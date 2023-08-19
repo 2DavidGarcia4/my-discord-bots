@@ -18,7 +18,7 @@ export default class SendContextCommand extends ContextCommand {
     super(SendCmcb, [FrogDb.backupServerId])
   }
 
-  public async execute(int: ContextInteraction, client: SecondClientData) {
+  async execute(int: ContextInteraction, client: SecondClientData) {
     const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == FrogDb.serverId ? FrogDb.backupServerId : FrogDb.serverId
     const server = client.guilds.cache.get(serverId)
   

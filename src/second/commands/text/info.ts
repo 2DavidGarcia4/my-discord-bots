@@ -1,5 +1,5 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, StringSelectMenuBuilder } from "discord.js"
-import { type MessageProp, TextCommand } from "../.."
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle, EmbedBuilder, StringSelectMenuBuilder } from 'discord.js'
+import { type MessageProp, TextCommand } from '../../..'
 
 export default class InfoCommand extends TextCommand{
   constructor() {

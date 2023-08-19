@@ -1,13 +1,13 @@
 import { defaultInfoMessageBody, getInfoMessage } from '../../lib/services'
-import { TextCommand, type MessageProp } from '../..'
 import { type SecondClientData } from '../..'
+import { type MessageProp, TextCommand } from '../../..'
 
 export default class RulesCommand extends TextCommand {
   constructor() {
     super({name: 'rules'})
   }
   
-  public async execute({message: msg, client}: {
+  async execute({message: msg, client}: {
     message: MessageProp
     client: SecondClientData 
   }) {

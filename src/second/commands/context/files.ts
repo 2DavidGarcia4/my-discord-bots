@@ -16,7 +16,7 @@ export default class FilesContextCommand extends ContextCommand {
     super(FilesCmcb, [FrogDb.serverId, FrogDb.backupServerId, FrogDb.publishingServerId, '949861760096145438'])
   }
 
-  public async execute(int: ContextInteraction, client: SecondClientData) {
+  async execute(int: ContextInteraction, client: SecondClientData) {
     if(!int.isMessageContextMenuCommand()) return
     const { guild, targetMessage } = int
 

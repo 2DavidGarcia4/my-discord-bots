@@ -34,7 +34,7 @@ export default class PublishFilesSlashCommand extends SlashCommand {
     super(PublishFilesScb, [FrogDb.publishingServerId])
   }
 
-  public async execute(int: SlashInteraction, client: SecondClientData) {
+  async execute(int: SlashInteraction, client: SecondClientData) {
     const { channel, options } = int
     const { serverId, serverIconUrl } = client.data
     const firstMessageId = options.getString('first', true), limit = options.getInteger('limit')

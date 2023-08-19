@@ -1,7 +1,7 @@
 import { EmbedBuilder } from 'discord.js'
 import { inspect } from 'util'
 import { type SecondClientData } from '../..'
-import { TextCommand, type MessageProp } from '../..'
+import { TextCommand, type MessageProp } from '../../..'
 import { sendMessageText, setError } from '../../../shared/functions'
 import { FrogDb } from '../../data'
 import { setGuildStatus } from '../../lib/services'

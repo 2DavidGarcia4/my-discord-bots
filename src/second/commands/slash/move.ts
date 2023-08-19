@@ -56,7 +56,7 @@ export default class MoveSlashCommand extends SlashCommand {
     super(MoveScb, [FrogDb.serverId, FrogDb.backupServerId, FrogDb.publishingServerId])
   }
   
-  public async execute(int: SlashInteraction) {
+  async execute(int: SlashInteraction) {
     const { options } = int, subCommand = options.getSubcommand(true)
   
     if(subCommand == 'file'){
