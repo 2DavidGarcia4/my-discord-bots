@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.presences = exports.selectMultipleRoles = exports.selectRole = exports.setSlashErrors = exports.setSlashError = exports.setErrors = exports.setError = exports.createEmbedMessage = exports.sendMessageSlash = exports.sendMessageText = exports.defaultReady = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../config");
-const db_1 = require("../pcem/db");
+const db_1 = require("../first/db");
 const { color, emoji } = db_1.botDB;
 const defaultReady = (client, channelId, rcolor) => {
     if (!client.user)

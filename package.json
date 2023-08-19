@@ -1,6 +1,6 @@
 {
   "name": "pcem",
-  "version": "1.9.6",
+  "version": "2.9.7",
   "description": "Mís bots de Discord",
   "main": "src/index.ts",
   "type": "commonjs",
