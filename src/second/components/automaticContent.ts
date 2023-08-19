@@ -1,5 +1,6 @@
 import { ChannelType, Message, TextChannel } from 'discord.js'
 import { type SecondClientData } from '..'
+import fetch from 'node-fetch'
 
 const channels = {
   martine: '1139600091829776498',
