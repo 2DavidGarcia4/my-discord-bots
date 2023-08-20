@@ -7,7 +7,7 @@ exports.botDB = {
     serverId: '773249398431809586',
     creatorId: '717420870267830382',
     serverInvite: 'https://discord.gg/xDG86jAXEZ',
-    owners: ['717420870267830382', '825186118050775052'],
+    owners: ['717420870267830382', '853063286320922634', '551146834941313026', '853000435098320907'],
     mainRoles: ['823372926707171358'],
     usedCommands: 0,
     botInvite: 'https://discord.com/api/oauth2/authorize?client_id=843185929002025030&permissions=1391838756087&scope=bot%20applications.commands',

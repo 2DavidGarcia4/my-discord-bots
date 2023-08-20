@@ -14,7 +14,10 @@ exports.DeleteReactionsCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setType(3).toJSON();
 class DeleteReactionsContexCommand extends __1.ContextCommand {
     constructor() {
-        super(exports.DeleteReactionsCmcb, [data_1.FrogDb.serverId]);
+        super({
+            struct: exports.DeleteReactionsCmcb,
+            guildsIds: [data_1.FrogDb.serverId]
+        });
     }
     async execute(int) {
         const { locale } = int, isEnglish = locale == 'en-US' ? true : false;

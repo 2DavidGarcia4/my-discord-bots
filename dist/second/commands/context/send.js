@@ -14,7 +14,10 @@ const SendCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setType(3).toJSON();
 class SendContextCommand extends __1.ContextCommand {
     constructor() {
-        super(SendCmcb, [data_1.FrogDb.backupServerId]);
+        super({
+            struct: SendCmcb,
+            guildsIds: [data_1.FrogDb.backupServerId]
+        });
     }
     async execute(int, client) {
         const { locale, guild } = int, isEnglish = locale == 'en-US' ? true : false, serverId = int.guildId == data_1.FrogDb.serverId ? data_1.FrogDb.backupServerId : data_1.FrogDb.serverId;

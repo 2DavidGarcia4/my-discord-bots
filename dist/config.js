@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.notionToken = exports.isDevelopment = exports.pepeFrog = exports.connectMongo = exports.tokenBot = void 0;
+exports.isDevelopment = exports.notionToken = exports.secondToken = exports.firstToken = exports.connectMongo = void 0;
 const dotenv_1 = require("dotenv");
 (0, dotenv_1.config)();
-exports.tokenBot = process.env.TOKEN_BOT, exports.connectMongo = process.env.CONNECT_MONGO, exports.pepeFrog = process.env.PEPE_FROG, exports.isDevelopment = process.env.DEVELOPMENT, exports.notionToken = process.env.NOTION_TOKEN;
-console.log(`NodeJs version: ` + process.version);
+exports.connectMongo = process.env.CONNECT_MONGO, exports.firstToken = process.env.FIRST_BOT_TOKEN, exports.secondToken = process.env.SECOND_BOT_TOKEN, exports.notionToken = process.env.NOTION_TOKEN, exports.isDevelopment = process.env.DEVELOPMENT;

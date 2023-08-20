@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.updateUsersData = exports.getUsersData = exports.getGuildPrefix = exports.getEmbedColor = exports.updateGuildsData = exports.getGuildsData = exports.interactiveList = exports.getBotData = exports.fetchServerRules = exports.moderationSanction = void 0;
 const discord_js_1 = require("discord.js");
-const db_1 = require("../db");
+const data_1 = require("../data");
 const functions_1 = require("../../shared/functions");
-const { color } = db_1.botDB;
+const { color } = data_1.botDB;
 const moderationSanction = (msg, autoModMember) => {
     if (autoModMember.warnings >= 2) {
         const embAdvertenciaMD = new discord_js_1.EmbedBuilder()
@@ -78,12 +78,12 @@ const interactiveList = async (int, list, title, description, color) => {
             new discord_js_1.ButtonBuilder()
                 .setCustomId('previous')
                 .setLabel("Anterior")
-                .setEmoji(db_1.botDB.emoji.leftArrow)
+                .setEmoji(data_1.botDB.emoji.leftArrow)
                 .setStyle(discord_js_1.ButtonStyle.Secondary),
             new discord_js_1.ButtonBuilder()
                 .setCustomId('next')
                 .setLabel("Siguiente")
-                .setEmoji(db_1.botDB.emoji.rightArrow)
+                .setEmoji(data_1.botDB.emoji.rightArrow)
                 .setStyle(discord_js_1.ButtonStyle.Primary)
         ]).toJSON();
         setTimeout(async () => {
@@ -158,13 +158,13 @@ const updateGuildsData = async (client, newData) => {
 };
 exports.updateGuildsData = updateGuildsData;
 const getEmbedColor = (guild) => {
-    const guildData = db_1.botDB.guilds.find(f => f.guildId == guild?.id);
-    return guildData ? (guildData.autoColor ? (guild?.members.me?.displayHexColor || 'White') : db_1.botDB.color.bot) : db_1.botDB.color.bot;
+    const guildData = data_1.botDB.guilds.find(f => f.guildId == guild?.id);
+    return guildData ? (guildData.autoColor ? (guild?.members.me?.displayHexColor || 'White') : data_1.botDB.color.bot) : data_1.botDB.color.bot;
 };
 exports.getEmbedColor = getEmbedColor;
 const getGuildPrefix = (guild) => {
-    const guildData = db_1.botDB.guilds.find(f => f.guildId == guild?.id);
-    return guildData?.prefix || db_1.botDB.prefix;
+    const guildData = data_1.botDB.guilds.find(f => f.guildId == guild?.id);
+    return guildData?.prefix || data_1.botDB.prefix;
 };
 exports.getGuildPrefix = getGuildPrefix;
 //? Users data

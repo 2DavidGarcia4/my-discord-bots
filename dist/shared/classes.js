@@ -27,6 +27,12 @@ exports.BotClient = void 0;
 const fs_1 = require("fs");
 const discord_js_1 = require("discord.js");
 class BotClient extends discord_js_1.Client {
+    getGuildById(guildId) {
+        return this.guilds.cache.get(guildId);
+    }
+    getChannelById(channelId) {
+        return this.channels.cache.get(channelId);
+    }
     constructor(rootFolderName) {
         super({
             intents: 131071
@@ -62,29 +68,11 @@ class BotClient extends discord_js_1.Client {
             commandCollection.set(command.struct.name, command);
         });
     }
-    // private loadSlashCommands(isDist: string){
-    //   readdirSync(`./${isDist}/commands/slash/`).forEach(file => {
-    //     const slashCommand: SlashCommand = new (require(`./commands/slash/${file}`).default)()
-    //     this.slashCommands.set(slashCommand.struct.name, slashCommand)
-    //   })
-    // }
-    // private loadContextCommands(isDist: string){
-    //   readdirSync(`./${isDist}/commands/context/`).forEach(file => {
-    //     const contextCommand: ContextCommand = new (require(`./commands/context/${file}`).default)()
-    //     this.contextCommands.set(contextCommand.struct.name, contextCommand)
-    //   })
-    // }
-    // private loadTextCommands(isDist: string): void {
-    //   readdirSync(`./${isDist}/commands/text/`).forEach(file=> {
-    //     const textCommand: TextCommand = new (require(`./commands/text/${file}`).default)()
-    //     this.textCommands.set(textCommand.struct.name, textCommand)
-    //   })
-    // }
     loadEvents() {
         const { rootPath, rootFolderName } = this;
         (0, fs_1.readdirSync)(`./${rootPath}/events/`).forEach(async (file) => {
-            const event = await Promise.resolve(`${`../${rootFolderName}/events/${file}`}`).then(s => __importStar(require(s)));
-            if (event.once)
+            const event = new (await Promise.resolve(`${`../${rootFolderName}/events/${file}`}`).then(s => __importStar(require(s)))).default();
+            if (event.isOnce)
                 this.once(event.name, async (...args) => await event.execute(...args, this));
             else
                 this.on(event.name, async (...args) => await event.execute(...args, this));

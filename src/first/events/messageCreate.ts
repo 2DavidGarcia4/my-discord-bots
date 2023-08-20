@@ -1,8 +1,7 @@
 import { ChannelType, EmbedBuilder, Message, MessageType } from 'discord.js'
 import ms from 'ms'
 import { botDB } from '../data'
-import { autoModeration, svStatistics, exemptMessagesIds, FirstClientData } from '..'
-import { getBotData, moderationSanction } from '../utils'
+import { type FirstClientData } from '..'
 import { BotEvent } from '../..'
 
 export default class MessageCreateEvent extends BotEvent {
@@ -14,9 +13,7 @@ export default class MessageCreateEvent extends BotEvent {
     const { member, guild, guildId } = msg 
     const { prefix, emoji, color, serverId } = client.data
   
-    if(msg.guildId == botDB.serverId){
-      svStatistics.messages++
-  
+    if(msg.guildId == botDB.serverId){  
       if(msg.author.bot) return
   
       //TODO: Roles de timpo
@@ -125,73 +122,6 @@ export default class MessageCreateEvent extends BotEvent {
           setTimeout(()=>{
             msg.channel.send(xds[Math.floor(Math.random()*xds.length)])
           }, 600)
-        }
-      }
-  
-  
-      //* Auto moderación -----------------------------
-      const discordDomains = ["discord.gg/","discord.com/invite/"]
-      const urlIncludes = ['https://', 'http://', '.com', 'discord.']
-      if(!msg.member?.roles.cache.has('887444598715219999') && !msg.member?.permissions.has('Administrator') && urlIncludes.some(s=> msg.content.includes(s))){
-        const dataBot = await getBotData(client)
-        if(!dataBot) return
-        const canalesPerIDs = msg.guild?.channels.cache.filter(fc => dataBot.autoModeration.ignoreCategories.includes(fc.parentId || '')).map(mc => mc.id)
-        const otrosIDCha = dataBot.autoModeration.ignoreChannels
-        canalesPerIDs?.push(...otrosIDCha)
-        
-  
-        if(!canalesPerIDs?.some(s=> s == msg.channelId)){
-          let urls = msg.content.split(/ +/g).map(m=> m.split('\n')).flat().filter(f=> urlIncludes.some(s=> f.includes(s)))
-          const UrlWarningEb = new EmbedBuilder()
-          .setAuthor({name: msg.author.tag, iconURL: msg.author.displayAvatarURL()})
-          .setTitle(`🔗 Auto moderación de enlaces`)
-          .setDescription(`En este canal no están permitidos los enlaces, hay otros canales que si los permiten pero no todo tipo de enlaces.\n\n*Lee la descripción de cada canal, normalmente contiene información de que esta permitido en el canal o puedes preguntarle a un administrador o moderador*`)
-          .setColor(color.negative)
-          .setFooter({text: msg.guild?.name || 'undefined', iconURL: msg.guild?.iconURL() || undefined})
-  
-          if(urls.every(e=> discordDomains.some(s=> e.includes(s)))){
-            for(let url of urls) {
-              let invitation = await client.fetchInvite(url)
-  
-              if(!(invitation.guild?.id == msg.guildId)){
-                msg.reply({embeds: [UrlWarningEb], content: `<@${msg.author.id}>`}).then(te=> {
-                  exemptMessagesIds.push(te.id)
-                  setTimeout(()=> msg.delete().catch(), 300)
-                  setTimeout(()=> {
-                    te.delete().catch()
-                  }, 25000)
-                })
-  
-                const autoModMember = autoModeration.find(f=> f.memberId==msg.author.id)
-                
-                if(autoModMember){
-                  autoModMember.warnings++
-                  moderationSanction(msg, autoModMember)
-                }else{
-                  autoModeration.push({memberId: msg.author.id, warnings: 1})
-                } 
-                return
-              }
-            }
-          }else{
-            msg.reply({embeds: [UrlWarningEb], content: `<@${msg.author.id}>`}).then(te=> {
-              exemptMessagesIds.push(te.id)
-              setTimeout(()=> msg.delete().catch(), 300)
-              setTimeout(()=> {
-                te.delete().catch()
-              }, 25000)
-            })
-  
-            const autoModMember = autoModeration.find(f=> f.memberId==msg.author.id)
-            
-            if(autoModMember){
-              autoModMember.warnings++
-              moderationSanction(msg, autoModMember)
-            }else{
-              autoModeration.push({memberId: msg.author.id, warnings: 1})
-            } 
-            return
-          }
         }
       }
     }

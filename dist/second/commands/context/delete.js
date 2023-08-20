@@ -14,7 +14,10 @@ exports.DeleteCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .setType(3).toJSON();
 class DeleteContextCommand extends __1.ContextCommand {
     constructor() {
-        super(exports.DeleteCmcb, [data_1.FrogDb.serverId]);
+        super({
+            struct: exports.DeleteCmcb,
+            guildsIds: [data_1.FrogDb.serverId]
+        });
     }
     async execute(int, client) {
         if (!int.isMessageContextMenuCommand())

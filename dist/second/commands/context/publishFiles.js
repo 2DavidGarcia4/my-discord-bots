@@ -13,7 +13,10 @@ const PublishFilesCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .toJSON();
 class PublishFiles extends __1.ContextCommand {
     constructor() {
-        super(PublishFilesCmcb, [data_1.FrogDb.publishingServerId]);
+        super({
+            struct: PublishFilesCmcb,
+            guildsIds: [data_1.FrogDb.publishingServerId]
+        });
     }
     async execute(int, client) {
         const { guildId, locale } = int, isEnglish = locale == 'en-US';

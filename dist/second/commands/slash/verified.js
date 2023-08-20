@@ -18,7 +18,10 @@ const VerifiedScb = new discord_js_1.SlashCommandBuilder()
     .setRequired(false)).toJSON();
 class VerifiedSlashCommand extends __1.SlashCommand {
     constructor() {
-        super(VerifiedScb, [data_1.FrogDb.serverId]);
+        super({
+            struct: VerifiedScb,
+            guildsIds: [data_1.FrogDb.serverId]
+        });
     }
     async execute(int, client) {
         const { guild, user, options, locale } = int, isEnglish = locale == 'en-US';

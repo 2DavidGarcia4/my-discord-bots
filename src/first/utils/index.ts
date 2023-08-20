@@ -1,5 +1,5 @@
 import { Message, EmbedBuilder, Client, ChannelType, CacheType, ChatInputCommandInteraction, MessageContextMenuCommandInteraction, ColorResolvable, ActionRowBuilder, ButtonBuilder, ButtonStyle, Guild } from "discord.js"
-import { botDB } from "../db"
+import { botDB } from "../data"
 import { DataBot, GuildsData, UsersData } from "../types"
 import { sendMessageSlash } from "../../shared/functions"
 

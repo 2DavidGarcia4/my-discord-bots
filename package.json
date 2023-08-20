@@ -1,5 +1,5 @@
 {
-  "name": "pcem",
+  "name": "my-bots",
   "version": "2.9.7",
   "description": "Mís bots de Discord",
   "main": "src/index.ts",

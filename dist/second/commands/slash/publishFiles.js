@@ -26,7 +26,10 @@ const PublishFilesScb = new discord_js_1.SlashCommandBuilder()
     .toJSON();
 class PublishFilesSlashCommand extends __1.SlashCommand {
     constructor() {
-        super(PublishFilesScb, [data_1.FrogDb.publishingServerId]);
+        super({
+            struct: PublishFilesScb,
+            guildsIds: [data_1.FrogDb.publishingServerId]
+        });
     }
     async execute(int, client) {
         const { channel, options } = int;

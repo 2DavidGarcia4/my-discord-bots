@@ -47,7 +47,10 @@ const MoveScb = new discord_js_1.SlashCommandBuilder()
     .setRequired(true))).toJSON();
 class MoveSlashCommand extends __1.SlashCommand {
     constructor() {
-        super(MoveScb, [data_1.FrogDb.serverId, data_1.FrogDb.backupServerId, data_1.FrogDb.publishingServerId]);
+        super({
+            struct: MoveScb,
+            guildsIds: [data_1.FrogDb.serverId, data_1.FrogDb.backupServerId, data_1.FrogDb.publishingServerId]
+        });
     }
     async execute(int) {
         const { options } = int, subCommand = options.getSubcommand(true);

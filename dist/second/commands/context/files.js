@@ -12,7 +12,10 @@ const FilesCmcb = new discord_js_1.ContextMenuCommandBuilder()
     .toJSON();
 class FilesContextCommand extends __1.ContextCommand {
     constructor() {
-        super(FilesCmcb, [data_1.FrogDb.serverId, data_1.FrogDb.backupServerId, data_1.FrogDb.publishingServerId, '949861760096145438']);
+        super({
+            struct: FilesCmcb,
+            guildsIds: [data_1.FrogDb.serverId, data_1.FrogDb.backupServerId, data_1.FrogDb.publishingServerId, '949861760096145438']
+        });
     }
     async execute(int, client) {
         if (!int.isMessageContextMenuCommand())
