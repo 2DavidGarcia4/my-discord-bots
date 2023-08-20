@@ -21,7 +21,10 @@ const VerifiedScb = new SlashCommandBuilder()
 
 export default class VerifiedSlashCommand extends SlashCommand {
   constructor() {
-    super(VerifiedScb, [FrogDb.serverId])
+    super({
+      struct: VerifiedScb, 
+      guildsIds: [FrogDb.serverId]
+    })
   }
 
   async execute(int: SlashInteraction, client: SecondClientData) {

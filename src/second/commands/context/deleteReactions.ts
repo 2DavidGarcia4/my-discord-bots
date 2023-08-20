@@ -13,7 +13,10 @@ export const DeleteReactionsCmcb = new ContextMenuCommandBuilder()
 
 export default class DeleteReactionsContexCommand extends ContextCommand {
   constructor() {
-    super(DeleteReactionsCmcb, [FrogDb.serverId])
+    super({
+      struct: DeleteReactionsCmcb, 
+      guildsIds: [FrogDb.serverId]
+    })
   }
 
   async execute(int: ContextInteraction) {

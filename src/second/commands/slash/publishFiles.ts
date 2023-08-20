@@ -31,7 +31,10 @@ const PublishFilesScb = new SlashCommandBuilder()
 
 export default class PublishFilesSlashCommand extends SlashCommand {
   constructor() {
-    super(PublishFilesScb, [FrogDb.publishingServerId])
+    super({
+      struct: PublishFilesScb, 
+      guildsIds: [FrogDb.publishingServerId]
+    })
   }
 
   async execute(int: SlashInteraction, client: SecondClientData) {

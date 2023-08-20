@@ -53,7 +53,10 @@ const MoveScb = new SlashCommandBuilder()
 
 export default class MoveSlashCommand extends SlashCommand {
   constructor() {
-    super(MoveScb, [FrogDb.serverId, FrogDb.backupServerId, FrogDb.publishingServerId])
+    super({
+      struct: MoveScb, 
+      guildsIds: [FrogDb.serverId, FrogDb.backupServerId, FrogDb.publishingServerId]
+    })
   }
   
   async execute(int: SlashInteraction) {

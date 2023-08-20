@@ -15,7 +15,10 @@ const SendCmcb = new ContextMenuCommandBuilder()
 
 export default class SendContextCommand extends ContextCommand {
   constructor() {
-    super(SendCmcb, [FrogDb.backupServerId])
+    super({
+      struct: SendCmcb, 
+      guildsIds: [FrogDb.backupServerId]
+    })
   }
 
   async execute(int: ContextInteraction, client: SecondClientData) {

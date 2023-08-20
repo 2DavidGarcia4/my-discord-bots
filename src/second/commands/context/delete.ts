@@ -14,7 +14,10 @@ export const DeleteCmcb = new ContextMenuCommandBuilder()
 
 export default class DeleteContextCommand extends ContextCommand {
   constructor() {
-    super(DeleteCmcb, [FrogDb.serverId])
+    super({
+      struct: DeleteCmcb, 
+      guildsIds: [FrogDb.serverId]
+    })
   }
 
   async execute(int: ContextInteraction, client: SecondClientData) {

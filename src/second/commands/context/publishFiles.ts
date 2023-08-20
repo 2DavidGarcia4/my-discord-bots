@@ -14,7 +14,10 @@ const PublishFilesCmcb = new ContextMenuCommandBuilder()
 
 export default class PublishFiles extends ContextCommand {
   constructor() {
-    super(PublishFilesCmcb, [FrogDb.publishingServerId])
+    super({
+      struct: PublishFilesCmcb, 
+      guildsIds: [FrogDb.publishingServerId]
+    })
   }
 
   async execute(int: ContextInteraction, client: SecondClientData) {
