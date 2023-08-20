@@ -1,10 +1,7 @@
 import { config } from 'dotenv'
 config()
 
-export const tokenBot = process.env.TOKEN_BOT, 
-  connectMongo = process.env.CONNECT_MONGO, 
-  pepeFrog = process.env.PEPE_FROG, 
-  isDevelopment = process.env.DEVELOPMENT,
-  notionToken = process.env.NOTION_TOKEN
-
-console.log(`NodeJs version: `+process.version)
+export const connectMongo = process.env.CONNECT_MONGO, firstToken = process.env.FIRST_BOT_TOKEN, 
+secondToken = process.env.SECOND_BOT_TOKEN, 
+notionToken = process.env.NOTION_TOKEN,
+isDevelopment = process.env.DEVELOPMENT
