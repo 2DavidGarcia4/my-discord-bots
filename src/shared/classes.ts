@@ -1,4 +1,4 @@
-import { readdirSync } from 'fs'
+import { readdirSync, existsSync } from 'fs'
 import { Client, Collection } from 'discord.js'
 import { SlashCommand, ContextCommand, TextCommand, BotEvent } from '..'
 
@@ -46,10 +46,12 @@ export class BotClient extends Client {
 
   private loadCommands(folderName: string, commandCollection: Collection<string, any>) {
     const { rootPath, rootFolderName } = this
-    readdirSync(`./${rootPath}/commands/${folderName}/`).forEach(file => {
-      const command = new (require(`../${rootFolderName}/commands/${folderName}/${file}`).default)()
-      commandCollection.set(command.struct.name, command)
-    })
+    if(existsSync(`./${rootPath}/commands/${folderName}/`)){
+      readdirSync(`./${rootPath}/commands/${folderName}/`).forEach(file => {
+        const command = new (require(`../${rootFolderName}/commands/${folderName}/${file}`).default)()
+        commandCollection.set(command.struct.name, command)
+      })
+    }
   }
 
   private loadEvents() {
