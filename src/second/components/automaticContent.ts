@@ -1,5 +1,6 @@
 import { ChannelType, Message, TextChannel } from 'discord.js'
 import { type SecondClientData } from '..'
+import { inDevelopment } from '../../config'
 
 const channels = {
   martine: '1139600091829776498',
@@ -33,14 +34,14 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
 
       const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0'))+1
       
-      channel.send({content: `**MB:** ${MBs.toFixed(2)}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
+      if(!inDevelopment) channel.send({content: `**MB:** ${MBs.toFixed(2)}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
       .then(()=> {
         channel.edit({topic: fileNumber+''})
       })
       .catch(e=> console.error('Error in send file:', e))
 
     }else{
-      channel.send({content: `**File:** ${contentUrl}`})
+      if(!inDevelopment) channel.send({content: `**File:** ${contentUrl}`})
     }
   }
 

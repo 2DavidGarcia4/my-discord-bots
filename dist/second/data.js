@@ -7,7 +7,7 @@ const services_1 = require("./lib/services");
 exports.FrogDb = {
     id: '1139577382068551721',
     serverIconUrl: '',
-    prefix: config_1.isDevelopment ? 'f!' : 's!',
+    prefix: config_1.inDevelopment ? 'f!' : 's!',
     serverId: '1139574510790639618',
     maxMBs: 25,
     joins: 0,

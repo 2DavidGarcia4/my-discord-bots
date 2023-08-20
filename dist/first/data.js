@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.botDB = void 0;
 const config_1 = require("../config");
 exports.botDB = {
-    prefix: config_1.isDevelopment ? '|' : 'q!',
+    prefix: config_1.inDevelopment ? '|' : 'q!',
     serverId: '773249398431809586',
     creatorId: '717420870267830382',
     serverInvite: 'https://discord.gg/xDG86jAXEZ',

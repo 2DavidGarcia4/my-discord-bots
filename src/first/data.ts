@@ -1,8 +1,8 @@
 import { BotDB } from "./types"
-import { isDevelopment } from "../config"
+import { inDevelopment } from "../config"
 
 export const botDB: BotDB = {
-  prefix: isDevelopment ? '|' : 'q!',
+  prefix: inDevelopment ? '|' : 'q!',
   serverId: '773249398431809586',
   creatorId: '717420870267830382',
   serverInvite: 'https://discord.gg/xDG86jAXEZ',

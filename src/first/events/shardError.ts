@@ -2,7 +2,7 @@ import { ChannelType, EmbedBuilder } from 'discord.js'
 import { FirstClientData } from '..'
 import { BotEvent } from '../..'
 import { getBotData } from '../utils'
-import { isDevelopment } from '../../config'
+import { inDevelopment } from '../../config'
 
 
 export default class ShardErrorEvent extends BotEvent {
@@ -21,6 +21,6 @@ export default class ShardErrorEvent extends BotEvent {
     .setDescription(`\`\`\`js\n${error.name}\n\n${error.message}\n\n${error.stack}\`\`\``)
     .setColor(color.negative)
     .setTimestamp()
-    if((!isDevelopment) && channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [embErr]})
+    if((!inDevelopment) && channelLog?.type == ChannelType.GuildText) channelLog.send({embeds: [embErr]})
   }
 }

@@ -2,7 +2,7 @@ import { ActionRowBuilder, ActivityType, ButtonBuilder, ButtonInteraction, Butto
 import type { ActivitiesOptions, TextChannel } from "discord.js"
 import { FrogDb } from "../data"
 import { VerifiedsData } from "../types"
-import { isDevelopment } from "../../config"
+import { inDevelopment } from "../../config"
 
 const getCategoryChannels = (id: string, server: Guild | undefined) => {
   return server?.channels.cache.filter(f=> f.parentId == id).size.toLocaleString()
@@ -264,7 +264,7 @@ export function handlePreviewChannels(this: {
 
 export function handlePresences(client: Client) {
   const NOW_TIME = new Date()
-  const hourDiference = isDevelopment ? 0 : 6
+  const hourDiference = inDevelopment ? 0 : 6
 
   let hour = NOW_TIME.getHours()-hourDiference
   if(hour < 0) hour = 24-(-hour)

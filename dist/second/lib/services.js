@@ -226,7 +226,7 @@ function handlePreviewChannels(int) {
 exports.handlePreviewChannels = handlePreviewChannels;
 function handlePresences(client) {
     const NOW_TIME = new Date();
-    const hourDiference = config_1.isDevelopment ? 0 : 6;
+    const hourDiference = config_1.inDevelopment ? 0 : 6;
     let hour = NOW_TIME.getHours() - hourDiference;
     if (hour < 0)
         hour = 24 - (-hour);

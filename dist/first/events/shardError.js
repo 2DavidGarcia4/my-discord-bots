@@ -17,7 +17,7 @@ class ShardErrorEvent extends __1.BotEvent {
             .setDescription(`\`\`\`js\n${error.name}\n\n${error.message}\n\n${error.stack}\`\`\``)
             .setColor(color.negative)
             .setTimestamp();
-        if ((!config_1.isDevelopment) && channelLog?.type == discord_js_1.ChannelType.GuildText)
+        if ((!config_1.inDevelopment) && channelLog?.type == discord_js_1.ChannelType.GuildText)
             channelLog.send({ embeds: [embErr] });
     }
 }

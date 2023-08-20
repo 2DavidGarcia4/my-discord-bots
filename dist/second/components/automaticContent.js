@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ManageAutomaticContent = void 0;
 const discord_js_1 = require("discord.js");
+const config_1 = require("../../config");
 const channels = {
     martine: '1139600091829776498',
     onlyNudes: '1139600102445551646'
@@ -29,14 +30,16 @@ async function ManageAutomaticContent(msg, client) {
                 return channel.send({ content: `**File:** ${contentUrl}` });
             console.log(MBs.toFixed(3) + ' MB');
             const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0')) + 1;
-            channel.send({ content: `**MB:** ${MBs.toFixed(2)}`, files: [{ attachment: buffer, name: `file${fileNumber}.${fileExtension}` }] })
-                .then(() => {
-                channel.edit({ topic: fileNumber + '' });
-            })
-                .catch(e => console.error('Error in send file:', e));
+            if (!config_1.inDevelopment)
+                channel.send({ content: `**MB:** ${MBs.toFixed(2)}`, files: [{ attachment: buffer, name: `file${fileNumber}.${fileExtension}` }] })
+                    .then(() => {
+                    channel.edit({ topic: fileNumber + '' });
+                })
+                    .catch(e => console.error('Error in send file:', e));
         }
         else {
-            channel.send({ content: `**File:** ${contentUrl}` });
+            if (!config_1.inDevelopment)
+                channel.send({ content: `**File:** ${contentUrl}` });
         }
     };
     const handleSendContent = (categoryId, categoryName, contentUrl, lastCategoriId) => {

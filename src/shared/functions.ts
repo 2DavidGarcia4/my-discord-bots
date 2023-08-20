@@ -1,5 +1,5 @@
 import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from 'discord.js'
-import { isDevelopment } from '../config'
+import { inDevelopment } from '../config'
 import { botDB } from '../first/data'
 import { DictionaryMenu } from '../first/types'
 
@@ -14,7 +14,7 @@ export const defaultReady = (client: Client, channelId: string, rcolor: ColorRes
   .setTitle(`✅ I'm ready`)
   .setColor(rcolor)
   .setDescription('Connected again')
-  if (!isDevelopment && readyChannel?.isTextBased()) {
+  if (!inDevelopment && readyChannel?.isTextBased()) {
     readyChannel.sendTyping()
     setTimeout(()=> readyChannel.send({ embeds: [ReadyEb] }), 4000)
   }

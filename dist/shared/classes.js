@@ -63,10 +63,12 @@ class BotClient extends discord_js_1.Client {
     }
     loadCommands(folderName, commandCollection) {
         const { rootPath, rootFolderName } = this;
-        (0, fs_1.readdirSync)(`./${rootPath}/commands/${folderName}/`).forEach(file => {
-            const command = new (require(`../${rootFolderName}/commands/${folderName}/${file}`).default)();
-            commandCollection.set(command.struct.name, command);
-        });
+        if ((0, fs_1.existsSync)(`./${rootPath}/commands/${folderName}/`)) {
+            (0, fs_1.readdirSync)(`./${rootPath}/commands/${folderName}/`).forEach(file => {
+                const command = new (require(`../${rootFolderName}/commands/${folderName}/${file}`).default)();
+                commandCollection.set(command.struct.name, command);
+            });
+        }
     }
     loadEvents() {
         const { rootPath, rootFolderName } = this;

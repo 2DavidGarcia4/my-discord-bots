@@ -14,7 +14,7 @@ const defaultReady = (client, channelId, rcolor) => {
         .setTitle(`✅ I'm ready`)
         .setColor(rcolor)
         .setDescription('Connected again');
-    if (!config_1.isDevelopment && readyChannel?.isTextBased()) {
+    if (!config_1.inDevelopment && readyChannel?.isTextBased()) {
         readyChannel.sendTyping();
         setTimeout(() => readyChannel.send({ embeds: [ReadyEb] }), 4000);
     }

@@ -1,11 +1,11 @@
 import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, Client, EmbedBuilder } from "discord.js"
-import { isDevelopment } from "../config"
+import { inDevelopment } from "../config"
 import { getInfoMessage } from "./lib/services"
 
 export const FrogDb = {
   id: '1139577382068551721',  
   serverIconUrl: '',
-  prefix: isDevelopment ? 'f!' : 's!',
+  prefix: inDevelopment ? 'f!' : 's!',
   serverId: '1139574510790639618',
   maxMBs: 25,
   joins: 0,
