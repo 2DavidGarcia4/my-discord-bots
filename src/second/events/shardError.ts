@@ -1,8 +1,12 @@
-import { type EventName } from '../..'
+import { BotEvent } from '../..'
 
-export const name: EventName = 'shardError'
-
-export async function execute(error: Error, shardId: number) {
-  console.error('Error: '+shardId, error.message)
-  console.error(error)
+export default class ShardErrorEvent extends BotEvent {
+  constructor() {
+    super('shardError')
+  }
+  
+  async execute(error: Error, shardId: number) {
+    console.error('Error: '+shardId, error.message)
+    console.error(error)
+  }
 }

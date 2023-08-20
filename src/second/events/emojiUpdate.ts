@@ -1,19 +1,23 @@
 import { GuildEmoji } from 'discord.js'
 import { type SecondClientData } from '..'
-import { type EventName } from '../..'
+import { BotEvent } from '../..'
 
-export const name: EventName = 'emojiUpdate'
+export default class EmojiUpdateEvent extends BotEvent {
+  constructor() {
+    super('emojiUpdate')
+  }
 
-export async function execute(oldEmoji: GuildEmoji, newEmoji: GuildEmoji, client: SecondClientData) {
-  const { serverId, backupServerId } = client.data
-  if(oldEmoji.guild.id != serverId) return
-
-  const backupServer = client.getGuildById(backupServerId)
-  const backupEmoji = backupServer?.emojis.cache.find(f=> f.name == oldEmoji.name)
+  async execute(oldEmoji: GuildEmoji, newEmoji: GuildEmoji, client: SecondClientData) {
+    const { serverId, backupServerId } = client.data
+    if(oldEmoji.guild.id != serverId) return
   
-  if(backupEmoji){
-    backupEmoji.edit({
-      name: newEmoji.name || 'unknown'
-    })
+    const backupServer = client.getGuildById(backupServerId)
+    const backupEmoji = backupServer?.emojis.cache.find(f=> f.name == oldEmoji.name)
+    
+    if(backupEmoji){
+      backupEmoji.edit({
+        name: newEmoji.name || 'unknown'
+      })
+    }
   }
 }

@@ -1,13 +1,17 @@
 import { Role } from 'discord.js'
 import { type SecondClientData } from '..'
-import { type EventName } from '../..'
+import { BotEvent } from '../..'
 
-export const name: EventName = 'roleCreate'
+export default class RoleCreateEvent extends BotEvent {
+  constructor() {
+    super('roleCreate')
+  }
 
-export async function execute(role: Role, client: SecondClientData) {
-  const { serverId, backupServerId } = client.data
-  if(role.guild.id != serverId) return
-
-  const principalServer = client.guilds.cache.get(backupServerId)
-  principalServer?.roles.create({name: role.name, permissions: role.permissions})
+  async execute(role: Role, client: SecondClientData) {
+    const { serverId, backupServerId } = client.data
+    if(role.guild.id != serverId) return
+  
+    const principalServer = client.guilds.cache.get(backupServerId)
+    principalServer?.roles.create({name: role.name, permissions: role.permissions})
+  }
 }
