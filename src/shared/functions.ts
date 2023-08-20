@@ -1,6 +1,6 @@
 import { EmbedBuilder, ColorResolvable, Message, MessagePayload, MessageReplyOptions, ChatInputCommandInteraction, CacheType, GuildMember, SelectMenuInteraction, UserContextMenuCommandInteraction, MessageContextMenuCommandInteraction, ActivitiesOptions, Client } from 'discord.js'
 import { isDevelopment } from '../config'
-import { botDB } from '../first/db'
+import { botDB } from '../first/data'
 import { DictionaryMenu } from '../first/types'
 
 const { color, emoji } = botDB
