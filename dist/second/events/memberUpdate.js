@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const services_1 = require("../lib/services");
 const notion_1 = require("../lib/notion");
 const __1 = require("../..");
 class MemberUpdateEvent extends __1.BotEvent {
@@ -17,7 +16,7 @@ class MemberUpdateEvent extends __1.BotEvent {
         const newRoles = newMember.roles.cache;
         if (newRoles.has(SnackData.roles.verified) && !oldRoles.has(SnackData.roles.verified)) {
             console.log('Rol agregado');
-            (0, services_1.createVerified)(client, { id: oldMember.id });
+            // createVerified(client, {id: oldMember.id})
         }
         else if (oldRoles.has(SnackData.roles.verified) && !newRoles.has(SnackData.roles.verified)) {
             console.log('Rol eliminado');

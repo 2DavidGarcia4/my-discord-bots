@@ -6,6 +6,7 @@ const functions_1 = require("../../../shared/functions");
 const data_1 = require("../../data");
 const notion_1 = require("../../lib/notion");
 const __1 = require("../../..");
+const models_1 = require("../../../models");
 const VerifiedScb = new discord_js_1.SlashCommandBuilder()
     .setName('verified')
     .setNameLocalization('es-ES', 'verificada')
@@ -23,7 +24,7 @@ class VerifiedSlashCommand extends __1.SlashCommand {
             guildsIds: [data_1.FrogDb.serverId]
         });
     }
-    async execute(int, client) {
+    async execute(int) {
         const { guild, user, options, locale } = int, isEnglish = locale == 'en-US';
         const author = guild?.members.cache.get(user.id);
         const { roles } = await (0, notion_1.getSnackData)();
@@ -49,8 +50,7 @@ class VerifiedSlashCommand extends __1.SlashCommand {
             'Verified information' :
             'Información verificada'));
         if (verifiedMember) {
-            const verifiedsData = await (0, services_1.getVerifiedsData)(client);
-            const verifiedData = verifiedsData?.find(f => f.id == verifiedMember.id);
+            const verifiedData = await models_1.VerifiedsModel.findOne({ userId: verifiedMember.id });
             if (!verifiedData)
                 return (0, functions_1.setSlashError)(int, isEnglish ?
                     `No verified member data found *(${verifiedMember.user.username})*` :

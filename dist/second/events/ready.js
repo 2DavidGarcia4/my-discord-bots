@@ -32,6 +32,8 @@ class ReadyEvent extends __1.BotEvent {
                 }
             });
         });
+        // console.log((await server?.commands.fetch())?.map(({id, name})=> ({name, id})))
+        // server?.commands.delete('1143001250355494952').then(c=> console.log(`Comando ${c?.name} eliminado`))
         (0, services_1.handlePresences)(client);
         const statsChannel = server?.channels.cache.get(SnackData.channels.stats);
         const sendStats = async () => {

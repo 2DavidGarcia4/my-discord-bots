@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const services_1 = require("../lib/services");
 const components_1 = require("../components");
 const notion_1 = require("../lib/notion");
 const __1 = require("../..");
+const models_1 = require("../../models");
 class MessageCreateEvent extends __1.BotEvent {
     constructor() {
         super('messageCreate');
@@ -40,15 +40,14 @@ class MessageCreateEvent extends __1.BotEvent {
                     if (backupChannel?.type == discord_js_1.ChannelType.GuildText)
                         backupChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 25000000).map(m => m) });
                 }
-                if (channel.parentId == '1053401639454773338' && channel.nsfw) {
+                if (channel.parentId == '1139599818931585184' && channel.nsfw) {
                     //? Verifieds system
                     if (msg.member?.roles.cache.has(SnackeData.roles.verified)) {
-                        const verifiedsData = await (0, services_1.getVerifiedsData)(client);
                         const now = Date.now();
                         if (msg.mentions.everyone) {
-                            const channelLog = client.channels.cache.get('1100110861244301382');
+                            const channelLog = client.getChannelById(SnackeData.channels.verifiedLogs);
                             channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });
-                            const verifiedUser = verifiedsData?.find(f => f.id == msg.author.id);
+                            const verifiedUser = models_1.VerifiedsModel.findOne({ userId: msg.author.id });
                             if (verifiedUser) {
                                 verifiedUser.ping = false;
                                 verifiedUser.pinedAt = now;
@@ -66,8 +65,8 @@ class MessageCreateEvent extends __1.BotEvent {
                                 }
                             }
                             else {
-                                verifiedsData?.push({
-                                    id: msg.author.id,
+                                models_1.VerifiedsModel.create({
+                                    userId: msg.author.id,
                                     ping: false,
                                     pinedAt: now,
                                     channelId: channelId,
@@ -78,8 +77,6 @@ class MessageCreateEvent extends __1.BotEvent {
                                     lastActivityAt: now
                                 });
                             }
-                            if (verifiedsData)
-                                await (0, services_1.updateVerifiedsData)(client, verifiedsData);
                             const VerifiedLog = new discord_js_1.EmbedBuilder()
                                 .setAuthor({ name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL() })
                                 .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor((now + verifiedsCooldown) / 1000)}:R>`)
@@ -88,7 +85,7 @@ class MessageCreateEvent extends __1.BotEvent {
                                 channelLog.send({ embeds: [VerifiedLog] });
                         }
                         else if (msg.content.length > 3 || msg.attachments.size) {
-                            const verifiedUser = verifiedsData?.find(v => v.id == msg.author.id);
+                            const verifiedUser = models_1.VerifiedsModel.findOne({ userId: msg.author.id });
                             if (verifiedUser) {
                                 verifiedUser.lastActivityAt = now;
                                 if (!verifiedUser.channelId)
@@ -105,14 +102,12 @@ class MessageCreateEvent extends __1.BotEvent {
                                     msg.reply({ allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**` });
                                     verifiedUser.lastMentionAt = now;
                                 }
-                                if (verifiedsData)
-                                    await (0, services_1.updateVerifiedsData)(client, verifiedsData);
                             }
                             else {
                                 msg.reply({ allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**` });
                                 if (!msg.member.permissions.has('Administrator')) {
-                                    verifiedsData?.push({
-                                        id: msg.author.id,
+                                    models_1.VerifiedsModel.create({
+                                        userId: msg.author.id,
                                         ping: false,
                                         channelId: channelId,
                                         verifiedAt: now,

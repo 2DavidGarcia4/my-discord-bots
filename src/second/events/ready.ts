@@ -35,6 +35,9 @@ export default class ReadyEvent extends BotEvent {
         }
       })
     })
+
+    // console.log((await server?.commands.fetch())?.map(({id, name})=> ({name, id})))
+    // server?.commands.delete('1143001250355494952').then(c=> console.log(`Comando ${c?.name} eliminado`))
   
     handlePresences(client)
   
