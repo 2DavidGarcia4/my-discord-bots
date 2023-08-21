@@ -40,7 +40,7 @@ export async function inspectVerifieds(client: SecondClientData) {
   
   for(let v of VerifiedsData) {
     const channel = client.getChannelById(v.channelId)
-    const verifiedMember = server?.members.cache.get(v.id)
+    const verifiedMember = server?.members.cache.get(v.userId)
     const day = 24*60*60000
 
     if(verifiedMember){
@@ -51,7 +51,7 @@ export async function inspectVerifieds(client: SecondClientData) {
           const VerifiedLog = new EmbedBuilder()
           .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
           .setColor('Blue')
-          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.userId}>`, embeds: [VerifiedLog]}) 
         })
     
         if((!v.channelHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(ed=> {
@@ -60,18 +60,18 @@ export async function inspectVerifieds(client: SecondClientData) {
           const VerifiedLog = new EmbedBuilder()
           .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
           .setColor('Orange')
-          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.userId}>`, embeds: [VerifiedLog]}) 
         })
       
         if(!v.ping) {
           if(v.pinedAt && Math.floor(v.pinedAt + (FrogDb.verifiedsCooldown)) <= Date.now()){
-            if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
+            if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.userId, {MentionEveryone: true})
             v.ping = true
       
             const VerifiedLog = new EmbedBuilder()
             .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
             .setColor('Green')
-            if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+            if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.userId}>`, embeds: [VerifiedLog]}) 
           }
         } 
       }
@@ -81,9 +81,9 @@ export async function inspectVerifieds(client: SecondClientData) {
         await v.deleteOne()
         
         const VerifiedLog = new EmbedBuilder()
-        .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
+        .setDescription(`La verificada <@${v.userId}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
         .setColor('Red')
-        if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+        if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.userId}>`, embeds: [VerifiedLog]}) 
       })
     }
   }
