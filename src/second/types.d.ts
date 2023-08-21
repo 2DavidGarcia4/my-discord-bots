@@ -37,15 +37,3 @@ export interface ModDb {
     channelId: string
   }[]
 }
-
-export interface VerifiedsData {
-  id: string
-  ping: boolean
-  pinedAt?: number
-  channelId: string
-  verifiedAt: number
-  lastMentionAt?: number
-  contentHidden: boolean
-  channelHidden: boolean
-  lastActivityAt?: number
-}
