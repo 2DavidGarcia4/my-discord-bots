@@ -1,15 +1,17 @@
-import { ActionRowBuilder, ActivityType, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, Client, Collection, EmbedBuilder, Guild, GuildMember, Message, WebhookClient } from "discord.js"
-import type { ActivitiesOptions, TextChannel } from "discord.js"
-import { FrogDb } from "../data"
-import { VerifiedsData } from "../types"
-import { inDevelopment } from "../../config"
+import { ActionRowBuilder, ActivityType, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, ChannelType, EmbedBuilder, Guild, GuildMember, Message, WebhookClient } from 'discord.js'
+import type { ActivitiesOptions, TextChannel } from 'discord.js'
+import { FrogDb } from '../data'
+import { inDevelopment } from '../../config'
+import { VerifiedsModel } from '../../models'
+import { type SecondClientData } from '..'
+import { getSnackData } from './notion'
 
 const getCategoryChannels = (id: string, server: Guild | undefined) => {
   return server?.channels.cache.filter(f=> f.parentId == id).size.toLocaleString()
 }
 
-export const setGuildStatus = (client: Client) => {
-  const snackServer = client.guilds.cache.get(FrogDb.serverId)
+export const setGuildStatus = (client: SecondClientData) => {
+  const snackServer = client.getGuildById(FrogDb.serverId)
   const online = snackServer?.members.cache.filter(f=> f.presence?.status == 'dnd' || f.presence?.status == 'idle' || f.presence?.status == 'online' || f.presence?.status == 'invisible').size
   const allMembers = snackServer?.memberCount, nsfwChannels = getCategoryChannels('1139599817568432292', snackServer)
   const vipChannels = getCategoryChannels('1139599819942400010', snackServer)
@@ -30,101 +32,60 @@ export const setGuildStatus = (client: Client) => {
   if(vipCahnnel?.name != nsfwName) vipCahnnel?.edit({name: vipName})
 }
 
-//? Verifieds data
-const verifiedsChanneId = '1083064332260212768', verifiedsMessageId = '1083069070896812154'
-export async function getVerifiedsData(client: Client): Promise<VerifiedsData[] | undefined> {
-  const channelDb = client.channels.cache.get(verifiedsChanneId)
-  if(channelDb?.isTextBased()) {
-    const message = (await channelDb.messages.fetch(verifiedsMessageId)).content
-    const data = JSON.parse(message)
-    return data
-  }
-}
-
-export async function updateVerifiedsData(client: Client, newData: VerifiedsData[]) {
-  const channelDb = client.channels.cache.get(verifiedsChanneId)
-  if(channelDb?.isTextBased()) {
-    const newDataStr = JSON.stringify(newData)
-    const message = await channelDb.messages.fetch(verifiedsMessageId)
-    if(newDataStr != message.content) message.edit({content: JSON.stringify(newData)})
-  }
-}
-
-export async function createVerified(client: Client, newVerified: Pick<VerifiedsData, 'id'> & {
-  channelId?: string
-}) {
-  const verifiedsData = await getVerifiedsData(client)
-
-  if(verifiedsData){
-    verifiedsData.push({
-      id: newVerified.id,
-      ping: true,
-      channelId: newVerified.channelId || '',
-      verifiedAt: Date.now(),
-      channelHidden: false,
-      contentHidden: false,
-    })
-  }
-}
-
-export async function inspectVerifieds(client: Client) {
-  const verifiedsData = await getVerifiedsData(client)
-  const server = client.guilds.cache.get(FrogDb.serverId)
-  const channelLog = client.channels.cache.get('1100110861244301382')
+export async function inspectVerifieds(client: SecondClientData) {
+  const VerifiedsData = await VerifiedsModel.find()
+  const { channels } = await getSnackData()
+  const server = client.getGuildById(FrogDb.serverId)
+  const channelLog = client.getChannelById(channels.verifiedLogs)
   
-  if(verifiedsData){
-    for(let v of verifiedsData) {
-      const channel = client.channels.cache.get(v.channelId)
-      const verified = server?.members.cache.get(v.id)
-      const day = 24*60*60000
+  for(let v of VerifiedsData) {
+    const channel = client.getChannelById(v.channelId)
+    const verifiedMember = server?.members.cache.get(v.id)
+    const day = 24*60*60000
 
-      if(verified){
-        if(channel?.type == ChannelType.GuildText) {
-          if((!v.contentHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
-            v.contentHidden = true
-      
-            
-            const VerifiedLog = new EmbedBuilder()
-            .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
-            .setColor('Blue')
-            if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
-          })
-      
-          if((!v.channelHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(ed=> {
-            v.channelHidden = true
-            
-            const VerifiedLog = new EmbedBuilder()
-            .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
-            .setColor('Orange')
-            if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
-          })
-        
-          if(!v.ping) {
-            if(v.pinedAt && Math.floor(v.pinedAt + (FrogDb.verifiedsCooldown)) <= Date.now()){
-              if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
-              v.ping = true
-        
-              const VerifiedLog = new EmbedBuilder()
-              .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
-              .setColor('Green')
-              if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
-            }
-          } 
-        }
-
-      }else{
-        if(channel?.type == ChannelType.GuildText) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(()=> {
-          verifiedsData.splice(verifiedsData.findIndex(f=> f.id == v.id), 1)
+    if(verifiedMember){
+      if(channel?.type == ChannelType.GuildText) {
+        if((!v.contentHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day*30))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ReadMessageHistory: false}).then(ed=> {
+          v.contentHidden = true
           
           const VerifiedLog = new EmbedBuilder()
-          .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
-          .setColor('Red')
+          .setDescription(`Los miembro ya no pueden ver el contenido de tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **30** días.`)
+          .setColor('Blue')
           if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
         })
-      }
-    }
     
-    await updateVerifiedsData(client, verifiedsData)
+        if((!v.channelHidden) && v.lastActivityAt && v.lastActivityAt < Math.floor(Date.now() - (day*40))) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(ed=> {
+          v.channelHidden = true
+          
+          const VerifiedLog = new EmbedBuilder()
+          .setDescription(`Los miembro ya no pueden ver tu canal <#${v.channelId}> ya que has estado inactiva durante mas de **40** días.`)
+          .setColor('Orange')
+          if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+        })
+      
+        if(!v.ping) {
+          if(v.pinedAt && Math.floor(v.pinedAt + (FrogDb.verifiedsCooldown)) <= Date.now()){
+            if(channel?.type == ChannelType.GuildText) channel.permissionOverwrites.edit(v.id, {MentionEveryone: true})
+            v.ping = true
+      
+            const VerifiedLog = new EmbedBuilder()
+            .setDescription(`Ya puedes utilizar ping en tu canal <#${v.channelId}>`)
+            .setColor('Green')
+            if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+          }
+        } 
+      }
+
+    }else{
+      if(channel?.type == ChannelType.GuildText) await channel.permissionOverwrites.edit(FrogDb.serverId, {ViewChannel: false}).then(async ()=> {
+        await v.deleteOne()
+        
+        const VerifiedLog = new EmbedBuilder()
+        .setDescription(`La verificada <@${v.id}> no se encuentra en el servidor, ha sido eliminada de la base de datos y su canal ha sido cerrado.`)
+        .setColor('Red')
+        if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.id}>`, embeds: [VerifiedLog]}) 
+      })
+    }
   }
 }
 
@@ -136,7 +97,7 @@ const messagesIndexByLanguages = {
 }
 
 export async function getInfoMessage({client, channelId, language}: {
-  client: Client
+  client: SecondClientData
   channelId: string,
   language: Languages
 }) {  
@@ -186,7 +147,7 @@ export function defaultInfoMessageBody(msg: Message<boolean>, {title, descriptio
   msg.channel.send({embeds: [RulesEb], components: [RulesArb]})
 }
 
-export function autoChangeNicknames(members: GuildMember[], client: Client) {
+export function autoChangeNicknames(members: GuildMember[], client: SecondClientData) {
   const includes = ['!', '¡', '?', '¿']
   let updatedMembers = 0
   
@@ -262,7 +223,7 @@ export function handlePreviewChannels(this: {
   int.reply({ephemeral: true, embeds: [VIPPreviewEb]})
 }
 
-export function handlePresences(client: Client) {
+export function handlePresences(client: SecondClientData) {
   const NOW_TIME = new Date()
   const hourDiference = inDevelopment ? 0 : 6
 

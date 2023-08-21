@@ -1,6 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, Client, EmbedBuilder } from "discord.js"
-import { inDevelopment } from "../config"
-import { getInfoMessage } from "./lib/services"
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, CacheType, EmbedBuilder } from 'discord.js'
+import { inDevelopment } from '../config'
+import { getInfoMessage } from './lib/services'
+import { type SecondClientData } from '.'
 
 export const FrogDb = {
   id: '1139577382068551721',  
@@ -45,11 +46,11 @@ interface ButtonInfoInteraction {
   id: string,
   channelId: string,
   title: string,
-  run: (int: ButtonInteraction<CacheType>, client: Client<boolean>) => Promise<void>
+  run: (int: ButtonInteraction<CacheType>, client: SecondClientData) => Promise<void>
   buttons?: ButtonBuilder[] 
 }
 
-async function run(this: ButtonInfoInteraction, int: ButtonInteraction<CacheType>, client: Client<boolean>) {
+async function run(this: ButtonInfoInteraction, int: ButtonInteraction<CacheType>, client: SecondClientData) {
   const description = await getInfoMessage({
     client,
     channelId: this.channelId,
