@@ -16,6 +16,7 @@ export interface SnackData {
     ready: string
     stats: string
     suggestions: string
+    verifiedLogs: string
     announcements: string
   }
   categories: {
