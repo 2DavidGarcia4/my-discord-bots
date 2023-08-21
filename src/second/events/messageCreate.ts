@@ -1,9 +1,9 @@
 import { ChannelType, EmbedBuilder, Message } from 'discord.js'
-import { getVerifiedsData, updateVerifiedsData } from '../lib/services'
 import { Announcements, Moderation, Reactions, ManageAutomaticContent } from '../components'
 import { getSnackData } from '../lib/notion'
 import { type SecondClientData } from '..'
 import { BotEvent } from '../..'
+import { VerifiedsModel } from '../../models'
 
 export default class MessageCreateEvent extends BotEvent {
   constructor() {
@@ -44,18 +44,17 @@ export default class MessageCreateEvent extends BotEvent {
           if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
         }
   
-        if(channel.parentId == '1053401639454773338' && channel.nsfw){
+        if(channel.parentId == '1139599818931585184' && channel.nsfw){
           
           //? Verifieds system
           if(msg.member?.roles.cache.has(SnackeData.roles.verified)){
-            const verifiedsData = await getVerifiedsData(client)
             const now = Date.now()
   
             if(msg.mentions.everyone){
-              const channelLog = client.channels.cache.get('1100110861244301382')
+              const channelLog = client.getChannelById(SnackeData.channels.verifiedLogs)
               
               channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
-              const verifiedUser = verifiedsData?.find(f=> f.id == msg.author.id)
+              const verifiedUser = VerifiedsModel.findOne({userId: msg.author.id})
   
               if(verifiedUser){
                 verifiedUser.ping = false
@@ -74,8 +73,8 @@ export default class MessageCreateEvent extends BotEvent {
                 }
               
               }else{
-                verifiedsData?.push({
-                  id: msg.author.id,
+                VerifiedsModel.create({
+                  userId: msg.author.id,
                   ping: false,
                   pinedAt: now,
                   channelId: channelId,
@@ -87,7 +86,6 @@ export default class MessageCreateEvent extends BotEvent {
                 })
               }
         
-              if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
               const VerifiedLog = new EmbedBuilder()
               .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
               .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor((now+verifiedsCooldown) / 1000)}:R>`)
@@ -96,7 +94,7 @@ export default class MessageCreateEvent extends BotEvent {
   
             }else if(msg.content.length > 3 || msg.attachments.size) {
   
-              const verifiedUser = verifiedsData?.find(v=> v.id == msg.author.id)
+              const verifiedUser = VerifiedsModel.findOne({userId: msg.author.id})
               if(verifiedUser){
                 verifiedUser.lastActivityAt = now
                 if(!verifiedUser.channelId) verifiedUser.channelId = channelId
@@ -114,16 +112,13 @@ export default class MessageCreateEvent extends BotEvent {
                   msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})
                   verifiedUser.lastMentionAt = now
                 }
-  
-  
-                if(verifiedsData) await updateVerifiedsData(client, verifiedsData)
-  
+    
               }else{
                 msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})
                 
                 if(!msg.member.permissions.has('Administrator')){
-                  verifiedsData?.push({
-                    id: msg.author.id,
+                  VerifiedsModel.create({
+                    userId: msg.author.id,
                     ping: false,
                     channelId: channelId,
                     verifiedAt: now,

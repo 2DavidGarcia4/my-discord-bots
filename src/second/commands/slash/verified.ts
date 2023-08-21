@@ -1,10 +1,10 @@
-import { SlashCommandBuilder, EmbedBuilder } from "discord.js"
-import { getVerifiedsData, transformTime } from "../../lib/services"
-import { sendMessageSlash, setSlashError, setSlashErrors } from "../../../shared/functions"
-import { FrogDb } from "../../data"
-import { getSnackData } from "../../lib/notion"
-import { type SecondClientData } from "../.."
-import { SlashCommand, type SlashInteraction } from "../../.."
+import { SlashCommandBuilder, EmbedBuilder } from 'discord.js'
+import { transformTime } from '../../lib/services'
+import { sendMessageSlash, setSlashError, setSlashErrors } from '../../../shared/functions'
+import { FrogDb } from '../../data'
+import { getSnackData } from '../../lib/notion'
+import { SlashCommand, type SlashInteraction } from '../../..'
+import { VerifiedsModel } from '../../../models'
 
 const VerifiedScb = new SlashCommandBuilder()
 .setName('verified')
@@ -27,7 +27,7 @@ export default class VerifiedSlashCommand extends SlashCommand {
     })
   }
 
-  async execute(int: SlashInteraction, client: SecondClientData) {
+  async execute(int: SlashInteraction) {
     const { guild, user, options, locale } = int, isEnglish = locale == 'en-US'
     const author = guild?.members.cache.get(user.id)
     const { roles } = await getSnackData()
@@ -59,8 +59,7 @@ export default class VerifiedSlashCommand extends SlashCommand {
     ))
     
     if(verifiedMember){
-      const verifiedsData = await getVerifiedsData(client)
-      const verifiedData = verifiedsData?.find(f=> f.id == verifiedMember.id)
+      const verifiedData = await VerifiedsModel.findOne({userId: verifiedMember.id})
   
       if(!verifiedData) return setSlashError(int, isEnglish ? 
         `No verified member data found *(${verifiedMember.user.username})*` : 

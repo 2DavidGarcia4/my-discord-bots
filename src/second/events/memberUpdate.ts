@@ -1,5 +1,4 @@
 import { GuildMember, type PartialGuildMember } from 'discord.js'
-import { createVerified } from '../lib/services'
 import { getSnackData } from '../lib/notion'
 import { type SecondClientData } from '..'
 import { BotEvent } from '../..'
@@ -20,7 +19,7 @@ export default class MemberUpdateEvent extends BotEvent {
   
     if(newRoles.has(SnackData.roles.verified) && !oldRoles.has(SnackData.roles.verified)) {
       console.log('Rol agregado')
-      createVerified(client, {id: oldMember.id})
+      // createVerified(client, {id: oldMember.id})
   
     }else if(oldRoles.has(SnackData.roles.verified) && !newRoles.has(SnackData.roles.verified)) {
       console.log('Rol eliminado')
