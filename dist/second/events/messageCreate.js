@@ -98,7 +98,7 @@ class MessageCreateEvent extends __1.BotEvent {
                                     verifiedUser.channelHidden = false;
                                     channel.permissionOverwrites.edit(serverId, { ViewChannel: true });
                                 }
-                                if (!verifiedUser.ping && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60 * 60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8 * 60000)) {
+                                if ((!verifiedUser.ping) && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60 * 60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8 * 60000)) {
                                     msg.reply({ allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**` });
                                     verifiedUser.lastMentionAt = now;
                                 }
