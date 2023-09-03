@@ -54,7 +54,7 @@ export default class MessageCreateEvent extends BotEvent {
               const channelLog = client.getChannelById(SnackeData.channels.verifiedLogs)
               
               channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
-              const verifiedUser = VerifiedsModel.findOne({userId: msg.author.id})
+              const verifiedUser = await VerifiedsModel.findOne({userId: msg.author.id})
   
               if(verifiedUser){
                 verifiedUser.ping = false
@@ -71,6 +71,8 @@ export default class MessageCreateEvent extends BotEvent {
                   verifiedUser.channelHidden = false 
                   channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
                 }
+
+                await verifiedUser.save()
               
               }else{
                 VerifiedsModel.create({

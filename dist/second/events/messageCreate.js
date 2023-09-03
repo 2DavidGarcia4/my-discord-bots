@@ -47,7 +47,7 @@ class MessageCreateEvent extends __1.BotEvent {
                         if (msg.mentions.everyone) {
                             const channelLog = client.getChannelById(SnackeData.channels.verifiedLogs);
                             channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });
-                            const verifiedUser = models_1.VerifiedsModel.findOne({ userId: msg.author.id });
+                            const verifiedUser = await models_1.VerifiedsModel.findOne({ userId: msg.author.id });
                             if (verifiedUser) {
                                 verifiedUser.ping = false;
                                 verifiedUser.pinedAt = now;
@@ -63,6 +63,7 @@ class MessageCreateEvent extends __1.BotEvent {
                                     verifiedUser.channelHidden = false;
                                     channel.permissionOverwrites.edit(serverId, { ViewChannel: true });
                                 }
+                                await verifiedUser.save();
                             }
                             else {
                                 models_1.VerifiedsModel.create({
