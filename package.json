@@ -1,6 +1,6 @@
 {
   "name": "my-bots",
-  "version": "2.9.7",
+  "version": "2.9.8",
   "description": "Mís bots de Discord",
   "main": "src/index.ts",
   "type": "commonjs",

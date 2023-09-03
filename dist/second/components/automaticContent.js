@@ -28,7 +28,7 @@ async function ManageAutomaticContent(msg, client) {
             // console.log({MBs, fileExtension})
             if (MBs > 25)
                 return channel.send({ content: `**File:** ${contentUrl}` });
-            console.log(MBs.toFixed(3) + ' MB');
+            // console.log(MBs.toFixed(3)+' MB')
             const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0')) + 1;
             if (!config_1.inDevelopment)
                 channel.send({ content: `**MB:** ${MBs.toFixed(2)}`, files: [{ attachment: buffer, name: `file${fileNumber}.${fileExtension}` }] })
