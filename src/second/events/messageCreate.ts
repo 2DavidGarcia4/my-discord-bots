@@ -94,7 +94,7 @@ export default class MessageCreateEvent extends BotEvent {
   
             }else if(msg.content.length > 3 || msg.attachments.size) {
   
-              const verifiedUser = VerifiedsModel.findOne({userId: msg.author.id})
+              const verifiedUser = await VerifiedsModel.findOne({userId: msg.author.id})
               if(verifiedUser){
                 verifiedUser.lastActivityAt = now
                 if(!verifiedUser.channelId) verifiedUser.channelId = channelId
@@ -112,6 +112,8 @@ export default class MessageCreateEvent extends BotEvent {
                   msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})
                   verifiedUser.lastMentionAt = now
                 }
+
+                await verifiedUser?.save()
     
               }else{
                 msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})

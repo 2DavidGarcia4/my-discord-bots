@@ -85,7 +85,7 @@ class MessageCreateEvent extends __1.BotEvent {
                                 channelLog.send({ embeds: [VerifiedLog] });
                         }
                         else if (msg.content.length > 3 || msg.attachments.size) {
-                            const verifiedUser = models_1.VerifiedsModel.findOne({ userId: msg.author.id });
+                            const verifiedUser = await models_1.VerifiedsModel.findOne({ userId: msg.author.id });
                             if (verifiedUser) {
                                 verifiedUser.lastActivityAt = now;
                                 if (!verifiedUser.channelId)
@@ -102,6 +102,7 @@ class MessageCreateEvent extends __1.BotEvent {
                                     msg.reply({ allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**` });
                                     verifiedUser.lastMentionAt = now;
                                 }
+                                await verifiedUser?.save();
                             }
                             else {
                                 msg.reply({ allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**` });
