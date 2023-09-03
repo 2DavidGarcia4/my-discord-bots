@@ -30,7 +30,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       // console.log({MBs, fileExtension})
 
       if(MBs > 25) return channel.send({content: `**File:** ${contentUrl}`})
-      console.log(MBs.toFixed(3)+' MB')
+      // console.log(MBs.toFixed(3)+' MB')
 
       const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0'))+1
       
