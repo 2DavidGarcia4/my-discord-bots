@@ -74,6 +74,8 @@ export async function inspectVerifieds(client: SecondClientData) {
             if(channelLog?.isTextBased()) channelLog.send({content: `<@${v.userId}>`, embeds: [VerifiedLog]}) 
           }
         } 
+
+        await v.save()
       }
 
     }else{

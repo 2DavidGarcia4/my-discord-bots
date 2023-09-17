@@ -70,6 +70,7 @@ async function inspectVerifieds(client) {
                             channelLog.send({ content: `<@${v.userId}>`, embeds: [VerifiedLog] });
                     }
                 }
+                await v.save();
             }
         }
         else {
