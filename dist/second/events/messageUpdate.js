@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const notion_1 = require("../lib/notion");
 const __1 = require("../..");
 class MessageUpdateEvent extends __1.BotEvent {
     constructor() {
@@ -11,11 +10,11 @@ class MessageUpdateEvent extends __1.BotEvent {
         const { serverId } = client.data;
         if (oldMsg.guildId != serverId || oldMsg.author?.bot)
             return;
-        const SnackData = await (0, notion_1.getSnackData)();
-        if (oldMsg.channelId == SnackData.channels.logs)
+        const { channels } = client.data;
+        if (oldMsg.channelId == channels.logs)
             return;
         if (oldMsg.content && oldMsg.content != newMsg.content) {
-            const channelLog = client.channels.cache.get(SnackData.channels.logs);
+            const channelLog = client.channels.cache.get(channels.logs);
             const MessageUpdateEb = new discord_js_1.EmbedBuilder()
                 .setAuthor({ name: oldMsg.member?.nickname || oldMsg.author?.username || 'undefined', iconURL: oldMsg.author?.displayAvatarURL() })
                 .setTitle('🪄 Edited message')

@@ -4,7 +4,6 @@ const discord_js_1 = require("discord.js");
 const services_1 = require("../../lib/services");
 const functions_1 = require("../../../shared/functions");
 const data_1 = require("../../data");
-const notion_1 = require("../../lib/notion");
 const __1 = require("../../..");
 const models_1 = require("../../../models");
 const VerifiedScb = new discord_js_1.SlashCommandBuilder()
@@ -24,10 +23,10 @@ class VerifiedSlashCommand extends __1.SlashCommand {
             guildsIds: [data_1.FrogDb.serverId]
         });
     }
-    async execute(int) {
+    async execute(int, client) {
         const { guild, user, options, locale } = int, isEnglish = locale == 'en-US';
         const author = guild?.members.cache.get(user.id);
-        const { roles } = await (0, notion_1.getSnackData)();
+        const { roles } = client.data;
         const userOption = options.getUser('user');
         if ((!author?.roles.cache.has(roles.verified)) && !userOption)
             return (0, functions_1.setSlashError)(int, isEnglish ?

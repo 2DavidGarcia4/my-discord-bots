@@ -3,7 +3,7 @@ import { SlashCommand, type SlashInteraction } from '../../..'
 import { FrogDb } from '../../data'
 import { VerifiedsModel } from '../../../models'
 import { sendMessageSlash, setSlashError } from '../../../shared/functions'
-import { getSnackData } from '../../lib/notion'
+import { type SecondClientData } from '../..'
 
 const AddScb = new SlashCommandBuilder()
 .setName('add')
@@ -41,7 +41,7 @@ export default class AddSlashCommand extends SlashCommand {
     })
   }
 
-  public async execute(int: SlashInteraction) {
+  public async execute(int: SlashInteraction, client: SecondClientData) {
     const { guild, options } = int, subCommandName = options.getSubcommand(true)
 
     if(subCommandName == 'verified'){
@@ -52,7 +52,7 @@ export default class AddSlashCommand extends SlashCommand {
 
       await int.deferReply({ephemeral: true})
 
-      const { roles } = await getSnackData()
+      const { roles } = client.data
       guild?.members.cache.get(girl.id)?.roles.add(roles.verified)
 
       VerifiedsModel.create({

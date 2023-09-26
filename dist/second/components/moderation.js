@@ -3,14 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Moderation = void 0;
 const discord_js_1 = require("discord.js");
 const data_1 = require("../data");
-const notion_1 = require("../lib/notion");
 async function Moderation(msg, client) {
     const { guildId } = msg;
     if (msg.author.bot)
         return;
     if (guildId != data_1.FrogDb.serverId)
         return;
-    const { categories, roles } = await (0, notion_1.getSnackData)();
+    const { categories, roles } = client.data;
     const verifiedsCahnnels = msg.guild?.channels.cache.filter(f => f.parentId == categories.verifieds);
     const handleModerateAction = (Embed, timeoutReason) => {
         Embed.setColor('Red');

@@ -1,7 +1,6 @@
 import { ChannelType, EmbedBuilder } from 'discord.js'
 import { autoChangeNicknames, inspectVerifieds, setGuildStatus, handlePresences } from '../lib/services'
 import { defaultReady } from '../../shared/functions'
-import { getSnackData } from '../lib/notion'
 import { type SecondClientData } from '..'
 import { BotEvent } from '../..'
 
@@ -11,10 +10,8 @@ export default class ReadyEvent extends BotEvent {
   }
 
   public async execute(client: SecondClientData) {
-    const { serverId, backupServerId, publishingServerId } = client.data
-    const SnackData = await getSnackData()
-    // console.log(SnackData)
-    defaultReady(client, SnackData.channels.ready, 'DarkGold')
+    const { serverId, backupServerId, publishingServerId, channels } = client.data
+    defaultReady(client, channels.ready, 'DarkGold')
   
     const server = client.getGuildById(serverId)
     const backupServer = client.getGuildById(backupServerId)
@@ -23,7 +20,7 @@ export default class ReadyEvent extends BotEvent {
     const allServers = [server, backupServer, publishedServer, auntoContentServer]
     client.data.serverIconUrl = server?.iconURL() || ''
   
-    const suggestionsChannel = server?.channels.cache.get(SnackData.channels.suggestions)
+    const suggestionsChannel = server?.channels.cache.get(channels.suggestions)
     if(suggestionsChannel?.type == ChannelType.GuildText) suggestionsChannel.messages.fetch({limit: 100})
   
     allServers.forEach(async sv=> {
@@ -41,7 +38,7 @@ export default class ReadyEvent extends BotEvent {
   
     handlePresences(client)
   
-    const statsChannel = server?.channels.cache.get(SnackData.channels.stats)
+    const statsChannel = server?.channels.cache.get(channels.stats)
     const sendStats = async () => {
       if(statsChannel?.type != ChannelType.GuildText) return
       const { topic } = statsChannel, nowTime = Date.now()

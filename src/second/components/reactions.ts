@@ -1,12 +1,12 @@
 import { ChannelType, Message } from "discord.js"
 import { FrogDb } from "../data"
-import { getSnackData } from "../lib/notion"
+import { type SecondClientData } from ".."
 
-export async function Reactions(msg: Message<boolean>) {
+export async function Reactions(msg: Message<boolean>, client: SecondClientData) {
   const { guildId, channel } = msg
   const { serverId, emojisIds } = FrogDb
 
-  const { roles, categories, channels } = await getSnackData()
+  const { roles, categories, channels } = client.data 
   
   if(msg.mentions.roles.first()?.id == roles.content) msg.react(emojisIds.more)
 

@@ -3,24 +3,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const services_1 = require("../lib/services");
 const functions_1 = require("../../shared/functions");
-const notion_1 = require("../lib/notion");
 const __1 = require("../..");
 class ReadyEvent extends __1.BotEvent {
     constructor() {
         super('ready', true);
     }
     async execute(client) {
-        const { serverId, backupServerId, publishingServerId } = client.data;
-        const SnackData = await (0, notion_1.getSnackData)();
-        // console.log(SnackData)
-        (0, functions_1.defaultReady)(client, SnackData.channels.ready, 'DarkGold');
+        const { serverId, backupServerId, publishingServerId, channels } = client.data;
+        (0, functions_1.defaultReady)(client, channels.ready, 'DarkGold');
         const server = client.getGuildById(serverId);
         const backupServer = client.getGuildById(backupServerId);
         const publishedServer = client.getGuildById(publishingServerId);
         const auntoContentServer = client.getGuildById('949861760096145438');
         const allServers = [server, backupServer, publishedServer, auntoContentServer];
         client.data.serverIconUrl = server?.iconURL() || '';
-        const suggestionsChannel = server?.channels.cache.get(SnackData.channels.suggestions);
+        const suggestionsChannel = server?.channels.cache.get(channels.suggestions);
         if (suggestionsChannel?.type == discord_js_1.ChannelType.GuildText)
             suggestionsChannel.messages.fetch({ limit: 100 });
         allServers.forEach(async (sv) => {
@@ -35,7 +32,7 @@ class ReadyEvent extends __1.BotEvent {
         // console.log((await server?.commands.fetch())?.map(({id, name})=> ({name, id})))
         // server?.commands.delete('1143001250355494952').then(c=> console.log(`Comando ${c?.name} eliminado`))
         (0, services_1.handlePresences)(client);
-        const statsChannel = server?.channels.cache.get(SnackData.channels.stats);
+        const statsChannel = server?.channels.cache.get(channels.stats);
         const sendStats = async () => {
             if (statsChannel?.type != discord_js_1.ChannelType.GuildText)
                 return;

@@ -5,7 +5,6 @@ const __1 = require("../../..");
 const data_1 = require("../../data");
 const models_1 = require("../../../models");
 const functions_1 = require("../../../shared/functions");
-const notion_1 = require("../../lib/notion");
 const AddScb = new discord_js_1.SlashCommandBuilder()
     .setName('add')
     .setNameLocalization('es-ES', 'agregar')
@@ -34,7 +33,7 @@ class AddSlashCommand extends __1.SlashCommand {
             guildsIds: [data_1.FrogDb.serverId]
         });
     }
-    async execute(int) {
+    async execute(int, client) {
         const { guild, options } = int, subCommandName = options.getSubcommand(true);
         if (subCommandName == 'verified') {
             const girl = options.getUser('girl', true), channelId = options.getString('channel', true);
@@ -42,7 +41,7 @@ class AddSlashCommand extends __1.SlashCommand {
             if (verified)
                 return (0, functions_1.setSlashError)(int, `The girl ${girl} is already verified`);
             await int.deferReply({ ephemeral: true });
-            const { roles } = await (0, notion_1.getSnackData)();
+            const { roles } = client.data;
             guild?.members.cache.get(girl.id)?.roles.add(roles.verified);
             models_1.VerifiedsModel.create({
                 userId: girl.id,

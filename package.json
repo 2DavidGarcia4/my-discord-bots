@@ -12,7 +12,6 @@
   "author": "David",
   "license": "ISC",
   "dependencies": {
-    "@notionhq/client": "^2.2.10",
     "@typegoose/typegoose": "^11.4.1",
     "discord.js": "^14.12.1",
     "dotenv": "^16.0.3",

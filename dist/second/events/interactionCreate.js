@@ -4,14 +4,13 @@ const discord_js_1 = require("discord.js");
 const data_1 = require("../data");
 const functions_1 = require("../../shared/functions");
 const services_1 = require("../lib/services");
-const notion_1 = require("../lib/notion");
 const __1 = require("../..");
 class InteractionCreateEvent extends __1.BotEvent {
     constructor() {
         super('interactionCreate');
     }
     async execute(int, client) {
-        const { roles } = await (0, notion_1.getSnackData)();
+        const { roles } = client.data;
         if (int.isChatInputCommand()) {
             const { commandName } = int;
             const slashCommand = client.slashCommands.find(f => f.struct.name == commandName);

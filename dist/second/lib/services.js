@@ -5,7 +5,6 @@ const discord_js_1 = require("discord.js");
 const data_1 = require("../data");
 const config_1 = require("../../config");
 const models_1 = require("../../models");
-const notion_1 = require("./notion");
 const getCategoryChannels = (id, server) => {
     return server?.channels.cache.filter(f => f.parentId == id).size.toLocaleString();
 };
@@ -31,7 +30,7 @@ const setGuildStatus = (client) => {
 exports.setGuildStatus = setGuildStatus;
 async function inspectVerifieds(client) {
     const VerifiedsData = await models_1.VerifiedsModel.find();
-    const { channels } = await (0, notion_1.getSnackData)();
+    const { channels } = client.data;
     const server = client.getGuildById(data_1.FrogDb.serverId);
     const channelLog = client.getChannelById(channels.verifiedLogs);
     for (let v of VerifiedsData) {

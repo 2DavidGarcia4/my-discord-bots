@@ -15,6 +15,7 @@ const categories = {
 const autoContentServerId = '949861760096145438'
 
 export async function ManageAutomaticContent(msg: Message<boolean>, client: SecondClientData) {
+  if(inDevelopment) return
   const { channelId, content } = msg
   if(![channels.martine, channels.onlyNudes].some(s=> s == channelId)) return
 

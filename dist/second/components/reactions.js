@@ -3,11 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Reactions = void 0;
 const discord_js_1 = require("discord.js");
 const data_1 = require("../data");
-const notion_1 = require("../lib/notion");
-async function Reactions(msg) {
+async function Reactions(msg, client) {
     const { guildId, channel } = msg;
     const { serverId, emojisIds } = data_1.FrogDb;
-    const { roles, categories, channels } = await (0, notion_1.getSnackData)();
+    const { roles, categories, channels } = client.data;
     if (msg.mentions.roles.first()?.id == roles.content)
         msg.react(emojisIds.more);
     if (msg.author.bot)

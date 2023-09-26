@@ -3,7 +3,6 @@ import { buttonInfoInteractions } from '../data'
 import { selectMultipleRoles, selectRole } from '../../shared/functions'
 import { handlePreviewChannels } from '../lib/services'
 import { type SecondClientData } from '..'
-import { getSnackData } from '../lib/notion'
 import { BotEvent } from '../..'
 
 export default class InteractionCreateEvent extends BotEvent {
@@ -12,7 +11,7 @@ export default class InteractionCreateEvent extends BotEvent {
   }
 
   async execute(int: Interaction<CacheType>, client: SecondClientData) {
-    const { roles } = await getSnackData()
+    const { roles } = client.data
     
     if(int.isChatInputCommand()){
       const { commandName } = int

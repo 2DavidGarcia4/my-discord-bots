@@ -1,11 +1,11 @@
-import { ChannelType, Client, type Message } from 'discord.js'
+import { ChannelType, type Message } from 'discord.js'
 import { FrogDb } from '../data'
-import { getSnackData } from '../lib/notion'
+import { type SecondClientData } from '..'
 
-export async function Announcements(msg: Message<boolean>, client: Client) {
+export async function Announcements(msg: Message<boolean>, client: SecondClientData) {
   const { channel, channelId, guildId } = msg
   if(msg.author.bot || guildId != FrogDb.backupServerId) return
-  const { channels, roles } = await getSnackData()
+  const { channels, roles } = client.data
   if(channelId != channels.announcements) return
 
   if(channel.type == ChannelType.GuildText){

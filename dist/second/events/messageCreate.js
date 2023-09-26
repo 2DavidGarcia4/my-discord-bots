@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
 const components_1 = require("../components");
-const notion_1 = require("../lib/notion");
 const __1 = require("../..");
 const models_1 = require("../../models");
 class MessageCreateEvent extends __1.BotEvent {
@@ -11,11 +10,11 @@ class MessageCreateEvent extends __1.BotEvent {
     }
     async execute(msg, client) {
         const { channel, channelId, guildId } = msg;
-        const { prefix, serverId, backupServerId, owners, verifiedsCooldown } = client.data;
+        const { prefix, serverId, backupServerId, roles, channels, verifiedsCooldown } = client.data;
         //* Components
         (0, components_1.Announcements)(msg, client);
         (0, components_1.Moderation)(msg, client);
-        (0, components_1.Reactions)(msg);
+        (0, components_1.Reactions)(msg, client);
         (0, components_1.ManageAutomaticContent)(msg, client);
         if (msg.author.bot)
             return;
@@ -29,7 +28,6 @@ class MessageCreateEvent extends __1.BotEvent {
                     serverChannel.send({ content: msg.content || ' ', files: msg.attachments.map(m => m) });
             }
         }
-        const SnackeData = await (0, notion_1.getSnackData)();
         if (guildId == serverId) {
             if (!msg.channel.isTextBased())
                 return;
@@ -42,10 +40,10 @@ class MessageCreateEvent extends __1.BotEvent {
                 }
                 if (channel.parentId == '1139599818931585184' && channel.nsfw) {
                     //? Verifieds system
-                    if (msg.member?.roles.cache.has(SnackeData.roles.verified)) {
+                    if (msg.member?.roles.cache.has(roles.verified)) {
                         const now = Date.now();
                         if (msg.mentions.everyone) {
-                            const channelLog = client.getChannelById(SnackeData.channels.verifiedLogs);
+                            const channelLog = client.getChannelById(channels.verifiedLogs);
                             channel.permissionOverwrites.edit(msg.author.id, { MentionEveryone: false });
                             const verifiedUser = await models_1.VerifiedsModel.findOne({ userId: msg.author.id });
                             if (verifiedUser) {
@@ -100,13 +98,13 @@ class MessageCreateEvent extends __1.BotEvent {
                                     channel.permissionOverwrites.edit(serverId, { ViewChannel: true });
                                 }
                                 if (!verifiedUser.ping && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60 * 60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8 * 60000)) {
-                                    msg.reply({ allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**` });
+                                    msg.reply({ allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**` });
                                     verifiedUser.lastMentionAt = now;
                                 }
                                 await verifiedUser?.save();
                             }
                             else {
-                                msg.reply({ allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**` });
+                                msg.reply({ allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**` });
                                 if (!msg.member.permissions.has('Administrator')) {
                                     models_1.VerifiedsModel.create({
                                         userId: msg.author.id,

@@ -4,7 +4,6 @@ import { FrogDb } from '../data'
 import { inDevelopment } from '../../config'
 import { VerifiedsModel } from '../../models'
 import { type SecondClientData } from '..'
-import { getSnackData } from './notion'
 
 const getCategoryChannels = (id: string, server: Guild | undefined) => {
   return server?.channels.cache.filter(f=> f.parentId == id).size.toLocaleString()
@@ -34,7 +33,7 @@ export const setGuildStatus = (client: SecondClientData) => {
 
 export async function inspectVerifieds(client: SecondClientData) {
   const VerifiedsData = await VerifiedsModel.find()
-  const { channels } = await getSnackData()
+  const { channels } = client.data
   const server = client.getGuildById(FrogDb.serverId)
   const channelLog = client.getChannelById(channels.verifiedLogs)
   

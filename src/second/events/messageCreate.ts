@@ -1,6 +1,5 @@
 import { ChannelType, EmbedBuilder, Message } from 'discord.js'
 import { Announcements, Moderation, Reactions, ManageAutomaticContent } from '../components'
-import { getSnackData } from '../lib/notion'
 import { type SecondClientData } from '..'
 import { BotEvent } from '../..'
 import { VerifiedsModel } from '../../models'
@@ -12,12 +11,12 @@ export default class MessageCreateEvent extends BotEvent {
   
   async execute(msg: Message<boolean>, client: SecondClientData) {
     const { channel, channelId, guildId } = msg
-    const { prefix, serverId, backupServerId, owners, verifiedsCooldown} = client.data
+    const { prefix, serverId, backupServerId, roles, channels, verifiedsCooldown} = client.data
   
     //* Components
     Announcements(msg, client)
     Moderation(msg, client)
-    Reactions(msg)
+    Reactions(msg, client)
     ManageAutomaticContent(msg, client)
   
     if(msg.author.bot) return
@@ -30,9 +29,7 @@ export default class MessageCreateEvent extends BotEvent {
         if(serverChannel?.type == ChannelType.GuildText) serverChannel.send({content: msg.content || ' ', files: msg.attachments.map(m=> m)})
       }
     }
-  
-    const SnackeData = await getSnackData()
-    
+      
     if(guildId == serverId){
       if(!msg.channel.isTextBased()) return
       
@@ -47,11 +44,11 @@ export default class MessageCreateEvent extends BotEvent {
         if(channel.parentId == '1139599818931585184' && channel.nsfw){
           
           //? Verifieds system
-          if(msg.member?.roles.cache.has(SnackeData.roles.verified)){
+          if(msg.member?.roles.cache.has(roles.verified)){
             const now = Date.now()
   
             if(msg.mentions.everyone){
-              const channelLog = client.getChannelById(SnackeData.channels.verifiedLogs)
+              const channelLog = client.getChannelById(channels.verifiedLogs)
               
               channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
               const verifiedUser = await VerifiedsModel.findOne({userId: msg.author.id})
@@ -111,14 +108,14 @@ export default class MessageCreateEvent extends BotEvent {
                 }
                 
                 if(!verifiedUser.ping && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60*60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8*60000)){
-                  msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})
+                  msg.reply({allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**`})
                   verifiedUser.lastMentionAt = now
                 }
 
                 await verifiedUser?.save()
     
               }else{
-                msg.reply({allowedMentions: { repliedUser: false, roles: [SnackeData.roles.verifiedSpeech] }, content: `**<@&${SnackeData.roles.verifiedSpeech}>**`})
+                msg.reply({allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**`})
                 
                 if(!msg.member.permissions.has('Administrator')){
                   VerifiedsModel.create({

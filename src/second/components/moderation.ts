@@ -1,6 +1,5 @@
 import { Message, EmbedBuilder } from "discord.js"
 import { FILE_EXTENSIONS, FrogDb, SANCTIONS } from "../data"
-import { getSnackData } from "../lib/notion"
 import { type SecondClientData } from ".."
 
 export async function Moderation(msg: Message<boolean>, client: SecondClientData) {
@@ -9,7 +8,7 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
   if(msg.author.bot) return
   if(guildId != FrogDb.serverId) return
 
-  const { categories, roles } = await getSnackData()
+  const { categories, roles } = client.data
 
   const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == categories.verifieds)
 

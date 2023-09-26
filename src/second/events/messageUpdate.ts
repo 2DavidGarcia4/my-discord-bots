@@ -1,5 +1,4 @@
 import { ChannelType, EmbedBuilder, Message, type PartialMessage } from 'discord.js'
-import { getSnackData } from '../lib/notion'
 import { type SecondClientData } from '..'
 import { BotEvent } from '../..'
 
@@ -12,10 +11,10 @@ export default class MessageUpdateEvent extends BotEvent {
     const { serverId } = client.data
     if(oldMsg.guildId != serverId || oldMsg.author?.bot) return
   
-    const SnackData = await getSnackData()
-    if(oldMsg.channelId == SnackData.channels.logs) return
+    const { channels } = client.data
+    if(oldMsg.channelId == channels.logs) return
     if(oldMsg.content && oldMsg.content != newMsg.content){
-      const channelLog = client.channels.cache.get(SnackData.channels.logs)
+      const channelLog = client.channels.cache.get(channels.logs)
   
       const MessageUpdateEb = new EmbedBuilder()
       .setAuthor({name: oldMsg.member?.nickname || oldMsg.author?.username || 'undefined', iconURL: oldMsg.author?.displayAvatarURL()})

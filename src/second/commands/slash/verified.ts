@@ -2,9 +2,9 @@ import { SlashCommandBuilder, EmbedBuilder } from 'discord.js'
 import { transformTime } from '../../lib/services'
 import { sendMessageSlash, setSlashError, setSlashErrors } from '../../../shared/functions'
 import { FrogDb } from '../../data'
-import { getSnackData } from '../../lib/notion'
 import { SlashCommand, type SlashInteraction } from '../../..'
 import { VerifiedsModel } from '../../../models'
+import { type SecondClientData } from '../..'
 
 const VerifiedScb = new SlashCommandBuilder()
 .setName('verified')
@@ -27,10 +27,10 @@ export default class VerifiedSlashCommand extends SlashCommand {
     })
   }
 
-  async execute(int: SlashInteraction) {
+  async execute(int: SlashInteraction, client: SecondClientData) {
     const { guild, user, options, locale } = int, isEnglish = locale == 'en-US'
     const author = guild?.members.cache.get(user.id)
-    const { roles } = await getSnackData()
+    const { roles } = client.data
   
     const userOption = options.getUser('user')
   

@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const notion_1 = require("../lib/notion");
 const __1 = require("../..");
 class MessageDeleteEvent extends __1.BotEvent {
     constructor() {
@@ -15,11 +14,11 @@ class MessageDeleteEvent extends __1.BotEvent {
             client.exemptMessagesIds.splice(client.exemptMessagesIds.findIndex(f => f == msgd.id), 1);
             return;
         }
-        const SnackData = await (0, notion_1.getSnackData)();
-        if (msgd.channelId == SnackData.channels.logs)
+        const { channels } = client.data;
+        if (msgd.channelId == channels.logs)
             return;
         if (msgd.content && !(msgd.content.startsWith(prefix) && owners.some(s => s == msgd.author?.id))) {
-            const channelLog = client.channels.cache.get(SnackData.channels.logs);
+            const channelLog = client.channels.cache.get(channels.logs);
             const DeleteMessageEb = new discord_js_1.EmbedBuilder()
                 .setAuthor({ name: msgd.member?.nickname || msgd.author?.username || 'undefined', iconURL: msgd.author?.displayAvatarURL() })
                 .setTitle('🗑️ Deleted message')

@@ -2,9 +2,8 @@ import { ChannelType, SlashCommandBuilder, EmbedBuilder } from 'discord.js'
 import { type SecondClientData } from '../..'
 import { SlashCommand, type SlashInteraction } from '../../..'
 import { FrogDb } from '../../data'
-import { sendMessageSlash, setSlashError } from '../../../shared/functions'
+import { setSlashError } from '../../../shared/functions'
 import { getWebhookClientByChannel } from '../../lib/services'
-import { getSnackData } from '../../lib/notion'
 
 const PublishFilesScb = new SlashCommandBuilder()
 .setName('publish-files')
@@ -39,7 +38,7 @@ export default class PublishFilesSlashCommand extends SlashCommand {
 
   async execute(int: SlashInteraction, client: SecondClientData) {
     const { channel, options } = int
-    const { serverId, serverIconUrl } = client.data
+    const { serverId, serverIconUrl, roles } = client.data
     const firstMessageId = options.getString('first', true), limit = options.getInteger('limit')
 
     
@@ -48,8 +47,6 @@ export default class PublishFilesSlashCommand extends SlashCommand {
     const snackServer = client.getGuildById(serverId), snackChannel = snackServer?.channels.cache.find(f=> f.name == channel.name)
     if(snackChannel?.type != ChannelType.GuildText) return setSlashError(int, 'The main server channel is not type text.')
     
-    const { roles } = await getSnackData()
-
     const PublishingWebhook = await getWebhookClientByChannel(snackChannel)
     const messages = (await channel.messages.fetch({limit: 50})).map(m=> m)
     const firstMessageIndex = messages.findIndex(f=> f.id == firstMessageId)

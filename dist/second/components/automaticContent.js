@@ -14,6 +14,8 @@ const categories = {
 };
 const autoContentServerId = '949861760096145438';
 async function ManageAutomaticContent(msg, client) {
+    if (config_1.inDevelopment)
+        return;
     const { channelId, content } = msg;
     if (![channels.martine, channels.onlyNudes].some(s => s == channelId))
         return;

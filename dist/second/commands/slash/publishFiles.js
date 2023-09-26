@@ -5,7 +5,6 @@ const __1 = require("../../..");
 const data_1 = require("../../data");
 const functions_1 = require("../../../shared/functions");
 const services_1 = require("../../lib/services");
-const notion_1 = require("../../lib/notion");
 const PublishFilesScb = new discord_js_1.SlashCommandBuilder()
     .setName('publish-files')
     .setNameLocalization('es-ES', 'publicar-archivos')
@@ -33,14 +32,13 @@ class PublishFilesSlashCommand extends __1.SlashCommand {
     }
     async execute(int, client) {
         const { channel, options } = int;
-        const { serverId, serverIconUrl } = client.data;
+        const { serverId, serverIconUrl, roles } = client.data;
         const firstMessageId = options.getString('first', true), limit = options.getInteger('limit');
         if (channel?.type != discord_js_1.ChannelType.GuildText)
             return (0, functions_1.setSlashError)(int, `The channel is not type text.`);
         const snackServer = client.getGuildById(serverId), snackChannel = snackServer?.channels.cache.find(f => f.name == channel.name);
         if (snackChannel?.type != discord_js_1.ChannelType.GuildText)
             return (0, functions_1.setSlashError)(int, 'The main server channel is not type text.');
-        const { roles } = await (0, notion_1.getSnackData)();
         const PublishingWebhook = await (0, services_1.getWebhookClientByChannel)(snackChannel);
         const messages = (await channel.messages.fetch({ limit: 50 })).map(m => m);
         const firstMessageIndex = messages.findIndex(f => f.id == firstMessageId);
