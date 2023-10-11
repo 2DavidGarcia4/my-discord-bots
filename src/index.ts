@@ -85,5 +85,5 @@ process.on("unhandledRejection", async (reason, promise) => {
   .catch(er=> console.error('Promise error: ', er))
 })
 
-import './first'
+// import './first'
 import './second'

@@ -35,5 +35,5 @@ process.on("unhandledRejection", async (reason, promise) => {
     promise.then(pr => console.error('Promise: ', pr))
         .catch(er => console.error('Promise error: ', er));
 });
-require("./first");
+// import './first'
 require("./second");
