@@ -22,6 +22,8 @@ async function ManageAutomaticContent(msg, client) {
     const getAndSendContent = async (contentUrl, channel) => {
         if (contentUrl.slice(contentUrl.length - 7, contentUrl.length).includes('.')) {
             const response = await fetch(contentUrl);
+            if (response.status !== 200)
+                return;
             const imageBufer = await response.arrayBuffer();
             const buffer = Buffer.from(imageBufer);
             const MBs = (buffer.length / 1048576);
@@ -42,7 +44,7 @@ async function ManageAutomaticContent(msg, client) {
         }
         else {
             if (!config_1.inDevelopment)
-                channel.send({ content: `**File:** ${contentUrl}` });
+                channel.send({ content: `**[File](${contentUrl})**` });
         }
     };
     const handleSendContent = (categoryId, categoryName, contentUrl, lastCategoriId) => {

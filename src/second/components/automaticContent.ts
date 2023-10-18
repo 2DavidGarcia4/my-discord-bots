@@ -22,6 +22,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
   const getAndSendContent = async (contentUrl: string, channel: TextChannel) => {
     if(contentUrl.slice(contentUrl.length-7, contentUrl.length).includes('.')){
       const response = await fetch(contentUrl)
+      if(response.status !== 200) return
       const imageBufer = await response.arrayBuffer()
 
       const buffer = Buffer.from(imageBufer)
@@ -43,7 +44,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       .catch(e=> console.error('Error in send file:', e))
 
     }else{
-      if(!inDevelopment) channel.send({content: `**File:** ${contentUrl}`})
+      if(!inDevelopment) channel.send({content: `**[File](${contentUrl})**`})
     }
   }
 
