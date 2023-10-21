@@ -44,7 +44,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       .catch(e=> console.error('Error in send file:', e))
 
     }else{
-      if(!inDevelopment) channel.send({content: `**[File](${contentUrl})**`})
+      if(!inDevelopment) channel.send({content: `**File**: ${contentUrl}`})
     }
   }
 

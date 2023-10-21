@@ -44,7 +44,7 @@ async function ManageAutomaticContent(msg, client) {
         }
         else {
             if (!config_1.inDevelopment)
-                channel.send({ content: `**[File](${contentUrl})**` });
+                channel.send({ content: `**File**: ${contentUrl}` });
         }
     };
     const handleSendContent = (categoryId, categoryName, contentUrl, lastCategoriId) => {
