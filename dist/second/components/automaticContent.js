@@ -31,8 +31,8 @@ async function ManageAutomaticContent(msg, client) {
             const fileExtension = reverseUrl.slice(0, reverseUrl.indexOf('.')).split('').reverse().join('');
             // console.log({MBs, fileExtension})
             //* 25MB max
-            if (MBs > 10)
-                return channel.send({ content: `**[File](${contentUrl})**\n**MB**: ${MBs.toFixed(2)}` });
+            if (MBs > 16)
+                return channel.send({ content: `[**File url**](${contentUrl})\n**MB**: ${MBs.toFixed(2)}` });
             // console.log(MBs.toFixed(3)+' MB')
             const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0')) + 1;
             if (!config_1.inDevelopment)
@@ -44,7 +44,7 @@ async function ManageAutomaticContent(msg, client) {
         }
         else {
             if (!config_1.inDevelopment)
-                channel.send({ content: `**File**: ${contentUrl}` });
+                channel.send({ content: `[**File url**](${contentUrl})` });
         }
     };
     const handleSendContent = (categoryId, categoryName, contentUrl, lastCategoriId) => {
