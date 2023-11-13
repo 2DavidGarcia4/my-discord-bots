@@ -32,11 +32,10 @@ class MessageCreateEvent extends __1.BotEvent {
             if (channel.type != discord_js_1.ChannelType.GuildText)
                 return;
             //! Backup files
-            if (msg.attachments.size && msg.attachments.some(s => s.size < 25000000)) {
-                const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f => f.name == channelName);
-                if (backupChannel?.type == discord_js_1.ChannelType.GuildText)
-                    backupChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 25000000).map(m => m) });
-            }
+            // if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
+            //   const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f=>  f.name == channelName) 
+            //   if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
+            // }
             if (channel.parentId == categories.verifieds && channel.nsfw) {
                 //? Verifieds system
                 if (msg.member?.roles.cache.has(roles.verified)) {
@@ -121,44 +120,41 @@ class MessageCreateEvent extends __1.BotEvent {
                 }
             }
             //! Handle VIP channel stats
-            if (channel.parentId == categories.vipNsfw && channel.nsfw) {
-                const filesCount = {};
-                if (channel.topic) {
-                    const description = channel.topic.split(' ');
-                    const getKey = (value) => {
-                        return value.split('\n').pop()?.replace(':', '');
-                    };
-                    description.forEach((v, i, a) => {
-                        if (v.includes(':')) {
-                            const key = getKey(v), value = parseInt(a[i + 1]);
-                            if (key)
-                                filesCount[key] = value;
-                        }
-                    });
-                    for (const key in filesCount) {
-                        msg.attachments.forEach(at => {
-                            const fileName = at.name.split('.').shift()?.replace(/\d+/g, '');
-                            if (fileName && key.toLowerCase().includes(fileName.toLowerCase())) {
-                                filesCount[key] ? filesCount[key]++ : filesCount[key] = 1;
-                            }
-                        });
-                    }
-                    const newDescription = description.map((v, i, a) => {
-                        const previous = a[i - 1];
-                        if (previous && previous.includes(':')) {
-                            const key = getKey(previous);
-                            if (!key)
-                                return v;
-                            const count = filesCount[key];
-                            return typeof count == 'number' ? count + v.replace(/\d+/g, '') : v;
-                        }
-                        else {
-                            return v;
-                        }
-                    });
-                    channel.edit({ topic: newDescription.join(' ') });
-                }
-            }
+            // if (msg.attachments.size && channel.parentId == categories.vipNsfw && channel.nsfw) {
+            //   const filesCount: {[key: string]: number} = {}
+            //   if (channel.topic) {
+            //     const description = channel.topic.split(' ')
+            //     const getKey = (value: string) => {
+            //       return value.split('\n').pop()?.replace(':', '')
+            //     }
+            //     description.forEach((v, i, a) => {
+            //       if (v.includes(':')) {
+            //         const key = getKey(v), value = parseInt(a[i+1])
+            //         if (key) filesCount[key] = value
+            //       }
+            //     })
+            //     for (const key in filesCount) {
+            //       msg.attachments.forEach(at=> {
+            //         const fileName = at.name.split('.').shift()?.replace(/\d+/g, '')
+            //         if (fileName && key.toLowerCase().includes(fileName.toLowerCase())) {
+            //           filesCount[key] ? filesCount[key]++ : filesCount[key] = 1
+            //         }
+            //       })  
+            //     }
+            //     const newDescription = description.map((v, i, a) => {
+            //       const previous = a[i-1]
+            //       if (previous && previous.includes(':')) {
+            //         const key = getKey(previous)
+            //         if (!key) return v
+            //         const count = filesCount[key]
+            //         return typeof count == 'number' ?  count+v.replace(/\d+/g, '') : v
+            //       } else {
+            //         return v
+            //       }
+            //     })
+            //     channel.edit({topic: newDescription.join(' ')})
+            //   }
+            // }
         }
         if (msg.author.bot || !msg.content.toLowerCase().startsWith(prefix))
             return;
