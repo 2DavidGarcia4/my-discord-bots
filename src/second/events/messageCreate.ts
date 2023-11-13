@@ -11,7 +11,7 @@ export default class MessageCreateEvent extends BotEvent {
   
   async execute(msg: Message<boolean>, client: SecondClientData) {
     const { channel, channelId, guildId } = msg
-    const { prefix, serverId, backupServerId, roles, channels, verifiedsCooldown} = client.data
+    const { prefix, serverId, backupServerId, roles, channels, verifiedsCooldown, categories } = client.data
   
     //* Components
     Announcements(msg, client)
@@ -31,51 +31,95 @@ export default class MessageCreateEvent extends BotEvent {
     }
       
     if(guildId == serverId){
-      if(!msg.channel.isTextBased()) return
+      if(channel.type != ChannelType.GuildText) return
       
   
-      if(channel.type == ChannelType.GuildText){
-        //! Backup files
-        if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
-          const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f=>  f.name == channelName) 
-          if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
-        }
-  
-        if(channel.parentId == '1139599818931585184' && channel.nsfw){
-          
-          //? Verifieds system
-          if(msg.member?.roles.cache.has(roles.verified)){
-            const now = Date.now()
-  
-            if(msg.mentions.everyone){
-              const channelLog = client.getChannelById(channels.verifiedLogs)
-              
-              channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
-              const verifiedUser = await VerifiedsModel.findOne({userId: msg.author.id})
-  
-              if(verifiedUser){
-                verifiedUser.ping = false
-                verifiedUser.pinedAt = now
-                verifiedUser.lastActivityAt = now
-                verifiedUser.lastMentionAt = now
-                if(!verifiedUser.channelId) verifiedUser.channelId = channelId
-  
-                if(verifiedUser.contentHidden) {
-                  verifiedUser.contentHidden = false 
-                  channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
-                }
-                if(verifiedUser.channelHidden) {
-                  verifiedUser.channelHidden = false 
-                  channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
-                }
+      //! Backup files
+      if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
+        const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f=>  f.name == channelName) 
+        if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
+      }
 
-                await verifiedUser.save()
+      if(channel.parentId == categories.verifieds && channel.nsfw){
+        
+        //? Verifieds system
+        if(msg.member?.roles.cache.has(roles.verified)){
+          const now = Date.now()
+
+          if(msg.mentions.everyone){
+            const channelLog = client.getChannelById(channels.verifiedLogs)
+            
+            channel.permissionOverwrites.edit(msg.author.id, {MentionEveryone: false})
+            const verifiedUser = await VerifiedsModel.findOne({userId: msg.author.id})
+
+            if(verifiedUser){
+              verifiedUser.ping = false
+              verifiedUser.pinedAt = now
+              verifiedUser.lastActivityAt = now
+              verifiedUser.lastMentionAt = now
+              if(!verifiedUser.channelId) verifiedUser.channelId = channelId
+
+              if(verifiedUser.contentHidden) {
+                verifiedUser.contentHidden = false 
+                channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
+              }
+              if(verifiedUser.channelHidden) {
+                verifiedUser.channelHidden = false 
+                channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
+              }
+
+              await verifiedUser.save()
+            
+            }else{
+              VerifiedsModel.create({
+                userId: msg.author.id,
+                ping: false,
+                pinedAt: now,
+                channelId: channelId,
+                verifiedAt: now,
+                contentHidden: false,
+                channelHidden: false,
+                lastMentionAt: now,
+                lastActivityAt: now
+              })
+            }
+      
+            const VerifiedLog = new EmbedBuilder()
+            .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
+            .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor((now+verifiedsCooldown) / 1000)}:R>`)
+            .setColor('Yellow')
+            if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
+
+          }else if(msg.content.length > 3 || msg.attachments.size) {
+
+            const verifiedUser = await VerifiedsModel.findOne({userId: msg.author.id})
+            if(verifiedUser){
+              verifiedUser.lastActivityAt = now
+              if(!verifiedUser.channelId) verifiedUser.channelId = channelId
+
+              if(verifiedUser.contentHidden) {
+                verifiedUser.contentHidden = false
+                channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
+              }
+              if(verifiedUser.channelHidden) {
+                verifiedUser.channelHidden = false
+                channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
+              }
               
-              }else{
+              if(!verifiedUser.ping && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60*60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8*60000)){
+                msg.reply({allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**`})
+                verifiedUser.lastMentionAt = now
+              }
+
+              await verifiedUser?.save()
+  
+            }else{
+              msg.reply({allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**`})
+              
+              if(!msg.member.permissions.has('Administrator')){
                 VerifiedsModel.create({
                   userId: msg.author.id,
                   ping: false,
-                  pinedAt: now,
                   channelId: channelId,
                   verifiedAt: now,
                   contentHidden: false,
@@ -84,54 +128,57 @@ export default class MessageCreateEvent extends BotEvent {
                   lastActivityAt: now
                 })
               }
-        
-              const VerifiedLog = new EmbedBuilder()
-              .setAuthor({name: `New ping for ${msg.author.username}`, iconURL: msg.author.displayAvatarURL()})
-              .setDescription(`${msg.author} podrás utilizar nuevamente ping <t:${Math.floor((now+verifiedsCooldown) / 1000)}:R>`)
-              .setColor('Yellow')
-              if(channelLog?.isTextBased()) channelLog.send({embeds: [VerifiedLog]})
-  
-            }else if(msg.content.length > 3 || msg.attachments.size) {
-  
-              const verifiedUser = await VerifiedsModel.findOne({userId: msg.author.id})
-              if(verifiedUser){
-                verifiedUser.lastActivityAt = now
-                if(!verifiedUser.channelId) verifiedUser.channelId = channelId
-  
-                if(verifiedUser.contentHidden) {
-                  verifiedUser.contentHidden = false
-                  channel.permissionOverwrites.edit(serverId, { ReadMessageHistory: true }) 
-                }
-                if(verifiedUser.channelHidden) {
-                  verifiedUser.channelHidden = false
-                  channel.permissionOverwrites.edit(serverId, { ViewChannel: true }) 
-                }
-                
-                if(!verifiedUser.ping && verifiedUser.pinedAt && verifiedUser.pinedAt < Math.floor(now - (60*60000)) && verifiedUser.lastMentionAt && verifiedUser.lastMentionAt < now - (8*60000)){
-                  msg.reply({allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**`})
-                  verifiedUser.lastMentionAt = now
-                }
-
-                await verifiedUser?.save()
-    
-              }else{
-                msg.reply({allowedMentions: { repliedUser: false, roles: [roles.verifiedSpeech] }, content: `**<@&${roles.verifiedSpeech}>**`})
-                
-                if(!msg.member.permissions.has('Administrator')){
-                  VerifiedsModel.create({
-                    userId: msg.author.id,
-                    ping: false,
-                    channelId: channelId,
-                    verifiedAt: now,
-                    contentHidden: false,
-                    channelHidden: false,
-                    lastMentionAt: now,
-                    lastActivityAt: now
-                  })
-                }
-              }
             }
           }
+        }
+      }
+
+      //! Handle VIP channel stats
+      if (channel.parentId == categories.vipNsfw && channel.nsfw) {
+        const filesCount: {[key: string]: number} = {}
+
+        if (channel.topic) {
+          const description = channel.topic.split(' ')
+
+          const getKey = (value: string) => {
+            return value.split('\n').pop()?.replace(':', '')
+          }
+
+          description.forEach((v, i, a) => {
+            if (v.includes(':')) {
+              const key = getKey(v), value = parseInt(a[i+1])
+              
+              if (key) filesCount[key] = value
+            }
+          })
+    
+          for (const key in filesCount) {
+            msg.attachments.forEach(at=> {
+              const fileName = at.name.split('.').shift()?.replace(/\d+/g, '')
+              
+              if (fileName && key.toLowerCase().includes(fileName.toLowerCase())) {
+                filesCount[key] ? filesCount[key]++ : filesCount[key] = 1
+              }
+            })  
+          }
+  
+          const newDescription = description.map((v, i, a) => {
+            const previous = a[i-1]
+            
+            if (previous && previous.includes(':')) {
+              const key = getKey(previous)
+
+              if (!key) return v
+
+              const count = filesCount[key]
+
+              return typeof count == 'number' ?  count+v.replace(/\d+/g, '') : v
+            } else {
+              return v
+            }
+          })
+
+          channel.edit({topic: newDescription.join(' ')})
         }
       }
     }

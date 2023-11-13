@@ -44,7 +44,10 @@ exports.FrogDb = {
         suggestions: '1139599870794154025',
         announcements: '1139620138216333315'
     },
-    categories: { verifieds: '1139599818931585184' }
+    categories: {
+        verifieds: '1139599818931585184',
+        vipNsfw: '1139599819942400010'
+    }
 };
 exports.SANCTIONS = [
     {
