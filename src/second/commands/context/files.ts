@@ -35,7 +35,7 @@ export default class FilesContextCommand extends ContextCommand {
     targetMessage.attachments.forEach(at=> {
       embedFields.push({
         name: `${at.name}`,
-        value: `Size: *${(at.size/1048576).toFixed(3)}*\nDimentions: *${at.width}×${at.height}*\nContent type: ${at.contentType}${at.description ? '\nDescription: '+at.description : ''}`,
+        value: `Size: *${(at.size/1048576).toFixed(3)}*\nDimentions: *${at.width}×${at.height}*\nContent type: ${at.contentType}${at.description ? '\nDescription: '+at.description : ''}\n[Url](${at.url})`,
         inline: true
       })
     })
