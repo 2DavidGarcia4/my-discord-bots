@@ -20,6 +20,8 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
   if(![channels.martine, channels.onlyNudes].some(s=> s == channelId)) return
 
   const getAndSendContent = async (contentUrl: string, channel: TextChannel) => {
+    return channel.send({content: `[**File url**](${contentUrl})`})
+
     if(contentUrl.slice(contentUrl.length-7, contentUrl.length).includes('.')){
       const response = await fetch(contentUrl)
       if(response.status !== 200) return
