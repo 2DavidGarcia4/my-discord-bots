@@ -35,10 +35,10 @@ export default class MessageCreateEvent extends BotEvent {
       
   
       //! Backup files
-      // if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
-      //   const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f=>  f.name == channelName) 
-      //   if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
-      // }
+      if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
+        const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f=>  f.name == channelName) 
+        if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
+      }
 
       if(channel.parentId == categories.verifieds && channel.nsfw){
         

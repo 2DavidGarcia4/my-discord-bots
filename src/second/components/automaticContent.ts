@@ -20,7 +20,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
   if(![channels.martine, channels.onlyNudes].some(s=> s == channelId)) return
 
   const getAndSendContent = async (contentUrl: string, channel: TextChannel) => {
-    return channel.send({content: `[**File url**](${contentUrl})`})
+    // return channel.send({content: `[**File url**](${contentUrl})`})
 
     if(contentUrl.slice(contentUrl.length-7, contentUrl.length).includes('.')){
       const response = await fetch(contentUrl)
@@ -34,7 +34,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       // console.log({MBs, fileExtension})
 
       //* 25MB max
-      if(MBs > 16) return channel.send({content: `[**File url**](${contentUrl})\n**MB**: ${MBs.toFixed(2)}`})
+      if(MBs > 10) return channel.send({content: `[**File url**](${contentUrl})\n**MB**: ${MBs.toFixed(2)}`})
       // console.log(MBs.toFixed(3)+' MB')
 
       const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0'))+1

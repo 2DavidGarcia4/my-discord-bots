@@ -32,10 +32,11 @@ class MessageCreateEvent extends __1.BotEvent {
             if (channel.type != discord_js_1.ChannelType.GuildText)
                 return;
             //! Backup files
-            // if(msg.attachments.size && msg.attachments.some(s=> s.size < 25000000)){
-            //   const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f=>  f.name == channelName) 
-            //   if(backupChannel?.type == ChannelType.GuildText) backupChannel.send({content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f=> f.size < 25000000).map(m=> m)})
-            // }
+            if (msg.attachments.size && msg.attachments.some(s => s.size < 25000000)) {
+                const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f => f.name == channelName);
+                if (backupChannel?.type == discord_js_1.ChannelType.GuildText)
+                    backupChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 25000000).map(m => m) });
+            }
             if (channel.parentId == categories.verifieds && channel.nsfw) {
                 //? Verifieds system
                 if (msg.member?.roles.cache.has(roles.verified)) {
