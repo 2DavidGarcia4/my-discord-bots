@@ -27,7 +27,7 @@ export default class MessageDeleteEvent extends BotEvent {
       .setDescription(`**📄 Message:**\n${msgd.content.length > 2000 ? msgd.content.slice(0, 2000)+'...' : msgd.content}`)
       .setFields(
         {name: '🧑 **Author:**', value: `${msgd.author} ||*(\`\`${msgd.author?.id}\`\`)*||`, inline: true},
-        {name: `<:canaldetexto:904812801925738557> **Channel:**`, value: `${msgd.channel}`, inline: true},
+        {name: `<:canaldetexto:1077274759164866681> **Channel:**`, value: `${msgd.channel}`, inline: true},
       )
       .setColor('DarkOrange')
       .setTimestamp()
