@@ -1,14 +1,17 @@
 import { Message, EmbedBuilder } from "discord.js"
-import { FILE_EXTENSIONS, FrogDb, SANCTIONS } from "../data"
+import { FILE_EXTENSIONS, FrogDb, TIMEOUT_SANCTIONS } from "../data"
 import { type SecondClientData } from ".."
 
+const ENLACE_IDENTIFIERS = ['http://', 'https://']
+const DISCORD_INVITES_IDENTIFIERS = ['discord.gg/', 'discord.com/invite/']
+
 export async function Moderation(msg: Message<boolean>, client: SecondClientData) {
-  const { guildId, channelId, member } = msg
+  const { guildId, channelId } = msg
   
   if(msg.author.bot) return
   if(guildId != FrogDb.serverId) return
 
-  const { categories, roles, channels } = client.data
+  const { categories, roles } = client.data
 
   const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == categories.verifieds)
 
@@ -16,17 +19,21 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
     Embed.setColor('Red')
     msg.channel.send({content: `${msg.author}`, embeds: [Embed]}).then(re=> {
       msg.delete()
-      setTimeout(()=> re.delete(), 10000)
+      setTimeout(()=> re.delete(), 20000)
     })
 
     const member = client.modDb.find(f=> f.id == msg.author.id)
     if(member){
       member.warns++
-      if(member.warns >= 3){
+      if(member.warns === 3){
         msg.member?.roles.add(roles.spamer)
       }
 
-      SANCTIONS.forEach(sanction=> {
+      if(member.warns === 4){
+        msg.member?.roles.add(roles.muted)
+      }
+
+      TIMEOUT_SANCTIONS.forEach(sanction=> {
         if(sanction.warns == member.warns){
           msg.member?.timeout(sanction.time, timeoutReason.replace('{warns}', sanction.warns+''))
         }
@@ -36,33 +43,36 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
     }
   }
 
-  //? Auto moderation links
-  const enlaceActivators = ['http://', 'https://']
-  if(!verifiedsCahnnels?.some(s=> s.id == msg.channelId) && !msg.member?.permissions.has('Administrator') && enlaceActivators.some(s=> msg.content.includes(s))){
+  //? Auto moderation discord invites
+  if(!verifiedsCahnnels?.some(s=> s.id == channelId) && !msg.member?.permissions.has('Administrator') && DISCORD_INVITES_IDENTIFIERS.some(s=> msg.content.includes(s))){
     const texts = msg.content.split(/ +/g).map(m=> m.includes('\n') ? m.split('\n') : m).flat()
-    const filter = texts.filter(f=> enlaceActivators.some(s=> f.includes(s))) 
+    const invites = texts.filter(f=> DISCORD_INVITES_IDENTIFIERS.some(s=> f.includes(s))) 
+
+    if (invites.some(i=> DISCORD_INVITES_IDENTIFIERS.some(s => i.includes(s)))) {
+      msg.member?.roles.add([roles.spamer, roles.muted])
+    }
+
+    const AutoModEb = new EmbedBuilder()
+    .setTitle('Auto moderation')
+    .setDescription('Discord server invites are not allowed.')
+
+    handleModerateAction(AutoModEb, `Auto moderation of discord invites, {warns} warns`)
+
+    return
+  }
+
+  //? Auto moderation links
+  if(!verifiedsCahnnels?.some(s=> s.id == msg.channelId) && !msg.member?.permissions.has('Administrator') && ENLACE_IDENTIFIERS.some(s=> msg.content.includes(s))){
+    const texts = msg.content.split(/ +/g).map(m=> m.includes('\n') ? m.split('\n') : m).flat()
+    const links = texts.filter(f=> ENLACE_IDENTIFIERS.some(s=> f.includes(s))) 
     
-    if(filter.some(f=> !FILE_EXTENSIONS.some(s=> f.endsWith('.'+s)))){
-      if (channelId === channels.exclusive) return member?.roles.add(roles.muted)
-      
+    if(links.some(l=> !FILE_EXTENSIONS.some(s=> l.endsWith('.'+s)))){      
       const AutoModEb = new EmbedBuilder()
       .setTitle('Auto moderation')
       .setDescription('Only links to images, videos and gifs are allowed.')
   
       handleModerateAction(AutoModEb, `Auto moderation of links, {warns} warns`)
     }
-
-    return
-  }
-  
-  //? Auto moderation discord invites
-  const discordInvites = ['discord.gg/', 'discord.com/invite/']
-  if(!verifiedsCahnnels?.some(s=> s.id == msg.channelId) && !msg.member?.permissions.has('Administrator') && discordInvites.some(s=> msg.content.includes(s))){
-    const AutoModEb = new EmbedBuilder()
-    .setTitle('Auto moderation')
-    .setDescription('Discord server invites are not allowed.')
-
-    handleModerateAction(AutoModEb, `Auto moderation of discord invites, {warns} warns`)
 
     return
   }
@@ -74,7 +84,7 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
       const duplicatedMessages = member.messages.filter(f=> f.content == msg.content && f.channelId != msg.channelId).length
       // console.log(member.messages.length)
 
-      member.messages.push({id: msg.id, content: msg.content, channelId: msg.channelId})
+      member.messages.push({id: msg.id, content: msg.content, channelId})
       setTimeout(()=> {
         member.messages.splice(member.messages.findIndex(f=> f.id == msg.id), 1)
       }, 4*60000)

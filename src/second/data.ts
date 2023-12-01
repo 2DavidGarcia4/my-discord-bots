@@ -48,10 +48,14 @@ export const FrogDb = {
   categories: { 
     verifieds: '1139599818931585184',
     vipNsfw: '1139599819942400010'
-  }
+  },
+  invitationCodes: [
+    'teenvids',
+    'AeSaX5rStE'
+  ]
 }
 
-export const SANCTIONS = [
+export const TIMEOUT_SANCTIONS = [
   {
     time: 2*60*60*1000,
     warns: 2 

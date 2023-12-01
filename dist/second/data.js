@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buttonInfoInteractions = exports.FILE_EXTENSIONS = exports.SANCTIONS = exports.FrogDb = void 0;
+exports.buttonInfoInteractions = exports.FILE_EXTENSIONS = exports.TIMEOUT_SANCTIONS = exports.FrogDb = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../config");
 const services_1 = require("./lib/services");
@@ -49,9 +49,13 @@ exports.FrogDb = {
     categories: {
         verifieds: '1139599818931585184',
         vipNsfw: '1139599819942400010'
-    }
+    },
+    invitationCodes: [
+        'teenvids',
+        'AeSaX5rStE'
+    ]
 };
-exports.SANCTIONS = [
+exports.TIMEOUT_SANCTIONS = [
     {
         time: 2 * 60 * 60 * 1000,
         warns: 2
