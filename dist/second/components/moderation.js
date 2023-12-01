@@ -4,12 +4,12 @@ exports.Moderation = void 0;
 const discord_js_1 = require("discord.js");
 const data_1 = require("../data");
 async function Moderation(msg, client) {
-    const { guildId } = msg;
+    const { guildId, channelId, member } = msg;
     if (msg.author.bot)
         return;
     if (guildId != data_1.FrogDb.serverId)
         return;
-    const { categories, roles } = client.data;
+    const { categories, roles, channels } = client.data;
     const verifiedsCahnnels = msg.guild?.channels.cache.filter(f => f.parentId == categories.verifieds);
     const handleModerateAction = (Embed, timeoutReason) => {
         Embed.setColor('Red');
@@ -39,6 +39,8 @@ async function Moderation(msg, client) {
         const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
         const filter = texts.filter(f => enlaceActivators.some(s => f.includes(s)));
         if (filter.some(f => !data_1.FILE_EXTENSIONS.some(s => f.endsWith('.' + s)))) {
+            if (channelId === channels.exclusive)
+                return member?.roles.add(roles.muted);
             const AutoModEb = new discord_js_1.EmbedBuilder()
                 .setTitle('Auto moderation')
                 .setDescription('Only links to images, videos and gifs are allowed.');

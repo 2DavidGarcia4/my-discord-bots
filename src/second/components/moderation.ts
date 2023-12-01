@@ -3,12 +3,12 @@ import { FILE_EXTENSIONS, FrogDb, SANCTIONS } from "../data"
 import { type SecondClientData } from ".."
 
 export async function Moderation(msg: Message<boolean>, client: SecondClientData) {
-  const { guildId } = msg
+  const { guildId, channelId, member } = msg
   
   if(msg.author.bot) return
   if(guildId != FrogDb.serverId) return
 
-  const { categories, roles } = client.data
+  const { categories, roles, channels } = client.data
 
   const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == categories.verifieds)
 
@@ -43,6 +43,8 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
     const filter = texts.filter(f=> enlaceActivators.some(s=> f.includes(s))) 
     
     if(filter.some(f=> !FILE_EXTENSIONS.some(s=> f.endsWith('.'+s)))){
+      if (channelId === channels.exclusive) return member?.roles.add(roles.muted)
+      
       const AutoModEb = new EmbedBuilder()
       .setTitle('Auto moderation')
       .setDescription('Only links to images, videos and gifs are allowed.')
