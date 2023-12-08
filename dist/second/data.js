@@ -52,7 +52,13 @@ exports.FrogDb = {
     },
     invitationCodes: [
         'teenvids',
-        'AeSaX5rStE'
+        'AeSaX5rStE',
+        'tiktokhomes',
+        'sexyhouse',
+        'xxxass',
+        'leaksforu',
+        'reelshot',
+        'nudesex'
     ]
 };
 exports.TIMEOUT_SANCTIONS = [
