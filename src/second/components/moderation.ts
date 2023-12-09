@@ -11,7 +11,7 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
   if(msg.author.bot) return
   if(guildId != FrogDb.serverId) return
 
-  const { categories, roles } = client.data
+  const { categories, roles, invitationCodes } = client.data
 
   const verifiedsCahnnels = msg.guild?.channels.cache.filter(f=> f.parentId == categories.verifieds)
 
@@ -48,7 +48,7 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
     const texts = msg.content.split(/ +/g).map(m=> m.includes('\n') ? m.split('\n') : m).flat()
     const invites = texts.filter(f=> DISCORD_INVITES_IDENTIFIERS.some(s=> f.includes(s))) 
 
-    if (invites.some(i=> DISCORD_INVITES_IDENTIFIERS.some(s => i.includes(s)))) {
+    if (invites.some(i=> invitationCodes.some(s => i.includes(s)))) {
       msg.member?.roles.add([roles.spamer, roles.muted])
     }
 

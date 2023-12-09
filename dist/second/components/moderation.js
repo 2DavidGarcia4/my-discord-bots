@@ -11,7 +11,7 @@ async function Moderation(msg, client) {
         return;
     if (guildId != data_1.FrogDb.serverId)
         return;
-    const { categories, roles } = client.data;
+    const { categories, roles, invitationCodes } = client.data;
     const verifiedsCahnnels = msg.guild?.channels.cache.filter(f => f.parentId == categories.verifieds);
     const handleModerateAction = (Embed, timeoutReason) => {
         Embed.setColor('Red');
@@ -42,7 +42,7 @@ async function Moderation(msg, client) {
     if (!verifiedsCahnnels?.some(s => s.id == channelId) && !msg.member?.permissions.has('Administrator') && DISCORD_INVITES_IDENTIFIERS.some(s => msg.content.includes(s))) {
         const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
         const invites = texts.filter(f => DISCORD_INVITES_IDENTIFIERS.some(s => f.includes(s)));
-        if (invites.some(i => DISCORD_INVITES_IDENTIFIERS.some(s => i.includes(s)))) {
+        if (invites.some(i => invitationCodes.some(s => i.includes(s)))) {
             msg.member?.roles.add([roles.spamer, roles.muted]);
         }
         const AutoModEb = new discord_js_1.EmbedBuilder()
