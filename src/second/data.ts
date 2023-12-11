@@ -57,7 +57,8 @@ export const FrogDb = {
     'xxxass',
     'leaksforu',
     'reelshot',
-    'nudesex'
+    'nudesex',
+    'tiktoknsfw'
   ]
 }
 
