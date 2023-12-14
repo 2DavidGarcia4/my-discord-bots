@@ -23,7 +23,7 @@ class MessageDeleteEvent extends __1.BotEvent {
                 .setAuthor({ name: msgd.member?.nickname || msgd.author?.username || 'undefined', iconURL: msgd.author?.displayAvatarURL() })
                 .setTitle('🗑️ Deleted message')
                 .setDescription(`**📄 Message:**\n${msgd.content.length > 2000 ? msgd.content.slice(0, 2000) + '...' : msgd.content}`)
-                .setFields({ name: '🧑 **Author:**', value: `${msgd.author} ||*(\`\`${msgd.author?.id}\`\`)*||`, inline: true }, { name: `<:canaldetexto:1077274759164866681> **Channel:**`, value: `${msgd.channel}`, inline: true })
+                .setFields({ name: '🧑 **Author:**', value: `${msgd.author}\n\`\`\`${msgd.author?.id}\`\`\``, inline: true }, { name: `<:canaldetexto:1077274759164866681> **Channel:**`, value: `${msgd.channel}`, inline: true })
                 .setColor('DarkOrange')
                 .setTimestamp();
             if (channelLog?.type == discord_js_1.ChannelType.GuildText)

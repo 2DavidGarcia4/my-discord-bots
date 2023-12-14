@@ -59,7 +59,10 @@ exports.FrogDb = {
         'leaksforu',
         'reelshot',
         'nudesex',
-        'tiktoknsfw'
+        'tiktoknsfw',
+        'xxxhot',
+        'givemenudes',
+        'sexxxx'
     ]
 };
 exports.TIMEOUT_SANCTIONS = [
