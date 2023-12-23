@@ -62,7 +62,8 @@ exports.FrogDb = {
         'tiktoknsfw',
         'xxxhot',
         'givemenudes',
-        'sexxxx'
+        'sexxxx',
+        'xxxsexx'
     ]
 };
 exports.TIMEOUT_SANCTIONS = [
