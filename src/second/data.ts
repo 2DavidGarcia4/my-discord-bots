@@ -61,7 +61,8 @@ export const FrogDb = {
     'tiktoknsfw',
     'xxxhot',
     'givemenudes',
-    'sexxxx'
+    'sexxxx',
+    'xxxsexx'
   ]
 }
 
