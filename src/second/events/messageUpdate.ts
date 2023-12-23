@@ -24,7 +24,7 @@ export default class MessageUpdateEvent extends BotEvent {
         {name: `📝 **New message:**`, value: `${(newMsg.content?.length || 0)>1024 ? newMsg.content?.slice(0, 1020)+'...' : newMsg.content}`, inline: true},
         {name: `\u200B`, value: `\u200B`, inline: true},
         {name: '🧑 **Author:**', value: `${oldMsg.author} ||*(\`\`${oldMsg.author?.id}\`\`)*||`, inline: true},
-        {name: `<:canaldetexto:904812801925738557> **Channel:**`, value: `${oldMsg.channel}`, inline: true},
+        {name: `<:canaldetexto:1077274759164866681> **Channel:**`, value: `${oldMsg.channel}`, inline: true},
         {name: '📄 **Message:**', value: `[Go to message](${newMsg.url})`, inline: true},
       )
       .setColor('Blurple')
