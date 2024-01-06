@@ -68,7 +68,10 @@ exports.FrogDb = {
         'teenporn',
         'nudesnapchat',
         'trashnudes',
-        'mariasex'
+        'mariasex',
+        'dcleaks',
+        'websluts',
+        'nudeteen'
     ]
 };
 exports.TIMEOUT_SANCTIONS = [
