@@ -67,7 +67,10 @@ export const FrogDb = {
     'teenporn',
     'nudesnapchat',
     'trashnudes',
-    'mariasex'
+    'mariasex',
+    'dcleaks',
+    'websluts',
+    'nudeteen'
   ]
 }
 
