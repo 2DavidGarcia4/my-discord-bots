@@ -23,7 +23,7 @@ async function Moderation(msg, client) {
         if (member) {
             member.warns++;
             if (member.warns === 3) {
-                msg.member?.roles.add(roles.spamer);
+                msg.member?.roles.add(roles.prisoner);
             }
             if (member.warns === 4) {
                 msg.member?.roles.add(roles.muted);
@@ -43,7 +43,7 @@ async function Moderation(msg, client) {
         const texts = msg.content.split(/ +/g).map(m => m.includes('\n') ? m.split('\n') : m).flat();
         const invites = texts.filter(f => DISCORD_INVITES_IDENTIFIERS.some(s => f.includes(s)));
         if (invites.some(i => invitationCodes.some(s => i.includes(s)))) {
-            msg.member?.roles.add([roles.spamer, roles.muted]);
+            msg.member?.roles.add([roles.prisoner, roles.muted]);
         }
         const AutoModEb = new discord_js_1.EmbedBuilder()
             .setTitle('Auto moderation')
@@ -107,7 +107,7 @@ async function Moderation(msg, client) {
                 msg.member?.timeout(4 * 60 * 60000, 'Spam auto moderation');
             }
             if (member.warns == 3) {
-                msg.member?.roles.add(roles.spamer);
+                msg.member?.roles.add(roles.prisoner);
             }
         }
         else {

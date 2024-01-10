@@ -123,29 +123,27 @@ function defaultInfoMessageBody(msg, { title, description, name, extraButtons })
     msg.channel.send({ embeds: [RulesEb], components: [RulesArb] });
 }
 exports.defaultInfoMessageBody = defaultInfoMessageBody;
-function autoChangeNicknames(members, client) {
-    const includes = ['!', '¡', '?', '¿'];
+async function autoChangeNicknames(members, client) {
+    const regex = /[!¡¿?]/;
+    const characters = ['!', '¡', '?', '¿'];
     let updatedMembers = 0;
-    members.forEach(m => {
-        if (m.nickname) {
-            if (includes.some(s => m.nickname?.startsWith(s))) {
-                m.edit({ nick: m.nickname.replace(/[!¡¿?]/, '').trim() }).then(mr => {
-                    updatedMembers++;
-                });
+    for (const member of members) {
+        const userName = member.nickname || member.user.globalName || member.user.username;
+        if ((!member.roles.cache.has(data_1.FrogDb.roles.prisoner)) && regex.test(userName) && characters.some(s => userName.startsWith(s))) {
+            try {
+                await member.edit({ nick: userName.replace(regex, '').trim() });
+                updatedMembers++;
+            }
+            catch (error) {
             }
         }
-        else if (includes.some(s => m.user.username.startsWith(s))) {
-            m.edit({ nick: m.user.username.replace(/[!¡¿?]/, '').trim() }).then(mr => {
-                updatedMembers++;
-            });
-        }
-    });
+    }
     if (updatedMembers) {
         const UpdatedMembersEb = new discord_js_1.EmbedBuilder()
             .setTitle('Update members nicknames')
-            .setDescription(`**${updatedMembers}**`)
+            .setDescription(`Amount: **${updatedMembers}**`)
             .setColor('Blue');
-        const channelLog = client.channels.cache.get('1139600309786775662');
+        const channelLog = client.channels.cache.get(data_1.FrogDb.channels.logs);
         if (channelLog?.isTextBased())
             channelLog.send({ embeds: [UpdatedMembersEb] });
     }
