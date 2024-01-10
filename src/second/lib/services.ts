@@ -148,31 +148,31 @@ export function defaultInfoMessageBody(msg: Message<boolean>, {title, descriptio
   msg.channel.send({embeds: [RulesEb], components: [RulesArb]})
 }
 
-export function autoChangeNicknames(members: GuildMember[], client: SecondClientData) {
-  const includes = ['!', '¡', '?', '¿']
+export async function autoChangeNicknames(members: GuildMember[], client: SecondClientData) {
+  const regex = /[!¡¿?]/
+  const characters = ['!', '¡', '?', '¿']
   let updatedMembers = 0
   
-  members.forEach(m=> {
-    if(m.nickname){
-      if(includes.some(s=> m.nickname?.startsWith(s))){
-        m.edit({nick: m.nickname.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
-          updatedMembers++
-        })
-      }
-    } else if(includes.some(s=> m.user.username.startsWith(s))){
-      m.edit({nick: m.user.username.replace(/[!¡¿?]/, '').trim()}).then(mr=> {
+  for (const member of members) {
+    const userName = member.nickname || member.user.globalName || member.user.username
+    
+    if((!member.roles.cache.has(FrogDb.roles.prisoner)) && regex.test(userName) && characters.some(s=> userName.startsWith(s))){
+      try {
+        await member.edit({nick: userName.replace(regex, '').trim()})
         updatedMembers++
-      })
+      } catch (error) {
+
+      }
     }
-  })
+  }
 
   if(updatedMembers){
     const UpdatedMembersEb = new EmbedBuilder()
     .setTitle('Update members nicknames')
-    .setDescription(`**${updatedMembers}**`)
+    .setDescription(`Amount: **${updatedMembers}**`)
     .setColor('Blue')
 
-    const channelLog = client.channels.cache.get('1139600309786775662')
+    const channelLog = client.channels.cache.get(FrogDb.channels.logs)
     if(channelLog?.isTextBased()) channelLog.send({embeds: [UpdatedMembersEb]})
   }
 }
