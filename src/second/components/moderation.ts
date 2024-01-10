@@ -26,7 +26,7 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
     if(member){
       member.warns++
       if(member.warns === 3){
-        msg.member?.roles.add(roles.spamer)
+        msg.member?.roles.add(roles.prisoner)
       }
 
       if(member.warns === 4){
@@ -49,7 +49,7 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
     const invites = texts.filter(f=> DISCORD_INVITES_IDENTIFIERS.some(s=> f.includes(s))) 
 
     if (invites.some(i=> invitationCodes.some(s => i.includes(s)))) {
-      msg.member?.roles.add([roles.spamer, roles.muted])
+      msg.member?.roles.add([roles.prisoner, roles.muted])
     }
 
     const AutoModEb = new EmbedBuilder()
@@ -128,7 +128,7 @@ export async function Moderation(msg: Message<boolean>, client: SecondClientData
       }
 
       if(member.warns == 3) {
-        msg.member?.roles.add(roles.spamer)
+        msg.member?.roles.add(roles.prisoner)
       }
 
     }else{
