@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.ManageAutomaticContent = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../../config");
+const node_path_1 = require("node:path");
 const channels = {
     martine: '1139600091829776498',
     onlyNudes: '1139600102445551646'
@@ -27,17 +28,16 @@ async function ManageAutomaticContent(msg, client) {
                 return;
             const imageBufer = await response.arrayBuffer();
             const buffer = Buffer.from(imageBufer);
-            const MBs = (buffer.length / 1048576);
-            const reverseUrl = contentUrl.split('').reverse().join('');
-            const fileExtension = reverseUrl.slice(0, reverseUrl.indexOf('.')).split('').reverse().join('');
+            const MBs = buffer.length / 1048576;
+            const fileExtension = (0, node_path_1.extname)(contentUrl).slice(1);
             // console.log({MBs, fileExtension})
             //* 25MB max
             if (MBs > 20)
-                return channel.send({ content: `[**File url**](${contentUrl})\n**MB**: ${MBs.toFixed(2)}` });
+                return channel.send({ content: `[**File url**](${contentUrl}) ${fileExtension}\n**${MBs.toFixed(2)} MB**` });
             // console.log(MBs.toFixed(3)+' MB')
             const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0')) + 1;
             if (!config_1.inDevelopment)
-                channel.send({ content: `**MB:** ${MBs.toFixed(2)}`, files: [{ attachment: buffer, name: `file${fileNumber}.${fileExtension}` }] })
+                channel.send({ content: `${fileExtension} **${MBs.toFixed(2)} MB**`, files: [{ attachment: buffer, name: `file${fileNumber}.${fileExtension}` }] })
                     .then(() => {
                     channel.edit({ topic: fileNumber + '' });
                 })

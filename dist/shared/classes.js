@@ -24,7 +24,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BotClient = void 0;
-const fs_1 = require("fs");
+const node_fs_1 = require("node:fs");
 const discord_js_1 = require("discord.js");
 class BotClient extends discord_js_1.Client {
     getGuildById(guildId) {
@@ -63,8 +63,8 @@ class BotClient extends discord_js_1.Client {
     }
     loadCommands(folderName, commandCollection) {
         const { rootPath, rootFolderName } = this;
-        if ((0, fs_1.existsSync)(`./${rootPath}/commands/${folderName}/`)) {
-            (0, fs_1.readdirSync)(`./${rootPath}/commands/${folderName}/`).forEach(file => {
+        if ((0, node_fs_1.existsSync)(`./${rootPath}/commands/${folderName}/`)) {
+            (0, node_fs_1.readdirSync)(`./${rootPath}/commands/${folderName}/`).forEach(file => {
                 const command = new (require(`../${rootFolderName}/commands/${folderName}/${file}`).default)();
                 commandCollection.set(command.struct.name, command);
             });
@@ -72,7 +72,7 @@ class BotClient extends discord_js_1.Client {
     }
     loadEvents() {
         const { rootPath, rootFolderName } = this;
-        (0, fs_1.readdirSync)(`./${rootPath}/events/`).forEach(async (file) => {
+        (0, node_fs_1.readdirSync)(`./${rootPath}/events/`).forEach(async (file) => {
             const event = new (await Promise.resolve(`${`../${rootFolderName}/events/${file}`}`).then(s => __importStar(require(s)))).default();
             if (event.isOnce)
                 this.once(event.name, async (...args) => await event.execute(...args, this));
