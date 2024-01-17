@@ -1,4 +1,4 @@
-import { readdirSync, existsSync } from 'fs'
+import { readdirSync, existsSync } from 'node:fs'
 import { Client, Collection } from 'discord.js'
 import { SlashCommand, ContextCommand, TextCommand, BotEvent } from '..'
 
