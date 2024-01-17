@@ -1,6 +1,7 @@
 import { ChannelType, Message, TextChannel } from 'discord.js'
 import { type SecondClientData } from '..'
 import { inDevelopment } from '../../config'
+import { extname } from 'node:path'
 
 const channels = {
   martine: '1139600091829776498',
@@ -28,18 +29,17 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       const imageBufer = await response.arrayBuffer()
 
       const buffer = Buffer.from(imageBufer)
-      const MBs = (buffer.length/1048576)
-      const reverseUrl = contentUrl.split('').reverse().join('')
-      const fileExtension = reverseUrl.slice(0, reverseUrl.indexOf('.')).split('').reverse().join('')
+      const MBs = buffer.length / 1048576
+      const fileExtension = extname(contentUrl).slice(1)
       // console.log({MBs, fileExtension})
 
       //* 25MB max
-      if(MBs > 20) return channel.send({content: `[**File url**](${contentUrl})\n**MB**: ${MBs.toFixed(2)}`})
+      if(MBs > 20) return channel.send({content: `[**File url**](${contentUrl}) ${fileExtension}\n**${MBs.toFixed(2)} MB**`})
       // console.log(MBs.toFixed(3)+' MB')
 
       const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0'))+1
       
-      if(!inDevelopment) channel.send({content: `**MB:** ${MBs.toFixed(2)}`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
+      if(!inDevelopment) channel.send({content: `${fileExtension} **${MBs.toFixed(2)} MB**`, files: [{attachment: buffer, name: `file${fileNumber}.${fileExtension}`}]})
       .then(()=> {
         channel.edit({topic: fileNumber+''})
       })
