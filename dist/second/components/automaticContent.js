@@ -26,19 +26,26 @@ async function ManageAutomaticContent(msg, client) {
             const response = await fetch(contentUrl);
             if (response.status !== 200)
                 return;
-            const imageBufer = await response.arrayBuffer();
-            const buffer = Buffer.from(imageBufer);
-            const MBs = buffer.length / 1048576;
+            const contentLength = response.headers.get('content-length');
+            let MBs = 0;
             const fileExtension = (0, node_path_1.extname)(contentUrl).slice(1);
-            // console.log({MBs, fileExtension})
+            if (contentLength === null) {
+                const imageBufer = await response.arrayBuffer();
+                const buffer = Buffer.from(imageBufer);
+                MBs = buffer.length / 1048576;
+            }
+            else {
+                MBs = parseInt(contentLength);
+            }
             //* 25MB max
-            if (MBs > 20)
-                return channel.send({ content: `[**File url**](${contentUrl}) ${fileExtension}\n**${MBs.toFixed(2)} MB**` });
-            // console.log(MBs.toFixed(3)+' MB')
+            if (MBs > 24)
+                return channel.send({ content: `[**File url**](${contentUrl}) ${fileExtension} | **${MBs.toFixed(2)} MB**` });
             const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0')) + 1;
             if (!config_1.inDevelopment)
-                channel.send({ content: `${fileExtension} **${MBs.toFixed(2)} MB**`, files: [{ attachment: buffer, name: `file${fileNumber}.${fileExtension}` }] })
-                    .then(() => {
+                channel.send({
+                    content: `**file${fileNumber}.${fileExtension}** | **${MBs.toFixed(2)} MB**`,
+                    files: [{ attachment: contentUrl, name: `file${fileNumber}.${fileExtension}` }]
+                }).then(() => {
                     channel.edit({ topic: fileNumber + '' });
                 })
                     .catch(e => console.error('Error in send file:', e));
