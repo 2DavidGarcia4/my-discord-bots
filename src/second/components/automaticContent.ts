@@ -27,6 +27,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       const response = await fetch(contentUrl)
       if(response.status !== 200) return
       const contentLength = response.headers.get('content-length')
+      const mb = 1_048_576
       let MBs = 0 
       const fileExtension = extname(contentUrl).slice(1)
 
@@ -34,10 +35,10 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
         const imageBufer = await response.arrayBuffer()
   
         const buffer = Buffer.from(imageBufer)
-        MBs = buffer.length / 1048576
+        MBs = buffer.length / mb
 
       } else {
-        MBs = parseInt(contentLength)
+        MBs = parseInt(contentLength) / mb
       }
 
       //* 25MB max

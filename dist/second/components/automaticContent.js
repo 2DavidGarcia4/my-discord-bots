@@ -27,15 +27,16 @@ async function ManageAutomaticContent(msg, client) {
             if (response.status !== 200)
                 return;
             const contentLength = response.headers.get('content-length');
+            const mb = 1048576;
             let MBs = 0;
             const fileExtension = (0, node_path_1.extname)(contentUrl).slice(1);
             if (contentLength === null) {
                 const imageBufer = await response.arrayBuffer();
                 const buffer = Buffer.from(imageBufer);
-                MBs = buffer.length / 1048576;
+                MBs = buffer.length / mb;
             }
             else {
-                MBs = parseInt(contentLength);
+                MBs = parseInt(contentLength) / mb;
             }
             //* 25MB max
             if (MBs > 24)
