@@ -35,7 +35,8 @@ async function ManageAutomaticContent(msg, client) {
             console.log(`El archivo no tiene content-type header | URL: ${fileUrl}`);
             return;
         }
-        const channelName = `${categoryName}-${contentType.split('/')[0]}`;
+        const splitContentTipe = contentType.split('/');
+        const channelName = `${categoryName}-${splitContentTipe.at(-1) === 'gif' ? 'gif' : splitContentTipe.at(0)}`;
         const channel = autoContentServer?.channels.cache.find(f => f.name === channelName) ?? await autoContentServer?.channels.create({
             name: channelName,
             parent: martineCategories.find(c => autoContentServer.channels.cache.filter(f => c === f.parentId).size < 50),
@@ -45,7 +46,7 @@ async function ManageAutomaticContent(msg, client) {
             return;
         const contentLength = response.headers.get('content-length');
         const mbSize = 1048576;
-        const fileExtension = contentType.split('/').at(-1);
+        const fileExtension = splitContentTipe.at(-1);
         let MBs = 0;
         if (contentLength === null) {
             const imageBufer = await response.arrayBuffer();
