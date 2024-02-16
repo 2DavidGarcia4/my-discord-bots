@@ -27,6 +27,14 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
 
   const autoContentServer = client.getGuildById(autoContentServerId)
 
+  async function getMartineChannel (channelName: string) {
+    return autoContentServer?.channels.cache.find(f => f.name === channelName && martineCategories.some(c => c === f.parentId)) ?? await autoContentServer?.channels.create({
+      name: channelName, 
+      parent: martineCategories.find(c => autoContentServer.channels.cache.filter(f => c === f.parentId).size < 50), 
+      nsfw: true
+    })
+  }
+
   if(fileUrl.slice(fileUrl.length-7, fileUrl.length).includes('.')) {
     const response = await fetch(fileUrl)
 
@@ -41,11 +49,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     
     const splitContentTipe = contentType.split('/')
     const channelName = `${categoryName}-${splitContentTipe.at(-1) === 'gif' ? 'gif' : splitContentTipe.at(0)}`
-    const channel = autoContentServer?.channels.cache.find(f => f.name === channelName) ?? await autoContentServer?.channels.create({
-      name: channelName, 
-      parent: martineCategories.find(c => autoContentServer.channels.cache.filter(f => c === f.parentId).size < 50), 
-      nsfw: true
-    })
+    const channel = await getMartineChannel(channelName)
     
     if (channel?.type !== ChannelType.GuildText) return
 
@@ -77,11 +81,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     }).catch(e=> console.error('Error in send file: ', e))
 
   } else {
-    const defaultChannel = autoContentServer?.channels.cache.find(f => f.name === categoryName) ?? await autoContentServer?.channels.create({
-      name: categoryName, 
-      parent: martineCategories.find(c => autoContentServer.channels.cache.filter(f => c === f.parentId).size < 50), 
-      nsfw: true
-    })
+    const defaultChannel = await getMartineChannel(categoryName)
 
     if (defaultChannel?.type === ChannelType.GuildText){
       defaultChannel.send({content: `[**File url**](${fileUrl})`})

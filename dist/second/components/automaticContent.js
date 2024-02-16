@@ -26,6 +26,13 @@ async function ManageAutomaticContent(msg, client) {
     if (!(categoryName && fileUrl) || config_2.TYPES_CONTENT_IGNORE.split(/ +/g).some(s => s === categoryName))
         return;
     const autoContentServer = client.getGuildById(autoContentServerId);
+    async function getMartineChannel(channelName) {
+        return autoContentServer?.channels.cache.find(f => f.name === channelName && martineCategories.some(c => c === f.parentId)) ?? await autoContentServer?.channels.create({
+            name: channelName,
+            parent: martineCategories.find(c => autoContentServer.channels.cache.filter(f => c === f.parentId).size < 50),
+            nsfw: true
+        });
+    }
     if (fileUrl.slice(fileUrl.length - 7, fileUrl.length).includes('.')) {
         const response = await fetch(fileUrl);
         if (response.status !== 200)
@@ -37,11 +44,7 @@ async function ManageAutomaticContent(msg, client) {
         }
         const splitContentTipe = contentType.split('/');
         const channelName = `${categoryName}-${splitContentTipe.at(-1) === 'gif' ? 'gif' : splitContentTipe.at(0)}`;
-        const channel = autoContentServer?.channels.cache.find(f => f.name === channelName) ?? await autoContentServer?.channels.create({
-            name: channelName,
-            parent: martineCategories.find(c => autoContentServer.channels.cache.filter(f => c === f.parentId).size < 50),
-            nsfw: true
-        });
+        const channel = await getMartineChannel(channelName);
         if (channel?.type !== discord_js_1.ChannelType.GuildText)
             return;
         const contentLength = response.headers.get('content-length');
@@ -68,11 +71,7 @@ async function ManageAutomaticContent(msg, client) {
         }).catch(e => console.error('Error in send file: ', e));
     }
     else {
-        const defaultChannel = autoContentServer?.channels.cache.find(f => f.name === categoryName) ?? await autoContentServer?.channels.create({
-            name: categoryName,
-            parent: martineCategories.find(c => autoContentServer.channels.cache.filter(f => c === f.parentId).size < 50),
-            nsfw: true
-        });
+        const defaultChannel = await getMartineChannel(categoryName);
         if (defaultChannel?.type === discord_js_1.ChannelType.GuildText) {
             defaultChannel.send({ content: `[**File url**](${fileUrl})` });
         }
