@@ -14,7 +14,7 @@ const martineCategories = [
 ];
 const autoContentServerId = '949861760096145438';
 async function ManageAutomaticContent(msg, client) {
-    if (config_1.inDevelopment || !config_2.TYPES_CONTENT_IGNORE)
+    if (config_1.inDevelopment !== undefined || !config_2.TYPES_CONTENT_IGNORE)
         return;
     const { channelId, content } = msg;
     if (channelId !== martineChannel)
@@ -45,7 +45,7 @@ async function ManageAutomaticContent(msg, client) {
             return;
         const contentLength = response.headers.get('content-length');
         const mbSize = 1048576;
-        const fileExtension = fileUrl.split('/').at(-1);
+        const fileExtension = contentType.split('/').at(-1);
         let MBs = 0;
         if (contentLength === null) {
             const imageBufer = await response.arrayBuffer();
