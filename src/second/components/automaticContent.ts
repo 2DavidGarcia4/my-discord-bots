@@ -1,7 +1,6 @@
-import { ChannelType, Message, TextChannel } from 'discord.js'
+import { ChannelType, Message } from 'discord.js'
 import { type SecondClientData } from '..'
 import { inDevelopment } from '../../config'
-import { extname } from 'node:path'
 import { TYPES_CONTENT_IGNORE } from '../../config'
 
 const martineChannel = '1139600091829776498'
@@ -15,7 +14,7 @@ const martineCategories = [
 const autoContentServerId = '949861760096145438'
 
 export async function ManageAutomaticContent(msg: Message<boolean>, client: SecondClientData) {
-  if(inDevelopment || !TYPES_CONTENT_IGNORE) return
+  if(inDevelopment !== undefined || !TYPES_CONTENT_IGNORE) return
   const { channelId, content } = msg
   if(channelId !== martineChannel) return
 
@@ -51,7 +50,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
 
     const contentLength = response.headers.get('content-length')
     const mbSize = 1_048_576
-    const fileExtension = fileUrl.split('/').at(-1)
+    const fileExtension = contentType.split('/').at(-1)
     let MBs = 0 
 
     if (contentLength === null) {
