@@ -32,10 +32,18 @@ class MessageCreateEvent extends __1.BotEvent {
             if (channel.type != discord_js_1.ChannelType.GuildText)
                 return;
             //! Backup files
-            if (msg.attachments.size && msg.attachments.some(s => s.size < 25000000)) {
+            const mbSize = 1048576;
+            const maxMb = mbSize * 25;
+            if (msg.attachments.size && msg.attachments.some(s => s.size < maxMb)) {
                 const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f => f.name == channelName);
-                if (backupChannel?.type == discord_js_1.ChannelType.GuildText)
-                    backupChannel.send({ content: `${msg.author} | \`\`${msg.author.id}\`\``, files: msg.attachments.filter(f => f.size < 25000000).map(m => m) });
+                if (backupChannel?.type == discord_js_1.ChannelType.GuildText) {
+                    backupChannel.send({
+                        content: `${msg.author} | \`\`${msg.author.id}\`\``,
+                        files: msg.attachments.filter(f => f.size < maxMb).map(m => m)
+                    }).catch(e => {
+                        console.error('Error in send backup file: ', e);
+                    });
+                }
             }
             if (channel.parentId == categories.verifieds && channel.nsfw) {
                 //? Verifieds system
