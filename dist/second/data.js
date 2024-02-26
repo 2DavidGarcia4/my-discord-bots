@@ -53,30 +53,7 @@ exports.FrogDb = {
     invitationCodes: [
         'AeSaX5rStE',
         'dcleaks',
-        'leaksforu',
-        'teenvids',
-        'tiktokhomes',
-        'tiktoknsfw',
-        'nudeteen',
-        'sexyhouse',
-        'reelshot',
-        'nudesex',
-        'nudesnapchat',
-        'sexxxx',
-        'teenporn',
-        'trashnudes',
-        'mariasex',
-        'givemenudes',
-        'welcomensfw',
-        'webslut',
-        'xxxhot',
-        'xxxass',
-        'xxxsexx',
-        'nsfwclub',
-        'teenpornx',
-        'onlybabes',
-        'camsluts',
-        'neednudes'
+        'leaksforu'
     ]
 };
 exports.TIMEOUT_SANCTIONS = [

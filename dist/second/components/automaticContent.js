@@ -4,7 +4,7 @@ exports.ManageAutomaticContent = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../../config");
 const config_2 = require("../../config");
-const martineChannel = '1139600091829776498';
+const martineChannel = '1058148757641900083';
 const martineCategories = [
     '949861762902138941',
     '1141400243645190304',
@@ -23,8 +23,10 @@ async function ManageAutomaticContent(msg, client) {
     const categoryName = splitContent.find(f => f.toLowerCase().includes('category:'))?.split(/ +/g).at(-1)?.toLowerCase();
     const fileUrl = splitContent.find(f => f.toLowerCase().includes('image:'))?.split(/ +/g).pop();
     // console.log({categoryName, fileUrl})
-    if (!(categoryName && fileUrl) || config_2.TYPES_CONTENT_IGNORE.split(/ +/g).some(s => s === categoryName))
+    if (!(categoryName && fileUrl) || config_2.TYPES_CONTENT_IGNORE.split(/ +/g).some(s => s === categoryName)) {
+        msg.delete().catch(e => console.error('Error al eliminar el mensaje: ', e));
         return;
+    }
     const autoContentServer = client.getGuildById(autoContentServerId);
     async function getMartineChannel(channelName) {
         return autoContentServer?.channels.cache.find(f => f.name === channelName && martineCategories.some(c => c === f.parentId)) ?? await autoContentServer?.channels.create({

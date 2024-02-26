@@ -3,7 +3,7 @@ import { type SecondClientData } from '..'
 import { inDevelopment } from '../../config'
 import { TYPES_CONTENT_IGNORE } from '../../config'
 
-const martineChannel = '1139600091829776498'
+const martineChannel = '1058148757641900083'
 const martineCategories = [
   '949861762902138941',
   '1141400243645190304',
@@ -23,7 +23,10 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
   const fileUrl = splitContent.find(f=> f.toLowerCase().includes('image:'))?.split(/ +/g).pop()
   // console.log({categoryName, fileUrl})
 
-  if(!(categoryName && fileUrl) || TYPES_CONTENT_IGNORE.split(/ +/g).some(s => s === categoryName)) return
+  if(!(categoryName && fileUrl) || TYPES_CONTENT_IGNORE.split(/ +/g).some(s => s === categoryName)) {
+    msg.delete().catch(e => console.error('Error al eliminar el mensaje: ', e))
+    return
+  }
 
   const autoContentServer = client.getGuildById(autoContentServerId)
 
