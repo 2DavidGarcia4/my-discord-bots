@@ -77,7 +77,8 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
 
     const categories = categoryName.split('_')
     for (const name of categories) {
-      if (await SnackFileCategoriesModel.findOne({name}) === undefined) {
+      const category = await SnackFileCategoriesModel.findOne({name})
+      if (category === null) {
         await SnackFileCategoriesModel.create({name})
       }
     }

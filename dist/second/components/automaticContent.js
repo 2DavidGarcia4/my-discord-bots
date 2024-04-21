@@ -67,7 +67,8 @@ async function ManageAutomaticContent(msg, client) {
         }
         const categories = categoryName.split('_');
         for (const name of categories) {
-            if (await models_1.SnackFileCategoriesModel.findOne({ name }) === undefined) {
+            const category = await models_1.SnackFileCategoriesModel.findOne({ name });
+            if (category === null) {
                 await models_1.SnackFileCategoriesModel.create({ name });
             }
         }
