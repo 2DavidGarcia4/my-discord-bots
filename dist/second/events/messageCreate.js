@@ -32,7 +32,7 @@ class MessageCreateEvent extends __1.BotEvent {
             if (channel.type != discord_js_1.ChannelType.GuildText)
                 return;
             //! Backup files
-            const mbSize = 1048576;
+            const mbSize = 1_048_576;
             const maxMb = mbSize * 25;
             if (msg.attachments.size && msg.attachments.some(s => s.size < maxMb)) {
                 const backupServer = client.guilds.cache.get(backupServerId), channelName = channel.name, backupChannel = backupServer?.channels.cache.find(f => f.name == channelName);

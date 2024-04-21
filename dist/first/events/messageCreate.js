@@ -1,10 +1,6 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 const discord_js_1 = require("discord.js");
-const ms_1 = __importDefault(require("ms"));
 const data_1 = require("../data");
 const __1 = require("../..");
 class MessageCreateEvent extends __1.BotEvent {
@@ -17,24 +13,25 @@ class MessageCreateEvent extends __1.BotEvent {
         if (msg.guildId == data_1.botDB.serverId) {
             if (msg.author.bot)
                 return;
+            const msDay = (days) => days * 24 * 60 * 60000;
             //TODO: Roles de timpo
             if (member) {
                 const tiempo = Math.floor(Date.now() - Number(member.joinedAt?.valueOf()));
                 const tiempos = [
-                    { condicion: tiempo >= (0, ms_1.default)("30d") && tiempo < (0, ms_1.default)("60d"), rol: "975068365032947792" },
-                    { condicion: tiempo >= (0, ms_1.default)("60d") && tiempo < (0, ms_1.default)("90d"), rol: "975068396406329434" },
-                    { condicion: tiempo >= (0, ms_1.default)("90d") && tiempo < (0, ms_1.default)("120d"), rol: "975068402576154654" },
-                    { condicion: tiempo >= (0, ms_1.default)("120d") && tiempo < (0, ms_1.default)("150d"), rol: "975068408464949298" },
-                    { condicion: tiempo >= (0, ms_1.default)("150d") && tiempo < (0, ms_1.default)("180d"), rol: "975068418850050098" },
-                    { condicion: tiempo >= (0, ms_1.default)("180d") && tiempo < (0, ms_1.default)("210d"), rol: "975068424466214922" },
-                    { condicion: tiempo >= (0, ms_1.default)("210d") && tiempo < (0, ms_1.default)("240d"), rol: "975068413816868894" },
-                    { condicion: tiempo >= (0, ms_1.default)("240d") && tiempo < (0, ms_1.default)("270d"), rol: "975068429834915850" },
-                    { condicion: tiempo >= (0, ms_1.default)("270d") && tiempo < (0, ms_1.default)("300d"), rol: "975068435434319903" },
-                    { condicion: tiempo >= (0, ms_1.default)("300d") && tiempo < (0, ms_1.default)("330d"), rol: "975068435832770581" },
-                    { condicion: tiempo >= (0, ms_1.default)("330d") && tiempo < (0, ms_1.default)("360d"), rol: "975068441650274314" },
-                    { condicion: tiempo >= (0, ms_1.default)("360d") && tiempo < (0, ms_1.default)("547d"), rol: "975068449015480402" },
-                    { condicion: tiempo >= (0, ms_1.default)("547d") && tiempo < (0, ms_1.default)("730d"), rol: "975068458045825024" },
-                    { condicion: tiempo >= (0, ms_1.default)("730d"), rol: "975068463687139349" },
+                    { condicion: tiempo >= msDay(30) && tiempo < msDay(60), rol: "975068365032947792" },
+                    { condicion: tiempo >= msDay(60) && tiempo < msDay(90), rol: "975068396406329434" },
+                    { condicion: tiempo >= msDay(90) && tiempo < msDay(120), rol: "975068402576154654" },
+                    { condicion: tiempo >= msDay(120) && tiempo < msDay(150), rol: "975068408464949298" },
+                    { condicion: tiempo >= msDay(150) && tiempo < msDay(180), rol: "975068418850050098" },
+                    { condicion: tiempo >= msDay(180) && tiempo < msDay(210), rol: "975068424466214922" },
+                    { condicion: tiempo >= msDay(210) && tiempo < msDay(240), rol: "975068413816868894" },
+                    { condicion: tiempo >= msDay(240) && tiempo < msDay(270), rol: "975068429834915850" },
+                    { condicion: tiempo >= msDay(270) && tiempo < msDay(300), rol: "975068435434319903" },
+                    { condicion: tiempo >= msDay(300) && tiempo < msDay(330), rol: "975068435832770581" },
+                    { condicion: tiempo >= msDay(330) && tiempo < msDay(360), rol: "975068441650274314" },
+                    { condicion: tiempo >= msDay(360) && tiempo < msDay(547), rol: "975068449015480402" },
+                    { condicion: tiempo >= msDay(547) && tiempo < msDay(730), rol: "975068458045825024" },
+                    { condicion: tiempo >= msDay(730), rol: "975068463687139349" },
                 ];
                 const option = tiempos.find(f => f.condicion);
                 if (option)

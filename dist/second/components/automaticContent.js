@@ -50,7 +50,7 @@ async function ManageAutomaticContent(msg, client) {
         if (channel?.type !== discord_js_1.ChannelType.GuildText)
             return;
         const contentLength = response.headers.get('content-length');
-        const mbSize = 1048576;
+        const mbSize = 1_048_576;
         const fileExtension = splitContentTipe.at(-1);
         let MBs = 0;
         if (contentLength === null) {
@@ -68,7 +68,9 @@ async function ManageAutomaticContent(msg, client) {
         channel.send({
             content: `**file${fileNumber}.${fileExtension}** | **${MBs.toFixed(2)} MB**`,
             files: [{ attachment: fileUrl, name: `file${fileNumber}.${fileExtension}` }]
-        }).then(() => {
+        }).then((msg) => {
+            console.log(msg.attachments.first());
+            console.log(msg.attachments);
             channel.edit({ topic: fileNumber + '' });
         }).catch(e => console.error('Error in send file: ', e));
     }

@@ -79,7 +79,9 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     channel.send({
       content: `**file${fileNumber}.${fileExtension}** | **${MBs.toFixed(2)} MB**`,
       files: [{attachment: fileUrl, name: `file${fileNumber}.${fileExtension}`}]
-    }).then(()=> {
+    }).then((msg)=> {
+      console.log(msg.attachments.first())
+      console.log(msg.attachments)
       channel.edit({topic: fileNumber+''})
     }).catch(e=> console.error('Error in send file: ', e))
 

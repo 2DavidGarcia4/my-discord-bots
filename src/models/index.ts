@@ -31,4 +31,14 @@ class Verifieds {
   public lastActivityAt?: number
 }
 
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
+class SnackFiles {
+  public fileUrl: string
+  public category: string
+  public type: string
+  public size: number
+  public width: number
+  public height: number
+}
+
 export const VerifiedsModel = getModelForClass(Verifieds)

@@ -53,4 +53,9 @@ __decorate([
 Verifieds = __decorate([
     (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
 ], Verifieds);
+let SnackFiles = class SnackFiles {
+};
+SnackFiles = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], SnackFiles);
 exports.VerifiedsModel = (0, typegoose_1.getModelForClass)(Verifieds);

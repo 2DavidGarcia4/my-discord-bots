@@ -1,5 +1,4 @@
 import { ChannelType, EmbedBuilder, Message, MessageType } from 'discord.js'
-import ms from 'ms'
 import { botDB } from '../data'
 import { type FirstClientData } from '..'
 import { BotEvent } from '../..'
@@ -15,25 +14,27 @@ export default class MessageCreateEvent extends BotEvent {
   
     if(msg.guildId == botDB.serverId){  
       if(msg.author.bot) return
+
+      const msDay = (days: number) => days * 24 * 60 * 60000 
   
       //TODO: Roles de timpo
       if(member){
         const tiempo = Math.floor(Date.now()-Number(member.joinedAt?.valueOf()))
         const tiempos = [
-          {condicion: tiempo>=ms("30d") && tiempo<ms("60d"), rol: "975068365032947792"},
-          {condicion: tiempo>=ms("60d") && tiempo<ms("90d"), rol: "975068396406329434"},
-          {condicion: tiempo>=ms("90d") && tiempo<ms("120d"), rol: "975068402576154654"},
-          {condicion: tiempo>=ms("120d") && tiempo<ms("150d"), rol: "975068408464949298"},
-          {condicion: tiempo>=ms("150d") && tiempo<ms("180d"), rol: "975068418850050098"},
-          {condicion: tiempo>=ms("180d") && tiempo<ms("210d"), rol: "975068424466214922"},
-          {condicion: tiempo>=ms("210d") && tiempo<ms("240d"), rol: "975068413816868894"},
-          {condicion: tiempo>=ms("240d") && tiempo<ms("270d"), rol: "975068429834915850"},
-          {condicion: tiempo>=ms("270d") && tiempo<ms("300d"), rol: "975068435434319903"},
-          {condicion: tiempo>=ms("300d") && tiempo<ms("330d"), rol: "975068435832770581"},
-          {condicion: tiempo>=ms("330d") && tiempo<ms("360d"), rol: "975068441650274314"},
-          {condicion: tiempo>=ms("360d") && tiempo<ms("547d"), rol: "975068449015480402"},
-          {condicion: tiempo>=ms("547d") && tiempo<ms("730d"), rol: "975068458045825024"},
-          {condicion: tiempo>=ms("730d"), rol: "975068463687139349"},
+          {condicion: tiempo>=msDay(30) && tiempo<msDay(60), rol: "975068365032947792"},
+          {condicion: tiempo>=msDay(60) && tiempo<msDay(90), rol: "975068396406329434"},
+          {condicion: tiempo>=msDay(90) && tiempo<msDay(120), rol: "975068402576154654"},
+          {condicion: tiempo>=msDay(120) && tiempo<msDay(150), rol: "975068408464949298"},
+          {condicion: tiempo>=msDay(150) && tiempo<msDay(180), rol: "975068418850050098"},
+          {condicion: tiempo>=msDay(180) && tiempo<msDay(210), rol: "975068424466214922"},
+          {condicion: tiempo>=msDay(210) && tiempo<msDay(240), rol: "975068413816868894"},
+          {condicion: tiempo>=msDay(240) && tiempo<msDay(270), rol: "975068429834915850"},
+          {condicion: tiempo>=msDay(270) && tiempo<msDay(300), rol: "975068435434319903"},
+          {condicion: tiempo>=msDay(300) && tiempo<msDay(330), rol: "975068435832770581"},
+          {condicion: tiempo>=msDay(330) && tiempo<msDay(360), rol: "975068441650274314"},
+          {condicion: tiempo>=msDay(360) && tiempo<msDay(547), rol: "975068449015480402"},
+          {condicion: tiempo>=msDay(547) && tiempo<msDay(730), rol: "975068458045825024"},
+          {condicion: tiempo>=msDay(730), rol: "975068463687139349"},
         ]
         const option = tiempos.find(f=> f.condicion)
         if(option) member.roles.add(option?.rol)
