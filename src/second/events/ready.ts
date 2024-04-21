@@ -25,7 +25,13 @@ export default class ReadyEvent extends BotEvent {
   
     allServers.forEach(async sv=> {
       [...client.slashCommands.map(sc=> sc), ...client.contextCommands.map(cc=> cc)].forEach(async cmd=> {
-        if(cmd.guildsIds?.some(id=> id == sv?.id)){
+        if (cmd.guildsIds === undefined) {
+          if ((await client.application?.commands.fetch())?.some(s=> s.name == cmd.struct.name)) return
+          client.application?.commands.create(cmd.struct).then(c=> console.log(`➕ Se creo el comando ${c.name}`))
+          return
+        }
+        
+        if(cmd.guildsIds.some(id=> id == sv?.id)){
           if(!(await sv?.commands.fetch())?.some(s=> s.name == cmd.struct.name)){
             sv?.commands.create(cmd.struct).then(c=> console.log(`➕ Se creo el comando ${c.name} en el servidor ${sv.name}`))
           }
