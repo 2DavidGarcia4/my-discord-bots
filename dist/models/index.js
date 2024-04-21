@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.VerifiedsModel = void 0;
+exports.SnackFilesModel = exports.VerifiedsModel = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
 //? Verifieds
 let Verifieds = class Verifieds {
@@ -55,7 +55,36 @@ Verifieds = __decorate([
 ], Verifieds);
 let SnackFiles = class SnackFiles {
 };
+__decorate([
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], SnackFiles.prototype, "fileUrl", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], SnackFiles.prototype, "category", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], SnackFiles.prototype, "type", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ type: Number, required: true }),
+    __metadata("design:type", Number)
+], SnackFiles.prototype, "size", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ type: Number, required: true }),
+    __metadata("design:type", Number)
+], SnackFiles.prototype, "width", void 0);
+__decorate([
+    (0, typegoose_1.prop)({ type: Number, required: true }),
+    __metadata("design:type", Number)
+], SnackFiles.prototype, "height", void 0);
 SnackFiles = __decorate([
     (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
 ], SnackFiles);
 exports.VerifiedsModel = (0, typegoose_1.getModelForClass)(Verifieds);
+exports.SnackFilesModel = (0, typegoose_1.getModelForClass)(SnackFiles, {
+    schemaOptions: {
+        timestamps: true
+    }
+});

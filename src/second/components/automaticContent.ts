@@ -2,6 +2,7 @@ import { ChannelType, Message } from 'discord.js'
 import { type SecondClientData } from '..'
 import { inDevelopment } from '../../config'
 import { TYPES_CONTENT_IGNORE } from '../../config'
+import { SnackFilesModel } from '../../models'
 
 const martineChannel = '1058148757641900083'
 const martineCategories = [
@@ -79,9 +80,17 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     channel.send({
       content: `**file${fileNumber}.${fileExtension}** | **${MBs.toFixed(2)} MB**`,
       files: [{attachment: fileUrl, name: `file${fileNumber}.${fileExtension}`}]
-    }).then((msg)=> {
-      console.log(msg.attachments.first())
-      console.log(msg.attachments)
+    }).then(async (msg)=> {
+      for (const [_, attachment] of msg.attachments) {
+        await SnackFilesModel.create({
+          category: categoryName,
+          fileUrl: attachment.url,
+          height: attachment.height,
+          width: attachment.width,
+          size: attachment.size,
+          type: attachment.contentType
+        })
+      }
       channel.edit({topic: fileNumber+''})
     }).catch(e=> console.error('Error in send file: ', e))
 

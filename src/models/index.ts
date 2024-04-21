@@ -33,12 +33,28 @@ class Verifieds {
 
 @modelOptions({options: {allowMixed: Severity.ALLOW}})
 class SnackFiles {
+  @prop({type: String, required: true})
   public fileUrl: string
+
+  @prop({type: String, required: true})
   public category: string
+
+  @prop({type: String, required: true})
   public type: string
+
+  @prop({type: Number, required: true})
   public size: number
+
+  @prop({type: Number, required: true})
   public width: number
+
+  @prop({type: Number, required: true})
   public height: number
 }
 
 export const VerifiedsModel = getModelForClass(Verifieds)
+export const SnackFilesModel = getModelForClass(SnackFiles, {
+  schemaOptions: {
+    timestamps: true
+  }
+})

@@ -4,6 +4,7 @@ exports.ManageAutomaticContent = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../../config");
 const config_2 = require("../../config");
+const models_1 = require("../../models");
 const martineChannel = '1058148757641900083';
 const martineCategories = [
     '949861762902138941',
@@ -68,9 +69,17 @@ async function ManageAutomaticContent(msg, client) {
         channel.send({
             content: `**file${fileNumber}.${fileExtension}** | **${MBs.toFixed(2)} MB**`,
             files: [{ attachment: fileUrl, name: `file${fileNumber}.${fileExtension}` }]
-        }).then((msg) => {
-            console.log(msg.attachments.first());
-            console.log(msg.attachments);
+        }).then(async (msg) => {
+            for (const [_, attachment] of msg.attachments) {
+                await models_1.SnackFilesModel.create({
+                    category: categoryName,
+                    fileUrl: attachment.url,
+                    height: attachment.height,
+                    width: attachment.width,
+                    size: attachment.size,
+                    type: attachment.contentType
+                });
+            }
             channel.edit({ topic: fileNumber + '' });
         }).catch(e => console.error('Error in send file: ', e));
     }
