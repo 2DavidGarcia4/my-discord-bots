@@ -53,18 +53,29 @@ async function ManageAutomaticContent(msg, client) {
         const contentLength = response.headers.get('content-length');
         const mbSize = 1_048_576;
         const fileExtension = splitContentTipe.at(-1);
+        let size = 0;
         let MBs = 0;
         if (contentLength === null) {
             const imageBufer = await response.arrayBuffer();
             const buffer = Buffer.from(imageBufer);
-            MBs = buffer.length / mbSize;
+            size = buffer.length;
+            MBs = size / mbSize;
         }
         else {
-            MBs = parseInt(contentLength) / mbSize;
+            size = parseInt(contentLength);
+            MBs = size / mbSize;
         }
         //* 25MB max
-        if (MBs > 24)
-            return channel.send({ content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**` });
+        if (MBs > 24) {
+            channel.send({ content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**` });
+            await models_1.SnackFilesModel.create({
+                categories: categoryName.split('_'),
+                fileUrl,
+                size,
+                type: contentType
+            });
+            return;
+        }
         const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0')) + 1;
         channel.send({
             content: `**file${fileNumber}.${fileExtension}** | **${MBs.toFixed(2)} MB**`,
@@ -72,7 +83,7 @@ async function ManageAutomaticContent(msg, client) {
         }).then(async (msg) => {
             for (const [_, attachment] of msg.attachments) {
                 await models_1.SnackFilesModel.create({
-                    category: categoryName,
+                    categories: categoryName.split('_'),
                     fileUrl: attachment.url,
                     height: attachment.height,
                     width: attachment.width,

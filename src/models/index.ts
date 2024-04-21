@@ -36,8 +36,8 @@ class SnackFiles {
   @prop({type: String, required: true})
   public fileUrl: string
 
-  @prop({type: String, required: true})
-  public category: string
+  @prop([{type: String, required: true}])
+  public categories: string[]
 
   @prop({type: String, required: true})
   public type: string
@@ -45,10 +45,10 @@ class SnackFiles {
   @prop({type: Number, required: true})
   public size: number
 
-  @prop({type: Number, required: true})
+  @prop({type: Number})
   public width: number
 
-  @prop({type: Number, required: true})
+  @prop({type: Number})
   public height: number
 }
 

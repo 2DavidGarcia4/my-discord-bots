@@ -60,9 +60,9 @@ __decorate([
     __metadata("design:type", String)
 ], SnackFiles.prototype, "fileUrl", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ type: String, required: true }),
-    __metadata("design:type", String)
-], SnackFiles.prototype, "category", void 0);
+    (0, typegoose_1.prop)([{ type: String, required: true }]),
+    __metadata("design:type", Array)
+], SnackFiles.prototype, "categories", void 0);
 __decorate([
     (0, typegoose_1.prop)({ type: String, required: true }),
     __metadata("design:type", String)
@@ -72,11 +72,11 @@ __decorate([
     __metadata("design:type", Number)
 ], SnackFiles.prototype, "size", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ type: Number, required: true }),
+    (0, typegoose_1.prop)({ type: Number }),
     __metadata("design:type", Number)
 ], SnackFiles.prototype, "width", void 0);
 __decorate([
-    (0, typegoose_1.prop)({ type: Number, required: true }),
+    (0, typegoose_1.prop)({ type: Number }),
     __metadata("design:type", Number)
 ], SnackFiles.prototype, "height", void 0);
 SnackFiles = __decorate([
