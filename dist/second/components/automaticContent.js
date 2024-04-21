@@ -65,11 +65,17 @@ async function ManageAutomaticContent(msg, client) {
             size = parseInt(contentLength);
             MBs = size / mbSize;
         }
+        const categories = categoryName.split('_');
+        for (const name of categories) {
+            if (await models_1.SnackFileCategoriesModel.findOne({ name }) === undefined) {
+                await models_1.SnackFileCategoriesModel.create({ name });
+            }
+        }
         //* 25MB max
         if (MBs > 24) {
             channel.send({ content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**` });
             await models_1.SnackFilesModel.create({
-                categories: categoryName.split('_'),
+                categories,
                 fileUrl,
                 size,
                 type: contentType
@@ -83,7 +89,7 @@ async function ManageAutomaticContent(msg, client) {
         }).then(async (msg) => {
             for (const [_, attachment] of msg.attachments) {
                 await models_1.SnackFilesModel.create({
-                    categories: categoryName.split('_'),
+                    categories,
                     fileUrl: attachment.url,
                     height: attachment.height,
                     width: attachment.width,

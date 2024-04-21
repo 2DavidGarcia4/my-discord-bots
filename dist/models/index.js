@@ -9,7 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SnackFilesModel = exports.VerifiedsModel = void 0;
+exports.SnackFileCategoriesModel = exports.SnackFilesModel = exports.VerifiedsModel = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
 //? Verifieds
 let Verifieds = class Verifieds {
@@ -82,8 +82,22 @@ __decorate([
 SnackFiles = __decorate([
     (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
 ], SnackFiles);
+let snackFileCategories = class snackFileCategories {
+};
+__decorate([
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], snackFileCategories.prototype, "name", void 0);
+snackFileCategories = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], snackFileCategories);
 exports.VerifiedsModel = (0, typegoose_1.getModelForClass)(Verifieds);
 exports.SnackFilesModel = (0, typegoose_1.getModelForClass)(SnackFiles, {
+    schemaOptions: {
+        timestamps: true
+    }
+});
+exports.SnackFileCategoriesModel = (0, typegoose_1.getModelForClass)(snackFileCategories, {
     schemaOptions: {
         timestamps: true
     }

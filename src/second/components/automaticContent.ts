@@ -2,7 +2,7 @@ import { ChannelType, Message } from 'discord.js'
 import { type SecondClientData } from '..'
 import { inDevelopment } from '../../config'
 import { TYPES_CONTENT_IGNORE } from '../../config'
-import { SnackFilesModel } from '../../models'
+import { SnackFileCategoriesModel, SnackFilesModel } from '../../models'
 
 const martineChannel = '1058148757641900083'
 const martineCategories = [
@@ -75,11 +75,18 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       MBs = size / mbSize
     }
 
+    const categories = categoryName.split('_')
+    for (const name of categories) {
+      if (await SnackFileCategoriesModel.findOne({name}) === undefined) {
+        await SnackFileCategoriesModel.create({name})
+      }
+    }
+
     //* 25MB max
     if(MBs > 24) {
       channel.send({content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**`})
       await SnackFilesModel.create({
-        categories: categoryName.split('_'),
+        categories,
         fileUrl,
         size,
         type: contentType
@@ -95,7 +102,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     }).then(async (msg)=> {
       for (const [_, attachment] of msg.attachments) {
         await SnackFilesModel.create({
-          categories: categoryName.split('_'),
+          categories,
           fileUrl: attachment.url,
           height: attachment.height,
           width: attachment.width,
