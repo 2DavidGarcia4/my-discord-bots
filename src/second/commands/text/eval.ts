@@ -5,6 +5,7 @@ import { TextCommand, type MessageProp } from '../../..'
 import { sendMessageText, setError } from '../../../shared/functions'
 import { FrogDb } from '../../data'
 import { setGuildStatus } from '../../lib/services'
+import { SnackFilesModel } from '../../../models'
 
 export default class EvalCommand extends TextCommand {
   constructor() {
@@ -19,10 +20,14 @@ export default class EvalCommand extends TextCommand {
     client: SecondClientData
   }) {
     try {
-      const db = FrogDb, setStatus = setGuildStatus, modDB = client.modDb
+      const db = FrogDb, setStatus = setGuildStatus, modDB = client.modDb, FileModel = SnackFilesModel
+      
       msg.channel.sendTyping()
-      const code = eval(args.join(' ')), texto = inspect(code)
+
+      const code = await eval(args.join(' '))
+      const texto = inspect(code)
       const evalEb = new EmbedBuilder()
+
       .setDescription(`\`\`\`js\n${texto.length > 2040 ? texto.substring(0, 2040).concat('...') : texto}\`\`\``)
       .setColor(msg.guild?.members.me?.displayHexColor || 'White')
       sendMessageText(msg, {embeds: [evalEb]})
