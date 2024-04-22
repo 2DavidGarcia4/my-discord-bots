@@ -58,7 +58,7 @@ let SnackFiles = class SnackFiles {
 __decorate([
     (0, typegoose_1.prop)({ type: String, required: true }),
     __metadata("design:type", String)
-], SnackFiles.prototype, "fileUrl", void 0);
+], SnackFiles.prototype, "url", void 0);
 __decorate([
     (0, typegoose_1.prop)([{ type: String, required: true }]),
     __metadata("design:type", Array)

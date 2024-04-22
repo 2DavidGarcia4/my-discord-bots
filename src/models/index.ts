@@ -34,7 +34,7 @@ class Verifieds {
 @modelOptions({options: {allowMixed: Severity.ALLOW}})
 class SnackFiles {
   @prop({type: String, required: true})
-  public fileUrl: string
+  public url: string
 
   @prop([{type: String, required: true}])
   public categories: string[]

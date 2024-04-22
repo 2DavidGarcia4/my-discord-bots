@@ -87,8 +87,8 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     if(MBs > 24) {
       channel.send({content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**`})
       await SnackFilesModel.create({
+        url: fileUrl,
         categories,
-        fileUrl,
         size,
         type: contentType
       })
@@ -104,7 +104,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       for (const [_, attachment] of msg.attachments) {
         await SnackFilesModel.create({
           categories,
-          fileUrl: attachment.url,
+          url: attachment.url,
           height: attachment.height,
           width: attachment.width,
           size: attachment.size,
