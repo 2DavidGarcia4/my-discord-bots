@@ -1,10 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ManageAutomaticContent = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../../config");
 const config_2 = require("../../config");
 const models_1 = require("../../models");
+const node_path_1 = __importDefault(require("node:path"));
 const martineChannel = '1058148757641900083';
 const martineCategories = [
     '949861762902138941',
@@ -66,20 +70,34 @@ async function ManageAutomaticContent(msg, client) {
             MBs = size / mbSize;
         }
         const categories = categoryName.split('_');
+        const categoryIds = [];
         for (const name of categories) {
             const category = await models_1.SnackFileCategoriesModel.findOne({ name });
             if (category === null) {
-                await models_1.SnackFileCategoriesModel.create({ name });
+                const newCategory = await models_1.SnackFileCategoriesModel.create({ name });
+                categoryIds.push(newCategory.id);
+                continue;
             }
+            categoryIds.push(category.id);
         }
+        const handleExtension = async (filePath) => {
+            const extName = node_path_1.default.extname(filePath);
+            const extension = await models_1.SnackFileExtensionsModel.findOne({ name: extName });
+            if (extension === null) {
+                await models_1.SnackFileExtensionsModel.create({ name: extName });
+            }
+        };
         //* 25MB max
         if (MBs > 24) {
             channel.send({ content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**` });
+            const name = node_path_1.default.basename(fileUrl);
+            await handleExtension(fileUrl);
             await models_1.SnackFilesModel.create({
                 url: fileUrl,
-                categories,
+                name,
                 size,
-                type: contentType
+                type: contentType,
+                categories: categoryIds
             });
             return;
         }
@@ -89,13 +107,15 @@ async function ManageAutomaticContent(msg, client) {
             files: [{ attachment: fileUrl, name: `file${fileNumber}.${fileExtension}` }]
         }).then(async (msg) => {
             for (const [_, attachment] of msg.attachments) {
+                await handleExtension(attachment.name);
                 await models_1.SnackFilesModel.create({
-                    categories,
                     url: attachment.url,
-                    height: attachment.height,
-                    width: attachment.width,
+                    name: attachment.name,
+                    type: attachment.contentType,
                     size: attachment.size,
-                    type: attachment.contentType
+                    width: attachment.width,
+                    height: attachment.height,
+                    categories: categoryIds
                 });
             }
             channel.edit({ topic: fileNumber + '' });

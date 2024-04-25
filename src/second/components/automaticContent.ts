@@ -2,7 +2,8 @@ import { ChannelType, Message } from 'discord.js'
 import { type SecondClientData } from '..'
 import { inDevelopment } from '../../config'
 import { TYPES_CONTENT_IGNORE } from '../../config'
-import { SnackFileCategoriesModel, SnackFilesModel } from '../../models'
+import { SnackFileCategoriesModel, SnackFileExtensionsModel, SnackFilesModel } from '../../models'
+import path from 'node:path'
 
 const martineChannel = '1058148757641900083'
 const martineCategories = [
@@ -76,21 +77,40 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     }
 
     const categories = categoryName.split('_')
+    const categoryIds: string[] = []
     for (const name of categories) {
       const category = await SnackFileCategoriesModel.findOne({name})
+      
       if (category === null) {
-        await SnackFileCategoriesModel.create({name})
+        const newCategory = await SnackFileCategoriesModel.create({name})
+        categoryIds.push(newCategory.id)
+        continue
+      }
+
+      categoryIds.push(category.id)
+    }
+
+    const handleExtension = async (filePath: string) => {
+      const extName = path.extname(filePath)
+      const extension = await SnackFileExtensionsModel.findOne({name: extName})
+
+      if (extension === null) {
+        await SnackFileExtensionsModel.create({name: extName})
       }
     }
 
     //* 25MB max
     if(MBs > 24) {
       channel.send({content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**`})
+      const name = path.basename(fileUrl)
+      await handleExtension(fileUrl)
+
       await SnackFilesModel.create({
         url: fileUrl,
-        categories,
+        name,
         size,
-        type: contentType
+        type: contentType,
+        categories: categoryIds
       })
       return
     }
@@ -102,13 +122,15 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
       files: [{attachment: fileUrl, name: `file${fileNumber}.${fileExtension}`}]
     }).then(async (msg)=> {
       for (const [_, attachment] of msg.attachments) {
+        await handleExtension(attachment.name)
         await SnackFilesModel.create({
-          categories,
           url: attachment.url,
-          height: attachment.height,
-          width: attachment.width,
+          name: attachment.name,
+          type: attachment.contentType,
           size: attachment.size,
-          type: attachment.contentType
+          width: attachment.width,
+          height: attachment.height,
+          categories: categoryIds
         })
       }
       channel.edit({topic: fileNumber+''})
