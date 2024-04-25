@@ -91,7 +91,7 @@ export async function ManageAutomaticContent(msg: Message<boolean>, client: Seco
     }
 
     const handleExtension = async (filePath: string) => {
-      const extName = path.extname(filePath)
+      const extName = path.extname(filePath).slice(1)
       const extension = await SnackFileExtensionsModel.findOne({name: extName})
 
       if (extension === null) {

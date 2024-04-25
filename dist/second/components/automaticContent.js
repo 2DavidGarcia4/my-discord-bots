@@ -81,7 +81,7 @@ async function ManageAutomaticContent(msg, client) {
             categoryIds.push(category.id);
         }
         const handleExtension = async (filePath) => {
-            const extName = node_path_1.default.extname(filePath);
+            const extName = node_path_1.default.extname(filePath).slice(1);
             const extension = await models_1.SnackFileExtensionsModel.findOne({ name: extName });
             if (extension === null) {
                 await models_1.SnackFileExtensionsModel.create({ name: extName });
