@@ -1,4 +1,5 @@
 import { prop, getModelForClass, modelOptions, Severity } from '@typegoose/typegoose'
+import { SchemaTypes } from 'mongoose'
 
 //? Verifieds
 @modelOptions({options: {allowMixed: Severity.ALLOW}})
@@ -30,13 +31,17 @@ class Verifieds {
   @prop({type: Number})
   public lastActivityAt?: number
 }
+export const VerifiedsModel = getModelForClass(Verifieds)
 
 @modelOptions({options: {allowMixed: Severity.ALLOW}})
 class SnackFiles {
   @prop({type: String, required: true})
   public url: string
 
-  @prop([{type: String, required: true}])
+  @prop({type: String, required: true})
+  public name: string
+
+  @prop([{type: SchemaTypes.ObjectId, required: true}])
   public categories: string[]
 
   @prop({type: String, required: true})
@@ -51,21 +56,33 @@ class SnackFiles {
   @prop({type: Number})
   public height: number
 }
-
-@modelOptions({options: {allowMixed: Severity.ALLOW}})
-class snackFileCategories {
-  @prop({type: String, required: true})
-  public name: string
-}
-
-export const VerifiedsModel = getModelForClass(Verifieds)
 export const SnackFilesModel = getModelForClass(SnackFiles, {
   schemaOptions: {
     timestamps: true
   }
 })
-export const SnackFileCategoriesModel = getModelForClass(snackFileCategories, {
+
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
+class SnackFileCategories {
+  @prop({type: String, required: true})
+  public name: string
+}
+export const SnackFileCategoriesModel = getModelForClass(SnackFileCategories, {
   schemaOptions: {
     timestamps: true
   }
 })
+
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
+class SnackFileTypes {
+  @prop({type: String, required: true})
+  public name: string
+}
+export const SnackFileTypesModel = getModelForClass(SnackFileTypes)
+
+@modelOptions({options: {allowMixed: Severity.ALLOW}})
+class SnackFileExtensions {
+  @prop({type: String, required: true})
+  public name: string
+}
+export const SnackFileExtensionsModel = getModelForClass(SnackFileExtensions)

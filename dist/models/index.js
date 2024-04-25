@@ -9,8 +9,9 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SnackFileCategoriesModel = exports.SnackFilesModel = exports.VerifiedsModel = void 0;
+exports.SnackFileExtensionsModel = exports.SnackFileTypesModel = exports.SnackFileCategoriesModel = exports.SnackFilesModel = exports.VerifiedsModel = void 0;
 const typegoose_1 = require("@typegoose/typegoose");
+const mongoose_1 = require("mongoose");
 //? Verifieds
 let Verifieds = class Verifieds {
 };
@@ -53,6 +54,7 @@ __decorate([
 Verifieds = __decorate([
     (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
 ], Verifieds);
+exports.VerifiedsModel = (0, typegoose_1.getModelForClass)(Verifieds);
 let SnackFiles = class SnackFiles {
 };
 __decorate([
@@ -60,7 +62,11 @@ __decorate([
     __metadata("design:type", String)
 ], SnackFiles.prototype, "url", void 0);
 __decorate([
-    (0, typegoose_1.prop)([{ type: String, required: true }]),
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], SnackFiles.prototype, "name", void 0);
+__decorate([
+    (0, typegoose_1.prop)([{ type: mongoose_1.SchemaTypes.ObjectId, required: true }]),
     __metadata("design:type", Array)
 ], SnackFiles.prototype, "categories", void 0);
 __decorate([
@@ -82,23 +88,42 @@ __decorate([
 SnackFiles = __decorate([
     (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
 ], SnackFiles);
-let snackFileCategories = class snackFileCategories {
-};
-__decorate([
-    (0, typegoose_1.prop)({ type: String, required: true }),
-    __metadata("design:type", String)
-], snackFileCategories.prototype, "name", void 0);
-snackFileCategories = __decorate([
-    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
-], snackFileCategories);
-exports.VerifiedsModel = (0, typegoose_1.getModelForClass)(Verifieds);
 exports.SnackFilesModel = (0, typegoose_1.getModelForClass)(SnackFiles, {
     schemaOptions: {
         timestamps: true
     }
 });
-exports.SnackFileCategoriesModel = (0, typegoose_1.getModelForClass)(snackFileCategories, {
+let SnackFileCategories = class SnackFileCategories {
+};
+__decorate([
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], SnackFileCategories.prototype, "name", void 0);
+SnackFileCategories = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], SnackFileCategories);
+exports.SnackFileCategoriesModel = (0, typegoose_1.getModelForClass)(SnackFileCategories, {
     schemaOptions: {
         timestamps: true
     }
 });
+let SnackFileTypes = class SnackFileTypes {
+};
+__decorate([
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], SnackFileTypes.prototype, "name", void 0);
+SnackFileTypes = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], SnackFileTypes);
+exports.SnackFileTypesModel = (0, typegoose_1.getModelForClass)(SnackFileTypes);
+let SnackFileExtensions = class SnackFileExtensions {
+};
+__decorate([
+    (0, typegoose_1.prop)({ type: String, required: true }),
+    __metadata("design:type", String)
+], SnackFileExtensions.prototype, "name", void 0);
+SnackFileExtensions = __decorate([
+    (0, typegoose_1.modelOptions)({ options: { allowMixed: typegoose_1.Severity.ALLOW } })
+], SnackFileExtensions);
+exports.SnackFileExtensionsModel = (0, typegoose_1.getModelForClass)(SnackFileExtensions);
