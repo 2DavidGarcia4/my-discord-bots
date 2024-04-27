@@ -1,14 +1,9 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ManageAutomaticContent = void 0;
 const discord_js_1 = require("discord.js");
 const config_1 = require("../../config");
 const config_2 = require("../../config");
-const models_1 = require("../../models");
-const node_path_1 = __importDefault(require("node:path"));
 const martineChannel = '1058148757641900083';
 const martineCategories = [
     '949861762902138941',
@@ -69,36 +64,36 @@ async function ManageAutomaticContent(msg, client) {
             size = parseInt(contentLength);
             MBs = size / mbSize;
         }
-        const categories = categoryName.split('_');
-        const categoryIds = [];
-        for (const name of categories) {
-            const category = await models_1.SnackFileCategoriesModel.findOne({ name });
-            if (category === null) {
-                const newCategory = await models_1.SnackFileCategoriesModel.create({ name });
-                categoryIds.push(newCategory.id);
-                continue;
-            }
-            categoryIds.push(category.id);
-        }
-        const handleExtension = async (filePath) => {
-            const extName = node_path_1.default.extname(filePath).slice(1);
-            const extension = await models_1.SnackFileExtensionsModel.findOne({ name: extName });
-            if (extension === null) {
-                await models_1.SnackFileExtensionsModel.create({ name: extName });
-            }
-        };
+        // const categories = categoryName.split('_')
+        // const categoryIds: string[] = []
+        // for (const name of categories) {
+        //   const category = await SnackFileCategoriesModel.findOne({name})
+        //   if (category === null) {
+        //     const newCategory = await SnackFileCategoriesModel.create({name})
+        //     categoryIds.push(newCategory.id)
+        //     continue
+        //   }
+        //   categoryIds.push(category.id)
+        // }
+        // const handleExtension = async (filePath: string) => {
+        //   const extName = path.extname(filePath).slice(1)
+        //   const extension = await SnackFileExtensionsModel.findOne({name: extName})
+        //   if (extension === null) {
+        //     await SnackFileExtensionsModel.create({name: extName})
+        //   }
+        // }
         //* 25MB max
         if (MBs > 24) {
             channel.send({ content: `[**File url**](${fileUrl}) **${contentType}** | **${MBs.toFixed(2)} MB**` });
-            const name = node_path_1.default.basename(fileUrl);
-            await handleExtension(fileUrl);
-            await models_1.SnackFilesModel.create({
-                url: fileUrl,
-                name,
-                size,
-                type: contentType,
-                categories: categoryIds
-            });
+            // const name = path.basename(fileUrl)
+            // await handleExtension(fileUrl)
+            // await SnackFilesModel.create({
+            //   url: fileUrl,
+            //   name,
+            //   size,
+            //   type: contentType,
+            //   categories: categoryIds
+            // })
             return;
         }
         const fileNumber = (parseInt(channel.topic?.match(/\d+/g)?.[0] || '0')) + 1;
@@ -106,18 +101,18 @@ async function ManageAutomaticContent(msg, client) {
             content: `**file${fileNumber}.${fileExtension}** | **${MBs.toFixed(2)} MB**`,
             files: [{ attachment: fileUrl, name: `file${fileNumber}.${fileExtension}` }]
         }).then(async (msg) => {
-            for (const [_, attachment] of msg.attachments) {
-                await handleExtension(attachment.name);
-                await models_1.SnackFilesModel.create({
-                    url: attachment.url,
-                    name: attachment.name,
-                    type: attachment.contentType,
-                    size: attachment.size,
-                    width: attachment.width,
-                    height: attachment.height,
-                    categories: categoryIds
-                });
-            }
+            // for (const [_, attachment] of msg.attachments) {
+            //   await handleExtension(attachment.name)
+            //   await SnackFilesModel.create({
+            //     url: attachment.url,
+            //     name: attachment.name,
+            //     type: attachment.contentType,
+            //     size: attachment.size,
+            //     width: attachment.width,
+            //     height: attachment.height,
+            //     categories: categoryIds
+            //   })
+            // }
             channel.edit({ topic: fileNumber + '' });
         }).catch(e => console.error('Error in send file: ', e));
     }
